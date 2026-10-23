@@ -1,0 +1,64 @@
+name: T02 persistent core
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'core/**'
+      - 'cmake/**'
+      - 'CMakeLists.txt'
+      - 'CMakePresets.json'
+      - 'tests/unit/**'
+      - 'tests/integration/history_crash.py'
+      - 'tests/size/**'
+      - '.github/workflows/core.yml'
+permissions:
+  contents: read
+jobs:
+  history:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-2025, ubuntu-24.04, macos-15, macos-15-intel]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: MSVC environment
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $vsPath = & "${env:ProgramFiles(x86)}/Microsoft Visual Studio/Installer/vswhere.exe" -latest -products '*' -property installationPath
+          cmd /c "`"$vsPath\Common7\Tools\VsDevCmd.bat`" -arch=x64 >nul && set" | ForEach-Object {
+            if ($_ -match '^([^=]+)=(.*)$') { "$( $matches[1] )=$( $matches[2] )" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8 }
+          }
+      - name: Fetch pinned SQLite
+        run: python tools/fetch-footprint-deps.py
+      - name: Configure tests
+        run: cmake --preset test
+      - name: Build tests
+        run: cmake --build --preset test
+      - name: History contracts and crash recovery
+        run: ctest --preset test --output-on-failure
+      - name: Configure size build
+        run: cmake --preset release -DCLIPTIQ_BUILD_SIZE_PROBE=ON
+      - name: Build size probe
+        run: cmake --build --preset release
+      - name: Release tests
+        run: ctest --preset release --output-on-failure
+      - name: Collect sizes
+        run: python tests/size/report.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: core-${{ matrix.os }}
+          path: |
+            out/t02-size.json
+            out/core-*/Testing/Temporary/LastTest.log
+  sanitizers:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - run: python tools/fetch-footprint-deps.py
+      - run: cmake --preset sanitize -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
+      - run: cmake --build --preset sanitize
+      - run: ctest --preset sanitize --output-on-failure
