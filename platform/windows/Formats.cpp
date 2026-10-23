@@ -80,8 +80,6 @@ Result<void> validate_native_payload(Representation& r) {
   data.resize(parsed.value().offset+std::size_t(parsed.value().stride)*parsed.value().height);
  }else if(r.native_type=="Preferred DropEffect"){
   if(data.size()<4)return invalid();data.resize(4);
- }else if(r.native_type=="Rich Text Format"){
-  auto end=std::find(data.begin(),data.end(),0);if(end!=data.end())data.resize(static_cast<std::size_t>(end-data.begin())+1);
  }
  return {};
 }

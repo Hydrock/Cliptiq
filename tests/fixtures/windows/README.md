@@ -16,3 +16,9 @@ WinSta0. Native station tests run in Windows CI; manual apps are separate.
 
 Expected outcomes derive from the Clipy feature matrix and Microsoft public
 clipboard contracts. No Clipy binary fixtures/assets/code have been copied here.
+
+Review regressions include binary RTF with PNG \binN bytes, explicit cloud-upload
+prohibition and a deterministic unlock race. The race uses a test-only import
+interceptor for CloseClipboard: it calls the real API, then publishes a second
+owner through real Win32 calls before replay resumes. No production hook, no
+user clipboard access, no elevation/consent bypass.

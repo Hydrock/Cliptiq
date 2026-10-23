@@ -21,7 +21,7 @@ Supported transferable formats at item_index 0:
 | Format | Representation |
 |---|---|
 | CF_UNICODETEXT | UTF-16LE, NUL terminated, surrogate validation, CRLF preserved |
-| Rich Text Format | Native RTF bytes |
+| Rich Text Format | Bounded opaque RTF bytes, including binary embedded NULs |
 | HTML Format | Entire CF_HTML including UTF-8 byte offsets, validated ranges/encoding |
 | Portable Document Format / PDF | Registered PDF bytes, app interoperability must be tested |
 | com.apple.flat-rtfd | Opaque RTFD bytes, no Windows application support promised |
@@ -51,8 +51,11 @@ Native failure after clear can leave partial data: replay is not transactional.
 The full ordered native offer list survives until T03. ExcludeClipboardContentFromMonitorProcessing
 presence denies capture before content reads. CanIncludeInClipboardHistory other
 than a valid DWORD 1 is conservatively transient; malformed/unreadable hints deny.
-CanUploadToCloud alone is not interpreted as a local history prohibition or Apple
-Universal Clipboard. org.nspasteboard transient/concealed markers are honoured if
+CanUploadToCloudClipboard alone is not interpreted as a local history prohibition or Apple
+Universal Clipboard. Every replay explicitly publishes CanUploadToCloudClipboard=0
+to keep restored history local, including entries originally copied with a cloud
+prohibition. This does not control what the original producer/OS did before capture.
+org.nspasteboard transient/concealed markers are honoured if
 cooperatively published on Windows. No universal password detector is claimed;
 concealed and remote absence remain Unknown.
 
