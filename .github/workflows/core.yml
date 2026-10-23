@@ -11,6 +11,7 @@ on:
       - 'tests/unit/**'
       - 'tests/integration/history_crash.py'
       - 'tests/integration/macos_clipboard_test.mm'
+      - 'tests/manual/macos_clipboard_manual.mm'
       - 'tests/size/**'
       - '.github/workflows/core.yml'
 permissions:
