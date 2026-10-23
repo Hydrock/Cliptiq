@@ -16,13 +16,15 @@ def main():
     args = parser.parse_args()
     docker = shutil.which('docker') or 'C:/Program Files/Docker/Docker/resources/bin/docker.exe'
     lane = 'linux-x86_64-base-' + ('gtk4' if args.lane == 'gtk4' else 'gtk3') + ('-ocr' if args.lane == 'ocr' else '')
-    dist = ROOT / 'out/clean-install' / args.lane / 'app'
-    output = ROOT / 'out/clean-install' / args.lane / 'evidence'
+    run_id = uuid.uuid4().hex[:10]
+    run_root = ROOT / 'out/clean-install' / args.lane / 'runs' / run_id
+    dist = run_root / 'app'
+    output = run_root / 'evidence'
     dist.mkdir(parents=True, exist_ok=True)
     output.mkdir(parents=True, exist_ok=True)
     for language in ('cpp', 'rust'):
         shutil.copy2(ROOT / 'build/footprint' / lane / ('probe_' + language), dist)
-    name = 'cliptiq-clean-' + args.lane + '-' + uuid.uuid4().hex[:10]
+    name = 'cliptiq-clean-' + args.lane + '-' + run_id
     log = output / 'container.log'
 
     def run(*command, timeout=900):
@@ -45,14 +47,19 @@ def main():
         run('start', name)
         run('exec', name, 'sh', '/work/linux_measure.sh', 'download', args.lane)
         run('network', 'disconnect', 'bridge', name)
+        networks = json.loads(run('inspect', '--format', '{{json .NetworkSettings.Networks}}', name))
+        if networks:
+            raise RuntimeError('container still has a network attachment')
         run('exec', name, 'sh', '/work/linux_measure.sh', 'install', args.lane)
         report = json.loads((output / 'report.json').read_text())
         report['image_digest'] = image_ref
+        report['measurement_run_id'] = run_id
         report['image_id'] = image['Id']
         report['app_bytes'] = {p.name: p.stat().st_size for p in dist.iterdir() if p.is_file()}
         report['before_runtime_exit'] = int((output / 'before-runtime-exit.txt').read_text())
         report['complete_install_apparent_bytes'] = {name: size + report['runtime_apparent_install_delta_bytes'] for name, size in report['app_bytes'].items()}
         (output / 'report.json').write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
+        (ROOT / 'out/clean-install' / args.lane / 'latest.json').write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
         print(json.dumps(report, indent=2))
     finally:
         # Only the exact, freshly generated container name is removed.

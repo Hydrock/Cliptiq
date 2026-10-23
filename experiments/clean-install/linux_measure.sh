@@ -24,6 +24,10 @@ if [ "$phase" = download ]; then
   status=$?
   set -e
   printf '%s\n' "$status" > /out/before-runtime-exit.txt
+  if [ "$status" -ne 127 ] || ! grep -q 'error while loading shared libraries' /out/before-runtime.txt; then
+    echo 'clean-image negative control did not fail for a missing shared library' >&2
+    exit 3
+  fi
   apt-get -o Acquire::Retries=2 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 update > /out/apt-update.log 2>&1
   mkdir -p /out/runtime-debs/partial /out/harness-debs/partial
   # Runtime and GUI test harness archives are kept distinct and counted apart.
