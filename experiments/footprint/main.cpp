@@ -35,7 +35,7 @@ int main(int argc, char** argv) {
     }
     bool native_ready = native_setup(interactive);
     auto ready = std::chrono::steady_clock::now();
-    if (lifecycle && native_ready) { native_schedule_close(); native_loop(); }
+    if (lifecycle && native_ready) { native_schedule_close(); native_loop(); std::puts("{\"native_window_lifecycle\":true}"); }
     else if (benchmark) {
         const char* ocr="not implemented";
 #ifdef PROBE_OCR

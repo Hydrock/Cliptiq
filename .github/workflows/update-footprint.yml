@@ -1,0 +1,28 @@
+name: T01 update footprint
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'experiments/update-footprint/**'
+      - '.github/workflows/update-footprint.yml'
+permissions:
+  contents: read
+jobs:
+  sparkle:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-15, macos-15-intel]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - run: command -v ninja || brew install ninja
+      - run: python3 tools/fetch-footprint-deps.py
+      - run: python3 experiments/update-footprint/measure.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: update-footprint-${{ matrix.os }}
+          path: out/update-footprint/
+          retention-days: 14
