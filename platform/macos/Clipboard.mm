@@ -144,7 +144,10 @@ struct MacClipboardBackend::State {
     }
     for(NSString* type in root) {
      if([item_types containsObject:type])continue;
-     auto known=lookup(utf8(type));if(!known||marker(type)||covered(*known,root))continue;
+     auto known=lookup(utf8(type));if(!known||marker(type))continue;
+     // A synthesized root public.file-url may describe only the first path.
+     // Keep the legacy root array so its complete file list is not lost.
+     if(std::string(known->name)!="NSFilenamesPboardType"&&covered(*known,root))continue;
      candidates.push_back({{RootPasteboardItem,"macos",known->name,known->kind,{}},nil,type});
     }
     if(candidates.size()>options.limits.max_representations)
@@ -224,6 +227,7 @@ Result<std::string> MacClipboardBackend::write_snapshot(const ClipboardSnapshot&
   std::map<std::uint32_t,NSPasteboardItem*> groups;
   NSMutableArray<NSPasteboardItem*>* objects=[NSMutableArray array];
   std::vector<const Representation*> roots;
+  const Representation* legacy_files=nullptr;
   std::set<std::pair<std::uint32_t,std::string>> seen;
   for(const auto& r:snapshot.representations) {
    const auto known=lookup(r.native_type);
@@ -232,22 +236,32 @@ Result<std::string> MacClipboardBackend::write_snapshot(const ClipboardSnapshot&
    if(r.data.size()>limits.representation_bytes||r.data.size()>limits.entry_bytes-total)
     return Error{ErrorCode::TooLarge,"Replay exceeds configured limits"};
    total+=r.data.size();
+   if(r.native_type=="NSFilenamesPboardType") {
+    if(legacy_files)return Error{ErrorCode::InvalidArgument,"Multiple legacy root file arrays cannot be replayed"};
+    legacy_files=&r;continue;
+   }
    if(r.item_index==RootPasteboardItem){roots.push_back(&r);continue;}
    if(!groups.count(r.item_index)){auto item=[NSPasteboardItem new];groups.emplace(r.item_index,item);[objects addObject:item];}
    if(![groups.at(r.item_index) setData:[NSData dataWithBytes:r.data.data() length:r.data.size()] forType:native(r.native_type)])
     return Error{ErrorCode::Io,"Unable to prepare native replay data"};
   }
-  if(objects.count==0)[objects addObject:[NSPasteboardItem new]];
+  if(objects.count==0&&!roots.empty())[objects addObject:[NSPasteboardItem new]];
   for(const auto* r:roots) {
    auto first=objects.firstObject;auto type=native(r->native_type);
    if([first.types containsObject:type])return Error{ErrorCode::InvalidArgument,"Conflicting root/item replay type"};
    if(![first setData:[NSData dataWithBytes:r->data.data() length:r->data.size()] forType:type])return Error{ErrorCode::Io,"Unable to prepare root replay data"};
   }
+  if(objects.count==0&&(snapshot.flags.transient==Flag::Yes||snapshot.flags.concealed==Flag::Yes||snapshot.flags.remote==Flag::Yes))
+   [objects addObject:[NSPasteboardItem new]];
   auto first=objects.firstObject;
   for(const auto& flag:std::vector<std::pair<Flag,NSString*>>{{snapshot.flags.transient,@"org.nspasteboard.TransientType"},{snapshot.flags.concealed,@"org.nspasteboard.ConcealedType"},{snapshot.flags.remote,@"com.apple.is-remote-clipboard"}})
    if(flag.first==Flag::Yes&&![first setData:[NSData data] forType:flag.second])return Error{ErrorCode::Io,"Unable to prepare replay metadata"};
   const NSInteger owned=[board clearContents];
-  if(![board writeObjects:objects])return Error{ErrorCode::Io,"Native pasteboard rejected the replay"};
+  // NSPasteboardItem rejects NSFilenamesPboardType. It must stay on the root,
+  // as in the original Clipy compatibility path, before writing modern items.
+  if(legacy_files&&![board setData:[NSData dataWithBytes:legacy_files->data.data() length:legacy_files->data.size()] forType:@"NSFilenamesPboardType"])
+   return Error{ErrorCode::Io,"Native pasteboard rejected legacy root filenames"};
+  if(objects.count&&![board writeObjects:objects])return Error{ErrorCode::Io,"Native pasteboard rejected the replay"};
   const NSInteger final=board.changeCount;
   if(final!=owned)return Error{ErrorCode::Busy,"Clipboard ownership changed during replay"};
   state.observed=final;state.last_error.reset();
