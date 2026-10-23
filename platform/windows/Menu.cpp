@@ -10,6 +10,10 @@
 #include <map>
 #include <stdexcept>
 #include <thread>
+#ifdef CLIPTIQ_TEST_POPUP_BOUNDARY
+extern "C" UINT cliptiq_test_track_popup(HMENU,UINT,int,int,HWND,LPTPMPARAMS);
+#define TrackPopupMenuEx cliptiq_test_track_popup
+#endif
 namespace cliptiq {
 namespace {
 std::wstring wide(const std::string &s) {

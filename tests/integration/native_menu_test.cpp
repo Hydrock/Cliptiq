@@ -9,6 +9,9 @@
 #include "../fixtures/linux/TrayPeer.hpp"
 #include <gtk/gtk.h>
 #endif
+#ifdef _WIN32
+extern "C" UINT cliptiq_test_track_popup(HMENU,UINT,int,int,HWND,LPTPMPARAMS){return 0;}
+#endif
 using namespace cliptiq;
 #define CHECK(x)                                                               \
   do {                                                                         \
