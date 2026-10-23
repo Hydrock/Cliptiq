@@ -24,7 +24,7 @@ report = {
     'source_commit': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=root, text=True).strip(),
     'working_tree_dirty': bool(subprocess.check_output(['git', 'status', '--porcelain'], cwd=root, text=True).strip()),
     'source_files_sha256': {p.relative_to(root).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
-                            for folder_name in ('core', 'cmake', 'platform/macos', 'platform/windows', 'platform/linux')
+                            for folder_name in ('core', 'cmake', 'platform/macos', 'platform/windows', 'platform/linux', 'third_party/libgrapheme')
                             for p in sorted((root / folder_name).rglob('*')) if p.is_file()},
     'build_type': 'MinSizeRel', 'windows_crt': 'static' if system == 'Windows' else None,
     'probe_bytes': len(data), 'probe_zip_bytes': len(archive.getvalue()),
@@ -118,5 +118,30 @@ if system == 'Linux':
         'added_bytes': native['executable_bytes'] - baseline['executable_bytes'],
         'added_zip_bytes': native['zip_bytes'] - baseline['zip_bytes'],
         'scope': 'paired core policy/history host vs combined X11+Wayland/session/worker; private Xvfb and Sway runs; system libraries not bundled; not full product or offline package closure'}
+def menu_variant(name):
+    path = folder / (name + ('.exe' if system == 'Windows' else ''))
+    if system == 'Linux':
+        for transport in ('x11', 'wayland'):
+            subprocess.run([sys.executable, str(root / 'tools/run-linux-isolated.py'), transport, str(path), '--smoke'], check=True, timeout=20)
+    else:
+        subprocess.run([str(path), '--smoke'], check=True, timeout=20)
+    raw = path.read_bytes()
+    compressed = io.BytesIO()
+    with zipfile.ZipFile(compressed, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as z:
+        item = zipfile.ZipInfo('menu_host', date_time=(2026, 1, 1, 0, 0, 0))
+        item.compress_type = zipfile.ZIP_DEFLATED
+        z.writestr(item, raw)
+    command = ['dumpbin', '/DEPENDENTS', str(path)] if system == 'Windows' else ['otool', '-L', str(path)] if system == 'Darwin' else ['ldd', str(path)]
+    linked = subprocess.check_output(command, text=True).splitlines()
+    return {'executable_bytes': len(raw), 'zip_bytes': len(compressed.getvalue()), 'sha256': hashlib.sha256(raw).hexdigest(), 'linked_libraries': linked}
+menu_baseline = menu_variant('menu_history_baseline')
+menu_model = menu_variant('menu_model_probe')
+menu_native = menu_variant('menu_native_probe')
+report['menu'] = {'baseline': menu_baseline, 'model': menu_model, 'native': menu_native,
+    'model_added_bytes': menu_model['executable_bytes'] - menu_baseline['executable_bytes'],
+    'native_added_bytes': menu_native['executable_bytes'] - menu_model['executable_bytes'],
+    'total_added_bytes': menu_native['executable_bytes'] - menu_baseline['executable_bytes'],
+    'scope': 'same history/capture-capable review host baseline, shared model + Unicode17, then native popup/tray/launcher; no capture in smoke; system GUI libraries not bundled; not full product'}
+report['source_files_sha256']['platform/MenuHost.cpp'] = hashlib.sha256((root / 'platform/MenuHost.cpp').read_bytes()).hexdigest()
 (root / 'out' / 't02-size.json').write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
 print(json.dumps(report, indent=2))

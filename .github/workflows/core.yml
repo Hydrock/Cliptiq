@@ -1,10 +1,11 @@
-name: Portable core and native clipboards (T02-T06)
+name: Portable core and native clipboards (T02-T07)
 on:
   workflow_dispatch:
   push:
     paths:
       - 'core/**'
       - 'third_party/libgrapheme/**'
+      - 'platform/MenuHost.cpp'
       - 'platform/macos/**'
       - 'platform/windows/**'
       - 'platform/linux/**'

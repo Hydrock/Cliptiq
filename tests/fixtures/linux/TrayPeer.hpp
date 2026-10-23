@@ -1,22 +1,165 @@
 #pragma once
-#include <gio/gio.h>
 #include <atomic>
-#include <thread>
+#include <gio/gio.h>
 #include <stdexcept>
 #include <string>
-// Independent watcher/client on the launcher's private session bus, not a desktop tray.
+#include <thread>
+// Independent watcher/client on the launcher's private session bus, not a
+// desktop tray.
 struct TrayPeer {
- std::atomic<bool> ready{false},done{false},stop{false};std::thread thread;std::string error;
- std::atomic<unsigned> registrations{0};std::string service;
- explicit TrayPeer(){thread=std::thread([this]{GMainContext*context=g_main_context_new();g_main_context_push_thread_default(context);GError*error=nullptr;auto bus=g_dbus_connection_new_for_address_sync(g_getenv("DBUS_SESSION_BUS_ADDRESS"),GDBusConnectionFlags(G_DBUS_CONNECTION_FLAGS_AUTHENTICATION_CLIENT|G_DBUS_CONNECTION_FLAGS_MESSAGE_BUS_CONNECTION),nullptr,nullptr,&error);GDBusNodeInfo*info=nullptr;guint id=0;
- try{if(!bus)throw std::runtime_error(error?error->message:"No bus");info=g_dbus_node_info_new_for_xml("<node><interface name='org.kde.StatusNotifierWatcher'><method name='RegisterStatusNotifierItem'><arg type='s' direction='in'/></method></interface></node>",nullptr);static const GDBusInterfaceVTable table={+[](GDBusConnection*,const gchar*,const gchar*,const gchar*,const gchar*,GVariant*params,GDBusMethodInvocation*inv,gpointer data){auto peer=static_cast<TrayPeer*>(data);const char*name;g_variant_get(params,"(&s)",&name);peer->service=name;++peer->registrations;g_dbus_method_invocation_return_value(inv,nullptr);},nullptr,nullptr,{nullptr}};id=g_dbus_connection_register_object(bus,"/StatusNotifierWatcher",info->interfaces[0],&table,this,nullptr,nullptr);
- auto call=[&](const char*destination,const char*path,const char*iface,const char*method,GVariant*params){GError*e=nullptr;auto reply=g_dbus_connection_call_sync(bus,destination,path,iface,method,params,nullptr,G_DBUS_CALL_FLAGS_NONE,3000,nullptr,&e);if(!reply){std::string text=e?e->message:"D-Bus failed";if(e)g_error_free(e);throw std::runtime_error(text);}return reply;};
- auto own=[&]{auto reply=call("org.freedesktop.DBus","/org/freedesktop/DBus","org.freedesktop.DBus","RequestName",g_variant_new("(su)","org.kde.StatusNotifierWatcher",4u));g_variant_unref(reply);};own();ready=true;auto deadline=g_get_monotonic_time()+6000000;while(registrations<1&&g_get_monotonic_time()<deadline&&!stop){g_main_context_iteration(context,FALSE);g_usleep(1000);}if(registrations<1)throw std::runtime_error("SNI registration deadline");
- auto layout=call(service.c_str(),"/MenuBar","com.canonical.dbusmenu","GetLayout",g_variant_new("(ii@as)",0,-1,g_variant_new_strv(nullptr,0)));auto tree=g_variant_get_child_value(layout,1);auto children=g_variant_get_child_value(tree,2);if(g_variant_n_children(children)!=2)throw std::runtime_error("DBusMenu child count");auto first_variant=g_variant_get_child_value(children,0);auto first=g_variant_get_variant(first_variant);gint first_id;g_variant_get_child(first,0,"i",&first_id);g_variant_unref(first);g_variant_unref(first_variant);auto second_variant=g_variant_get_child_value(children,1);auto second=g_variant_get_variant(second_variant);gint disabled_id;g_variant_get_child(second,0,"i",&disabled_id);g_variant_unref(second);g_variant_unref(second_variant);g_variant_unref(children);g_variant_unref(tree);g_variant_unref(layout);
- auto property=call(service.c_str(),"/MenuBar","com.canonical.dbusmenu","GetProperty",g_variant_new("(is)",first_id,"label"));auto boxed=g_variant_get_child_value(property,0);auto text=g_variant_get_variant(boxed);if(std::string(g_variant_get_string(text,nullptr)).find("A&B")==std::string::npos)throw std::runtime_error("DBus label");g_variant_unref(text);g_variant_unref(boxed);g_variant_unref(property);
- for(auto item:{disabled_id,first_id}){auto response=call(service.c_str(),"/MenuBar","com.canonical.dbusmenu","Event",g_variant_new("(isvu)",item,"clicked",g_variant_new_int32(0),0u));g_variant_unref(response);}
- auto released=call("org.freedesktop.DBus","/org/freedesktop/DBus","org.freedesktop.DBus","ReleaseName",g_variant_new("(s)","org.kde.StatusNotifierWatcher"));g_variant_unref(released);g_usleep(50000);own();deadline=g_get_monotonic_time()+3000000;while(registrations<2&&g_get_monotonic_time()<deadline&&!stop){g_main_context_iteration(context,FALSE);g_usleep(1000);}if(registrations<2)throw std::runtime_error("Watcher restart re-registration");
- }catch(const std::exception&e){this->error=e.what();ready=true;}
- done=true;while(!stop){g_main_context_iteration(context,FALSE);g_usleep(1000);}if(bus&&id)g_dbus_connection_unregister_object(bus,id);if(info)g_dbus_node_info_unref(info);if(bus)g_object_unref(bus);if(error)g_error_free(error);g_main_context_pop_thread_default(context);g_main_context_unref(context);});}
- ~TrayPeer(){stop=true;if(thread.joinable())thread.join();}
+  std::atomic<bool> ready{false}, done{false}, stop{false};
+  std::thread thread;
+  std::string error;
+  std::atomic<unsigned> registrations{0};
+  std::string service;
+  explicit TrayPeer() {
+    thread = std::thread([this] {
+      GMainContext *context = g_main_context_new();
+      g_main_context_push_thread_default(context);
+      GError *error = nullptr;
+      auto bus = g_dbus_connection_new_for_address_sync(
+          g_getenv("DBUS_SESSION_BUS_ADDRESS"),
+          GDBusConnectionFlags(G_DBUS_CONNECTION_FLAGS_AUTHENTICATION_CLIENT |
+                               G_DBUS_CONNECTION_FLAGS_MESSAGE_BUS_CONNECTION),
+          nullptr, nullptr, &error);
+      GDBusNodeInfo *info = nullptr;
+      guint id = 0;
+      try {
+        if (!bus)
+          throw std::runtime_error(error ? error->message : "No bus");
+        info = g_dbus_node_info_new_for_xml(
+            "<node><interface name='org.kde.StatusNotifierWatcher'><method "
+            "name='RegisterStatusNotifierItem'><arg type='s' "
+            "direction='in'/></method></interface></node>",
+            nullptr);
+        static const GDBusInterfaceVTable table = {
+            +[](GDBusConnection *, const gchar *, const gchar *, const gchar *,
+                const gchar *, GVariant *params, GDBusMethodInvocation *inv,
+                gpointer data) {
+              auto peer = static_cast<TrayPeer *>(data);
+              const char *name;
+              g_variant_get(params, "(&s)", &name);
+              peer->service = name;
+              ++peer->registrations;
+              g_dbus_method_invocation_return_value(inv, nullptr);
+            },
+            nullptr,
+            nullptr,
+            {nullptr}};
+        id = g_dbus_connection_register_object(bus, "/StatusNotifierWatcher",
+                                               info->interfaces[0], &table,
+                                               this, nullptr, nullptr);
+        auto call = [&](const char *destination, const char *path,
+                        const char *iface, const char *method,
+                        GVariant *params) {
+          GError *e = nullptr;
+          auto reply = g_dbus_connection_call_sync(
+              bus, destination, path, iface, method, params, nullptr,
+              G_DBUS_CALL_FLAGS_NONE, 3000, nullptr, &e);
+          if (!reply) {
+            std::string text = e ? e->message : "D-Bus failed";
+            if (e)
+              g_error_free(e);
+            throw std::runtime_error(text);
+          }
+          return reply;
+        };
+        auto own = [&] {
+          auto reply =
+              call("org.freedesktop.DBus", "/org/freedesktop/DBus",
+                   "org.freedesktop.DBus", "RequestName",
+                   g_variant_new("(su)", "org.kde.StatusNotifierWatcher", 4u));
+          g_variant_unref(reply);
+        };
+        own();
+        ready = true;
+        auto deadline = g_get_monotonic_time() + 6000000;
+        while (registrations < 1 && g_get_monotonic_time() < deadline &&
+               !stop) {
+          g_main_context_iteration(context, FALSE);
+          g_usleep(1000);
+        }
+        if (registrations < 1)
+          throw std::runtime_error("SNI registration deadline");
+        auto layout = call(
+            service.c_str(), "/MenuBar", "com.canonical.dbusmenu", "GetLayout",
+            g_variant_new("(ii@as)", 0, -1, g_variant_new_strv(nullptr, 0)));
+        auto tree = g_variant_get_child_value(layout, 1);
+        auto children = g_variant_get_child_value(tree, 2);
+        if (g_variant_n_children(children) != 2)
+          throw std::runtime_error("DBusMenu child count");
+        auto first_variant = g_variant_get_child_value(children, 0);
+        auto first = g_variant_get_variant(first_variant);
+        gint first_id;
+        g_variant_get_child(first, 0, "i", &first_id);
+        g_variant_unref(first);
+        g_variant_unref(first_variant);
+        auto second_variant = g_variant_get_child_value(children, 1);
+        auto second = g_variant_get_variant(second_variant);
+        gint disabled_id;
+        g_variant_get_child(second, 0, "i", &disabled_id);
+        g_variant_unref(second);
+        g_variant_unref(second_variant);
+        g_variant_unref(children);
+        g_variant_unref(tree);
+        g_variant_unref(layout);
+        auto property =
+            call(service.c_str(), "/MenuBar", "com.canonical.dbusmenu",
+                 "GetProperty", g_variant_new("(is)", first_id, "label"));
+        auto boxed = g_variant_get_child_value(property, 0);
+        auto text = g_variant_get_variant(boxed);
+        if (std::string(g_variant_get_string(text, nullptr)).find("A&B") ==
+            std::string::npos)
+          throw std::runtime_error("DBus label");
+        g_variant_unref(text);
+        g_variant_unref(boxed);
+        g_variant_unref(property);
+        for (auto item : {disabled_id, first_id}) {
+          auto response = call(service.c_str(), "/MenuBar",
+                               "com.canonical.dbusmenu", "Event",
+                               g_variant_new("(isvu)", item, "clicked",
+                                             g_variant_new_int32(0), 0u));
+          g_variant_unref(response);
+        }
+        auto released =
+            call("org.freedesktop.DBus", "/org/freedesktop/DBus",
+                 "org.freedesktop.DBus", "ReleaseName",
+                 g_variant_new("(s)", "org.kde.StatusNotifierWatcher"));
+        g_variant_unref(released);
+        g_usleep(50000);
+        own();
+        deadline = g_get_monotonic_time() + 3000000;
+        while (registrations < 2 && g_get_monotonic_time() < deadline &&
+               !stop) {
+          g_main_context_iteration(context, FALSE);
+          g_usleep(1000);
+        }
+        if (registrations < 2)
+          throw std::runtime_error("Watcher restart re-registration");
+      } catch (const std::exception &e) {
+        this->error = e.what();
+        ready = true;
+      }
+      done = true;
+      while (!stop) {
+        g_main_context_iteration(context, FALSE);
+        g_usleep(1000);
+      }
+      if (bus && id)
+        g_dbus_connection_unregister_object(bus, id);
+      if (info)
+        g_dbus_node_info_unref(info);
+      if (bus)
+        g_object_unref(bus);
+      if (error)
+        g_error_free(error);
+      g_main_context_pop_thread_default(context);
+      g_main_context_unref(context);
+    });
+  }
+  ~TrayPeer() {
+    stop = true;
+    if (thread.joinable())
+      thread.join();
+  }
 };
