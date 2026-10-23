@@ -15,7 +15,7 @@ template <class T> T take(Result<T> r) {
 }
 struct Clipboard : ClipboardBackend {
   ClipboardSnapshot written;
-  CapturePlatform platform=CapturePlatform::X11;
+  CapturePlatform platform = CapturePlatform::X11;
   unsigned writes = 0;
   bool fail = false;
   std::function<void()> after_write;
@@ -241,15 +241,39 @@ int main() {
     }
   });
   test("snippet_encoded_and_entry_limits_before_writer", [] {
-    struct Case {std::uint64_t rep,entry;const char *content;bool allowed;std::size_t size;};
-    for(auto c:{Case{8,8,"abcde",false,0},Case{16,8,"abcde",false,0},Case{8,8,"abc",true,8},Case{6,6,"😀",true,6},Case{5,5,"😀",false,0}}){
-      Limits limits;limits.representation_bytes=c.rep;limits.entry_bytes=c.entry;
-      auto store=take(open_store(":memory:",limits));std::string sql="INSERT INTO snippets VALUES('s',NULL,'S','"+std::string(c.content)+"',0)";
-      CHECK(sqlite3_exec(store.connection(),sql.c_str(),nullptr,nullptr,nullptr)==SQLITE_OK);
-      Clipboard clipboard;clipboard.platform=CapturePlatform::Windows;Paste paste;SelectionIntent intent;intent.command={MenuAction::SelectSnippet,"s",take(data_revision(store)),{"target:7"}};
-      auto result=execute_selection(store,intent,clipboard,paste);
-      if(c.allowed){CHECK(result&&clipboard.writes==1&&clipboard.written.representations[0].data.size()==c.size);}
-      else{CHECK(!result&&result.error().code==ErrorCode::TooLarge&&clipboard.writes==0&&paste.calls==0);}
+    struct Case {
+      std::uint64_t rep, entry;
+      const char *content;
+      bool allowed;
+      std::size_t size;
+    };
+    for (auto c : {Case{8, 8, "abcde", false, 0},
+                   Case{16, 8, "abcde", false, 0}, Case{8, 8, "abc", true, 8},
+                   Case{6, 6, "😀", true, 6}, Case{5, 5, "😀", false, 0}}) {
+      Limits limits;
+      limits.representation_bytes = c.rep;
+      limits.entry_bytes = c.entry;
+      auto store = take(open_store(":memory:", limits));
+      std::string sql = "INSERT INTO snippets VALUES('s',NULL,'S','" +
+                        std::string(c.content) + "',0)";
+      CHECK(sqlite3_exec(store.connection(), sql.c_str(), nullptr, nullptr,
+                         nullptr) == SQLITE_OK);
+      Clipboard clipboard;
+      clipboard.platform = CapturePlatform::Windows;
+      Paste paste;
+      SelectionIntent intent;
+      intent.command = {MenuAction::SelectSnippet,
+                        "s",
+                        take(data_revision(store)),
+                        {"target:7"}};
+      auto result = execute_selection(store, intent, clipboard, paste);
+      if (c.allowed) {
+        CHECK(result && clipboard.writes == 1 &&
+              clipboard.written.representations[0].data.size() == c.size);
+      } else {
+        CHECK(!result && result.error().code == ErrorCode::TooLarge &&
+              clipboard.writes == 0 && paste.calls == 0);
+      }
     }
   });
   return failures ? 1 : 0;

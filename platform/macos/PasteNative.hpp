@@ -9,7 +9,7 @@ struct NativePasteCalls {
   std::function<CGEventFlags()> held_flags;
   std::function<int()> paste_key;
   std::function<bool(int)> key_down;
-  std::function<CGEventRef(CGKeyCode,bool)> create;
+  std::function<CGEventRef(CGKeyCode, bool)> create;
   std::function<void(CGEventRef)> post;
 };
-}
+} // namespace cliptiq

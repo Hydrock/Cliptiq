@@ -19,6 +19,7 @@ on:
       - 'tests/integration/menu_paste_bridge_test.cpp'
       - 'tests/integration/menu_regression_test.cpp'
       - 'tests/fixtures/linux/**'
+      - 'tests/fixtures/PasteHistory.hpp'
       - 'cmake/**'
       - 'CMakeLists.txt'
       - 'CMakePresets.json'

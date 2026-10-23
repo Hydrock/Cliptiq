@@ -159,6 +159,8 @@ Result<void> NativePasteBackend::dispatch(const TargetToken &token,
   if (!s.calls->alive(s.window) ||
       s.calls->window_thread(s.window, &pid) != s.thread || pid != s.pid)
     return fail("Paste target closed or replaced");
+  if (s.calls->lifetime(s.window) != s.lifetime)
+    return fail("Paste target window lifetime changed");
   if (s.calls->process_birth(s.pid) != s.created)
     return fail("Paste target process changed");
   auto ours = s.calls->integrity(GetCurrentProcessId()),
@@ -178,7 +180,8 @@ Result<void> NativePasteBackend::dispatch(const TargetToken &token,
       return fail("Windows denied normal focus restoration");
   }
   auto scan = s.calls->scan(s.thread);
-  if (!scan || s.calls->foreground() != s.window)
+  if (!scan || s.calls->foreground() != s.window ||
+      s.calls->lifetime(s.window) != s.lifetime)
     return fail("Paste key/focus unavailable");
   INPUT input[6]{};
   unsigned count = 0;
@@ -212,9 +215,22 @@ Result<void> NativePasteBackend::dispatch(const TargetToken &token,
       release[n++].ki.dwFlags =
           KEYEVENTF_KEYUP | (physical ? KEYEVENTF_SCANCODE : 0);
     };
-    if(sent>unsigned(terminal?2:1))up(static_cast<WORD>(scan),true);
-    if(terminal&&sent>1)up(VK_SHIFT);
-    if(sent)up(VK_CONTROL);
+    bool control_down = false, shift_down = false, v_down = false;
+    for (unsigned i = 0; i < sent && i < count; ++i) {
+      bool down = !(input[i].ki.dwFlags & KEYEVENTF_KEYUP);
+      if (input[i].ki.wVk == VK_CONTROL)
+        control_down = down;
+      else if (input[i].ki.wVk == VK_SHIFT)
+        shift_down = down;
+      else if (input[i].ki.dwFlags & KEYEVENTF_SCANCODE)
+        v_down = down;
+    }
+    if (v_down)
+      up(static_cast<WORD>(scan), true);
+    if (shift_down)
+      up(VK_SHIFT);
+    if (control_down)
+      up(VK_CONTROL);
     if (n)
       s.calls->send(n, release);
     return fail("SendInput rejected or partially dispatched (UIPI possible); "

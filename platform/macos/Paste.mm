@@ -200,8 +200,8 @@ Result<void> NativePasteBackend::dispatch(const TargetToken &token,
   }
   // macOS Terminal uses Command+V for the clipboard too; Shift+Command+V is
   // Paste Selection and must never substitute unrelated terminal text.
-  CGEventSetFlags(down, kCGEventFlagMaskCommand|(shortcut==Shortcut::TerminalPaste?kCGEventFlagMaskShift:0));
-  CGEventSetFlags(up, kCGEventFlagMaskCommand|(shortcut==Shortcut::TerminalPaste?kCGEventFlagMaskShift:0));
+  CGEventSetFlags(down, kCGEventFlagMaskCommand);
+  CGEventSetFlags(up, kCGEventFlagMaskCommand);
   s.calls->post(down);
   s.calls->post(up);
   CFRelease(down);
