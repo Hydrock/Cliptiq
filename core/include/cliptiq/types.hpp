@@ -49,6 +49,10 @@ struct ClipboardSnapshot {
     std::string sequence_token;
     SourceInfo source;
     ClipboardFlags flags;
+    // Capture-only complete ordered native offers, including metadata/markers.
+    // T02 persists allowed representations and flags, not this offer list.
+    struct OfferedType { std::string platform, native_type; };
+    std::vector<OfferedType> offered_types;
 };
 struct HistoryEntry {
     EntryId id;

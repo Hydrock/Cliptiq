@@ -8,8 +8,8 @@ byte-equal are duplicates; UUID identity never substitutes for content digest.
 `Store` is movable and owns one SQLite connection. Serialize all calls per store
 and run I/O/compaction on the application worker thread. `open_store` accepts a
 UTF-8 path (or `:memory:` for tests). Native shells will own user-only directory
-permissions, single-instance locking and scheduling. T03 must filter captures
-before invoking ingest; T02 does not implement privacy policy.
+permissions, single-instance locking and scheduling. [T03 privacy gate](POLICY.md)
+filters captures before invoking ingest; the repository itself remains low level.
 
 `ingest` atomically writes representations and metadata, applies count/quota
 pruning in current sort order, and increments `data_revision`. Empty primary

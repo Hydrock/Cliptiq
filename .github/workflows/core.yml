@@ -1,4 +1,4 @@
-name: T02 persistent core
+name: Portable core (T02-T03)
 on:
   workflow_dispatch:
   push:
@@ -37,7 +37,7 @@ jobs:
         run: cmake --preset test
       - name: Build tests
         run: cmake --build --preset test
-      - name: History contracts and crash recovery
+      - name: Policy, history contracts and crash recovery
         run: ctest --preset test --output-on-failure
       - name: Configure size build
         run: cmake --preset release -DCLIPTIQ_BUILD_SIZE_PROBE=ON

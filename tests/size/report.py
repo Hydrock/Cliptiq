@@ -36,5 +36,21 @@ cache = (folder / 'CMakeCache.txt').read_text(encoding='utf-8')
 report['cmake_configuration'] = [line for line in cache.splitlines()
     if line.startswith(('CMAKE_C_COMPILER:', 'CMAKE_CXX_COMPILER:', 'CMAKE_C_FLAGS_MINSIZEREL:',
                         'CMAKE_CXX_FLAGS_MINSIZEREL:', 'CMAKE_MSVC_RUNTIME_LIBRARY:'))]
+policy_probe = folder / ('core_policy_probe.exe' if system == 'Windows' else 'core_policy_probe')
+if policy_probe.exists():
+    report['scope'] = 'paired T02 core baseline and T03 policy dispatch integration fixtures; no native UI, not complete Cliptiq'
+    subprocess.run([str(policy_probe)], check=True)
+    policy_data = policy_probe.read_bytes()
+    policy_archive = io.BytesIO()
+    with zipfile.ZipFile(policy_archive, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as z:
+        item = zipfile.ZipInfo(probe.name, date_time=(2026, 1, 1, 0, 0, 0))
+        item.compress_type = zipfile.ZIP_DEFLATED
+        z.writestr(item, policy_data)
+    report['policy_probe_bytes'] = len(policy_data)
+    report['policy_probe_zip_bytes'] = len(policy_archive.getvalue())
+    report['policy_probe_sha256'] = hashlib.sha256(policy_data).hexdigest()
+    report['policy_added_bytes'] = len(policy_data) - len(data)
+    report['policy_added_zip_bytes'] = len(policy_archive.getvalue()) - len(archive.getvalue())
+    report['policy_comparison'] = 'same source/compiler/flags/native-free API fixture; policy dispatch linked only in second variant'
 (root / 'out' / 't02-size.json').write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
 print(json.dumps(report, indent=2))
