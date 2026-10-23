@@ -24,7 +24,7 @@ report = {
     'source_commit': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=root, text=True).strip(),
     'working_tree_dirty': bool(subprocess.check_output(['git', 'status', '--porcelain'], cwd=root, text=True).strip()),
     'source_files_sha256': {p.relative_to(root).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
-                            for folder_name in ('core', 'cmake', 'platform/macos', 'platform/windows')
+                            for folder_name in ('core', 'cmake', 'platform/macos', 'platform/windows', 'platform/linux')
                             for p in sorted((root / folder_name).rglob('*')) if p.is_file()},
     'build_type': 'MinSizeRel', 'windows_crt': 'static' if system == 'Windows' else None,
     'probe_bytes': len(data), 'probe_zip_bytes': len(archive.getvalue()),
@@ -92,5 +92,31 @@ if system == 'Windows':
         'added_bytes': native['executable_bytes'] - baseline['executable_bytes'],
         'added_zip_bytes': native['zip_bytes'] - baseline['zip_bytes'],
         'scope': 'paired Win32/core host vs clipboard + listener/session/worker/WIC integration; isolated noninteractive station, not full app'}
+if system == 'Linux':
+    import sys
+    def linux_variant(name):
+        path = folder / name
+        for transport in ('x11', 'wayland'):
+            subprocess.run([sys.executable, str(root / 'tools/run-linux-isolated.py'), transport,
+                            str(path), transport], check=True, timeout=20)
+        raw = path.read_bytes()
+        compressed = io.BytesIO()
+        with zipfile.ZipFile(compressed, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as z:
+            item = zipfile.ZipInfo('clipboard_probe', date_time=(2026, 1, 1, 0, 0, 0))
+            item.compress_type = zipfile.ZIP_DEFLATED
+            z.writestr(item, raw)
+        linked = subprocess.check_output(['ldd', str(path)], text=True).splitlines()
+        paths = {line.split('=>', 1)[1].strip().split()[0] for line in linked if '=>' in line and 'not found' not in line}
+        libraries = {p: pathlib.Path(p).stat().st_size for p in sorted(paths) if pathlib.Path(p).is_file()}
+        return {'executable_bytes': len(raw), 'zip_bytes': len(compressed.getvalue()),
+                'sha256': hashlib.sha256(raw).hexdigest(), 'linked_libraries': linked,
+                'resolved_shared_library_bytes': libraries,
+                'resolved_shared_library_total_bytes': sum(libraries.values())}
+    baseline = linux_variant('linux_clipboard_baseline')
+    native = linux_variant('linux_clipboard_probe')
+    report['linux_clipboard'] = {'baseline': baseline, 'with_backend': native,
+        'added_bytes': native['executable_bytes'] - baseline['executable_bytes'],
+        'added_zip_bytes': native['zip_bytes'] - baseline['zip_bytes'],
+        'scope': 'paired core policy/history host vs combined X11+Wayland/session/worker; private Xvfb and Sway runs; system libraries not bundled; not full product or offline package closure'}
 (root / 'out' / 't02-size.json').write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
 print(json.dumps(report, indent=2))

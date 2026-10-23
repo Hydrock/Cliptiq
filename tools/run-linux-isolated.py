@@ -25,7 +25,7 @@ with tempfile.TemporaryDirectory(prefix='cliptiq-wayland-') as name:
         raise ValueError('unknown isolated display mode')
     env.update(WLR_BACKENDS='headless', WLR_LIBINPUT_NO_DEVICES='1', WLR_RENDERER='pixman', XDG_CURRENT_DESKTOP='sway')
     config = root / 'sway.conf'
-    config.write_text('output * resolution 800x600\nseat seat0 fallback true\n')
+    config.write_text('output * resolution 800x600\nseat seat0 fallback true\nxwayland disable\n')
     with (root / 'sway.log').open('w+') as log:
         process = subprocess.Popen(['dbus-run-session', '--', 'sway', '-c', str(config), '-d'], env=env, stdout=log, stderr=log, start_new_session=True)
         try:
