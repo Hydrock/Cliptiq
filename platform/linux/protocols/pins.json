@@ -1,0 +1,12 @@
+{
+  "wlr-data-control-unstable-v1.xml": {
+    "source": "https://raw.githubusercontent.com/swaywm/wlr-protocols/b010a03648b88d143236de193bddbfea0c08bc84/unstable/wlr-data-control-unstable-v1.xml",
+    "commit": "b010a03648b88d143236de193bddbfea0c08bc84",
+    "sha256": "5ac39552975b28d0ea42f636a79b7fc8e2d1fcfa31cbe173f549bd4b044ae2de"
+  },
+  "ext-data-control-v1.xml": {
+    "source": "https://gitlab.freedesktop.org/wayland/wayland-protocols/-/blob/1.45/staging/ext-data-control/ext-data-control-v1.xml",
+    "version": "1.45",
+    "sha256": "293deba5dfdb974fbcf8dcf891a30a51a36a8bba0047dc6bdf6a03194089b7fb"
+  }
+}

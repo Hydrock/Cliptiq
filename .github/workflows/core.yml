@@ -1,4 +1,4 @@
-name: Portable core and native clipboards (T02-T05)
+name: Portable core and native clipboards (T02-T06)
 on:
   workflow_dispatch:
   push:
@@ -6,6 +6,11 @@ on:
       - 'core/**'
       - 'platform/macos/**'
       - 'platform/windows/**'
+      - 'platform/linux/**'
+      - 'tools/run-linux-isolated.py'
+      - 'tools/install-linux-backend-deps.sh'
+      - 'tests/integration/linux*'
+      - 'tests/fixtures/linux/**'
       - 'cmake/**'
       - 'CMakeLists.txt'
       - 'CMakePresets.json'
@@ -37,6 +42,9 @@ jobs:
           cmd /c "`"$vsPath\Common7\Tools\VsDevCmd.bat`" -arch=x64 >nul && set" | ForEach-Object {
             if ($_ -match '^([^=]+)=(.*)$') { "$( $matches[1] )=$( $matches[2] )" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8 }
           }
+      - name: Linux backend/test dependencies
+        if: runner.os == 'Linux'
+        run: bash tools/install-linux-backend-deps.sh
       - name: Fetch pinned SQLite
         run: python tools/fetch-footprint-deps.py
       - name: Configure tests
@@ -64,6 +72,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+      - run: bash tools/install-linux-backend-deps.sh
       - run: python tools/fetch-footprint-deps.py
       - run: cmake --preset sanitize -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
       - run: cmake --build --preset sanitize
