@@ -12,7 +12,23 @@ struct Worker {
  Limits limits;
  std::optional<Store> store;
  std::atomic<std::uint64_t> generation{0};
- Worker(std::string p,Limits l):path(std::move(p)),limits(l){}
+ CaptureQueueLimits queue_limits;
+ std::atomic<std::size_t> pending_count{0};
+ std::atomic<std::uint64_t> pending_bytes{0};
+ Worker(std::string p,Limits l,CaptureQueueLimits q):path(std::move(p)),limits(l),queue_limits(q){}
+};
+std::uint64_t retained_bytes(const ClipboardSnapshot& v) {
+ auto bytes=std::uint64_t(sizeof(v)+v.sequence_token.capacity());
+ if(v.source.app_id)bytes+=v.source.app_id->capacity();
+ bytes+=v.representations.capacity()*sizeof(Representation)+v.offered_types.capacity()*sizeof(ClipboardSnapshot::OfferedType);
+ for(const auto& r:v.representations)bytes+=r.data.capacity()+r.platform.capacity()+r.native_type.capacity();
+ for(const auto& t:v.offered_types)bytes+=t.platform.capacity()+t.native_type.capacity();
+ return bytes; // Conservative capacity estimate; not an OS/process RSS limit.
+}
+struct PendingCapture {
+ std::shared_ptr<Worker> worker;
+ std::uint64_t bytes;
+ ~PendingCapture(){worker->pending_bytes.fetch_sub(bytes);worker->pending_count.fetch_sub(1);}
 };
 class HistorySink final:public CaptureSink {
  Worker& worker_;
@@ -33,23 +49,38 @@ public:
 struct MacCaptureSession::Impl {
  MacClipboardBackend backend;
  std::shared_ptr<Worker> worker;
- Impl(std::string path,std::string board,Limits limits):backend(std::move(board),ClipboardOptions{limits,{},{}}),worker(std::make_shared<Worker>(std::move(path),limits)){}
+ Impl(std::string path,std::string board,Limits limits,CaptureQueueLimits queue):backend(std::move(board),ClipboardOptions{limits,{},{}}),worker(std::make_shared<Worker>(std::move(path),limits,queue)){}
  bool running=false;
 };
-MacCaptureSession::MacCaptureSession(std::string path,std::string board,Limits limits,CaptureQueueLimits):impl_(new Impl(std::move(path),std::move(board),limits)){}
+MacCaptureSession::MacCaptureSession(std::string path,std::string board,Limits limits,CaptureQueueLimits queue):impl_(new Impl(std::move(path),std::move(board),limits,queue)){}
 MacCaptureSession::~MacCaptureSession(){stop();}
 MacClipboardBackend& MacCaptureSession::clipboard(){return impl_->backend;}
 Result<void> MacCaptureSession::start(CapturePolicy policy,HistoryPolicy history,CaptureEventCallback callback) {
  if(![NSThread isMainThread]||!callback||impl_->running)return Error{ErrorCode::InvalidArgument,"Capture session must start once on the main thread"};
  auto configured=impl_->backend.set_capture_policy(policy);if(!configured)return configured;
  auto worker=impl_->worker;
+ if(!worker->queue_limits.max_pending_count||worker->queue_limits.max_pending_count>16||!worker->queue_limits.max_pending_bytes||worker->queue_limits.max_pending_bytes>256ull*1024*1024)
+  return Error{ErrorCode::InvalidArgument,"Invalid capture queue limits"};
  const auto generation=++worker->generation;
  std::weak_ptr<Worker> weak=worker;
  auto started=impl_->backend.start([this,weak,generation,policy,history,callback](Result<ClipboardSnapshot> captured){
   auto worker=weak.lock();if(!worker||worker->generation!=generation)return;
   auto caps=impl_->backend.capabilities();
+  if(!captured){callback(captured.error());return;}
+  if(captured.value().representations.empty()) {
+   auto decision=evaluate_capture(captured.value(),policy,caps);
+   callback(CaptureEvent{{decision.disposition,decision.reason},std::nullopt});return;
+  }
+  const auto retained=retained_bytes(captured.value());
+  // Single main-thread producer; consumers only decrement. Conservative
+  // loads can reject early during a release but cannot over-admit snapshots.
+  if(worker->pending_count.load()>=worker->queue_limits.max_pending_count||retained>worker->queue_limits.max_pending_bytes||worker->pending_bytes.load()>worker->queue_limits.max_pending_bytes-retained) {
+   callback(Error{ErrorCode::Busy,"Capture queue capacity exceeded; snapshot skipped"});return;
+  }
+  worker->pending_count.fetch_add(1);worker->pending_bytes.fetch_add(retained);
   auto input=std::make_shared<Result<ClipboardSnapshot>>(std::move(captured));
   dispatch_async(worker->queue,^{@autoreleasepool{
+   PendingCapture reservation{worker,retained};
    if(worker->generation!=generation)return;
    auto result=std::make_shared<Result<CaptureEvent>>([&]()->Result<CaptureEvent>{
     if(!*input)return input->error();

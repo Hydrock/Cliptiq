@@ -89,6 +89,7 @@ struct MacClipboardBackend::State {
  ClipboardOptions options;
  CaptureCallback callback;
  std::atomic<bool> active{false};
+ std::atomic<std::uint64_t> generation{0};
  NSInteger observed=0;
  NSInteger stable_read=0;
  std::optional<ErrorCode> last_error;
@@ -122,6 +123,9 @@ struct MacClipboardBackend::State {
      [all addObjectsFromArray:item.types];
     }
     if(all.count>4096)return Error{ErrorCode::TooLarge,"Too many advertised types"};
+    for(NSString* type in all)
+     if([type lengthOfBytesUsingEncoding:NSUTF8StringEncoding]>4096)
+      return Error{ErrorCode::TooLarge,"Native clipboard type identifier is too long"};
     ClipboardSnapshot out;
     out.sequence_token=utf8(board.name)+":"+std::to_string(before);
     out.source=options.source_reader?options.source_reader():foreground();
@@ -139,6 +143,7 @@ struct MacClipboardBackend::State {
      for(NSString* type in item.types) {
       [item_types addObject:type];
       auto known=lookup(utf8(type));if(!known||marker(type)||covered(*known,item.types))continue;
+      if(candidates.size()>=options.limits.max_representations)return Error{ErrorCode::TooLarge,"Too many clipboard representations"};
       candidates.push_back({{static_cast<std::uint32_t>(index),"macos",known->name,known->kind,{}},item,type});
      }
     }
@@ -148,6 +153,7 @@ struct MacClipboardBackend::State {
      // A synthesized root public.file-url may describe only the first path.
      // Keep the legacy root array so its complete file list is not lost.
      if(std::string(known->name)!="NSFilenamesPboardType"&&covered(*known,root))continue;
+     if(candidates.size()>=options.limits.max_representations)return Error{ErrorCode::TooLarge,"Too many clipboard representations"};
      candidates.push_back({{RootPasteboardItem,"macos",known->name,known->kind,{}},nil,type});
     }
     if(candidates.size()>options.limits.max_representations)
@@ -273,16 +279,19 @@ Result<void> MacClipboardBackend::start(CaptureCallback callback) {
   if(![NSThread isMainThread])return thread_error();
   if(!callback||state_->active.load())return Error{ErrorCode::InvalidArgument,"Invalid or already running clipboard monitor"};
   if(!state_->board)return Error{ErrorCode::Io,"Pasteboard unavailable"};
-  state_->observed=state_->board.changeCount;state_->callback=std::move(callback);state_->active=true;
+  [state_->timer invalidate]; // A prior off-main stop may still have cleanup queued.
+  const auto generation=++state_->generation;
+  state_->observed=state_->board.changeCount;state_->callback=std::move(callback);state_->last_error.reset();state_->active=true;
   std::weak_ptr<State> weak=state_;
-  state_->timer=[NSTimer timerWithTimeInterval:0.5 repeats:YES block:^(NSTimer*){auto state=weak.lock();if(state)state->poll();}];
+  state_->timer=[NSTimer timerWithTimeInterval:0.5 repeats:YES block:^(NSTimer*){auto state=weak.lock();if(state&&state->generation==generation)state->poll();}];
   [[NSRunLoop mainRunLoop] addTimer:state_->timer forMode:NSRunLoopCommonModes];
   return {};
  });
 }
 void MacClipboardBackend::stop() {
- auto state=state_;state->active=false;
- if([NSThread isMainThread]){[state->timer invalidate];state->timer=nil;state->callback={};}
- else dispatch_async(dispatch_get_main_queue(),^{[state->timer invalidate];state->timer=nil;state->callback={};});
+ auto state=state_;const auto generation=++state->generation;state->active=false;
+ auto cleanup=^{if(state->generation==generation){state->active=false;[state->timer invalidate];state->timer=nil;state->callback={};}};
+ if([NSThread isMainThread])cleanup();
+ else dispatch_async(dispatch_get_main_queue(),cleanup);
 }
 }

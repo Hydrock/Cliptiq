@@ -30,15 +30,26 @@ NSData* image(bool png){auto rep=[[NSBitmapImageRep alloc] initWithBitmapDataPla
 @property NSInteger tick;
 @property NSUInteger reads;
 @property NSInteger permission;
+@property BOOL reportGeneralName;
+@property(strong) NSArray<NSPasteboardItem*>* itemOverride;
 @end
 @implementation BoardProvider
 - (instancetype)init{if((self=[super init]))_permission=-1;return self;}
-- (NSPasteboardName)name{return _backing.name;}
+- (NSPasteboardName)name{return _reportGeneralName?NSPasteboardNameGeneral:_backing.name;}
 - (NSArray<NSPasteboardType>*)types{return _backing.types;}
-- (NSArray<NSPasteboardItem*>*)pasteboardItems{return _rootOnly?nil:_backing.pasteboardItems;}
+- (NSArray<NSPasteboardItem*>*)pasteboardItems{return _rootOnly?nil:(_itemOverride?:_backing.pasteboardItems);}
 - (NSInteger)changeCount{return _moving?++_tick:_backing.changeCount;}
 - (NSData*)dataForType:(NSPasteboardType)type{++_reads;return [_backing dataForType:type];}
 - (NSPasteboardAccessBehavior)accessBehavior API_AVAILABLE(macos(15.4)){return _permission>=0?static_cast<NSPasteboardAccessBehavior>(_permission):_backing.accessBehavior;}
+@end
+@interface ItemProvider:NSObject
+@property(strong) NSPasteboardItem* backing;
+@property(strong) NSMutableArray<NSString*>* reads;
+@end
+@implementation ItemProvider
+- (instancetype)init{if((self=[super init]))_reads=[NSMutableArray new];return self;}
+- (NSArray<NSPasteboardType>*)types{return _backing.types;}
+- (NSData*)dataForType:(NSPasteboardType)type{[_reads addObject:type];return [_backing dataForType:type];}
 @end
 struct Sink:CaptureSink{
  Store db=take(open_store(":memory:"));int stores=0,thumbs=0,ocrs=0;
@@ -71,5 +82,8 @@ int main(){@autoreleasepool{
  test("off_main_stop_then_immediate_restart",[]{Board b;MacClipboardBackend backend(b.pb);ok(backend.start([](Result<ClipboardSnapshot>){}));std::thread stopping([&]{backend.stop();});stopping.join();int calls=0;ok(backend.start([&](Result<ClipboardSnapshot> r){if(r)++calls;}));put(b.pb,@[item(NSPasteboardTypeString,[@"restarted" dataUsingEncoding:NSUTF8StringEncoding])]);CHECK(wait([&]{return calls==1;}));backend.stop();});
  test("worker_queue_overflow_is_explicit",[]{Board b;NSString* path=[NSTemporaryDirectory() stringByAppendingPathComponent:[[NSUUID UUID].UUIDString stringByAppendingString:@".db"]];MacCaptureSession session(path.UTF8String,b.pb.name.UTF8String);bool ready=false,overflow=false;ok(session.start({}, {},[&](Result<CaptureEvent> r){if(r&&r.value().entry_id)ready=true;if(!r&&r.error().code==ErrorCode::Busy&&r.error().message.find("Capture queue")!=std::string::npos)overflow=true;}));put(b.pb,@[item(NSPasteboardTypeString,[@"seed" dataUsingEncoding:NSUTF8StringEncoding])]);CHECK(wait([&]{return ready;}));auto blocker=take(open_store(path.UTF8String));CHECK(sqlite3_exec(blocker.connection(),"BEGIN IMMEDIATE",nullptr,nullptr,nullptr)==SQLITE_OK);for(unsigned i=0;i<7&&!overflow;++i){NSString* value=[NSString stringWithFormat:@"pending-%u",i];put(b.pb,@[item(NSPasteboardTypeString,[value dataUsingEncoding:NSUTF8StringEncoding])]);pump(0.55);}CHECK(sqlite3_exec(blocker.connection(),"ROLLBACK",nullptr,nullptr,nullptr)==SQLITE_OK);session.stop();[[NSFileManager defaultManager] removeItemAtPath:path error:nil];CHECK(overflow);});
  test("worker_byte_limit_before_database_creation",[]{Board b;NSString* path=[NSTemporaryDirectory() stringByAppendingPathComponent:[[NSUUID UUID].UUIDString stringByAppendingString:@".db"]];CaptureQueueLimits queue;queue.max_pending_bytes=1024;MacCaptureSession session(path.UTF8String,b.pb.name.UTF8String,{},queue);bool overflow=false;ok(session.start({}, {},[&](Result<CaptureEvent> r){overflow=!r&&r.error().code==ErrorCode::Busy&&r.error().message.find("Capture queue")!=std::string::npos;}));std::string text(8192,'x');put(b.pb,@[item(NSPasteboardTypeString,[NSData dataWithBytes:text.data() length:text.size()])]);CHECK(wait([&]{return overflow;}));session.stop();CHECK(![[NSFileManager defaultManager] fileExistsAtPath:path]);});
+ test("ask_default_and_permission_recovery_injected",[]{if(@available(macOS 15.4,*)){Board b;put(b.pb,@[item(NSPasteboardTypeString,[@"text" dataUsingEncoding:NSUTF8StringEncoding])]);auto provider=[BoardProvider new];provider.backing=b.pb;provider.rootOnly=YES;provider.reportGeneralName=YES;MacClipboardBackend backend((NSPasteboard*)provider);for(auto mode:{NSPasteboardAccessBehaviorAsk,NSPasteboardAccessBehaviorDefault}){provider.permission=mode;provider.reads=0;auto blocked=backend.read_snapshot();CHECK(!blocked&&blocked.error().code==ErrorCode::ReadOnly);CHECK(provider.reads==0);CHECK(backend.capabilities().capture.status==CapabilityStatus::Limited);CHECK(take(backend.read_snapshot(true)).representations.size()>0);CHECK(provider.reads>0);}provider.permission=NSPasteboardAccessBehaviorAlwaysDeny;CHECK(!backend.read_snapshot(true));provider.permission=NSPasteboardAccessBehaviorAlwaysAllow;CHECK(take(backend.read_snapshot()).representations.size()>0);}});
+ test("disabled_and_unknown_item_payload_never_fetched",[]{Board b;auto i=item(NSPasteboardTypeString,[@"text" dataUsingEncoding:NSUTF8StringEncoding]);[i setData:[@"<b>private</b>" dataUsingEncoding:NSUTF8StringEncoding] forType:NSPasteboardTypeHTML];[i setData:[@"secret" dataUsingEncoding:NSUTF8StringEncoding] forType:@"vendor.unknown"];put(b.pb,@[i]);auto proxy=[ItemProvider new];proxy.backing=b.pb.pasteboardItems.firstObject;auto provider=[BoardProvider new];provider.backing=b.pb;provider.itemOverride=(NSArray<NSPasteboardItem*>*)@[proxy];MacClipboardBackend backend((NSPasteboard*)provider);auto r=take(backend.read_snapshot());CHECK(find(r,"public.utf8-plain-text"));CHECK([proxy.reads containsObject:NSPasteboardTypeString]);CHECK(![proxy.reads containsObject:NSPasteboardTypeHTML]);CHECK(![proxy.reads containsObject:@"vendor.unknown"]);});
+ test("session_destroy_inside_completion",[]{Board b;auto session=std::make_unique<MacCaptureSession>(":memory:",b.pb.name.UTF8String);bool done=false;ok(session->start({}, {},[&](Result<CaptureEvent> r){done=bool(r)&&r.value().entry_id.has_value();session.reset();}));put(b.pb,@[item(NSPasteboardTypeString,[@"finish" dataUsingEncoding:NSUTF8StringEncoding])]);CHECK(wait([&]{return done;}));CHECK(!session);pump(0.55);});
  return failures?1:0;
 }}
