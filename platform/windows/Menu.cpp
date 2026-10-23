@@ -11,7 +11,8 @@
 #include <stdexcept>
 #include <thread>
 #ifdef CLIPTIQ_TEST_POPUP_BOUNDARY
-extern "C" UINT cliptiq_test_track_popup(HMENU,UINT,int,int,HWND,LPTPMPARAMS);
+extern "C" UINT cliptiq_test_track_popup(HMENU, UINT, int, int, HWND,
+                                         LPTPMPARAMS);
 #define TrackPopupMenuEx cliptiq_test_track_popup
 #endif
 namespace cliptiq {
@@ -71,6 +72,7 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
   HMENU menu = nullptr;
   HICON icon = nullptr;
   HFONT font = nullptr;
+  unsigned dpi = 96;
   std::vector<HBITMAP> bitmaps;
   MenuModel model;
   InvocationContext invocation;
@@ -129,8 +131,7 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
           commands[info.wID] = i;
         auto image = menu_preview(i, options, provider);
         if (image) {
-          auto dpi = GetDpiForWindow(window);
-          auto b = bitmap(scale_menu_image(*image, dpi ? dpi : 96));
+          auto b = bitmap(scale_menu_image(*image, std::clamp(dpi, 48u, 384u)));
           if (b) {
             bitmaps.push_back(b);
             info.fMask |= MIIM_BITMAP;
@@ -162,9 +163,7 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
     return {};
   }
   void layout() {
-    auto dpi = GetDpiForWindow(window);
-    if (!dpi)
-      dpi = 96;
+    auto dpi = this->dpi;
     auto button = GetDlgItem(window, 1);
     if (!button)
       return;
@@ -239,6 +238,10 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
   }
   void popup(const InvocationContext &ctx = {}) {
     invocation = ctx;
+    struct Reset {
+      State *s;
+      ~Reset() { s->invocation = {}; }
+    } reset{this};
     auto keep = shared_from_this();
     if (!menu)
       return;
@@ -283,6 +286,9 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
                       GetModuleHandleW(nullptr), nullptr);
         return 0;
       }
+      case WM_SETFOCUS:
+        SetFocus(GetDlgItem(w, 1));
+        return 0;
       case WM_SIZE:
         s->layout();
         return 0;
@@ -327,10 +333,15 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
           s->popup();
         return 0;
       case WM_DPICHANGED: {
+        auto new_dpi = unsigned(HIWORD(wp));
+        if (new_dpi >= 48)
+          s->dpi = new_dpi;
         auto rect = reinterpret_cast<RECT *>(lp);
         SetWindowPos(w, nullptr, rect->left, rect->top,
                      rect->right - rect->left, rect->bottom - rect->top,
                      SWP_NOZORDER | SWP_NOACTIVATE);
+        s->layout();
+        s->rebuild();
         return 0;
       }
       case WM_THEMECHANGED:
@@ -389,6 +400,16 @@ Result<void> NativeMenu::initialize() {
                               type.hInstance, s.get());
   if (!s->window)
     return Error{ErrorCode::ReadOnly, "Cannot create native launcher window"};
+  s->dpi = GetDpiForWindow(s->window);
+  if (!s->dpi)
+    s->dpi = 96;
+  RECT client{0, 0, MulDiv(300, s->dpi, 96), MulDiv(110, s->dpi, 96)};
+  AdjustWindowRectExForDpi(&client, WS_OVERLAPPEDWINDOW, FALSE, 0, s->dpi);
+  SetWindowPos(s->window, nullptr, 0, 0, client.right - client.left,
+               client.bottom - client.top,
+               SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
+  s->layout();
+  SetFocus(GetDlgItem(s->window, 1));
   s->status.launcher_visible = true;
   s->taskbar_created = RegisterWindowMessageW(L"TaskbarCreated");
   s->tip = CreateWindowExW(WS_EX_TOPMOST, TOOLTIPS_CLASSW, nullptr,
@@ -440,8 +461,23 @@ Result<void> NativeMenu::process_events(unsigned wait) {
   MSG message;
   for (unsigned i = 0;
        i < 64 && PeekMessageW(&message, nullptr, 0, 0, PM_REMOVE); ++i) {
-    TranslateMessage(&message);
-    DispatchMessageW(&message);
+    if (message.message == WM_KEYDOWN &&
+        (message.hwnd == s->window || IsChild(s->window, message.hwnd))) {
+      auto button = GetDlgItem(s->window, 1);
+      if (message.wParam == VK_TAB) {
+        SetFocus(button);
+        continue;
+      }
+      if ((message.wParam == VK_RETURN || message.wParam == VK_SPACE) &&
+          GetFocus() == button) {
+        SendMessageW(button, BM_CLICK, 0, 0);
+        continue;
+      }
+    }
+    if (!IsDialogMessageW(s->window, &message)) {
+      TranslateMessage(&message);
+      DispatchMessageW(&message);
+    }
   }
   if (wait)
     MsgWaitForMultipleObjects(0, nullptr, FALSE, std::min(wait, 10u),

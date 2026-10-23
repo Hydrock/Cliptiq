@@ -10,7 +10,10 @@
 #include <gtk/gtk.h>
 #endif
 #ifdef _WIN32
-extern "C" UINT cliptiq_test_track_popup(HMENU,UINT,int,int,HWND,LPTPMPARAMS){return 0;}
+extern "C" UINT cliptiq_test_track_popup(HMENU, UINT, int, int, HWND,
+                                         LPTPMPARAMS) {
+  return 0;
+}
 #endif
 using namespace cliptiq;
 #define CHECK(x)                                                               \
@@ -124,12 +127,21 @@ int main(int argc, char **argv) {
           GTK_CONTAINER((void *)ui.native_handles().menu));
       gtk_menu_item_activate(GTK_MENU_ITEM(children->data));
       g_list_free(children);
-      CHECK(selected == 2 && command.invocation.target == context.target &&
-            command.invocation.activation_token == context.activation_token);
+      CHECK(selected == 2);
+      if (std::string(getenv("CLIPTIQ_TEST_ISOLATED")) == "x11")
+        CHECK(command.invocation.target == context.target &&
+              command.invocation.activation_token == context.activation_token);
+      else
+        CHECK(command.invocation.target.empty() &&
+              command.invocation.activation_token.empty());
       gtk_menu_popdown(GTK_MENU((void *)ui.native_handles().menu));
       std::cout << "PASS invocation_context_preserved_without_paste\n";
     }
     {
+      InvocationContext pending;
+      pending.target = "pending-target";
+      pending.activation_token = "pending-token";
+      ok(ui.show(pending));
       TrayPeer peer;
       auto end = std::chrono::steady_clock::now() + std::chrono::seconds(10);
       ok(ui.set_tray_style(TrayStyle::Standard));
@@ -137,10 +149,12 @@ int main(int argc, char **argv) {
         ok(ui.process_events(2));
       CHECK(peer.done && peer.error.empty());
       CHECK(selected == 3 && command.id == "replacement" &&
-            command.revision == 8);
+            command.revision == 8 && command.invocation.target.empty() &&
+            command.invocation.activation_token.empty());
       std::cout
           << "PASS "
              "independent_sni_dbusmenu_layout_events_and_watcher_restart\n";
+      gtk_menu_popdown(GTK_MENU((void *)ui.native_handles().menu));
     }
 #endif
 

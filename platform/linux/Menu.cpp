@@ -34,6 +34,8 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
   GtkWidget *window = nullptr, *button = nullptr, *menu = nullptr;
   MenuModel model;
   InvocationContext invocation;
+  bool explicit_opening = false;
+  std::uint64_t opening = 0;
   std::uint64_t generation = 0;
   unsigned serial = 0;
   int next_id = 100;
@@ -76,7 +78,7 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
     }
   }
   bool thread() const { return owner == std::this_thread::get_id(); }
-  void invoke(int id) {
+  void invoke(int id, bool external = false) {
     auto keep = shared_from_this();
     auto it = nodes.find(id);
     if (it == nodes.end() || !it->second.item.enabled ||
@@ -85,7 +87,8 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
       return;
     auto cb = callback;
     MenuCommand c{it->second.item.action, it->second.item.id, model.revision};
-    c.invocation = invocation;
+    c.invocation = external ? InvocationContext{} : invocation;
+    invocation = {};
     if (cb)
       cb(std::move(c));
   }
@@ -102,6 +105,38 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
   }
   GtkWidget *build(const std::vector<MenuItem> &items, std::vector<int> &ids) {
     auto result = gtk_menu_new();
+    g_signal_connect(result, "map",
+                     G_CALLBACK(+[](GtkWidget *w, gpointer data) {
+                       auto s = static_cast<State *>(data);
+                       if (w == s->menu && !s->explicit_opening) {
+                         ++s->opening;
+                         s->invocation = {};
+                       }
+                     }),
+                     this);
+    g_signal_connect(
+        result, "deactivate", G_CALLBACK((+[](GtkWidget *w, gpointer data) {
+          auto s = static_cast<State *>(data);
+          if (w != s->menu)
+            return;
+          struct Pending {
+            std::weak_ptr<State> state;
+            std::uint64_t opening;
+          };
+          auto p = new Pending{s->weak_from_this(), s->opening};
+          g_idle_add_full(
+              G_PRIORITY_DEFAULT_IDLE,
+              +[](gpointer data) -> gboolean {
+                auto p = static_cast<Pending *>(data);
+                if (auto s = p->state.lock())
+                  if (s->opening == p->opening)
+                    s->invocation = {};
+                return G_SOURCE_REMOVE;
+              },
+              p, +[](gpointer data) { delete static_cast<Pending *>(data); });
+        })),
+        this);
+
     g_signal_connect(result, "map", G_CALLBACK(+[](GtkWidget *w, gpointer) {
                        gtk_menu_shell_select_first(GTK_MENU_SHELL(w), TRUE);
                      }),
@@ -182,15 +217,39 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
     status.launcher_visible = true;
   }
   void popup(const InvocationContext &ctx = {}) {
-    invocation = ctx;
-    present();
     if (!menu)
       return;
+    gtk_menu_popdown(GTK_MENU(menu));
+    ++opening;
+    invocation = ctx;
     auto event = gtk_get_current_event();
-    if (GDK_IS_WAYLAND_DISPLAY(gtk_widget_get_display(window)) && !event)
+    bool wayland = GDK_IS_WAYLAND_DISPLAY(gtk_widget_get_display(window));
+    if (wayland && !event) {
+      present();
+      invocation = {};
       return;
-    gtk_menu_popup_at_widget(GTK_MENU(menu), button, GDK_GRAVITY_SOUTH_WEST,
+    }
+    explicit_opening = true;
+    if (wayland)
+      gtk_menu_popup_at_widget(GTK_MENU(menu), button, GDK_GRAVITY_SOUTH_WEST,
+                               GDK_GRAVITY_NORTH_WEST, event);
+    else {
+      int x = 0, y = 0;
+      if (ctx.x && ctx.y) {
+        x = *ctx.x;
+        y = *ctx.y;
+      } else {
+        auto pointer = gdk_seat_get_pointer(
+            gdk_display_get_default_seat(gtk_widget_get_display(window)));
+        if (pointer)
+          gdk_device_get_position(pointer, nullptr, &x, &y);
+      }
+      GdkRectangle rectangle{x, y, 1, 1};
+      gtk_menu_popup_at_rect(GTK_MENU(menu), gdk_get_default_root_window(),
+                             &rectangle, GDK_GRAVITY_NORTH_WEST,
                              GDK_GRAVITY_NORTH_WEST, event);
+    }
+    explicit_opening = false;
     gtk_menu_shell_select_first(GTK_MENU_SHELL(menu), TRUE);
     if (event)
       gdk_event_free(event);
@@ -378,7 +437,7 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
         g_variant_unref(payload);
         g_dbus_method_invocation_return_value(inv, nullptr);
         if (std::string(event) == "clicked")
-          s->invoke(id);
+          s->invoke(id, true);
         return;
       }
       if (n == "EventGroup") {
@@ -404,7 +463,7 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
         g_dbus_method_invocation_return_value(
             inv, g_variant_new("(@ai)", g_variant_builder_end(&b)));
         for (auto id : clicked)
-          s->invoke(id);
+          s->invoke(id, true);
         return;
       }
       if (n == "AboutToShow") {
@@ -536,6 +595,8 @@ Result<void> NativeMenu::update(MenuModel model) {
   if (!s->thread() || !s->window)
     return Error{ErrorCode::InvalidArgument, "GTK menu not initialized"};
   ++s->generation;
+  ++s->opening;
+  s->invocation = {};
   ++s->serial;
   if (s->menu) {
     gtk_menu_popdown(GTK_MENU(s->menu));

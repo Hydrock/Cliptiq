@@ -2,15 +2,24 @@
 #import <AppKit/AppKit.h>
 #include <map>
 #include <thread>
-@interface CliptiqMenuTarget : NSObject {
+@interface CliptiqMenuTarget : NSObject <NSMenuDelegate> {
 @public
   std::function<void(NSMenuItem *)> invoke;
   std::function<void()> popup;
+  std::function<void(NSMenu *)> will_open, did_close;
 }
 - (void)selected:(NSMenuItem *)sender;
 - (void)open:(id)sender;
 @end
 @implementation CliptiqMenuTarget
+- (void)menuWillOpen:(NSMenu *)menu {
+  if (will_open)
+    will_open(menu);
+}
+- (void)menuDidClose:(NSMenu *)menu {
+  if (did_close)
+    did_close(menu);
+}
 - (void)selected:(NSMenuItem *)sender {
   if (invoke)
     invoke(sender);
@@ -64,6 +73,7 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
   std::uint64_t generation = 0;
   MenuModel model;
   InvocationContext invocation;
+  bool explicit_tracking = false;
   NativeMenuStatus status;
   State(NativeMenuOptions o, std::function<void(MenuCommand)> c,
         MenuPreviewProvider p)
@@ -74,6 +84,8 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
     if (target) {
       target->invoke = {};
       target->popup = {};
+      target->will_open = {};
+      target->did_close = {};
     }
     [window orderOut:nil];
     [window close];
@@ -93,12 +105,14 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
     auto cb = callback;
     MenuCommand c{it->second.action, it->second.id, model.revision};
     c.invocation = invocation;
+    invocation = {};
     if (cb)
       cb(std::move(c));
   }
   NSMenu *build(const std::vector<MenuItem> &items) {
     NSMenu *result = [[NSMenu alloc] initWithTitle:@"Cliptiq"];
     result.autoenablesItems = NO;
+    result.delegate = target;
     for (const auto &i : items) {
       if (i.separator) {
         [result addItem:NSMenuItem.separatorItem];
@@ -134,6 +148,14 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
   }
   void popup(const InvocationContext &ctx = {}) {
     invocation = ctx;
+    explicit_tracking = true;
+    struct Reset {
+      State *s;
+      ~Reset() {
+        s->invocation = {};
+        s->explicit_tracking = false;
+      }
+    } reset{this};
     auto keep = shared_from_this();
     if (!menu)
       return;
@@ -199,6 +221,16 @@ Result<void> NativeMenu::initialize() {
   s->target->invoke = [weak](NSMenuItem *item) {
     if (auto s = weak.lock())
       s->invoke(item);
+  };
+  s->target->will_open = [weak](NSMenu *menu) {
+    if (auto s = weak.lock())
+      if (menu == s->menu && !s->explicit_tracking)
+        s->invocation = {};
+  };
+  s->target->did_close = [weak](NSMenu *menu) {
+    if (auto s = weak.lock())
+      if (menu == s->menu && !s->explicit_tracking)
+        s->invocation = {};
   };
   s->target->popup = [weak] {
     if (auto s = weak.lock())
