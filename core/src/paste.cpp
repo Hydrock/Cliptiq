@@ -25,7 +25,8 @@ Result<SelectionAction> selection_action(unsigned held,
 }
 namespace {
 ClipboardSnapshot snippet_snapshot(const std::string &text,
-                                   CapturePlatform platform) {
+                                   CapturePlatform platform,
+                                   const Limits &limits) {
   Representation r{0, "", "", CanonicalKind::Text, {}};
   switch (platform) {
   case CapturePlatform::MacOS:
@@ -48,6 +49,14 @@ ClipboardSnapshot snippet_snapshot(const std::string &text,
   default:
     throw detail::Failure{{ErrorCode::Unsupported, "No native text writer"}};
   }
+  std::uint64_t encoded =
+      platform == CapturePlatform::Windows ? 2 : text.size();
+  auto check_size = [&] {
+    if (encoded > limits.representation_bytes || encoded > limits.entry_bytes)
+      throw detail::Failure{
+          {ErrorCode::TooLarge, "Encoded snippet exceeds Store limits"}};
+  };
+  check_size();
   // Validate UTF-8 before native writers; do not alter snippet
   // whitespace/newlines.
   for (std::size_t i = 0; i < text.size();) {
@@ -77,10 +86,30 @@ ClipboardSnapshot snippet_snapshot(const std::string &text,
     if (c < minimum || c > 0x10ffff || (c >= 0xd800 && c <= 0xdfff) || !c)
       detail::invalid("Invalid snippet scalar");
     if (platform == CapturePlatform::Windows) {
-      auto append = [&](unsigned v) {
-        r.data.push_back(static_cast<std::uint8_t>(v));
-        r.data.push_back(static_cast<std::uint8_t>(v >> 8));
-      };
+      encoded += c > 0xffff ? 4 : 2;
+      check_size();
+    }
+  }
+  if (platform == CapturePlatform::Windows) {
+    r.data.reserve(static_cast<std::size_t>(encoded));
+    auto append = [&](unsigned c) {
+      r.data.push_back(static_cast<std::uint8_t>(c));
+      r.data.push_back(static_cast<std::uint8_t>(c >> 8));
+    };
+    for (std::size_t i = 0; i < text.size();) {
+      unsigned c = static_cast<unsigned char>(text[i++]), more = 0;
+      if (c >= 0xf0) {
+        c &= 7;
+        more = 3;
+      } else if (c >= 0xe0) {
+        c &= 15;
+        more = 2;
+      } else if (c >= 0xc0) {
+        c &= 31;
+        more = 1;
+      }
+      while (more--)
+        c = (c << 6) | (static_cast<unsigned char>(text[i++]) & 63);
       if (c > 0xffff) {
         c -= 0x10000;
         append(0xd800 + (c >> 10));
@@ -88,10 +117,7 @@ ClipboardSnapshot snippet_snapshot(const std::string &text,
       } else
         append(c);
     }
-  }
-  if (platform == CapturePlatform::Windows) {
-    r.data.push_back(0);
-    r.data.push_back(0);
+    append(0);
   } else
     r.data.assign(text.begin(), text.end());
   ClipboardSnapshot result;
@@ -173,8 +199,8 @@ Result<SelectionOutcome> execute_selection(Store &store,
         if (q.number(0) >
             static_cast<std::int64_t>(store.limits().representation_bytes))
           return Error{ErrorCode::TooLarge, "Snippet exceeds clipboard limit"};
-        snapshot =
-            snippet_snapshot(q.text(1), clipboard.capabilities().platform);
+        snapshot = snippet_snapshot(
+            q.text(1), clipboard.capabilities().platform, store.limits());
       }
       tx.commit();
     }

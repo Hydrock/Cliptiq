@@ -162,12 +162,39 @@ Result<void> NativePasteBackend::dispatch(const TargetToken &token,
   if (!map)
     return fail("XKB keymap unavailable");
   unsigned v = 0;
-  if (map->names && map->names->keys)
-    for (unsigned code = map->min_key_code; code <= map->max_key_code; ++code)
-      if (std::memcmp(map->names->keys[code].name, "AB04", 4) == 0) {
+  auto symbol = [&](unsigned code, unsigned group) {
+    unsigned count = XkbKeyNumGroups(map, code);
+    return count ? XkbKeySymEntry(map, code, 0, group < count ? group : 0)
+                 : NoSymbol;
+  };
+  for (unsigned code = map->min_key_code; code <= map->max_key_code; ++code) {
+    auto sym = symbol(code, keyboard.group);
+    if (sym == XK_v || sym == XK_V) {
+      v = code;
+      break;
+    }
+  }
+  if (!v)
+    for (unsigned code = map->min_key_code; code <= map->max_key_code && !v;
+         ++code)
+      for (unsigned group = 0; group < XkbKeyNumGroups(map, code); ++group) {
+        auto sym = symbol(code, group);
+        if (sym == XK_v || sym == XK_V) {
+          v = code;
+          break;
+        }
+      }
+  // Single Russian layout has no Latin V group. Preserve its known paste
+  // position only when the actual current symbol is the expected Cyrillic m.
+  if (!v && map->names && map->names->keys)
+    for (unsigned code = map->min_key_code; code <= map->max_key_code; ++code) {
+      auto sym = symbol(code, keyboard.group);
+      if (std::memcmp(map->names->keys[code].name, "AB04", 4) == 0 &&
+          (sym == XK_Cyrillic_em || sym == XK_Cyrillic_EM)) {
         v = code;
         break;
       }
+    }
   XkbFreeKeyboard(map, 0, True);
   auto control = XKeysymToKeycode(s.display, XK_Control_L),
        shift = XKeysymToKeycode(s.display, XK_Shift_L);

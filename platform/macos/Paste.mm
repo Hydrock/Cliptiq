@@ -1,31 +1,8 @@
-#include "cliptiq/paste.hpp"
+#include "PasteNative.hpp"
 #import <AppKit/AppKit.h>
-#import <ApplicationServices/ApplicationServices.h>
 #import <Carbon/Carbon.h>
 #include <thread>
-#include <stdexcept>
 namespace cliptiq {
-struct NativePasteBackend::State {
-  std::thread::id owner = std::this_thread::get_id();
-  NSRunningApplication *application = nil;
-  NSDate *launched = nil;
-  AXUIElementRef window = nullptr;
-  TargetToken token;
-  std::uint64_t serial = 0;
-  ~State() {
-    if (window)
-      CFRelease(window);
-  }
-  void clear() {
-    token.clear();
-    application = nil;
-    launched = nil;
-    if (window) {
-      CFRelease(window);
-      window = nullptr;
-    }
-  }
-};
 namespace {
 AXUIElementRef focused(pid_t pid) {
   auto app = AXUIElementCreateApplication(pid);
@@ -67,12 +44,101 @@ int paste_key() {
   CFRelease(source);
   return result;
 }
+
+struct MacTarget {
+  NSRunningApplication *application = nil;
+  NSDate *launched = nil;
+  AXUIElementRef window = nullptr;
+  ~MacTarget() {
+    if (window)
+      CFRelease(window);
+  }
+  bool capture() {
+    if (window) {
+      CFRelease(window);
+      window = nullptr;
+    }
+    application = nil;
+    launched = nil;
+    auto app = NSWorkspace.sharedWorkspace.frontmostApplication;
+    if (!app ||
+        app.processIdentifier == NSProcessInfo.processInfo.processIdentifier)
+      return false;
+    auto focused_window = focused(app.processIdentifier);
+    if (!focused_window || !app.launchDate) {
+      if (focused_window)
+        CFRelease(focused_window);
+      return false;
+    }
+    application = app;
+    launched = app.launchDate;
+    window = focused_window;
+    return true;
+  }
+  bool alive() {
+    return application && !application.terminated &&
+           [application.launchDate isEqualToDate:launched];
+  }
+  bool same() {
+    if (!alive())
+      return false;
+    auto current = focused(application.processIdentifier);
+    bool result = current && window && CFEqual(current, window);
+    if (current)
+      CFRelease(current);
+    return result;
+  }
+};
+std::shared_ptr<NativePasteCalls> native_calls() {
+  auto c = std::make_shared<NativePasteCalls>();
+  auto target = std::make_shared<MacTarget>();
+  c->trusted = [] {
+    return AXIsProcessTrusted() && CGPreflightPostEventAccess();
+  };
+  c->capture = [target] { return target->capture(); };
+  c->alive = [target] { return target->alive(); };
+  c->same_window = [target] { return target->same(); };
+  c->foreground = [target] {
+    auto pid =
+        NSWorkspace.sharedWorkspace.frontmostApplication.processIdentifier;
+    if (target->application && pid == target->application.processIdentifier)
+      return PasteForeground::Target;
+    if (pid == NSProcessInfo.processInfo.processIdentifier)
+      return PasteForeground::Self;
+    return PasteForeground::Other;
+  };
+  c->activate = [target] {
+    return [target->application activateWithOptions:0] != NO;
+  };
+  c->held_flags = [] {
+    return CGEventSourceFlagsState(kCGEventSourceStateCombinedSessionState);
+  };
+  c->paste_key = [] { return paste_key(); };
+  c->key_down = [](int key) {
+    return CGEventSourceKeyState(kCGEventSourceStateCombinedSessionState,
+                                 static_cast<CGKeyCode>(key));
+  };
+  c->create = [](CGKeyCode key, bool down) {
+    return CGEventCreateKeyboardEvent(nullptr, key, down);
+  };
+  c->post = [](CGEventRef event) { CGEventPost(kCGHIDEventTap, event); };
+  return c;
+}
 } // namespace
-NativePasteBackend::NativePasteBackend() : state_(std::make_unique<State>()) {}
-NativePasteBackend::NativePasteBackend(std::shared_ptr<NativePasteCalls>) : NativePasteBackend() {throw std::runtime_error("Native call boundary not implemented");}
+struct NativePasteBackend::State {
+  std::thread::id owner = std::this_thread::get_id();
+  std::shared_ptr<NativePasteCalls> calls;
+  TargetToken token;
+  std::uint64_t serial = 0;
+};
+NativePasteBackend::NativePasteBackend() : NativePasteBackend(native_calls()) {}
+NativePasteBackend::NativePasteBackend(std::shared_ptr<NativePasteCalls> calls)
+    : state_(std::make_unique<State>()) {
+  state_->calls = std::move(calls);
+}
 NativePasteBackend::~NativePasteBackend() = default;
 Capability NativePasteBackend::capability() const {
-  if (!AXIsProcessTrusted() || !CGPreflightPostEventAccess())
+  if (!state_->calls->trusted())
     return {CapabilityStatus::Unavailable,
             "Accessibility/input permission not granted; no automatic prompt; "
             "manual paste"};
@@ -82,25 +148,11 @@ Capability NativePasteBackend::capability() const {
 }
 TargetToken NativePasteBackend::capture_target() {
   auto &s = *state_;
-  s.clear();
+  s.token.clear();
   if (s.owner != std::this_thread::get_id() || !NSThread.isMainThread ||
-      !AXIsProcessTrusted() || !CGPreflightPostEventAccess())
+      !s.calls->trusted() || !s.calls->capture())
     return {};
-  auto app = NSWorkspace.sharedWorkspace.frontmostApplication;
-  if (!app ||
-      app.processIdentifier == NSProcessInfo.processInfo.processIdentifier)
-    return {};
-  auto window = focused(app.processIdentifier);
-  if (!window || !app.launchDate) {
-    if (window)
-      CFRelease(window);
-    return {};
-  }
-  s.application = app;
-  s.launched = app.launchDate;
-  s.window = window;
-  s.token = "mac-target:" + std::to_string(++s.serial) + ":" +
-            std::to_string(app.processIdentifier);
+  s.token = "mac-target:" + std::to_string(++s.serial);
   return s.token;
 }
 Result<void> NativePasteBackend::dispatch(const TargetToken &token,
@@ -114,41 +166,31 @@ Result<void> NativePasteBackend::dispatch(const TargetToken &token,
   if (s.owner != std::this_thread::get_id() || !NSThread.isMainThread ||
       token.empty() || token != expected || static_cast<unsigned>(shortcut) > 1)
     return fail("Expired or invalid paste target");
-  if (!AXIsProcessTrusted() || !CGPreflightPostEventAccess())
+  if (!s.calls->trusted())
     return fail("Accessibility/input permission unavailable; paste manually");
-  if (!s.application || s.application.terminated ||
-      ![s.application.launchDate isEqualToDate:s.launched])
+  if (!s.calls->alive())
     return fail("Paste target process closed or replaced");
-  auto held = CGEventSourceFlagsState(kCGEventSourceStateCombinedSessionState);
+  auto held = s.calls->held_flags();
   if (held & (kCGEventFlagMaskCommand | kCGEventFlagMaskControl |
               kCGEventFlagMaskShift | kCGEventFlagMaskAlternate))
     return fail("Release held modifiers before pasting");
-  auto window = focused(s.application.processIdentifier);
-  bool same = window && s.window && CFEqual(window, s.window);
-  if (window)
-    CFRelease(window);
-  if (!same)
+  if (!s.calls->same_window())
     return fail("Target focused window changed");
-  auto foreground = NSWorkspace.sharedWorkspace.frontmostApplication;
-  if (foreground.processIdentifier != s.application.processIdentifier) {
-    if (foreground.processIdentifier !=
-        NSProcessInfo.processInfo.processIdentifier)
+  auto foreground = s.calls->foreground();
+  if (foreground != PasteForeground::Target) {
+    if (foreground != PasteForeground::Self)
       return fail("Focus changed; paste manually");
-    if (![s.application activateWithOptions:0])
+    if (!s.calls->activate())
       return fail("macOS denied normal application activation");
   }
-  int key = paste_key();
-  if (key < 0 ||
-      NSWorkspace.sharedWorkspace.frontmostApplication.processIdentifier !=
-          s.application.processIdentifier)
+  int key = s.calls->paste_key();
+  if (key < 0 || s.calls->foreground() != PasteForeground::Target ||
+      !s.calls->same_window() || !s.calls->alive())
     return fail("Paste key/focus unavailable");
-  if (CGEventSourceKeyState(kCGEventSourceStateCombinedSessionState,
-                            static_cast<CGKeyCode>(key)))
+  if (s.calls->key_down(key))
     return fail("Release held paste key");
-  auto down =
-      CGEventCreateKeyboardEvent(nullptr, static_cast<CGKeyCode>(key), true);
-  auto up =
-      CGEventCreateKeyboardEvent(nullptr, static_cast<CGKeyCode>(key), false);
+  auto down = s.calls->create(static_cast<CGKeyCode>(key), true),
+       up = s.calls->create(static_cast<CGKeyCode>(key), false);
   if (!down || !up) {
     if (down)
       CFRelease(down);
@@ -156,13 +198,12 @@ Result<void> NativePasteBackend::dispatch(const TargetToken &token,
       CFRelease(up);
     return fail("Cannot allocate input events");
   }
-  auto flags =
-      kCGEventFlagMaskCommand |
-      (shortcut == Shortcut::TerminalPaste ? kCGEventFlagMaskShift : 0);
-  CGEventSetFlags(down, flags);
-  CGEventSetFlags(up, flags);
-  CGEventPost(kCGHIDEventTap, down);
-  CGEventPost(kCGHIDEventTap, up);
+  // macOS Terminal uses Command+V for the clipboard too; Shift+Command+V is
+  // Paste Selection and must never substitute unrelated terminal text.
+  CGEventSetFlags(down, kCGEventFlagMaskCommand|(shortcut==Shortcut::TerminalPaste?kCGEventFlagMaskShift:0));
+  CGEventSetFlags(up, kCGEventFlagMaskCommand|(shortcut==Shortcut::TerminalPaste?kCGEventFlagMaskShift:0));
+  s.calls->post(down);
+  s.calls->post(up);
   CFRelease(down);
   CFRelease(up);
   return {};

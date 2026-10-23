@@ -73,6 +73,7 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
   std::uint64_t generation = 0;
   MenuModel model;
   InvocationContext invocation;
+  std::uint64_t opening = 0;
   bool explicit_tracking = false;
   NativeMenuStatus status;
   State(NativeMenuOptions o, std::function<void(MenuCommand)> c,
@@ -152,6 +153,7 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
     return result;
   }
   void popup(const InvocationContext &ctx = {}) {
+    ++opening;
     invocation = ctx;
     if (invocation.target.empty() && options.invocation_provider)
       invocation = options.invocation_provider();
@@ -231,15 +233,23 @@ Result<void> NativeMenu::initialize() {
   };
   s->target->will_open = [weak](NSMenu *menu) {
     if (auto s = weak.lock())
-      if (menu == s->menu && !s->explicit_tracking)
+      if (menu == s->menu && !s->explicit_tracking) {
+        ++s->opening;
         s->invocation = s->options.invocation_provider
                             ? s->options.invocation_provider()
                             : InvocationContext{};
+      }
   };
   s->target->did_close = [weak](NSMenu *menu) {
     if (auto s = weak.lock())
-      if (menu == s->menu && !s->explicit_tracking)
-        s->invocation = {};
+      if (menu == s->menu && !s->explicit_tracking) {
+        auto opening = s->opening;
+        dispatch_async(dispatch_get_main_queue(), ^{
+          if (auto state = weak.lock())
+            if (state->opening == opening && !state->explicit_tracking)
+              state->invocation = {};
+        });
+      }
   };
   s->target->popup = [weak] {
     if (auto s = weak.lock())
