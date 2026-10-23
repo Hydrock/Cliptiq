@@ -10,7 +10,7 @@
 
 **Spec:** [дизайн](../specs/2026-10-23-cliptiq-design.md). **Coverage:** [аудит с ID функций](../../research/2026-10-23-clipy-audit.md). **Naming:** [проверка имён](../../research/2026-10-23-naming.md).
 
-Статус: полный план охвата исследуемой ревизии; пользователь разрешил T01, [прототипы и первые измерения выполнены](../../support/architecture-decision.md). T01 закрыт в согласованных границах ([итог](../../support/t01-results.md)); T02 завершён ([результаты](../../support/t02-results.md)); T03 завершён ([результаты](../../support/t03-results.md)); T04 реализуется с native CI; ручная macOS-приёмка остаётся открыта ([результаты](../../support/t04-results.md)). T05–T17 не начаты. Release binaries не созданы.
+Статус: полный план охвата исследуемой ревизии; пользователь разрешил T01, [прототипы и первые измерения выполнены](../../support/architecture-decision.md). T01 закрыт в согласованных границах ([итог](../../support/t01-results.md)); T02 завершён ([результаты](../../support/t02-results.md)); T03 завершён ([результаты](../../support/t03-results.md)); T04 реализуется с native CI; ручная macOS-приёмка остаётся открыта ([результаты](../../support/t04-results.md)). T05 реализован с native CI; ручная Windows-приёмка открыта ([результаты](../../support/t05-results.md)). T06–T17 не начаты. Release binaries не созданы.
 
 ## Global Constraints
 
@@ -125,7 +125,7 @@ Capture contract: сохранять все разрешённые representatio
 - [ ] Проверить TextEdit/Safari/Finder/Preview, permission granted/denied, image-only/RTF/RTFD/PDF/multiple files; результаты записать с OS build.
 - [x] Commit `feat(macos): add native clipboard capture and replay`.
 
-**Статус:** backend и автоматические проверки подготовлены. Ручная проверка приложений и настоящих permission dialogs не выполнена: доступен Windows executor и macOS hosted CI, интерактивного Mac нет. Named-pasteboard tests и injected accessBehavior эту строку не закрывают. T05 не начинать без отдельного разрешения.
+**Статус:** backend и автоматические проверки подготовлены. Ручная проверка приложений и настоящих permission dialogs не выполнена: доступен Windows executor и macOS hosted CI, интерактивного Mac нет. Named-pasteboard tests и injected accessBehavior эту строку не закрывают. Переход к T05 разрешён пользователем; ручная приёмка T04 остаётся открытой.
 
 ### T05. Windows clipboard backend
 
@@ -133,11 +133,13 @@ Capture contract: сохранять все разрешённые representatio
 
 **Interfaces:** тот же ClipboardBackend T04, SourceInfo с foreground/owner confidence.
 
-- [ ] Failing cases: UTF-16/emoji/CRLF, CF_HTML UTF-8 offsets, Rich Text Format, CF_HDROP multiple paths, DIBV5 alpha, custom PDF bytes, clipboard busy/owner exits/sequence changes.
-- [ ] `ctest --preset test -R windows_clipboard --output-on-failure` на Windows, failing before implementation.
-- [ ] Message window + AddClipboardFormatListener, bounded retry с sequence guard, deep-copy transferable bytes, release handles по API ownership. Не сохранять дескрипторы объектов как байты для будущего процесса. WIC decode на worker с limits.
+- [x] Failing cases: UTF-16/emoji/CRLF, CF_HTML UTF-8 offsets, Rich Text Format, CF_HDROP multiple paths, DIBV5 alpha, custom PDF bytes, clipboard busy/owner exits/sequence changes.
+- [x] `ctest --preset test -R windows_clipboard --output-on-failure` на Windows, failing before implementation.
+- [x] Message window + AddClipboardFormatListener, bounded retry с sequence guard, deep-copy transferable bytes, release handles по API ownership. Не сохранять дескрипторы объектов как байты для будущего процесса. WIC decode на worker с limits.
 - [ ] Notepad/browser/Office или LibreOffice/Explorer/image editor smoke; virtual files/OLE-only objects явно классифицировать unsupported, не объявлять поддержкой всех Windows clipboard formats.
-- [ ] Commit `feat(windows): add native multi-format clipboard backend`.
+- [x] Commit `feat(windows): add native multi-format clipboard backend`.
+
+**Статус:** backend и автоматические native проверки реализованы; ручная Notepad/browser/Office/Explorer/image editor приёмка не выполнена. Отдельная window station в CI не заменяет этот критерий. T04 manual открыт; T06 не начат.
 
 ### T06. Linux X11 и Wayland backend
 
