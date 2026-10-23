@@ -1,0 +1,83 @@
+{
+  "system": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "source_commit": "da0d6cc20a77749bdfb1c9067ce92efea74f0e9c",
+  "os": {
+    "exit": 0,
+    "stdout": [
+      "Ubuntu 24.04.3 LTS"
+    ],
+    "stderr": []
+  },
+  "gcc": {
+    "exit": 0,
+    "stdout": [
+      "g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+      "Copyright (C) 2023 Free Software Foundation, Inc.",
+      "This is free software; see the source for copying conditions.  There is NO",
+      "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+      ""
+    ],
+    "stderr": []
+  },
+  "cmake": {
+    "exit": 0,
+    "stdout": [
+      "cmake version 3.28.3",
+      "",
+      "CMake suite maintained and supported by Kitware (kitware.com/cmake)."
+    ],
+    "stderr": []
+  },
+  "sway": {
+    "exit": 0,
+    "stdout": [
+      "sway version 1.9"
+    ],
+    "stderr": []
+  },
+  "xvfb": {
+    "exit": 1,
+    "stdout": [],
+    "stderr": [
+      "Unrecognized option: -version",
+      "use: X [:<display>] [option]",
+      "-a #                   default pointer acceleration (factor)",
+      "-ac                    disable access control restrictions"
+    ]
+  },
+  "wl_clipboard": {
+    "exit": 0,
+    "stdout": [
+      "wl-clipboard 2.2.1",
+      "Copyright (C) 2018-2023 Sergey Bugaev",
+      "License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>.",
+      "This is free software: you are free to change and redistribute it.",
+      "There is NO WARRANTY, to the extent permitted by law."
+    ],
+    "stderr": []
+  },
+  "libraries": {
+    "exit": 0,
+    "stdout": [
+      "1.15",
+      "1.15",
+      "1.22.0",
+      "1.22.0"
+    ],
+    "stderr": []
+  },
+  "packages": {
+    "exit": 0,
+    "stdout": [
+      "gnome-shell\t46.0-0ubuntu6~24.04.13",
+      "libwayland-client0:amd64\t1.22.0-2.1build1",
+      "libwlroots12t64:amd64\t0.17.1-2.1build1",
+      "libxcb-xfixes0:amd64\t1.15-1ubuntu2",
+      "libxcb1:amd64\t1.15-1ubuntu2",
+      "sway\t1.9-1build2",
+      "wl-clipboard\t2.2.1-1build1",
+      "xvfb\t2:21.1.12-1ubuntu1.9"
+    ],
+    "stderr": []
+  }
+}

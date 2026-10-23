@@ -1,0 +1,100 @@
+Preset CMake variables:
+
+  BUILD_TESTING="ON"
+  CLIPTIQ_SANITIZE="ON"
+  CMAKE_BUILD_TYPE="Debug"
+
+-- Configuring done (2.2s)
+-- Generating done (0.3s)
+-- Build files have been written to: /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-sanitize
+[1/13] Building CXX object CMakeFiles/linux_clipboard_test.dir/tests/integration/linux_clipboard_test.cpp.o
+[2/13] Building CXX object CMakeFiles/cliptiq_linux.dir/platform/linux/Transfer.cpp.o
+[3/13] Building CXX object CMakeFiles/cliptiq_linux.dir/platform/linux/Application.cpp.o
+[4/13] Building CXX object CMakeFiles/linux_wayland_wire_test.dir/tests/integration/linux_wayland_wire_test.cpp.o
+[5/13] Building CXX object CMakeFiles/cliptiq_linux.dir/platform/linux/ClipboardX11.cpp.o
+[6/13] Building CXX object CMakeFiles/linux_x11_wire_test.dir/tests/integration/linux_x11_wire_test.cpp.o
+[7/13] Building CXX object CMakeFiles/linux_native_clipboard_test.dir/tests/integration/linux_native_clipboard_test.cpp.o
+[8/13] Building CXX object CMakeFiles/cliptiq_linux.dir/platform/linux/ClipboardWayland.cpp.o
+[9/13] Linking CXX static library libcliptiq_linux.a
+[10/13] Linking CXX executable linux_clipboard_test
+[11/13] Linking CXX executable linux_native_clipboard_test
+[12/13] Linking CXX executable linux_x11_wire_test
+[13/13] Linking CXX executable linux_wayland_wire_test
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-sanitize
+    Start 1: linux_clipboard_protocol
+1/8 Test #1: linux_clipboard_protocol .........***Failed    0.08 sec
+PASS stream_bytes_and_complete_eof
+PASS stream_overflow_is_sticky
+PASS stream_generation_change_cancels_partial
+PASS stream_timeout_never_returns_partial
+PASS mime_stream_over_32_mib_rejected
+PASS fd_receiver_nonblocking_eof
+PASS fd_send_closed_receiver_survives_sigpipe
+PASS gnome_cut_replay_becomes_copy
+PASS binary_rtf_preserved
+PASS unknown_type_not_persistable
+PASS wayland_unknown_source_exclusions
+PASS markers_precede_payload_filtering
+PASS no_display_capability_fails_closed
+FAIL stalled_sends_do_not_retain_unrequested_snapshot_formats: old.expired()
+
+    Start 2: linux_clipboard_wayland_wire
+2/8 Test #2: linux_clipboard_wayland_wire .....***Failed    2.32 sec
+PASS ext_preferred_over_wlr_and_fd_roundtrip
+PASS no_data_control_unavailable_without_fallback
+PASS finished_device_is_unavailable
+PASS stalled_fd_times_out_without_partial
+PASS offer_cancel_discards_partial
+PASS offer_change_discards_partial_and_next_read_recovers
+PASS fd_byte_limit_rejects_before_snapshot
+PASS disabled_html_and_unknown_never_requested
+PASS transient_marker_prevents_all_fd_requests
+PASS unknown_source_exclusions_prevent_fd_requests
+PASS multi_seat_requires_explicit_selection
+PASS cancelled_fd_never_opens_history
+FAIL kde_sensitive_hint_blocks_payload_and_database: rejected&&peer.receives==0&&!std::filesystem::exists(path)
+
+    Start 3: linux_clipboard_x11_wire
+3/8 Test #3: linux_clipboard_x11_wire .........***Failed    0.86 sec
+/usr/include/c++/13/bits/stl_vector.h:1129:34: runtime error: reference binding to null pointer of type 'value_type'
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/platform/linux/ClipboardX11.cpp:579:29: runtime error: load of null pointer of type 'value_type'
+AddressSanitizer:DEADLYSIGNAL
+=================================================================
+==5591==ERROR: AddressSanitizer: SEGV on unknown address 0x000000000000 (pc 0x5763e47e1ae0 bp 0x7ffeebe5e720 sp 0x7ffeebe5e200 T0)
+==5591==The signal is caused by a READ memory access.
+==5591==Hint: address points to the zero page.
+    #0 0x5763e47e1ae0 in cliptiq::linux_backend::ClipboardX11::State::event(xcb_generic_event_t*) (/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-sanitize/linux_x11_wire_test+0xbdeae0) (BuildId: b8886b996fcdff5f5a731ec1ec206da17a5d834f)
+    #1 0x5763e47e43a4 in cliptiq::linux_backend::ClipboardX11::State::drain() (/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-sanitize/linux_x11_wire_test+0xbe13a4) (BuildId: b8886b996fcdff5f5a731ec1ec206da17a5d834f)
+    #2 0x5763e47e4db5 in cliptiq::linux_backend::ClipboardX11::State::pump(unsigned int) (/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-sanitize/linux_x11_wire_test+0xbe1db5) (BuildId: b8886b996fcdff5f5a731ec1ec206da17a5d834f)
+    #3 0x5763e47ebc14 in cliptiq::linux_backend::ClipboardX11::read_snapshot() (/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-sanitize/linux_x11_wire_test+0xbe8c14) (BuildId: b8886b996fcdff5f5a731ec1ec206da17a5d834f)
+    #4 0x5763e47466fa in main::{lambda()#10}::operator()() const (/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-sanitize/linux_x11_wire_test+0xb436fa) (BuildId: b8886b996fcdff5f5a731ec1ec206da17a5d834f)
+    #5 0x5763e4747208 in auto main::{lambda(char const*, auto:1)#1}::operator()<main::{lambda()#10}>(char const*, main::{lambda()#10}) const (/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-sanitize/linux_x11_wire_test+0xb44208) (BuildId: b8886b996fcdff5f5a731ec1ec206da17a5d834f)
+    #6 0x5763e474bbd7 in main (/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-sanitize/linux_x11_wire_test+0xb48bd7) (BuildId: b8886b996fcdff5f5a731ec1ec206da17a5d834f)
+    #7 0x7670c082a1c9  (/lib/x86_64-linux-gnu/libc.so.6+0x2a1c9) (BuildId: a4a7992a8e66555c8141ab2a08a8465ff6e0ea65)
+    #8 0x7670c082a28a in __libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x2a28a) (BuildId: a4a7992a8e66555c8141ab2a08a8465ff6e0ea65)
+    #9 0x5763e4735154 in _start (/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-sanitize/linux_x11_wire_test+0xb32154) (BuildId: b8886b996fcdff5f5a731ec1ec206da17a5d834f)
+
+AddressSanitizer can not provide additional info.
+SUMMARY: AddressSanitizer: SEGV (/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-sanitize/linux_x11_wire_test+0xbdeae0) (BuildId: b8886b996fcdff5f5a731ec1ec206da17a5d834f) in cliptiq::linux_backend::ClipboardX11::State::event(xcb_generic_event_t*)
+==5591==ABORTING
+
+    Start 4: linux_clipboard_x11
+4/8 Test #4: linux_clipboard_x11 ..............   Passed    0.65 sec
+    Start 5: linux_clipboard_wayland
+5/8 Test #5: linux_clipboard_wayland ..........   Passed    0.62 sec
+    Start 6: policy
+6/8 Test #6: policy ...........................   Passed    0.19 sec
+    Start 7: history
+7/8 Test #7: history ..........................   Passed    0.41 sec
+    Start 8: history_crash
+8/8 Test #8: history_crash ....................   Passed    0.79 sec
+
+63% tests passed, 3 tests failed out of 8
+
+Total Test time (real) =   5.98 sec
+
+The following tests FAILED:
+	  1 - linux_clipboard_protocol (Failed)
+	  2 - linux_clipboard_wayland_wire (Failed)
+	  3 - linux_clipboard_x11_wire (Failed)
+Errors while running CTest

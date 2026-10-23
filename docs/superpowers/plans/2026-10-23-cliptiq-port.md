@@ -10,7 +10,7 @@
 
 **Spec:** [дизайн](../specs/2026-10-23-cliptiq-design.md). **Coverage:** [аудит с ID функций](../../research/2026-10-23-clipy-audit.md). **Naming:** [проверка имён](../../research/2026-10-23-naming.md).
 
-Статус: полный план охвата исследуемой ревизии; пользователь разрешил T01, [прототипы и первые измерения выполнены](../../support/architecture-decision.md). T01 закрыт в согласованных границах ([итог](../../support/t01-results.md)); T02 завершён ([результаты](../../support/t02-results.md)); T03 завершён ([результаты](../../support/t03-results.md)); T04 реализуется с native CI; ручная macOS-приёмка остаётся открыта ([результаты](../../support/t04-results.md)). T05 реализован с native CI; ручная Windows-приёмка открыта ([результаты](../../support/t05-results.md)). T06–T17 не начаты. Release binaries не созданы.
+Статус: полный план охвата исследуемой ревизии; пользователь разрешил T01, [прототипы и первые измерения выполнены](../../support/architecture-decision.md). T01 закрыт в согласованных границах ([итог](../../support/t01-results.md)); T02 завершён ([результаты](../../support/t02-results.md)); T03 завершён ([результаты](../../support/t03-results.md)); T04 реализуется с native CI; ручная macOS-приёмка остаётся открыта ([результаты](../../support/t04-results.md)). T05 реализован с native CI; ручная Windows-приёмка открыта ([результаты](../../support/t05-results.md)). T06 автоматическая часть реализована ([результаты](../../support/t06-results.md)); Linux desktop manual gate открыт. T07–T17 не начаты. Release binaries не созданы.
 
 ## Global Constraints
 
@@ -147,11 +147,13 @@ Capture contract: сохранять все разрешённые representatio
 
 **Interfaces:** ClipboardBackend T04; runtime `Capabilities` T03. X11-only process не объявляет native-Wayland support.
 
-- [ ] Failing protocol/fixture tests: X11 TARGETS/INCR/owner death, Wayland offer fd cancel/timeout/change, MIME streams >32 MiB, no-data-control, source unknown. Expected: partial entry не сохраняется; capability reason точный.
-- [ ] `ctest --preset test -R linux_clipboard --output-on-failure`; protocol state machine tests без desktop и отдельные native tests в Xvfb/на реальном compositor.
-- [ ] XFixes events, selection ownership, bounded INCR; Wayland native ext-data-control с wlr fallback через libwayland. GTK clipboard focus не выдавать за background history. PRIMARY не добавлять в parity scope: Clipy имеет один general clipboard.
+- [x] Failing protocol/fixture tests: X11 TARGETS/INCR/owner death, Wayland offer fd cancel/timeout/change, MIME streams >32 MiB, no-data-control, source unknown. Expected: partial entry не сохраняется; capability reason точный.
+- [x] `ctest --preset test -R linux_clipboard --output-on-failure`; protocol state machine tests без desktop и отдельные native tests в Xvfb/на реальном compositor.
+- [x] XFixes events, selection ownership, bounded INCR; Wayland native ext-data-control с wlr fallback через libwayland. GTK clipboard focus не выдавать за background history. PRIMARY не добавлять в parity scope: Clipy имеет один general clipboard.
 - [ ] Прогнать concrete GNOME/KDE/Sway/Hyprland versions и X11; записать capture/write/source/portal/tray отдельно. Clipboard portal не использовать как обход разрешений. Если нужен compositor plugin, реализовать и проверить version-pinned integration pack; без него limited environment, не supported history desktop. Support floor: capture+write+persistence+snippets+launcher+working popup route; auto-paste/tray могут иметь объявленный fallback.
-- [ ] Commit `feat(linux): add capability-aware X11 and Wayland backends`.
+- [x] Commit `feat(linux): add capability-aware X11 and Wayland backends`.
+
+Автоматическая часть: [T06 results](../../support/t06-results.md), source da0d6cc, CI39989123550 —7/7 success. Desktop пункт выше остаётся OPEN: проверены Xvfb/Sway и GNOME46 registry, KDE/Hyprland не доступны; snippets/launcher/popup относятся к T07+. T04/T05 manual остаются OPEN.
 
 ### T07. Menu model и три нативных popup/tray UI
 

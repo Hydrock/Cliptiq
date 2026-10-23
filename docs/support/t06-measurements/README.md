@@ -1,0 +1,3 @@
+# T06 raw evidence
+
+Final source da0d6cc20a77749bdfb1c9067ce92efea74f0e9c, GitHub Actions39989123550. core-* contain original t02-size.json compatibility filenames and original CTest logs for Debug/MinSizeRel. linux/macOS/windows sanitizer logs are separate; local-* are WSL Ubuntu24.04 GCC13.3 developer image, not clean install. gnome-46-headless.json records private GNOME registry discovery, not GUI acceptance. review-regressions-red.log is intentionally failing pre-fix evidence, not final test status. ci-compilers.json extracts compiler identification from job logs. No binaries, credentials, real clipboard content or signed download URLs are saved.
