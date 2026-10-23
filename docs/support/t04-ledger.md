@@ -13,3 +13,11 @@ Ruling: accessBehavior (macOS 15.4+) is checked before background reads. Ask/def
 Ruling: bound NSData length before C++ copy and enforce representation/entry limits, but NSPasteboard dataForType is an eager OS API. No claim of bounding provider/server allocations or preempting a stuck native provider. Root-only representations use reserved item_index UINT32_MAX; normal item indices are preserved.
 
 Status: in progress. Native RED/green evidence and fresh final review pending. Manual app/permission scenarios remain explicit acceptance items until actually exercised.
+
+Native RED: run39949102889 (0b0f83a), all 15 native scenarios failed on not-implemented backend; core suites stayed green. First implementation b9e7a5c reproduced root fallback/replay failures: legacy filenames is not a valid NSPasteboardItem UTI. Fixed actual root setData path and retained complete legacy array when modern root URL is synthesized. e364191 CI39950784833: 6/6 jobs PASS.
+
+Fresh gpt-6-astra review: two P2 reliability issues, no critical privacy leak. Regression run39951378417 (9bdad50) reproduced stale off-main stop cleanup, absent count backpressure and absent byte backpressure. Generation-scoped cleanup and bounded pending inputs fixed; run39951888081 (4755ee2) 6/6 PASS. Minor coverage requests addressed: Ask/default/deny/recovery injection, item payload read counting, and session destruction inside completion. No deferred review minors.
+
+Ruling: default pending input is capped at two snapshots/128 MiB conservative retained-capacity estimate. Overflow drops the new capture with an explicit Busy event; it does not silently grow memory or stall the UI behind SQLite. Cost: a copy can be skipped under persistent I/O pressure; UI must surface that condition.
+
+Run39952471330 (3cc2ff2): 6/6 PASS including full root read/replay, compiled opt-in manual helper, 25 native cases, macOS and Linux ASan/UBSan. No General clipboard mode runs in CI. Final upstream parity check found Clipy's cached count starts at zero; extra native RED run39953094514 (002ed34) reproduced missing startup capture. Start now preserves cached/own-write counters and captures existing data on first tick like upstream. Final GREEN pending.

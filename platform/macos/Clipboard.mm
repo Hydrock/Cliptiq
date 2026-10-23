@@ -281,7 +281,9 @@ Result<void> MacClipboardBackend::start(CaptureCallback callback) {
   if(!state_->board)return Error{ErrorCode::Io,"Pasteboard unavailable"};
   [state_->timer invalidate]; // A prior off-main stop may still have cleanup queued.
   const auto generation=++state_->generation;
-  state_->observed=state_->board.changeCount;state_->callback=std::move(callback);state_->last_error.reset();state_->active=true;
+  // Match Clipy's initial cached count zero: first tick also examines existing
+  // clipboard content. Preserve observed/own-write counts across stop/restart.
+  state_->callback=std::move(callback);state_->last_error.reset();state_->active=true;
   std::weak_ptr<State> weak=state_;
   state_->timer=[NSTimer timerWithTimeInterval:0.5 repeats:YES block:^(NSTimer*){auto state=weak.lock();if(state&&state->generation==generation)state->poll();}];
   [[NSRunLoop mainRunLoop] addTimer:state_->timer forMode:NSRunLoopCommonModes];
