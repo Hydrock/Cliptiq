@@ -1,0 +1,52 @@
+#include "Application.hpp"
+#include "../fixtures/windows/IsolatedClipboard.hpp"
+#include <shellapi.h>
+#include <shlobj.h>
+#include <atomic>
+#include <chrono>
+#include <cstring>
+#include <iostream>
+#include <stdexcept>
+#include <thread>
+using namespace cliptiq;
+using namespace cliptiq::windows;
+#define CHECK(x) do{if(!(x))throw std::runtime_error(#x);}while(false)
+template<class T>T take(Result<T> r){if(!r)throw std::runtime_error(r.error().message);return std::move(r.value());}
+void ok(Result<void> r){if(!r)throw std::runtime_error(r.error().message);}
+Bytes utf16(const std::wstring& s){auto p=reinterpret_cast<const std::uint8_t*>(s.c_str());return Bytes(p,p+(s.size()+1)*2);}
+Bytes ascii(const std::string& s){return Bytes(s.begin(),s.end());}
+struct Owner{HWND hwnd=CreateWindowExW(0,L"STATIC",L"",0,0,0,0,0,HWND_MESSAGE,nullptr,GetModuleHandleW(nullptr),nullptr);~Owner(){if(hwnd)DestroyWindow(hwnd);}};
+void set(UINT f,const Bytes& b){auto h=GlobalAlloc(GMEM_MOVEABLE|GMEM_ZEROINIT,b.size());CHECK(h);auto p=GlobalLock(h);CHECK(p);memcpy(p,b.data(),b.size());GlobalUnlock(h);if(!SetClipboardData(f,h)){GlobalFree(h);throw std::runtime_error("fixture SetClipboardData");}}
+void put(HWND owner,const std::vector<std::pair<UINT,Bytes>>& v){CHECK(OpenClipboard(owner));CHECK(EmptyClipboard());try{for(const auto& p:v)set(p.first,p.second);}catch(...){CloseClipboard();throw;}CHECK(CloseClipboard());}
+UINT reg(const wchar_t* name){auto n=RegisterClipboardFormatW(name);CHECK(n);return n;}
+const Representation* find(const ClipboardSnapshot& s,const char* type){for(const auto& r:s.representations)if(r.native_type==type)return &r;return nullptr;}
+Representation text(const std::wstring& s){return {0,"windows","CF_UNICODETEXT",CanonicalKind::Text,utf16(s),TextEncoding::Utf16Le};}
+void pump(int ms=40){auto end=GetTickCount64()+ms;do{MSG m;while(PeekMessageW(&m,nullptr,0,0,PM_REMOVE)){TranslateMessage(&m);DispatchMessageW(&m);}Sleep(1);}while(GetTickCount64()<end);}
+template<class F>bool wait(F f,int ms=2500){auto end=GetTickCount64()+ms;while(!f()&&GetTickCount64()<end)pump(5);return f();}
+Bytes html(){ // Hand-counted UTF-8 offsets: fixed 105-byte header, 12-byte context prefix.
+ return ascii("Version:1.0\r\nStartHTML:0000000105\r\nEndHTML:0000000140\r\nStartFragment:0000000117\r\nEndFragment:0000000126\r\n<html><body><b>\xC3\xA9</b></body></html>");
+}
+Bytes dib(bool top=true){BITMAPV5HEADER h{};h.bV5Size=sizeof(h);h.bV5Width=2;h.bV5Height=top?-1:1;h.bV5Planes=1;h.bV5BitCount=32;h.bV5Compression=BI_BITFIELDS;h.bV5RedMask=0xff0000;h.bV5GreenMask=0xff00;h.bV5BlueMask=0xff;h.bV5AlphaMask=0xff000000;h.bV5CSType=LCS_sRGB;Bytes v(sizeof(h)+8);memcpy(v.data(),&h,sizeof(h));const std::uint8_t pixels[]={10,20,30,128,40,50,60,255};memcpy(v.data()+sizeof(h),pixels,8);return v;}
+Bytes files(){DROPFILES h{};h.pFiles=sizeof(h);h.fWide=TRUE;std::wstring list=L"C:\\fixture one.txt";list+=L'\0';list+=L"C:\\second-\u0434.txt";list+=L'\0';list+=L'\0';Bytes v(sizeof(h)+list.size()*2);memcpy(v.data(),&h,sizeof(h));memcpy(v.data()+sizeof(h),list.data(),list.size()*2);return v;}
+int main(){try{IsolatedClipboard isolated;Owner owner;CHECK(owner.hwnd);int failures=0;
+ auto test=[&](const char* n,auto f){try{f();std::cout<<"PASS "<<n<<'\n';}catch(const std::exception& e){++failures;std::cerr<<"FAIL "<<n<<": "<<e.what()<<'\n';}};
+ test("unicode_emoji_crlf_and_replay",[&]{put(owner.hwnd,{{CF_UNICODETEXT,utf16(L"\u041f\u0440\u0438\u0432\u0435\u0442 \U0001f600\r\nline")}});WindowsClipboardBackend b;auto s=take(b.read_snapshot());auto r=find(s,"CF_UNICODETEXT");CHECK(r&&r->data==utf16(L"\u041f\u0440\u0438\u0432\u0435\u0442 \U0001f600\r\nline"));CHECK(r->text_encoding==TextEncoding::Utf16Le);take(b.write_snapshot(s));CHECK(find(take(b.read_snapshot()),"CF_UNICODETEXT"));});
+ test("html_byte_offsets_and_raw_roundtrip",[&]{auto v=html();auto fragment=take(html_fragment(v));CHECK(fragment.begin==117&&fragment.end==126);CHECK(std::string(v.begin()+117,v.begin()+126)=="<b>\xC3\xA9</b>");CapturePolicy p;p.enabled_kinds[3]=true;WindowsClipboardBackend b({{},p,{}});put(owner.hwnd,{{reg(L"HTML Format"),v},{reg(L"Rich Text Format"),ascii("{\\rtf1 hello}")}});auto s=take(b.read_snapshot());CHECK(find(s,"HTML Format"));CHECK(find(s,"Rich Text Format"));take(b.write_snapshot(s));CHECK(find(take(b.read_snapshot()),"HTML Format")->data==find(s,"HTML Format")->data);});
+ test("invalid_html_offsets_rejected",[]{auto v=html();v[105]=0xff;CHECK(!html_fragment(v));v=html();v[81]='9';CHECK(!html_fragment(v));});
+ test("hdrop_multiple_unicode_paths_copy_replay",[&]{DWORD cut=2;Bytes effect(4);memcpy(effect.data(),&cut,4);put(owner.hwnd,{{CF_HDROP,files()},{reg(L"Preferred DropEffect"),effect}});WindowsClipboardBackend b;auto s=take(b.read_snapshot());CHECK(find(s,"CF_HDROP"));take(b.write_snapshot(s));CHECK(OpenClipboard(owner.hwnd));auto h=GetClipboardData(CF_HDROP);CHECK(h&&DragQueryFileW(static_cast<HDROP>(h),0xffffffff,nullptr,0)==2);auto e=GetClipboardData(reg(L"Preferred DropEffect"));CHECK(e);auto p=static_cast<DWORD*>(GlobalLock(e));CHECK(p&&*p==1);GlobalUnlock(e);CloseClipboard();});
+ test("dibv5_alpha_orientation_and_worker_decoder",[&]{put(owner.hwnd,{{CF_DIBV5,dib()}});WindowsClipboardBackend b;auto s=take(b.read_snapshot());auto r=find(s,"CF_DIBV5");CHECK(r);auto decoded=take(decode_image(*r));CHECK(decoded.width==2&&decoded.height==1&&decoded.bgra==Bytes({10,20,30,128,40,50,60,255}));take(b.write_snapshot(s));CHECK(find(take(b.read_snapshot()),"CF_DIBV5"));});
+ test("image_header_limits_and_truncation",[]{Representation r{0,"windows","CF_DIBV5",CanonicalKind::Image,dib()};CHECK(!decode_image(r,1));r.data.resize(124);CHECK(!decode_image(r));});
+ test("registered_pdf_and_rtfd_bytes",[&]{put(owner.hwnd,{{reg(L"Portable Document Format"),ascii("%PDF-1.4\nfixture")},{reg(L"com.apple.flat-rtfd"),Bytes{1,2,3,4}}});WindowsClipboardBackend b;auto s=take(b.read_snapshot());CHECK(find(s,"Portable Document Format")&&find(s,"com.apple.flat-rtfd"));take(b.write_snapshot(s));});
+ test("url_utf16_and_known_type_registry",[&]{put(owner.hwnd,{{reg(L"UniformResourceLocatorW"),utf16(L"https://example.invalid/\u0434")}});WindowsClipboardBackend b;auto s=take(b.read_snapshot());CHECK(find(s,"UniformResourceLocatorW")->data==utf16(L"https://example.invalid/\u0434"));CHECK(b.capabilities().source_app.status==CapabilityStatus::Limited);CHECK(s.source.confidence!=SourceConfidence::Known);});
+ test("transient_marker_rejects_before_storage",[&]{put(owner.hwnd,{{CF_UNICODETEXT,utf16(L"secret")},{reg(L"ExcludeClipboardContentFromMonitorProcessing"),Bytes{0}}});WindowsClipboardBackend b;auto s=take(b.read_snapshot());CHECK(s.flags.transient==Flag::Yes&&s.representations.empty());CHECK(evaluate_capture(s,{},b.capabilities()).disposition==CaptureDisposition::Reject);});
+ test("history_dword_zero_is_excluded",[&]{put(owner.hwnd,{{CF_UNICODETEXT,utf16(L"secret")},{reg(L"CanIncludeInClipboardHistory"),Bytes{0,0,0,0}}});WindowsClipboardBackend b;auto s=take(b.read_snapshot());CHECK(s.representations.empty()&&s.flags.transient==Flag::Yes);});
+ test("disabled_html_and_unknown_not_captured",[&]{put(owner.hwnd,{{reg(L"HTML Format"),html()},{reg(L"cliptiq.unknown"),Bytes{1,2}},{CF_UNICODETEXT,utf16(L"allowed")}});WindowsClipboardBackend b;auto s=take(b.read_snapshot());CHECK(s.representations.size()==1&&find(s,"CF_UNICODETEXT"));});
+ test("unknown_source_with_exclusions_rejects",[&]{put(owner.hwnd,{{CF_UNICODETEXT,utf16(L"x")}});CapturePolicy p;p.excluded_apps={"excluded.exe"};WindowsClipboardBackend b({{},p,[]{return SourceInfo{};}});CHECK(take(b.read_snapshot()).representations.empty());});
+ test("sequence_token_independent_of_foreground",[&]{put(owner.hwnd,{{CF_UNICODETEXT,utf16(L"token")}});int n=0;WindowsClipboardBackend b({{},{},[&]{return SourceInfo{n++?"other.exe":"first.exe",SourceConfidence::Known};}});auto a=take(b.read_snapshot());auto c=take(b.read_snapshot());CHECK(a.sequence_token==c.sequence_token&&a.source.confidence==SourceConfidence::BestEffort);});
+ test("busy_read_is_bounded_and_recovers",[&]{std::atomic<bool> locked=false,release=false;std::thread holder([&]{if(OpenClipboard(nullptr)){locked=true;while(!release)Sleep(1);CloseClipboard();}});bool acquired=wait([&]{return locked.load();});if(!acquired){release=true;holder.join();throw std::runtime_error("fixture lock");}WindowsClipboardBackend b;auto before=GetTickCount64();auto r=b.read_snapshot();auto elapsed=GetTickCount64()-before;release=true;holder.join();CHECK(!r&&r.error().code==ErrorCode::Busy&&elapsed<200);put(owner.hwnd,{{CF_UNICODETEXT,utf16(L"recovered")}});CHECK(find(take(b.read_snapshot()),"CF_UNICODETEXT"));});
+ test("invalid_replay_keeps_current_clipboard",[&]{put(owner.hwnd,{{CF_UNICODETEXT,utf16(L"keep")}});WindowsClipboardBackend b;auto n=GetClipboardSequenceNumber();ClipboardSnapshot s;s.representations={text(L"new"),{0,"windows","CF_BITMAP",CanonicalKind::Image,Bytes{1,2}}};CHECK(!b.write_snapshot(s));CHECK(GetClipboardSequenceNumber()==n);s.representations={text(L"new")};s.representations[0].item_index=1;CHECK(!b.write_snapshot(s));CHECK(GetClipboardSequenceNumber()==n);});
+ test("oversize_read_is_rejected",[&]{put(owner.hwnd,{{CF_UNICODETEXT,utf16(L"too large")}});Limits l;l.representation_bytes=4;WindowsClipboardBackend b({l,{},{}});auto r=b.read_snapshot();CHECK(!r&&r.error().code==ErrorCode::TooLarge);});
+ test("listener_initial_capture_own_write_and_stop",[&]{put(owner.hwnd,{{CF_UNICODETEXT,utf16(L"initial")}});WindowsClipboardBackend b;unsigned calls=0;auto thread=GetCurrentThreadId();ok(b.start([&](Result<ClipboardSnapshot> s){CHECK(GetCurrentThreadId()==thread);take(std::move(s));++calls;}));CHECK(wait([&]{return calls==1;}));ClipboardSnapshot s;s.representations={text(L"own")};take(b.write_snapshot(s));pump(100);CHECK(calls==1);put(owner.hwnd,{{CF_UNICODETEXT,utf16(L"external")}});CHECK(wait([&]{return calls==2;}));b.stop();put(owner.hwnd,{{CF_UNICODETEXT,utf16(L"stopped")}});pump(60);CHECK(calls==2);});
+ test("owner_exit_does_not_serialize_handle",[]{Owner temporary;put(temporary.hwnd,{{CF_UNICODETEXT,utf16(L"survives")}});DestroyWindow(temporary.hwnd);temporary.hwnd=nullptr;WindowsClipboardBackend b;auto s=take(b.read_snapshot());CHECK(find(s,"CF_UNICODETEXT"));CHECK(s.source.confidence==SourceConfidence::Unknown);});
+ return failures?1:0;
+ }catch(const std::exception& e){std::cerr<<"ISOLATION/SETUP FAILED: "<<e.what()<<'\n';return 2;}}

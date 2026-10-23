@@ -1,16 +1,19 @@
-name: Portable core and macOS clipboard (T02-T04)
+name: Portable core and native clipboards (T02-T05)
 on:
   workflow_dispatch:
   push:
     paths:
       - 'core/**'
       - 'platform/macos/**'
+      - 'platform/windows/**'
       - 'cmake/**'
       - 'CMakeLists.txt'
       - 'CMakePresets.json'
       - 'tests/unit/**'
       - 'tests/integration/history_crash.py'
       - 'tests/integration/macos_clipboard_test.mm'
+      - 'tests/integration/windows_clipboard_test.cpp'
+      - 'tests/fixtures/windows/**'
       - 'tests/manual/macos_clipboard_manual.mm'
       - 'tests/size/**'
       - '.github/workflows/core.yml'
