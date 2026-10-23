@@ -24,7 +24,7 @@ report = {
     'source_commit': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=root, text=True).strip(),
     'working_tree_dirty': bool(subprocess.check_output(['git', 'status', '--porcelain'], cwd=root, text=True).strip()),
     'source_files_sha256': {p.relative_to(root).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
-                            for folder_name in ('core', 'cmake', 'platform/macos')
+                            for folder_name in ('core', 'cmake', 'platform/macos', 'platform/windows')
                             for p in sorted((root / folder_name).rglob('*')) if p.is_file()},
     'build_type': 'MinSizeRel', 'windows_crt': 'static' if system == 'Windows' else None,
     'probe_bytes': len(data), 'probe_zip_bytes': len(archive.getvalue()),
@@ -73,5 +73,24 @@ if system == 'Darwin':
         'added_bytes': native['executable_bytes'] - baseline['executable_bytes'],
         'added_zip_bytes': native['zip_bytes'] - baseline['zip_bytes'],
         'scope': 'paired AppKit/core host vs native clipboard + timer/session/worker integration; not isolated backend machine code or full app'}
+if system == 'Windows':
+    def windows_variant(name):
+        path = folder / (name + '.exe')
+        subprocess.run([str(path)], check=True, timeout=15)
+        raw = path.read_bytes()
+        compressed = io.BytesIO()
+        with zipfile.ZipFile(compressed, 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as z:
+            item = zipfile.ZipInfo('clipboard_probe.exe', date_time=(2026, 1, 1, 0, 0, 0))
+            item.compress_type = zipfile.ZIP_DEFLATED
+            z.writestr(item, raw)
+        return {'executable_bytes': len(raw), 'zip_bytes': len(compressed.getvalue()),
+                'sha256': hashlib.sha256(raw).hexdigest(),
+                'linked_libraries': subprocess.check_output(['dumpbin', '/DEPENDENTS', str(path)], text=True).splitlines()}
+    baseline = windows_variant('windows_clipboard_baseline')
+    native = windows_variant('windows_clipboard_probe')
+    report['windows_clipboard'] = {'baseline': baseline, 'with_backend': native,
+        'added_bytes': native['executable_bytes'] - baseline['executable_bytes'],
+        'added_zip_bytes': native['zip_bytes'] - baseline['zip_bytes'],
+        'scope': 'paired Win32/core host vs clipboard + listener/session/worker/WIC integration; isolated noninteractive station, not full app'}
 (root / 'out' / 't02-size.json').write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
 print(json.dumps(report, indent=2))
