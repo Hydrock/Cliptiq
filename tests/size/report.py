@@ -53,6 +53,7 @@ if policy_probe.exists():
     report['policy_added_zip_bytes'] = len(policy_archive.getvalue()) - len(archive.getvalue())
     report['policy_comparison'] = 'same source/compiler/flags/native-free API fixture; policy dispatch linked only in second variant'
 if system == 'Darwin':
+    report['os_build'] = subprocess.check_output(['sw_vers', '-buildVersion'], text=True).strip()
     def native_variant(name):
         path = folder / name
         subprocess.run([str(path)], check=True, timeout=15)
