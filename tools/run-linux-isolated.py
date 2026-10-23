@@ -7,16 +7,20 @@ import sys
 import tempfile
 import time
 
-mode, executable, *args = sys.argv[1:]
+owned_bus = sys.argv[1] == '--owned-bus'
+mode, executable, *args = sys.argv[2:] if owned_bus else sys.argv[1:]
 env = os.environ.copy()
-for key in ('DISPLAY', 'WAYLAND_DISPLAY', 'SWAYSOCK', 'XAUTHORITY', 'DBUS_SESSION_BUS_ADDRESS'):
+for key in ('DISPLAY', 'WAYLAND_DISPLAY', 'SWAYSOCK', 'XAUTHORITY'):
     env.pop(key, None)
+if not owned_bus:
+    env.pop('DBUS_SESSION_BUS_ADDRESS', None)
+    raise SystemExit(subprocess.run(['dbus-run-session', '--', sys.executable, __file__, '--owned-bus', mode, executable, *args], env=env).returncode)
 env['CLIPTIQ_TEST_ISOLATED'] = mode
 if mode in ('x11', 'wayland'):
     env['GDK_BACKEND'] = mode
     env['XDG_SESSION_TYPE'] = mode
 if mode == 'x11':
-    raise SystemExit(subprocess.run(['dbus-run-session', '--', 'xvfb-run', '-a', '-s', '-screen 0 800x600x24 -nolisten tcp', executable, *args], env=env).returncode)
+    raise SystemExit(subprocess.run(['xvfb-run', '-a', '-s', '-screen 0 800x600x24 -nolisten tcp', executable, *args], env=env).returncode)
 with tempfile.TemporaryDirectory(prefix='cliptiq-wayland-') as name:
     root = Path(name)
     runtime = root / 'runtime'
@@ -30,7 +34,7 @@ with tempfile.TemporaryDirectory(prefix='cliptiq-wayland-') as name:
     config = root / 'sway.conf'
     config.write_text('output * resolution 800x600\nseat seat0 fallback true\nxwayland disable\n')
     with (root / 'sway.log').open('w+') as log:
-        process = subprocess.Popen(['dbus-run-session', '--', 'sway', '-c', str(config), '-d'], env=env, stdout=log, stderr=log, start_new_session=True)
+        process = subprocess.Popen(['sway', '-c', str(config), '-d'], env=env, stdout=log, stderr=log, start_new_session=True)
         try:
             deadline = time.monotonic() + 8
             while time.monotonic() < deadline:

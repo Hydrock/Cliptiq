@@ -7,6 +7,7 @@
 #import <AppKit/AppKit.h>
 #else
 #include <gtk/gtk.h>
+#include "../fixtures/linux/TrayPeer.hpp"
 #endif
 using namespace cliptiq;
 #define CHECK(x) do{if(!(x))throw std::runtime_error(#x);}while(false)
@@ -37,4 +38,8 @@ int main(){try{
 #endif
  CHECK(selected==1);std::cout<<"PASS old_native_item_cannot_select_replacement\n";
  ok(ui.set_tray_style(TrayStyle::Standard));ok(ui.process_events(5));ok(ui.set_tray_style(TrayStyle::Reversed));ok(ui.process_events(5));ok(ui.set_tray_style(TrayStyle::Hidden));CHECK(ui.status().launcher_visible);std::cout<<"PASS tray_style_changes_preserve_fallback\n";
+
+#if !defined(_WIN32) && !defined(__APPLE__)
+ {TrayPeer peer;auto end=std::chrono::steady_clock::now()+std::chrono::seconds(10);ok(ui.set_tray_style(TrayStyle::Standard));while(!peer.done&&std::chrono::steady_clock::now()<end)ok(ui.process_events(2));CHECK(peer.done&&peer.error.empty());CHECK(selected==2&&command.id=="replacement"&&command.revision==8);std::cout<<"PASS independent_sni_dbusmenu_layout_events_and_watcher_restart\n";}
+#endif
  return 0;}catch(const std::exception&e){std::cerr<<"FAIL native_menu: "<<e.what()<<'\n';return 1;}}

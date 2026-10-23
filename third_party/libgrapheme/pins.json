@@ -12,6 +12,8 @@
     "src/util.h": "16b562df26ea682aabd6a74b2d7d89d0915f6620bb168a7a8237405916e2fe61",
     "src/utf8.c": "e88950d47465ed3006aa4ce63e9051b4a6fe193998f948700bf596da01e6b837",
     "gen/character.h": "7b99193052892cdb7cc005a9465c17b9798649df2bde7f37c45ffdd17156b218",
-    "gen/types.h": "693fa272255288ad7878a12e18d5fc72cee62ddec0f8084d40a8d623308df9df"
-  }
+    "gen/types.h": "693fa272255288ad7878a12e18d5fc72cee62ddec0f8084d40a8d623308df9df",
+    "src/cliptiq-util.c": "16eea9fd340f52be3da09183db0dd9c5aa063aad7e1b0ec01331c1cc4b17563a"
+  },
+  "adaptation": "src/cliptiq-util.c omits only unused herodotus_reader_next_word_break, avoiding MSVC unresolved unused word API; upstream util.c retained for provenance"
 }

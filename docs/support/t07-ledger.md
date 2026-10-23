@@ -7,3 +7,7 @@ Pre-flight T02->T07: Store/list_history/load_snapshot exist; avoid loading every
 Ruling: native adapters emit immutable commands carrying ID/revision; no auto-paste, modifier action or clipboard write in T07 (T08 owner). A native review host displays history/snippets and clear/status, preserving visible launcher when tray is hidden/missing. Host is a review harness, not finished shipping app. Icons/previews reference persisted assets; decode/image production belongs to T12. Native selection must never execute destructive or selection callbacks on stale models.
 
 Ruling: small pinned Unicode17 libgrapheme3 character segmentation only, not full ICU; linked size measured. Existing defaults/history grouping follow upstream audit. No platform repeats SQL/grouping.
+
+Model RED observed all initial feature cases fail on explicit stub, then GREEN. Native GTK X11/Wayland RED then GREEN (4 contract scenarios per transport). Preview RED swatch/aspect-fit then GREEN. Clear revision RED then implementation under BEGIN IMMEDIATE; no stale command may erase a newly captured row.
+
+Ruling: MSVC resolves unused word symbols before /OPT:REF; retain upstream libgrapheme util.c for hashes but compile an attributed character-only copy omitting the unused word helper. No fake word API or full word tables. Linux GTK LSan initially reports external fontconfig caches/AT-SPI init; narrow library/symbol suppressions apply only to menu GUI cases, not core/clipboard tests. ASan/UBSan remain enabled.

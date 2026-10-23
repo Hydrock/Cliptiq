@@ -12,6 +12,7 @@ struct MenuSettings { std::size_t inline_count=0,folder_count=10,title_character
 struct MenuCommand { MenuAction action=MenuAction::None; std::string id; std::uint64_t revision=0; };
 struct InvocationContext { std::string target,activation_token; bool keyboard=false; std::optional<int> x,y; };
 Result<MenuModel> build_menu(Store&,MenuKind,const MenuSettings& = {});
+Result<void> execute_menu_clear(Store&,const MenuCommand&);
 Result<void> validate_menu_command(Store&,const MenuCommand&);
 Result<std::string> menu_text(const std::string&,std::size_t,bool first_line=true);
 }
