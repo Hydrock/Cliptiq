@@ -16,6 +16,8 @@ python tools/build-footprint.py
 python tools/build-footprint.py --fts5
 python tools/build-footprint.py --dynamic-crt       # Windows only
 python tools/build-footprint.py --gtk4              # Linux only
+python tools/build-footprint.py --lto               # compare C/C++ LTO separately
+python tools/build-footprint.py --ocr               # generated-image OCR probe
 xvfb-run -a python3 tools/build-footprint.py         # Linux headless
 ```
 
@@ -29,11 +31,11 @@ xvfb-run -a python3 tools/build-footprint.py         # Linux headless
 
 - `app_bytes`: executable + одинаковый NOTICE, без данных пользователя, compiler, object files, symbols.
 - `archive_bytes`: реально созданный ZIP/deflate9, фиксированные timestamps.
-- `idle_memory_bytes`: медиана пяти RSS/working-set samples после setup и 300 ms; UI hidden, не размер приватной памяти.
+- `idle_memory_bytes`: медиана пяти RSS/working-set samples после setup и 300 ms; UI hidden, не размер приватной памяти. OCR lane использует два samples в локальной проверке и пять по умолчанию в CI; это host RSS после OCR, без завершившегося Tesseract child process и без памяти внешних OS OCR services. Поэтому это не полная RAM OCR-системы.
 - `startup_ms`: медиана main→SQLite fixture+hidden native window. **Не cold start:** загрузка executable/OS loader до main не учтена. Это не обещание скорости готового продукта.
 - `linked_library_bytes` Linux: сумма реальных файлов ELF closure `ldd`, включая системные библиотеки, без fonts/plugins/data. Это **не** clean-machine dependency delta.
 - `dependency_delta_bytes` и `total_offline_bytes`: null, пока clean-machine installation не измерена. Ноль вместо неизвестного запрещён.
-- `ocr_bytes=0` означает «OCR отсутствует в prototype», не «OCR бесплатно»; это отмечено в feature_scope/runtime. OCR/updater/migration и полный UI отсутствуют.
+- `ocr_bytes=0` в Base означает «OCR отсутствует», не «OCR бесплатно». В OCR lane стоимость внешних engine/models неизвестна и `ocr_bytes=null`; добавленный native integration code уже учтён в app_bytes. Generated-image OCR probe использует Windows.Media.Ocr / macOS Vision / внешний Linux Tesseract. Полная упаковка OCR, updater/migration и полный UI отсутствуют. Windows OCR lane использует C++20 из-за современного C++/WinRT SDK; базовые lanes остаются C++17.
 
 У каждой ОС отдельные compiler/version данные; WSL/Xvfb не полноценная сессия GNOME/KDE и не proof Wayland support. macOS lane подготовлен в CI, но результат существует только после фактического запуска на Mac. FTS5/CRT/GTK измерения — компоненты решения T01; финальная архитектура и size ceiling остаются предварительными до полного closure и OCR lanes.
 

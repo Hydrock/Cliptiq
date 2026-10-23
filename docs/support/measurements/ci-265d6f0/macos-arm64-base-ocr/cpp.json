@@ -1,0 +1,119 @@
+{
+  "schema_version": 1,
+  "target": "macos",
+  "arch": "arm64",
+  "toolchain": {
+    "cmake": "cmake version 4.4.3",
+    "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)",
+    "sqlite": "3.53.4",
+    "host": "macOS-15.7.9-arm64-arm-64bit-Mach-O",
+    "cc": "Apple clang version 17.0.0 (clang-1700.0.13.5)"
+  },
+  "flags": {
+    "fts5": false,
+    "static_crt": null,
+    "gtk": null,
+    "cpp": "MinSizeRel",
+    "cpp_lto": false,
+    "ocr_probe": true,
+    "rust": "opt-level=z panic=abort lto=thin codegen-units=1"
+  },
+  "app_bytes": 841166,
+  "archive_bytes": 438657,
+  "dependency_delta_bytes": null,
+  "ocr_bytes": null,
+  "total_offline_bytes": null,
+  "idle_memory_bytes": 128024576,
+  "startup_ms": 48.8158,
+  "measurement_scope": "prototype; host OS libraries excluded, clean-machine closure unverified",
+  "archive_sha256": "9024bdff5ba4622dea0afea667e730ec45dd78230dbb1935802328d6b4491b26",
+  "files": [
+    {
+      "path": "NOTICE.txt",
+      "bytes": 422,
+      "sha256": "2d2825762056493c9cdba84e15e2cdaf42e51dc82bef0f7b489741ef9fc14ae3"
+    },
+    {
+      "path": "probe_cpp",
+      "bytes": 840744,
+      "sha256": "e9a4c5cedb4f7e38c7e6d4abf352b1b31e6580924fd2cd24ca073a7158ebfbfa"
+    }
+  ],
+  "runtime": {
+    "entries": 33,
+    "representations": 35,
+    "native_ui_ready": true,
+    "fts5": false,
+    "idle_memory_bytes": 128024576,
+    "startup_ms": 48.8158,
+    "startup_definition": "main-to-fixture-and-hidden-native-window; loader time excluded",
+    "clipboard_roundtrip": "not exercised; user clipboard preserved",
+    "ocr": "recognized",
+    "samples": [
+      {
+        "entries": 33,
+        "representations": 35,
+        "native_ui_ready": true,
+        "fts5": false,
+        "idle_memory_bytes": 128024576,
+        "startup_ms": 46.1274,
+        "startup_definition": "main-to-fixture-and-hidden-native-window; loader time excluded",
+        "clipboard_roundtrip": "not exercised; user clipboard preserved",
+        "ocr": "recognized"
+      },
+      {
+        "entries": 33,
+        "representations": 35,
+        "native_ui_ready": true,
+        "fts5": false,
+        "idle_memory_bytes": 138264576,
+        "startup_ms": 48.8916,
+        "startup_definition": "main-to-fixture-and-hidden-native-window; loader time excluded",
+        "clipboard_roundtrip": "not exercised; user clipboard preserved",
+        "ocr": "recognized"
+      },
+      {
+        "entries": 33,
+        "representations": 35,
+        "native_ui_ready": true,
+        "fts5": false,
+        "idle_memory_bytes": 126025728,
+        "startup_ms": 49.7572,
+        "startup_definition": "main-to-fixture-and-hidden-native-window; loader time excluded",
+        "clipboard_roundtrip": "not exercised; user clipboard preserved",
+        "ocr": "recognized"
+      },
+      {
+        "entries": 33,
+        "representations": 35,
+        "native_ui_ready": true,
+        "fts5": false,
+        "idle_memory_bytes": 139427840,
+        "startup_ms": 47.0355,
+        "startup_definition": "main-to-fixture-and-hidden-native-window; loader time excluded",
+        "clipboard_roundtrip": "not exercised; user clipboard preserved",
+        "ocr": "recognized"
+      },
+      {
+        "entries": 33,
+        "representations": 35,
+        "native_ui_ready": true,
+        "fts5": false,
+        "idle_memory_bytes": 123240448,
+        "startup_ms": 48.8158,
+        "startup_definition": "main-to-fixture-and-hidden-native-window; loader time excluded",
+        "clipboard_roundtrip": "not exercised; user clipboard preserved",
+        "ocr": "recognized"
+      }
+    ]
+  },
+  "language": "cpp",
+  "lane": "macos-arm64-base-ocr",
+  "feature_scope": "33 entries / 35 representations, SQLite, XML, shared native host; no updater/history monitor; generated-image OCR availability probe, model closure unknown",
+  "native_ui_ready": true,
+  "evidence_provenance": {
+    "source": "ci-265d6f0",
+    "ci_run": "https://github.com/Hydrock/Cliptiq/actions/runs/39931524164",
+    "source_commit": "265d6f097d0a6a552085cb2030f1329b4c8d411e"
+  }
+}

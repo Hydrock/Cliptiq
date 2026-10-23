@@ -1,0 +1,119 @@
+{
+  "schema_version": 1,
+  "target": "macos",
+  "arch": "arm64",
+  "toolchain": {
+    "cmake": "cmake version 4.4.3",
+    "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)",
+    "sqlite": "3.53.4",
+    "host": "macOS-15.7.9-arm64-arm-64bit-Mach-O",
+    "cc": "Apple clang version 17.0.0 (clang-1700.0.13.5)"
+  },
+  "flags": {
+    "fts5": false,
+    "static_crt": null,
+    "gtk": null,
+    "cpp": "MinSizeRel",
+    "cpp_lto": false,
+    "ocr_probe": false,
+    "rust": "opt-level=z panic=abort lto=thin codegen-units=1"
+  },
+  "app_bytes": 1222798,
+  "archive_bytes": 592100,
+  "dependency_delta_bytes": null,
+  "ocr_bytes": 0,
+  "total_offline_bytes": null,
+  "idle_memory_bytes": 20430848,
+  "startup_ms": 45.8001,
+  "measurement_scope": "prototype; host OS libraries excluded, clean-machine closure unverified",
+  "archive_sha256": "8eaa2b496e7ae7e4a28d6d10cc7dd29f746f06499c13528a62afe52c412baf4d",
+  "files": [
+    {
+      "path": "NOTICE.txt",
+      "bytes": 422,
+      "sha256": "2d2825762056493c9cdba84e15e2cdaf42e51dc82bef0f7b489741ef9fc14ae3"
+    },
+    {
+      "path": "probe_rust",
+      "bytes": 1222376,
+      "sha256": "07b12cc773f2ce2bdf28f8263ae2c96aa17602bbeaa8175caa2e495cb8ec172d"
+    }
+  ],
+  "runtime": {
+    "entries": 33,
+    "representations": 35,
+    "native_ui_ready": true,
+    "fts5": false,
+    "idle_memory_bytes": 20430848,
+    "startup_ms": 45.8001,
+    "startup_definition": "main-to-fixture-and-hidden-native-window; loader time excluded",
+    "clipboard_roundtrip": "not exercised; user clipboard preserved",
+    "ocr": "not implemented",
+    "samples": [
+      {
+        "entries": 33,
+        "representations": 35,
+        "native_ui_ready": true,
+        "fts5": false,
+        "idle_memory_bytes": 20414464,
+        "startup_ms": 51.7131,
+        "startup_definition": "main-to-fixture-and-hidden-native-window; loader time excluded",
+        "clipboard_roundtrip": "not exercised; user clipboard preserved",
+        "ocr": "not implemented"
+      },
+      {
+        "entries": 33,
+        "representations": 35,
+        "native_ui_ready": true,
+        "fts5": false,
+        "idle_memory_bytes": 20512768,
+        "startup_ms": 40.926,
+        "startup_definition": "main-to-fixture-and-hidden-native-window; loader time excluded",
+        "clipboard_roundtrip": "not exercised; user clipboard preserved",
+        "ocr": "not implemented"
+      },
+      {
+        "entries": 33,
+        "representations": 35,
+        "native_ui_ready": true,
+        "fts5": false,
+        "idle_memory_bytes": 20381696,
+        "startup_ms": 73.9426,
+        "startup_definition": "main-to-fixture-and-hidden-native-window; loader time excluded",
+        "clipboard_roundtrip": "not exercised; user clipboard preserved",
+        "ocr": "not implemented"
+      },
+      {
+        "entries": 33,
+        "representations": 35,
+        "native_ui_ready": true,
+        "fts5": false,
+        "idle_memory_bytes": 20430848,
+        "startup_ms": 36.8389,
+        "startup_definition": "main-to-fixture-and-hidden-native-window; loader time excluded",
+        "clipboard_roundtrip": "not exercised; user clipboard preserved",
+        "ocr": "not implemented"
+      },
+      {
+        "entries": 33,
+        "representations": 35,
+        "native_ui_ready": true,
+        "fts5": false,
+        "idle_memory_bytes": 20480000,
+        "startup_ms": 45.8001,
+        "startup_definition": "main-to-fixture-and-hidden-native-window; loader time excluded",
+        "clipboard_roundtrip": "not exercised; user clipboard preserved",
+        "ocr": "not implemented"
+      }
+    ]
+  },
+  "language": "rust",
+  "lane": "macos-arm64-base",
+  "feature_scope": "33 entries / 35 representations, SQLite, XML, shared native host; no updater/history monitor; no OCR",
+  "native_ui_ready": true,
+  "evidence_provenance": {
+    "source": "ci-265d6f0",
+    "ci_run": "https://github.com/Hydrock/Cliptiq/actions/runs/39931524164",
+    "source_commit": "265d6f097d0a6a552085cb2030f1329b4c8d411e"
+  }
+}

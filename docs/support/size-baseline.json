@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "status": "provisional-prototype-only",
+  "product_budget_approved": false,
+  "units": "bytes",
+  "limits": {
+    "app_bytes": 10485760,
+    "archive_bytes": 5242880
+  },
+  "budget_scope": "proposed Base product goals, not a completed product measurement",
+  "growth_review_fraction": 0.1,
+  "dependency_delta_bytes": null,
+  "total_offline_bytes": null,
+  "evidence": "docs/support/measurements/",
+  "notes": [
+    "Unknown clean-machine dependency/model costs are null, never zero.",
+    "Do not use prototype sizes as a final product baseline.",
+    "T01 remains open for clean desktop closure, update integration and Linux capabilities."
+  ]
+}

@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "target": "windows",
+  "arch": "x86_64",
+  "toolchain": {
+    "cmake": "cmake version 4.3.1-msvc1",
+    "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)",
+    "sqlite": "3.53.4",
+    "host": "Windows-11-10.0.26200-SP0",
+    "cc": "14.51.36231"
+  },
+  "flags": {
+    "fts5": false,
+    "static_crt": true,
+    "gtk": 3,
+    "cpp": "MinSizeRel",
+    "rust": "opt-level=z panic=abort lto=thin codegen-units=1"
+  },
+  "app_bytes": 1043878,
+  "archive_bytes": 584642,
+  "dependency_delta_bytes": null,
+  "ocr_bytes": 0,
+  "total_offline_bytes": null,
+  "idle_memory_bytes": 8548352,
+  "startup_ms": 3.1268,
+  "measurement_scope": "prototype; host OS libraries excluded, clean-machine closure unverified",
+  "archive_sha256": "a1babc637fd0d9c151bb85edf97ab42b0d61873ebffbe7c79a4178438f02861b",
+  "files": [
+    {
+      "path": "NOTICE.txt",
+      "bytes": 422,
+      "sha256": "2d2825762056493c9cdba84e15e2cdaf42e51dc82bef0f7b489741ef9fc14ae3"
+    },
+    {
+      "path": "probe_rust.exe",
+      "bytes": 1043456,
+      "sha256": "8f4a45e1b2f23ca62e233b7a956e8cab3bf8c867620d78886b91d2019a835e27"
+    }
+  ],
+  "runtime": {
+    "entries": 33,
+    "representations": 35,
+    "native_ui_ready": true,
+    "fts5": false,
+    "idle_memory_bytes": 8548352,
+    "startup_ms": 3.1268,
+    "startup_definition": "main-to-fixture-and-hidden-native-window; loader time excluded",
+    "clipboard_roundtrip": "not exercised; user clipboard preserved",
+    "ocr": "not implemented",
+    "samples": [
+      {
+        "entries": 33,
+        "representations": 35,
+        "native_ui_ready": true,
+        "fts5": false,
+        "idle_memory_bytes": 8544256,
+        "startup_ms": 2.7267,
+        "startup_definition": "main-to-fixture-and-hidden-native-window; loader time excluded",
+        "clipboard_roundtrip": "not exercised; user clipboard preserved",
+        "ocr": "not implemented"
+      },
+      {
+        "entries": 33,
+        "representations": 35,
+        "native_ui_ready": true,
+        "fts5": false,
+        "idle_memory_bytes": 8540160,
+        "startup_ms": 3.3187,
+        "startup_definition": "main-to-fixture-and-hidden-native-window; loader time excluded",
+        "clipboard_roundtrip": "not exercised; user clipboard preserved",
+        "ocr": "not implemented"
+      },
+      {
+        "entries": 33,
+        "representations": 35,
+        "native_ui_ready": true,
+        "fts5": false,
+        "idle_memory_bytes": 8548352,
+        "startup_ms": 3.1268,
+        "startup_definition": "main-to-fixture-and-hidden-native-window; loader time excluded",
+        "clipboard_roundtrip": "not exercised; user clipboard preserved",
+        "ocr": "not implemented"
+      },
+      {
+        "entries": 33,
+        "representations": 35,
+        "native_ui_ready": true,
+        "fts5": false,
+        "idle_memory_bytes": 8564736,
+        "startup_ms": 2.874,
+        "startup_definition": "main-to-fixture-and-hidden-native-window; loader time excluded",
+        "clipboard_roundtrip": "not exercised; user clipboard preserved",
+        "ocr": "not implemented"
+      },
+      {
+        "entries": 33,
+        "representations": 35,
+        "native_ui_ready": true,
+        "fts5": false,
+        "idle_memory_bytes": 8552448,
+        "startup_ms": 3.5076,
+        "startup_definition": "main-to-fixture-and-hidden-native-window; loader time excluded",
+        "clipboard_roundtrip": "not exercised; user clipboard preserved",
+        "ocr": "not implemented"
+      }
+    ]
+  },
+  "language": "rust",
+  "lane": "windows-x86_64-base-mt",
+  "feature_scope": "33 entries / 35 representations, SQLite, XML, shared native host; no OCR/updater/history monitor",
+  "native_ui_ready": true,
+  "evidence_provenance": {
+    "source": "local-windows-wsl",
+    "ci_run": null,
+    "source_commit": "local intermediate measurement; see t01-ledger.md"
+  }
+}

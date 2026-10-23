@@ -1,0 +1,119 @@
+{
+  "schema_version": 1,
+  "target": "windows",
+  "arch": "x86_64",
+  "toolchain": {
+    "cmake": "cmake version 4.3.1-msvc1",
+    "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+    "sqlite": "3.53.4",
+    "host": "Windows-2025Server-10.0.26100-SP0",
+    "cc": "14.51.36231"
+  },
+  "flags": {
+    "fts5": true,
+    "static_crt": true,
+    "gtk": null,
+    "cpp": "MinSizeRel",
+    "cpp_lto": false,
+    "ocr_probe": false,
+    "rust": "opt-level=z panic=abort lto=thin codegen-units=1"
+  },
+  "app_bytes": 1186726,
+  "archive_bytes": 676084,
+  "dependency_delta_bytes": null,
+  "ocr_bytes": 0,
+  "total_offline_bytes": null,
+  "idle_memory_bytes": 8491008,
+  "startup_ms": 3.8597,
+  "measurement_scope": "prototype; host OS libraries excluded, clean-machine closure unverified",
+  "archive_sha256": "7d4362e35f996e9d6e8b29ac2e5162e4cbe7683cf7a5b2187d20424d4396c672",
+  "files": [
+    {
+      "path": "NOTICE.txt",
+      "bytes": 422,
+      "sha256": "2d2825762056493c9cdba84e15e2cdaf42e51dc82bef0f7b489741ef9fc14ae3"
+    },
+    {
+      "path": "probe_rust.exe",
+      "bytes": 1186304,
+      "sha256": "465d8a831949c987925f09f06ceaaf799d1f15f6e18148c160faaf520763ad11"
+    }
+  ],
+  "runtime": {
+    "entries": 33,
+    "representations": 35,
+    "native_ui_ready": true,
+    "fts5": true,
+    "idle_memory_bytes": 8491008,
+    "startup_ms": 3.8597,
+    "startup_definition": "main-to-fixture-and-hidden-native-window; loader time excluded",
+    "clipboard_roundtrip": "not exercised; user clipboard preserved",
+    "ocr": "not implemented",
+    "samples": [
+      {
+        "entries": 33,
+        "representations": 35,
+        "native_ui_ready": true,
+        "fts5": true,
+        "idle_memory_bytes": 8482816,
+        "startup_ms": 3.8862,
+        "startup_definition": "main-to-fixture-and-hidden-native-window; loader time excluded",
+        "clipboard_roundtrip": "not exercised; user clipboard preserved",
+        "ocr": "not implemented"
+      },
+      {
+        "entries": 33,
+        "representations": 35,
+        "native_ui_ready": true,
+        "fts5": true,
+        "idle_memory_bytes": 8482816,
+        "startup_ms": 3.833,
+        "startup_definition": "main-to-fixture-and-hidden-native-window; loader time excluded",
+        "clipboard_roundtrip": "not exercised; user clipboard preserved",
+        "ocr": "not implemented"
+      },
+      {
+        "entries": 33,
+        "representations": 35,
+        "native_ui_ready": true,
+        "fts5": true,
+        "idle_memory_bytes": 8515584,
+        "startup_ms": 3.7536,
+        "startup_definition": "main-to-fixture-and-hidden-native-window; loader time excluded",
+        "clipboard_roundtrip": "not exercised; user clipboard preserved",
+        "ocr": "not implemented"
+      },
+      {
+        "entries": 33,
+        "representations": 35,
+        "native_ui_ready": true,
+        "fts5": true,
+        "idle_memory_bytes": 8495104,
+        "startup_ms": 3.9079,
+        "startup_definition": "main-to-fixture-and-hidden-native-window; loader time excluded",
+        "clipboard_roundtrip": "not exercised; user clipboard preserved",
+        "ocr": "not implemented"
+      },
+      {
+        "entries": 33,
+        "representations": 35,
+        "native_ui_ready": true,
+        "fts5": true,
+        "idle_memory_bytes": 8491008,
+        "startup_ms": 3.8597,
+        "startup_definition": "main-to-fixture-and-hidden-native-window; loader time excluded",
+        "clipboard_roundtrip": "not exercised; user clipboard preserved",
+        "ocr": "not implemented"
+      }
+    ]
+  },
+  "language": "rust",
+  "lane": "windows-x86_64-fts5-mt",
+  "feature_scope": "33 entries / 35 representations, SQLite, XML, shared native host; no updater/history monitor; no OCR",
+  "native_ui_ready": true,
+  "evidence_provenance": {
+    "source": "ci-265d6f0",
+    "ci_run": "https://github.com/Hydrock/Cliptiq/actions/runs/39931524164",
+    "source_commit": "265d6f097d0a6a552085cb2030f1329b4c8d411e"
+  }
+}
