@@ -88,3 +88,7 @@ Release flags: MSVC `/O1 /GL /LTCG /OPT:REF /OPT:ICF`, Clang/GCC `-Os`/изме�
 ## Оставленные исполнителю решения
 
 Точные compiler/dependency pins и supported desktop versions выбираются и фиксируются T01 по актуальной доступности; структура внутренних private helper functions, стиль native controls и SQL query plans — исполнителю. Стек, size goals, OCR distribution и отказ от Firebase остаются предложениями для ревью. Публикация, подпись чужими сертификатами, регистрация домена, release в GitHub не выполняются этим документом.
+
+## Принято после T01
+
+Пользователь 23 октября 2026 подтвердил C++ с нативными оболочками и разрешил T02 по плану. Предварительные size ceilings сохраняются целями полного продукта; измеренный prototype/core probe не доказывает их достижение.

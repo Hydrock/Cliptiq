@@ -10,13 +10,13 @@
 
 **Spec:** [дизайн](../specs/2026-10-23-cliptiq-design.md). **Coverage:** [аудит с ID функций](../../research/2026-10-23-clipy-audit.md). **Naming:** [проверка имён](../../research/2026-10-23-naming.md).
 
-Статус: полный план охвата исследуемой ревизии; пользователь разрешил T01, [прототипы и первые измерения выполнены](../../support/architecture-decision.md). T01 закрыт в согласованных границах ([итог](../../support/t01-results.md)); T02–T17 не начаты. Product code и release binaries не созданы.
+Статус: полный план охвата исследуемой ревизии; пользователь разрешил T01, [прототипы и первые измерения выполнены](../../support/architecture-decision.md). T01 закрыт в согласованных границах ([итог](../../support/t01-results.md)); T02 завершён ([результаты](../../support/t02-results.md)); T03–T17 не начаты. Release binaries не созданы.
 
 ## Global Constraints
 
 - Один `Hydrock/Cliptiq`, upstream baseline `71b0e82623d5c73b4b717d81233eb78db8bbe258`; ветки `codex/...`.
 - Предложены macOS 13+ arm64/x86_64; Windows 10 22H2+/11 x64, arm64 после native smoke; Linux glibc 2.35+ x86_64 GTK3 3.24+, aarch64 после native smoke. Windows API floor не означает поддержку самой ОС поставщиком.
-- C++17 + native UI — исходная гипотеза T01, не одобренный окончательный выбор пользователя. Репозиторий создан, публичное имя окончательно не проверено.
+- C++17 + native UI приняты пользователем после T01. Репозиторий создан, публичное имя окончательно не проверено.
 - Base download ≤5 MiB / installed app-owned ≤10 MiB на architecture — предварительные цели, уточнить после T01. Отдельно dependency delta, OCR/models, migration, installer и total offline closure; CI growth gate +10% к принятому baseline.
 - Base не содержит bundled browser, Electron, Flutter runtime, .NET self-contained, Realm/Firebase; исключение Firebase и OCR lane — явные scope предложения, не молчаливое удаление функций.
 - Defaults/диапазоны Clipy из аудита сохраняются кроме явно описанных надёжностных исправлений и подтверждённых адаптаций. HTML off; history 30 / 1–1000; auto-paste on с manual fallback; OCR max 10 000 chars.
@@ -87,7 +87,7 @@ Capture contract: сохранять все разрешённые representatio
 - [x] Exact flags/toolchains/hashes, raw evidence и ADR опубликованы. Фактические команды воспроизведения находятся в experiments/*/README.md; исходные примерные presets/cargo команды заменены экспериментальным tools/build-footprint.py с одинаковым UI host.
 - [x] T01 закрыт в согласованных границах: [итог](../../support/t01-results.md). Native C++ рекомендован, окончательный выбор стека и budgets до T02 остаётся открытым решением пользователя.
 
-Не заявлены выполненными: полноценный tray/settings product UI на всех ОС, Windows packaged-vs-portable OCR support matrix, OCR quality/redistributable pack, clean stock OS VM, production signed update end-to-end и GNOME/KDE desktop compatibility. Эти product/release проверки сохраняются для соответствующих T04–T17; нулевой размер или PASS для них не подставляется. T02 не начат.
+Не заявлены выполненными: полноценный tray/settings product UI на всех ОС, Windows packaged-vs-portable OCR support matrix, OCR quality/redistributable pack, clean stock OS VM, production signed update end-to-end и GNOME/KDE desktop compatibility. Эти product/release проверки сохраняются для соответствующих T04–T17; нулевой размер или PASS для них не подставляется. T02 завершён по последующему разрешению пользователя.
 
 ### T02. Модель данных, SQLite, история и очистка
 
@@ -95,11 +95,11 @@ Capture contract: сохранять все разрешённые representatio
 
 **Interfaces:** `open_store(path, Limits)->Result<Store>`; `ingest(Store&, ClipboardSnapshot, HistoryPolicy, int64_t now_ms)->Result<optional<EntryId>>`; `list_history(Store&, SortOrder, size_t limit)->Result<vector<HistoryEntry>>`; `load_snapshot(Store&, EntryId)->Result<ClipboardSnapshot>`; `erase_history(Store&, optional<EntryId>)->Result<void>`; `tick_cleanup(Store&, CleanupPolicy, int64_t now_ms)->Result<void>`; `HistoryPolicy` содержит max_count, allow_duplicates, replace_duplicate; `Limits` — spec values.
 
-- [ ] Failing tests `preserves_all_representations`, `duplicate_mode_switch_keeps_digest`, `blank_text_ignored`, `last_used_preserves_created`, `limit_three`, `periodic_clear_is_not_ttl`, `clear_preserves_snippets`, `oversize_is_atomic`. Assertions: 4 copies/limit3 → 3 visible; allow=false после UUID mode не создаёт дубликат; whole-history clear каждые 300 sec удаляет и свежие записи.
-- [ ] `cmake --preset test && cmake --build --preset test && ctest --preset test -R history --output-on-failure` — сначала failing assertion/not-implemented, затем PASS после реализации. В PowerShell выполнять команды последовательно, без зависимости от `&&` старых версий shell.
-- [ ] Реализовать schema/transactions/FK, canonical digest bytes, counters, quotas и injected clock; native assets не преобразовывать в один текст. SQL user data только bindings. Cleanup VACUUM/checkpoint по необходимости вне UI; не обещать secure erase.
-- [ ] Проверить reopen, interrupted transaction, full disk/read-only/corrupt DB: понятная ошибка, исходная БД не стирается автоматически. ASan/UBSan на supported Clang targets.
-- [ ] Commit `feat: add bounded persistent clipboard history`.
+- [x] Failing tests `preserves_all_representations`, `duplicate_mode_switch_keeps_digest`, `blank_text_ignored`, `last_used_preserves_created`, `limit_three`, `periodic_clear_is_not_ttl`, `clear_preserves_snippets`, `oversize_is_atomic`. Assertions: 4 copies/limit3 → 3 visible; allow=false после UUID mode не создаёт дубликат; whole-history clear каждые 300 sec удаляет и свежие записи.
+- [x] `cmake --preset test && cmake --build --preset test && ctest --preset test -R history --output-on-failure` — сначала failing assertion/not-implemented, затем PASS после реализации. В PowerShell выполнять команды последовательно, без зависимости от `&&` старых версий shell.
+- [x] Реализовать schema/transactions/FK, canonical digest bytes, counters, quotas и injected clock; native assets не преобразовывать в один текст. SQL user data только bindings. Cleanup VACUUM/checkpoint по необходимости вне UI; не обещать secure erase.
+- [x] Проверить reopen, interrupted transaction, full disk/read-only/corrupt DB: понятная ошибка, исходная БД не стирается автоматически. ASan/UBSan на supported Clang targets.
+- [x] Commit `feat: add bounded persistent clipboard history`.
 
 ### T03. Privacy policy и capability contract
 
@@ -284,8 +284,8 @@ Capture contract: сохранять все разрешённые representatio
 ## Решения, которые нужно подтвердить до реализации
 
 1. **Решено пользователем:** сохраняем Cliptiq после сообщения о найденном Cliptic. Повторно подтверждать имя не требуется.
-2. Принимаем ли предложенный native C++ подход после сравнительного T01? Если Rust измеренно лучше по сочетанию размера/поддержки — ADR меняется, не начинается незапланированная вторая реализация.
+2. **Решено пользователем:** принимаем C++ с нативными оболочками; T02 разрешён.
 3. Разрешены ли явные адаптации: Firebase → local diagnostics, OCR/index отдельным pack/build, Wayland limited mode без compositor integration? Если цель — буквальная полнота на каждом backend, packs/integrations входят в full distribution и её размер.
 4. После T01 фиксируем численный size ceiling по archive/app-owned/clean-machine total отдельно. «Маленькая сборка» без этих трёх чисел не является критерием приёмки.
 
-Для каждого варианта указаны работа, dependency и критерий проверки. Пользователь разрешил T01: установка инструментов, prototypes, CI и загрузка документов выполнены в его рамках. T02 product scaffold не начат. Документы и эксперименты опубликованы в origin/codex/portability-plan.
+Для каждого варианта указаны работа, dependency и критерий проверки. Пользователь разрешил T01: установка инструментов, prototypes, CI и загрузка документов выполнены в его рамках. T02 persistent core завершён; T03+ не начаты. Документы и эксперименты опубликованы в origin/codex/portability-plan.

@@ -1,0 +1,63 @@
+Start testing: Oct 23 10:43 UTC
+----------------------------------------------------------
+1/2 Testing: history
+1/2 Test: history
+Command: "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-release/history_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-release
+"history" start time: Oct 23 10:43 UTC
+Output:
+----------------------------------------------------------
+PASS preserves_all_representations
+PASS duplicate_mode_switch_keeps_digest
+PASS duplicate_flags
+PASS blank_text_ignored
+PASS last_used_preserves_created
+PASS limit_three
+PASS periodic_clear_is_not_ttl
+PASS clear_preserves_snippets
+PASS oversize_is_atomic
+PASS quota_prunes_by_current_sort
+PASS reopen_and_periodic_state
+PASS transaction_failure_rolls_back
+PASS read_only_and_full_are_errors
+PASS corrupt_db_not_replaced
+PASS digest_has_unambiguous_boundaries
+PASS invalid_policy_and_empty_snapshot
+PASS revision_clear_compact
+PASS sha256_standard_vectors
+PASS collision_is_not_equality
+PASS source_changes_do_not_create_new_content
+PASS rtf_blank_and_primary_order
+PASS metadata_and_representation_limits
+PASS cleanup_disable_change_and_clock_rewind
+PASS foreign_and_future_db_preserved
+PASS load_rechecks_persisted_limits
+PASS duplicate_candidate_limits_checked
+PASS returned_id_survives_pruning
+PASS native_utf16_blank_text_ignored
+PASS utf16_roundtrip_and_big_endian_blank
+<end of output>
+Test time =   0.07 sec
+----------------------------------------------------------
+Test Passed.
+"history" end time: Oct 23 10:43 UTC
+"history" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/2 Testing: history_crash
+2/2 Test: history_crash
+Command: "/usr/bin/python3.12" "/home/runner/work/Cliptiq/Cliptiq/tests/integration/history_crash.py" "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-release/history_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-release
+"history_crash" start time: Oct 23 10:43 UTC
+Output:
+----------------------------------------------------------
+PASS process interruption rollback and reopen
+<end of output>
+Test time =   0.08 sec
+----------------------------------------------------------
+Test Passed.
+"history_crash" end time: Oct 23 10:43 UTC
+"history_crash" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Oct 23 10:43 UTC

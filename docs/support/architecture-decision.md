@@ -45,3 +45,7 @@ macOS Vision и Linux Tesseract также распознали generated fixtur
 ## Закрытие T01
 
 См. [итоговый отчёт](t01-results.md): успешная полная CI матрица, isolated-profile installation, clean Linux dependency delta, Sparkle обоих CPU, Windows/Linux update payload и Linux protocol probes. T01 закрыт в согласованных границах. Чистые Windows/macOS ВМ недоступны; ограничение согласовано пользователем и сохранено в evidence. Production signing/update end-to-end и реальные desktop проверки не объявлены выполненными и остаются release gates последующих задач. T02 не начат.
+
+## Решение пользователя после T01
+
+23 октября 2026: C++ с нативными оболочками принят, T02 разрешён. Сравнительные результаты T01 остаются исходными измерениями; это решение не утверждает размер полного продукта или все release budgets.

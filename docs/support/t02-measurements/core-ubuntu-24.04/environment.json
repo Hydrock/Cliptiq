@@ -1,0 +1,8 @@
+{
+  "ci_run": "https://github.com/Hydrock/Cliptiq/actions/runs/39941083332",
+  "job_id": "120372386393",
+  "compiler_identifications": [
+    "GNU 13.3.0"
+  ],
+  "ci_log_sha256": "31095e25e313cc1e5da5ad57cb23374b565ce9ba2e11081d3aeaeda6b8c73cbf"
+}
