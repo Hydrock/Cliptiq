@@ -1,13 +1,15 @@
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
+// clang-format off
+#include <windows.h>
+#include <commctrl.h>
+#include <shellapi.h>
+// clang-format on
 #include "cliptiq/native_menu.hpp"
 #include <algorithm>
-#include <commctrl.h>
 #include <map>
-#include <shellapi.h>
 #include <stdexcept>
 #include <thread>
-#include <windows.h>
 namespace cliptiq {
 namespace {
 std::wstring wide(const std::string &s) {
