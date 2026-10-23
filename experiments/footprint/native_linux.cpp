@@ -49,7 +49,16 @@ bool native_setup(bool visible) {
     return true;
 }
 void native_loop(){ loop=g_main_loop_new(nullptr,FALSE); g_main_loop_run(loop); g_main_loop_unref(loop); loop=nullptr; }
-void native_schedule_close(){ g_timeout_add(25,[](gpointer)->gboolean { if(window) gtk_window_close(GTK_WINDOW(window)); return G_SOURCE_REMOVE; },nullptr); }
+void native_schedule_close(){
+    // gtk_window_close() ignores unrealized hidden windows; exercise the real
+    // user-close path in Xvfb rather than timing out on a nonexistent surface.
+#if GTK_MAJOR_VERSION >= 4
+    gtk_window_present(GTK_WINDOW(window));
+#else
+    gtk_widget_show_all(window);
+#endif
+    g_timeout_add(25,[](gpointer)->gboolean { if(window) gtk_window_close(GTK_WINDOW(window)); return G_SOURCE_REMOVE; },nullptr);
+}
 void native_cleanup(){ if(window) {
 #if GTK_MAJOR_VERSION >= 4
     gtk_window_destroy(GTK_WINDOW(window));
