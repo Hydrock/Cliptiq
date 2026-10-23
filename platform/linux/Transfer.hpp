@@ -42,6 +42,7 @@ public:
   std::optional<Result<Bytes>> step(std::uint64_t current);
   int fd() const { return fd_; }
 };
+std::shared_ptr<const Bytes> owned_send_bytes(const Bytes &);
 class FdSendQueue {
   struct Send;
   std::vector<std::unique_ptr<Send>> sends_;

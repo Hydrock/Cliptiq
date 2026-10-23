@@ -49,6 +49,7 @@ struct ClipboardX11::State {
     xcb_window_t requestor, owner;
     std::uint64_t epoch, monitor;
     bool sync;
+    bool awaiting_notify = false;
     Clock::time_point deadline;
     ClipboardSnapshot snapshot;
     std::vector<xcb_atom_t> targets, selected;
@@ -244,6 +245,7 @@ struct ClipboardX11::State {
     capture->snapshot.sequence_token = "x11:" + std::to_string(owner) + ":" +
                                        std::to_string(stamp) + ":" +
                                        std::to_string(epoch);
+    capture->awaiting_notify = true;
     xcb_convert_selection(connection, requestor, atom("CLIPBOARD"),
                           atom("TARGETS"), atom("CLIPTIQ_TRANSFER"), stamp);
     xcb_flush(connection);
@@ -281,6 +283,8 @@ struct ClipboardX11::State {
     c.incr = false;
     c.minimum = 0;
     xcb_delete_property(connection, c.requestor, atom("CLIPTIQ_TRANSFER"));
+    c.phase = Phase::Data;
+    c.awaiting_notify = true;
     xcb_convert_selection(connection, c.requestor, atom("CLIPBOARD"),
                           c.selected[c.index], atom("CLIPTIQ_TRANSFER"), stamp);
     xcb_flush(connection);
@@ -550,7 +554,7 @@ struct ClipboardX11::State {
         XCB_EVENT_MASK_PROPERTY_CHANGE | XCB_EVENT_MASK_STRUCTURE_NOTIFY;
     xcb_change_window_attributes(connection, r.requestor, XCB_CW_EVENT_MASK,
                                  &mask);
-    auto data = std::shared_ptr<const Bytes>(replay, &found->data);
+    auto data = owned_send_bytes(found->data);
     sends.push_back(
         {data, 0, r.requestor, property, r.target,
          Clock::now() + std::chrono::milliseconds(options.timeout_ms)});
@@ -574,12 +578,18 @@ struct ClipboardX11::State {
     if (type == XCB_SELECTION_NOTIFY) {
       auto e = reinterpret_cast<xcb_selection_notify_event_t *>(generic);
       if (capture && e->requestor == capture->requestor &&
-          e->selection == atom("CLIPBOARD")) {
+          e->selection == atom("CLIPBOARD") && capture->awaiting_notify &&
+          !capture->pending &&
+          (capture->phase == Phase::Targets ||
+           (capture->phase == Phase::Data &&
+            capture->index < capture->selected.size()))) {
         auto expected = capture->phase == Phase::Targets
                             ? atom("TARGETS")
                             : capture->selected[capture->index];
-        if (e->target != expected)
+        if (e->target != expected ||
+            (e->property && e->property != atom("CLIPTIQ_TRANSFER")))
           return;
+        capture->awaiting_notify = false;
         if (!e->property) {
           complete(Error{ErrorCode::Unsupported,
                          "X11 owner refused a declared selection format"});

@@ -82,7 +82,7 @@ const Representation *find(const ClipboardSnapshot &s, const char *name) {
   return nullptr;
 }
 int main(int argc, char **argv) {
-  if (argc != 2 || !getenv("CLIPTIQ_TEST_ISOLATED") ||
+  if ((argc != 2 && argc != 3) || !getenv("CLIPTIQ_TEST_ISOLATED") ||
       std::string(getenv("CLIPTIQ_TEST_ISOLATED")) != argv[1]) {
     std::cerr << "Isolated display launcher required\n";
     return 2;
@@ -96,6 +96,50 @@ int main(int argc, char **argv) {
       return std::make_unique<ClipboardX11>(options);
     return std::make_unique<ClipboardWayland>(options);
   };
+  if (argc == 3) {
+    ClipboardOptions o;
+    o.policy.ignore_concealed = true;
+    auto b = factory(o);
+    if (std::string(argv[2]) == "--external-sensitive") {
+      auto path = std::filesystem::temp_directory_path() /
+                  "cliptiq-t06-wl-copy-secret.sqlite";
+      std::filesystem::remove(path);
+      LinuxCaptureSession session(std::move(b), path.string());
+      bool rejected = false;
+      ok(session.start(o.policy, {}, [&](Result<CaptureEvent> r) {
+        rejected = bool(r) &&
+                   r.value().disposition == CaptureDisposition::Reject &&
+                   r.value().reason == CaptureReason::Concealed;
+      }));
+      auto end = std::chrono::steady_clock::now() + std::chrono::seconds(3);
+      while (!rejected && std::chrono::steady_clock::now() < end)
+        ok(session.dispatch(5));
+      session.stop();
+      CHECK(rejected && !std::filesystem::exists(path));
+      std::cout << "PASS external_wl_copy_sensitive_no_database\n";
+      return 0;
+    }
+    auto end = std::chrono::steady_clock::now() + std::chrono::seconds(3);
+    std::optional<ClipboardSnapshot> read;
+    while (!read && std::chrono::steady_clock::now() < end) {
+      auto r = b->read_snapshot();
+      if (r && !r.value().representations.empty())
+        read = std::move(r.value());
+      else
+        ok(b->dispatch(5));
+    }
+    CHECK(read && find(*read, text) &&
+          find(*read, text)->data == Bytes({'e', 'x', 't', 0xc3, 0xa9}));
+    ClipboardSnapshot reply;
+    reply.representations = {{0, platform, text, CanonicalKind::Text,
+                              Bytes{'r', 'e', 'p', 'l', 'y'}}};
+    take(b->write_snapshot(reply));
+    std::cout << "READY\n" << std::flush;
+    end = std::chrono::steady_clock::now() + std::chrono::seconds(2);
+    while (std::chrono::steady_clock::now() < end)
+      ok(b->dispatch(5));
+    return 0;
+  }
   auto snapshot = [&](Bytes bytes) {
     ClipboardSnapshot s;
     s.representations = {
@@ -298,6 +342,47 @@ int main(int argc, char **argv) {
       ok(session.dispatch(5));
     session.stop();
     CHECK(old == 0 && fresh == 1);
+  });
+  test("native_supported_format_matrix", [&] {
+    Source source(factory);
+    ClipboardOptions o;
+    o.policy.enabled_kinds[3] = true;
+    auto b = factory(o);
+    auto s = snapshot(Bytes{'t'});
+    auto add = [&](const char *n, CanonicalKind k, Bytes d,
+                   TextEncoding e = TextEncoding::Utf8) {
+      s.representations.push_back({0, platform, n, k, std::move(d), e});
+    };
+    add("application/rtfd", CanonicalKind::Rtfd, Bytes{'r', 0, 1});
+    add("application/pdf", CanonicalKind::Pdf, Bytes{'p', 0, 2});
+    add("text/html", CanonicalKind::Html, Bytes{'<', 'b', '>'});
+    add("text/uri-list", CanonicalKind::Files,
+        Bytes{'f', 'i', 'l', 'e', ':', '/', '/', '/', 'a', '\n'});
+    add("x-special/gnome-copied-files", CanonicalKind::Files,
+        Bytes{'c', 'o', 'p', 'y', '\n', 'f', 'i', 'l', 'e', ':', '/', '/', '/',
+              'a', '\n'});
+    add("text/x-moz-url", CanonicalKind::Url,
+        Bytes{'h', 0, 't', 0, 't', 0, 'p', 0, ':', 0, '/', 0, '/', 0, 'a', 0},
+        TextEncoding::Utf16Le);
+    add("image/png", CanonicalKind::Image, Bytes{1, 0, 2});
+    take(source.put(s));
+    auto read = take(b->read_snapshot());
+    CHECK(read.representations.size() == s.representations.size());
+    for (const auto &r : s.representations) {
+      auto got = find(read, r.native_type.c_str());
+      CHECK(got && got->data == r.data && got->kind == r.kind);
+    }
+  });
+  test("native_tiff_without_png_is_preserved", [&] {
+    Source source(factory);
+    auto b = factory({});
+    ClipboardSnapshot s;
+    s.representations = {
+        {0, platform, "image/tiff", CanonicalKind::Image, Bytes{2, 0, 3}}};
+    take(source.put(s));
+    auto read = take(b->read_snapshot());
+    CHECK(find(read, "image/tiff") &&
+          find(read, "image/tiff")->data == Bytes({2, 0, 3}));
   });
   test("invalid_native_limits_are_unavailable", [&] {
     ClipboardOptions options;

@@ -129,7 +129,8 @@ native_flags(const std::vector<ClipboardSnapshot::OfferedType> &offers) {
   for (const auto &t : offers) {
     if (t.native_type == "org.nspasteboard.TransientType")
       f.transient = Flag::Yes;
-    if (t.native_type == "org.nspasteboard.ConcealedType")
+    if ((t.native_type == "org.nspasteboard.ConcealedType" ||
+         t.native_type == "x-kde-passwordManagerHint"))
       f.concealed = Flag::Yes;
   }
   return f;
@@ -336,8 +337,11 @@ std::optional<Result<Bytes>> FdReceiver::step(std::uint64_t current) {
   }
   return {};
 }
+std::shared_ptr<const Bytes> owned_send_bytes(const Bytes &bytes) {
+  return std::make_shared<const Bytes>(bytes.begin(), bytes.end());
+}
 struct FdSendQueue::Send {
-  int fd;
+  int fd = -1;
   std::shared_ptr<const Bytes> bytes;
   std::size_t sent = 0;
   Clock::time_point deadline;
@@ -367,12 +371,24 @@ Result<void> FdSendQueue::add(int fd, std::shared_ptr<const Bytes> bytes,
   auto flags = fcntl(fd, F_GETFL);
   if (flags < 0 || fcntl(fd, F_SETFL, flags | O_NONBLOCK) < 0)
     return deny(ErrorCode::Io, "Cannot configure outgoing clipboard FD");
-  auto send = std::make_unique<Send>();
-  send->fd = fd;
-  send->bytes = std::move(bytes);
-  send->deadline = deadline;
-  sends_.push_back(std::move(send));
-  return {};
+  struct Guard {
+    int fd;
+    ~Guard() {
+      if (fd >= 0)
+        close(fd);
+    }
+  } guard{fd};
+  try {
+    auto send = std::make_unique<Send>();
+    send->bytes = owned_send_bytes(*bytes);
+    send->deadline = deadline;
+    send->fd = guard.fd;
+    guard.fd = -1;
+    sends_.push_back(std::move(send));
+    return {};
+  } catch (const std::bad_alloc &) {
+    return Error{ErrorCode::TooLarge, "Outgoing clipboard allocation failed"};
+  }
 }
 void FdSendQueue::step() {
   for (auto it = sends_.begin(); it != sends_.end();) {

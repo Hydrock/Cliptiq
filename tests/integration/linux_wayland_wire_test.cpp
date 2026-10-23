@@ -157,5 +157,41 @@ int main() {
     session.stop();
     CHECK(failed && !std::filesystem::exists(path));
   });
+  test("kde_sensitive_hint_blocks_payload_and_database", [] {
+    WaylandPeer peer(
+        WaylandPeer::Mode::Normal,
+        {{"text/plain;charset=utf-8", {'s'}},
+         {"x-kde-passwordManagerHint", {'s', 'e', 'c', 'r', 'e', 't'}}});
+    ClipboardOptions o;
+    o.display_name = peer.socket;
+    CapturePolicy policy;
+    policy.ignore_concealed = true;
+    o.policy = policy;
+    auto path = std::filesystem::temp_directory_path() /
+                "cliptiq-t06-wayland-secret.sqlite";
+    std::filesystem::remove(path);
+    LinuxCaptureSession session(std::make_unique<ClipboardWayland>(o),
+                                path.string());
+    bool rejected = false;
+    CHECK(session.start(policy, {}, [&](Result<CaptureEvent> r) {
+      rejected = bool(r) && r.value().disposition == CaptureDisposition::Reject;
+    }));
+    auto end = Clock::now() + std::chrono::seconds(2);
+    while (!rejected && Clock::now() < end)
+      CHECK(session.dispatch(5));
+    session.stop();
+    CHECK(rejected && peer.receives == 0 && !std::filesystem::exists(path));
+  });
+  test("actual_32_mib_plus_one_fd_rejected", [] {
+    WaylandPeer peer(
+        WaylandPeer::Mode::Normal,
+        {{"application/pdf", Bytes(32ull * 1024 * 1024 + 1, 'p')}});
+    ClipboardOptions o;
+    o.display_name = peer.socket;
+    o.timeout_ms = 10000;
+    ClipboardWayland b(o);
+    auto r = b.read_snapshot();
+    CHECK(!r && r.error().code == ErrorCode::TooLarge);
+  });
   return failures ? 1 : 0;
 }

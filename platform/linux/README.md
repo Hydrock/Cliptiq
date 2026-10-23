@@ -1,15 +1,29 @@
 # Linux clipboard backend (T06)
 
+
+
 C++17, system XCB/XFixes and libwayland-client; no GTK, Qt, browser or codec runtime. Build dependencies: `bash tools/install-linux-backend-deps.sh`; generated protocol code comes from hash-checked pinned XML. libwayland-server, Xvfb and Sway are test dependencies only.
 
-`ClipboardX11` and `ClipboardWayland` must be created and dispatched on their owner event thread. Call `dispatch` regularly (or poll `connection_fd`, then dispatch); timeout is capped at 10 ms per dispatch. `read_snapshot`/`write_snapshot` are bounded synchronous operations for explicit actions. `LinuxCaptureSession` monitors asynchronously and sends accepted snapshots to a bounded serial SQLite worker. Defaults: 2 pending captures / 128 MiB retained snapshot capacity, 64 lean completions; overflow reports Busy. Stop invalidates callbacks, clears queued work and joins in-flight SQLite; an already executing transaction may finish. Destroy/stop on owner thread. Policy changes require session stop/start.
+
+
+`ClipboardX11` and `ClipboardWayland` must be created and dispatched on their owner event thread. Call `dispatch` regularly (or poll `connection_fd`, then dispatch); timeout is capped at 10 ms per dispatch. `read_snapshot`/`write_snapshot` are bounded synchronous operations for explicit actions. `LinuxCaptureSession` monitors asynchronously and sends accepted snapshots to a bounded serial SQLite worker. Defaults: 2 pending captures / 128 MiB retained snapshot capacity, admission pauses at 64 lean completions (up to 16 already pending jobs may still finish); overflow reports Busy. Stop invalidates callbacks, clears queued work and joins in-flight SQLite; an already executing transaction may finish. Destroy/stop on owner thread. Policy changes require session stop/start.
+
+
 
 X11: CLIPBOARD only, XFixes notifications, TARGETS then metadata gate, bounded normal/INCR transfers, final owner/generation guard. Same-owner/same-timestamp reassertions are new copies. Unique requestor windows prevent old chunks entering new captures. WM_CLASS is a best-effort untrusted source hint (`x11.wm_class:<ascii-lowercase-class>`), not authenticated identity. Missing identity stays Unknown. No PRIMARY, clipboard-manager SAVE_TARGETS or persistence after process exit.
 
+
+
 Wayland: prefer ext-data-control-v1, otherwise wlr-data-control-v1/v2. Discover actual globals; no data-control, finished device, ambiguous seats or lost selected global => Unavailable with reason. Explicit seat_name selects one seat. `open_backend` selects native Wayland when advertised by session environment and never silently falls back to XWayland. Source identity is Unknown; exclusions fail closed under default T03 policy. No focused-only GTK history, portal session, compositor plugin or permission bypass. Own replay uses an instance-random MIME nonce and consumes its pending marker once.
 
-Both paths gate full offered types before requesting payload and call T03 dispatch_capture again before Store. No database/thumbnail/OCR for rejection or failed/partial transfers. HTML is off by default. Cooperative transient/concealed markers are honored; their absence does not prove content public. Limits: <=32 MiB per representation, <=64 MiB per entry, <=4096 representations/offered types; deadline 1–10000 ms (default 2000). Wayland pipes are nonblocking; cancellation, generation change, byte limit and timeout discard received partial data. X11 INCR declared lower bound is checked. Wayland EOF has no declared content length: a provider that ends its stream early without cancellation cannot be distinguished from a complete opaque payload. No claim of total process RSS bound. Outgoing queues are bounded to 8 transfers / 128 MiB retained bytes with deadlines; SIGPIPE handling is thread-scoped.
+
+
+Both paths gate full offered types before requesting payload and call T03 dispatch_capture again before Store. No database/thumbnail/OCR for rejection or failed/partial transfers. HTML is off by default. Cooperative transient/concealed markers are honored; x-kde-passwordManagerHint presence is conservatively Concealed=Yes before any payload request (also for a non-secret value); ignore_concealed remains false by default per T03; their absence does not prove content public. Limits: <=32 MiB per representation, <=64 MiB per entry, <=4096 representations/offered types; deadline 1â€“10000 ms (default 2000). Wayland pipes are nonblocking; cancellation, generation change, byte limit and timeout discard received partial data. X11 INCR declared lower bound is checked. Wayland EOF has no declared content length: a provider that ends its stream early without cancellation cannot be distinguished from a complete opaque payload. No claim of total process RSS bound. Outgoing queues are bounded to 8 transfers / 128 MiB retained bytes with deadlines; sends own only the requested representation, not its enclosing multi-format snapshot; SIGPIPE handling is thread-scoped.
+
+
 
 Native types: UTF-8/plain text; X11 STRING converts Latin-1 to UTF8_STRING; RTF, RTFD, PDF raw bytes; HTML; PNG/TIFF raw bytes; text/x-moz-url UTF-16LE; text/uri-list and x-special/gnome-copied-files classified conservatively as Files. Generic URI lists are not inferred as Url; GNOME cut replays as copy. No image decode/normalization until T12. Only item 0 is supported by these single-selection protocols. Unknown types are retained as metadata for filtering, never requested or replayed as payload.
+
+
 
 Automated tests use private Xvfb, private headless Sway and an independent libwayland-server wire peer. The latter exercises ext protocol and faults; it is not a GNOME/KDE compositor. `tools/run-linux-isolated.py` clears ambient clipboard endpoints. Tests/size probes must use this launcher. Manual desktop matrix: [linux-desktops.md](../../tests/manual/linux-desktops.md). Backend capability is not full product support: snippets, launcher, popup and tray are T07+ and remain unimplemented.

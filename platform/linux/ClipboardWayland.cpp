@@ -380,7 +380,13 @@ struct ClipboardWayland::State {
         close(fd);
         return;
       }
-      auto bytes = std::shared_ptr<const Bytes>(source->snapshot, &found->data);
+      std::shared_ptr<const Bytes> bytes;
+      try {
+        bytes = std::shared_ptr<const Bytes>(source->snapshot, &found->data);
+      } catch (...) {
+        close(fd);
+        throw;
+      }
       s->sends.add(fd, std::move(bytes),
                    Clock::now() +
                        std::chrono::milliseconds(s->options.timeout_ms));

@@ -111,7 +111,7 @@ if(BUILD_TESTING)
     add_dependencies(linux_wayland_wire_test cliptiq_linux_protocols)
     add_executable(linux_x11_wire_test tests/integration/linux_x11_wire_test.cpp)
     target_link_libraries(linux_x11_wire_test PRIVATE cliptiq_linux)
-    target_link_options(linux_x11_wire_test PRIVATE -Wl,--wrap=xcb_get_selection_owner -Wl,--wrap=xcb_poll_for_reply)
+    target_link_options(linux_x11_wire_test PRIVATE -Wl,--wrap=xcb_get_selection_owner -Wl,--wrap=xcb_poll_for_reply -Wl,--wrap=xcb_get_property)
     find_package(Python3 REQUIRED COMPONENTS Interpreter)
     add_test(NAME linux_clipboard_wayland_wire COMMAND ${Python3_EXECUTABLE}
       ${CMAKE_SOURCE_DIR}/tools/run-linux-isolated.py fixture $<TARGET_FILE:linux_wayland_wire_test>)
@@ -121,6 +121,10 @@ if(BUILD_TESTING)
     set_tests_properties(linux_clipboard_x11_wire PROPERTIES TIMEOUT 60)
     add_executable(linux_native_clipboard_test tests/integration/linux_native_clipboard_test.cpp)
     target_link_libraries(linux_native_clipboard_test PRIVATE cliptiq_linux)
+    add_test(NAME linux_clipboard_external_clients COMMAND ${Python3_EXECUTABLE}
+      ${CMAKE_SOURCE_DIR}/tools/run-linux-isolated.py wayland ${Python3_EXECUTABLE}
+      ${CMAKE_SOURCE_DIR}/tests/integration/linux_wl_clipboard.py $<TARGET_FILE:linux_native_clipboard_test>)
+    set_tests_properties(linux_clipboard_external_clients PROPERTIES TIMEOUT 30)
     foreach(transport x11 wayland)
       add_test(NAME linux_clipboard_${transport} COMMAND ${Python3_EXECUTABLE}
         ${CMAKE_SOURCE_DIR}/tools/run-linux-isolated.py ${transport} $<TARGET_FILE:linux_native_clipboard_test> ${transport})

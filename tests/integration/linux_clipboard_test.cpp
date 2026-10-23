@@ -138,5 +138,38 @@ int main() {
     CHECK(b.capabilities().capture.status == CapabilityStatus::Unavailable);
     CHECK(!b.read_snapshot());
   });
+  test("stalled_sends_do_not_retain_unrequested_snapshot_formats", [] {
+    FdSendQueue queue;
+    std::vector<int> readers;
+    for (unsigned i = 0; i < 8; ++i) {
+      auto parent = std::make_shared<ClipboardSnapshot>();
+      parent->representations = {{0, "wayland", "text/plain",
+                                  CanonicalKind::Text, Bytes(128 * 1024, 'x')},
+                                 {0, "wayland", "application/pdf",
+                                  CanonicalKind::Pdf,
+                                  Bytes(8 * 1024 * 1024, 'p')}};
+      std::weak_ptr<ClipboardSnapshot> old = parent;
+      auto alias = std::shared_ptr<const Bytes>(
+          parent, &parent->representations[0].data);
+      int fd[2];
+      CHECK(pipe(fd) == 0);
+      readers.push_back(fd[0]);
+      ok(queue.add(fd[1], alias, Clock::now() + std::chrono::seconds(5)));
+      parent.reset();
+      alias.reset();
+      CHECK(old.expired());
+      queue.step();
+    }
+    CHECK(queue.fds().size() == 8);
+    int fd[2];
+    CHECK(pipe(fd) == 0);
+    auto denied = queue.add(fd[1], std::make_shared<const Bytes>(1, 'x'),
+                            Clock::now() + std::chrono::seconds(5));
+    CHECK(!denied && denied.error().code == ErrorCode::TooLarge);
+    close(fd[0]);
+    queue.clear();
+    for (auto fd : readers)
+      close(fd);
+  });
   return failures ? 1 : 0;
 }

@@ -1,4 +1,4 @@
-# T06 Linux desktop acceptance — OPEN
+# T06 Linux desktop acceptance â€” OPEN
 
 Automated backend evidence does not close interactive desktop acceptance. No clean desktop VM is available; CI runners/WSL developer images do not substitute for clean installation. T04/T05 manual gates remain OPEN. T07 has not started.
 
@@ -7,7 +7,7 @@ Automated backend evidence does not close interactive desktop acceptance. No cle
 | X11 isolated Xvfb | 21.1.12 local Ubuntu 24.04 | TARGETS/normal/INCR, owner death, timeout, generation, replay | WM_CLASS BestEffort or Unknown | unused | T07+ | backend automated only |
 | Sway headless, native Wayland | 1.9, wlroots 0.17.1 local | wlr data-control roundtrip, monitor, persistence | Unknown | unused | T07+ | backend automated only |
 | ext + wlr wire peer | test fixture, not desktop | ext preferred; FD faults/no protocol/seat tests | Unknown | unused | absent | protocol evidence only |
-| GNOME | not yet measured | unverified | unverified | unused | T07+ | OPEN |
+| GNOME Shell | 46.0 private headless | no ext/wlr data-control advertised; native background backend unavailable (registry inference) | Unknown | unused | T07+ | LIMITED; desktop OPEN |
 | KDE Plasma/KWin | unavailable locally | unverified | unverified | unused | T07+ | OPEN |
 | Hyprland | unavailable locally | unverified | unverified | unused | T07+ | OPEN |
 

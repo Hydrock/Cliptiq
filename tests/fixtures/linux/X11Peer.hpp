@@ -28,6 +28,7 @@ private:
   xcb_atom_t clipboard = 0, targets = 0, incr = 0;
   std::uint32_t acquired = 0;
   Mode mode;
+  xcb_selection_request_event_t last_targets{};
   std::map<xcb_atom_t, Bytes> values;
   std::map<std::string, xcb_atom_t> names;
   struct Transfer {
@@ -65,6 +66,7 @@ private:
   void request(const xcb_selection_request_event_t &r) {
     auto property = r.property ? r.property : r.target;
     if (r.target == targets) {
+      last_targets = r;
       std::vector<xcb_atom_t> types;
       for (const auto &v : values)
         types.push_back(v.first);
@@ -203,6 +205,22 @@ public:
   ~X11Peer() {
     stop = true;
     thread.join();
+  }
+  void duplicate_targets() {
+    auto promise = std::make_shared<std::promise<void>>();
+    auto f = promise->get_future();
+    {
+      std::lock_guard<std::mutex> lock(mutex);
+      commands.push_back([&, promise] {
+        notify(last_targets, last_targets.property);
+        xcb_flush(connection);
+        auto ack = xcb_get_input_focus_reply(
+            connection, xcb_get_input_focus(connection), nullptr);
+        free(ack);
+        promise->set_value();
+      });
+    }
+    f.get();
   }
   void reassert_same_timestamp(Bytes bytes) {
     auto promise = std::make_shared<std::promise<void>>();
