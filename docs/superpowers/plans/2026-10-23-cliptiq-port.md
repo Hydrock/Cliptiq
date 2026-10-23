@@ -82,11 +82,12 @@ Capture contract: сохранять все разрешённые representatio
 
 **Interfaces:** результат — JSON report `{target,arch,toolchain,flags,app_bytes,archive_bytes,dependency_delta_bytes,ocr_bytes,total_offline_bytes,idle_memory_bytes,startup_ms}` и ADR. Schema report фиксируется в этом task; T17 использует её без переименования полей.
 
-- [ ] Создать одинаковый smoke fixture: 30 text entries + PNG + HTML/RTF; tray, один shortcut, native settings window, XML export и одна OCR операция в отдельной lane. Измерить сравнимые C++/Rust native prototypes на macOS/Windows/Linux; GTK3/GTK4 проверить на Linux. FTS сравнить on/off отдельно, не подменять Base более функциональным вариантом.
-- [ ] На clean VM измерить compressed download, app-owned install, dynamic closure, optional packs, idle memory и startup. Для Windows сравнить CRT static vs redistributable; Linux baseline с GTK и без него; Windows packaged OCR vs portable OCR pack; Mac Sparkle включён/выключен для attribution, но update requirement не выкидывать.
-- [ ] Команды будущего C++ spike: `cmake --preset size-native`, `cmake --build --preset size-native`, `python tools/size-report.py --dist dist --output out/size.json`; equivalent Rust `cargo build --release`. Expected: parseable report с ненулевыми measured fields, не оценками.
-- [ ] Зафиксировать compiler/dependency exact versions/hashes, support image versions, размеры, выбранный вариант и пересмотр targets. Аргументировать, почему малый archive не скрывает runtime. Дополнить ADR по telemetry/OCR/Wayland scope до product implementation.
-- [ ] Commit `docs: record native architecture and footprint baseline`. Gate: согласованный дизайн/ADR, ни одного бездоказательного size claim.
+- [x] Сравнимый SQLite fixture C++/Rust с общими native UI hosts, XML parity, FTS on/off, GTK3/GTK4, static/dynamic CRT, OCR generated fixture: выполнено. Linux clipboard/hotkey/SNI проверены отдельными protocol probes, не сравнительным product UI.
+- [x] Измерены archive/app-owned, Linux clean-userland offline closure, Mac Sparkle обоих CPU, Windows native update helper и Linux full update payload. Windows/macOS clean VM недоступны; пользователь явно согласовал фиксацию ограничения CI. Fresh profile не заменяет чистую ОС.
+- [x] Exact flags/toolchains/hashes, raw evidence и ADR опубликованы. Фактические команды воспроизведения находятся в experiments/*/README.md; исходные примерные presets/cargo команды заменены экспериментальным tools/build-footprint.py с одинаковым UI host.
+- [x] T01 закрыт в согласованных границах: [итог](../../support/t01-results.md). Native C++ рекомендован, окончательный выбор стека и budgets до T02 остаётся открытым решением пользователя.
+
+Не заявлены выполненными: полноценный tray/settings product UI на всех ОС, Windows packaged-vs-portable OCR support matrix, OCR quality/redistributable pack, clean stock OS VM, production signed update end-to-end и GNOME/KDE desktop compatibility. Эти product/release проверки сохраняются для соответствующих T04–T17; нулевой размер или PASS для них не подставляется. T02 не начат.
 
 ### T02. Модель данных, SQLite, история и очистка
 

@@ -10,7 +10,7 @@
 
 ## Размеры и решение
 
-В изолированном профиле CI C++ Base с NOTICE: Windows 942 502 bytes / ZIP 534 868; macOS arm64 859 848 / 438 385; macOS x86_64 858 392 / 465 965. Это отдельный эксперимент от Sparkle baseline; небольшие различия упаковки/подписи отражены исходными JSON. C++ core оказался компактнее Rust на измеренном workload. Рекомендация: C++17 core, native UI, static CRT Windows, отдельные CPU сборки Mac; финальное утверждение стека остаётся решением до T02.
+В изолированном профиле CI C++ Base с NOTICE: Windows 942 502 bytes / ZIP 534 869; macOS arm64 859 848 / 438 385; macOS x86_64 858 392 / 465 965. Это отдельный эксперимент от Sparkle baseline; небольшие различия упаковки/подписи отражены исходными JSON. C++ core оказался компактнее Rust на измеренном workload. Рекомендация: C++17 core, native UI, static CRT Windows, отдельные CPU сборки Mac; финальное утверждение стека остаётся решением до T02.
 
 [Чистый Linux userland](clean-install/README.md): GTK3 runtime добавляет 141 422 111 bytes, GTK4 — 147 262 609; OCR EN/RU с GTK3 — 171 250 572. Маленький EXE не означает маленький автономный Linux-дистрибутив. GTK3 пока разумный baseline для дальнейшей проверки, desktop package manager может переиспользовать существующие библиотеки.
 
