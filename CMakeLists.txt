@@ -20,7 +20,7 @@ add_library(cliptiq_core STATIC core/src/storage.cpp core/src/history.cpp core/s
 target_include_directories(cliptiq_core PUBLIC core/include PRIVATE core/src)
 target_link_libraries(cliptiq_core PRIVATE cliptiq_sqlite)
 if(WIN32)
-  add_library(cliptiq_windows STATIC platform/windows/Clipboard.cpp platform/windows/Formats.cpp)
+  add_library(cliptiq_windows STATIC platform/windows/Clipboard.cpp platform/windows/Formats.cpp platform/windows/Application.cpp)
   target_include_directories(cliptiq_windows PUBLIC platform/windows)
   target_compile_definitions(cliptiq_windows PRIVATE UNICODE _UNICODE WIN32_LEAN_AND_MEAN NOMINMAX _WIN32_WINNT=0x0A00)
   target_compile_options(cliptiq_windows PRIVATE /W4 /utf-8 /Gy /Gw)

@@ -8,6 +8,8 @@
 #include <iostream>
 #include <stdexcept>
 #include <thread>
+#include <filesystem>
+#include "cliptiq/history.hpp"
 using namespace cliptiq;
 using namespace cliptiq::windows;
 #define CHECK(x) do{if(!(x))throw std::runtime_error(#x);}while(false)
@@ -48,5 +50,7 @@ int main(int argc,char** argv){if(argc==2&&std::string(argv[1])=="--formats"){in
  test("oversize_read_is_rejected",[&]{put(owner.hwnd,{{CF_UNICODETEXT,utf16(L"too large")}});Limits l;l.representation_bytes=4;WindowsClipboardBackend b({l,{},{}});auto r=b.read_snapshot();CHECK(!r&&r.error().code==ErrorCode::TooLarge);});
  test("listener_initial_capture_own_write_and_stop",[&]{put(owner.hwnd,{{CF_UNICODETEXT,utf16(L"initial")}});WindowsClipboardBackend b;unsigned calls=0;auto thread=GetCurrentThreadId();ok(b.start([&](Result<ClipboardSnapshot> s){CHECK(GetCurrentThreadId()==thread);take(std::move(s));++calls;}));CHECK(wait([&]{return calls==1;}));ClipboardSnapshot s;s.representations={text(L"own")};take(b.write_snapshot(s));pump(100);CHECK(calls==1);put(owner.hwnd,{{CF_UNICODETEXT,utf16(L"external")}});CHECK(wait([&]{return calls==2;}));b.stop();put(owner.hwnd,{{CF_UNICODETEXT,utf16(L"stopped")}});pump(60);CHECK(calls==2);});
  test("owner_exit_does_not_serialize_handle",[]{Owner temporary;put(temporary.hwnd,{{CF_UNICODETEXT,utf16(L"survives")}});DestroyWindow(temporary.hwnd);temporary.hwnd=nullptr;WindowsClipboardBackend b;auto s=take(b.read_snapshot());CHECK(find(s,"CF_UNICODETEXT"));CHECK(s.source.confidence==SourceConfidence::Unknown);});
+ test("session_gate_lazy_database_and_ui_report",[&]{auto path=std::filesystem::temp_directory_path()/L"cliptiq-t05-rejected.sqlite";std::filesystem::remove(path);put(owner.hwnd,{{CF_UNICODETEXT,utf16(L"private")},{reg(L"ExcludeClipboardContentFromMonitorProcessing"),Bytes{0}}});WindowsCaptureSession session(path.u8string());bool rejected=false;ok(session.start({}, {},[&](Result<CaptureEvent> e){rejected=bool(e)&&e.value().disposition==CaptureDisposition::Reject&&!e.value().entry_id;}));CHECK(wait([&]{return rejected;}));session.stop();CHECK(!std::filesystem::exists(path));});
+ test("session_real_worker_persistence",[&]{auto path=std::filesystem::temp_directory_path()/L"cliptiq-t05-worker.sqlite";std::filesystem::remove(path);auto thread=GetCurrentThreadId();bool retained=false,onUI=false;{WindowsCaptureSession session(path.u8string());put(owner.hwnd,{{CF_UNICODETEXT,utf16(L"persisted")}});ok(session.start({}, {},[&](Result<CaptureEvent> e){onUI=GetCurrentThreadId()==thread;retained=bool(e)&&e.value().entry_id.has_value();}));CHECK(wait([&]{return retained;}));session.stop();}auto db=take(open_store(path.u8string()));CHECK(take(list_history(db)).size()==1&&onUI);});
  return failures?1:0;
  }catch(const std::exception& e){std::cerr<<"ISOLATION/SETUP FAILED: "<<e.what()<<'\n';return 2;}}
