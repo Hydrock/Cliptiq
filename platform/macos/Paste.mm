@@ -3,6 +3,7 @@
 #import <ApplicationServices/ApplicationServices.h>
 #import <Carbon/Carbon.h>
 #include <thread>
+#include <stdexcept>
 namespace cliptiq {
 struct NativePasteBackend::State {
   std::thread::id owner = std::this_thread::get_id();
@@ -68,6 +69,7 @@ int paste_key() {
 }
 } // namespace
 NativePasteBackend::NativePasteBackend() : state_(std::make_unique<State>()) {}
+NativePasteBackend::NativePasteBackend(std::shared_ptr<NativePasteCalls>) : NativePasteBackend() {throw std::runtime_error("Native call boundary not implemented");}
 NativePasteBackend::~NativePasteBackend() = default;
 Capability NativePasteBackend::capability() const {
   if (!AXIsProcessTrusted() || !CGPreflightPostEventAccess())

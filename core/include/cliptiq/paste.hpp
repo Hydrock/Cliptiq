@@ -41,6 +41,9 @@ class NativePasteBackend final : public PasteBackend {
 
 public:
   NativePasteBackend();
+#if defined(_WIN32) || defined(__APPLE__)
+  explicit NativePasteBackend(std::shared_ptr<struct NativePasteCalls>);
+#endif
   ~NativePasteBackend() override;
   NativePasteBackend(const NativePasteBackend &) = delete;
   NativePasteBackend &operator=(const NativePasteBackend &) = delete;

@@ -144,6 +144,14 @@ int run() {
     CHECK(ru_code == vcode);
     CHECK(system("setxkbmap -layout us") == 0);
     std::cout << "PASS ru_layout_physical_paste_key\n";
+    CHECK(system("setxkbmap -layout us -variant dvorak")==0);XSync(d,False);target=paste.capture_target();CHECK(paste.dispatch(target,Shortcut::Paste));XSync(d,False);unsigned dvorak=0;
+    while(XPending(d)){XEvent e;XNextEvent(d,&e);if(e.type==KeyPress&&(e.xkey.state&ControlMask))dvorak=e.xkey.keycode;}
+    CHECK(dvorak==XKeysymToKeycode(d,XStringToKeysym("v")));std::cout<<"PASS dvorak_effective_v_shortcut\n";
+    CHECK(system("setxkbmap -layout us -variant ''")==0);XSync(d,False);
+    auto old_v=XKeysymToKeycode(d,XStringToKeysym("v")), new_v=XKeysymToKeycode(d,XStringToKeysym("p"));KeySym replacement=XStringToKeysym("x"),sym_v=XStringToKeysym("v");
+    XChangeKeyboardMapping(d,old_v,1,&replacement,1);XChangeKeyboardMapping(d,new_v,1,&sym_v,1);XSync(d,False);target=paste.capture_target();CHECK(paste.dispatch(target,Shortcut::Paste));XSync(d,False);unsigned remapped=0;
+    while(XPending(d)){XEvent e;XNextEvent(d,&e);if(e.type==KeyPress&&(e.xkey.state&ControlMask))remapped=e.xkey.keycode;}
+    CHECK(remapped==new_v);std::cout<<"PASS remapped_effective_v_shortcut\n";CHECK(system("setxkbmap -layout us -variant ''")==0);XSync(d,False);
     target = paste.capture_target();
     XDestroyWindow(d, window);
     XSync(d, False);

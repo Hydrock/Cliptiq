@@ -121,6 +121,17 @@ int run(int argc, char **argv) {
             command.invocation.activation_token == ctx.activation_token);
     }
 #elif defined(__APPLE__)
+    if(which=="status_lifecycle"){
+      NativeMenuOptions options;options.tray_style=TrayStyle::Hidden;options.invocation_provider=[] {return InvocationContext{"issued-status-target"};};
+      MenuCommand got;unsigned selected=0;NativeMenu status(options,[&](MenuCommand c){got=std::move(c);++selected;});ok(status.initialize());ok(status.update(model));
+      auto native=(__bridge NSMenu *)(void*)status.native_handles().menu;
+      [native.delegate menuWillOpen:native];[native.delegate menuDidClose:native];[native performActionForItemAtIndex:0];
+      CHECK(selected==1&&got.invocation.target=="issued-status-target");ok(status.process_events(1));
+      [native performActionForItemAtIndex:0];CHECK(selected==2&&got.invocation.target.empty());
+      [native.delegate menuWillOpen:native];[native.delegate menuDidClose:native];ok(status.process_events(1));
+      [native performActionForItemAtIndex:0];CHECK(selected==3&&got.invocation.target.empty());
+      std::cout<<"PASS appkit_close_before_action_retains_target_then_expires\n";return 0;
+    }
     CHECK(which == "context");
     Method original = class_getInstanceMethod(
         NSMenu.class, @selector(popUpMenuPositioningItem:atLocation:inView:));
