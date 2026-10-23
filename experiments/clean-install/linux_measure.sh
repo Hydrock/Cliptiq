@@ -43,6 +43,7 @@ elif [ "$phase" = install ]; then
   metadata_bytes > /out/package-metadata-after.txt
   dpkg-query -W -f='${Package} ${Version}\n' > /out/packages-after-runtime.txt
   find /out/runtime-debs -name '*.deb' -printf '%f %s\n' | sort > /out/runtime-deb-inventory.txt
+  sha256sum /out/runtime-debs/*.deb | sed 's#/out/runtime-debs/##' > /out/runtime-deb-sha256.txt
   download_bytes=$(awk '{n+=$NF} END {printf "%.0f",n}' /out/runtime-deb-inventory.txt)
   before=$(cat /out/root-before.txt)
   after=$(cat /out/root-after-runtime.txt)

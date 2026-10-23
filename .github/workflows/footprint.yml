@@ -34,7 +34,7 @@ jobs:
       - name: Linux native dependencies
         if: runner.os == 'Linux'
         timeout-minutes: 8
-        run: bash experiments/footprint/ci-linux-deps.sh
+        run: bash experiments/footprint/ci-linux-deps.sh ${{ matrix.args }}
       - name: macOS Ninja
         if: runner.os == 'macOS'
         run: command -v ninja || brew install ninja
