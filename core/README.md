@@ -14,17 +14,22 @@ before invoking ingest; T02 does not implement privacy policy.
 `ingest` atomically writes representations and metadata, applies count/quota
 pruning in current sort order, and increments `data_revision`. Empty primary
 text is rejected using Unicode White_Space, as is RTF-primary with a corresponding
-plain-text representation that is blank; opaque RTF is not decoded by storage.
+plain-text representation that is blank. TextEncoding explicitly identifies UTF-8,
+UTF-16LE or UTF-16BE while retaining original bytes; Windows adapters must set it.
+A terminal UTF-16 NUL is accepted; embedded NUL is content. Opaque RTF is not decoded by storage.
 `allow_duplicates=false` rejects an equal copy, regardless of previous UUID mode.
 Otherwise `replace_duplicate=true` updates the matching ID/last-used/source
-metadata without changing creation time; false allocates a fresh UUID.
+metadata without changing creation time; false allocates a fresh UUID. If pruning removes the accepted entry (for example
+created-order replacement of an old item), ingest returns an empty optional.
 
 Sort uses descending timestamp then descending insertion rowid for ties.
 Limits are payload limits, not exact database file size: page/index overhead,
 metadata and free pages are separate. Hard ceilings: 32 MiB per representation,
 64 MiB per entry, 256 MiB history and 4096 representations per snapshot. Native
 adapters must check these before allocating external clipboard bytes; core
-validates the provided snapshot before any write. No partial oversized capture.
+validates the provided snapshot before any write. Persisted blob lengths, counts
+and metadata lengths are checked before C++ materialization, including digest
+candidates loaded for duplicate equality. No partial oversized capture.
 
 Cleanup uses explicit `now_ms` input and persisted last-run/interval state.
 First enable, interval change or backward clock reanchors the schedule. On due

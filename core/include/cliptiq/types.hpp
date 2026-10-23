@@ -36,11 +36,13 @@ enum class SourceConfidence { Known, BestEffort, Unknown };
 enum class Flag { Unknown, No, Yes };
 struct SourceInfo { std::optional<std::string> app_id; SourceConfidence confidence = SourceConfidence::Unknown; };
 struct ClipboardFlags { Flag transient = Flag::Unknown, concealed = Flag::Unknown, remote = Flag::Unknown; };
+enum class TextEncoding { Utf8, Utf16Le, Utf16Be };
 struct Representation {
     std::uint32_t item_index = 0;
     std::string platform, native_type;
     CanonicalKind kind = CanonicalKind::Opaque;
     Bytes data;
+    TextEncoding text_encoding = TextEncoding::Utf8;
 };
 struct ClipboardSnapshot {
     std::vector<Representation> representations;

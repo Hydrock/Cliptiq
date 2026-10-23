@@ -21,3 +21,9 @@ Ruling: T02 supplies minimal snippet/settings storage boundaries plus revision/n
 Debugging: Windows and WSL CMake caches initially collided; host-specific output directories fix configure reuse. Python SQLite context manager commits but does not close; explicit closing fixes Windows crash-test temporary file cleanup. Local Clang unavailable; local sanitizer run uses GCC, CI separately uses Clang.
 
 Verified locally: Windows MSVC Debug/MinSizeRel, Linux GCC ASan/UBSan, unit history and process-interruption recovery pass. Review and remote CI pending.
+
+Final fresh review (gpt-6-astra): P1 persisted read limits after allocation, P2 UTF-16 whitespace, P2 returned ID already pruned. Regression run reproduced the duplicate read-limit bypass, UTF-16 blank retention and stale return. Fixed size/count SQL preflight before materializing payload (also duplicate candidates), explicit persisted TextEncoding and empty return when accepted entry was evicted. Original reduced-limit load test already failed safely after allocation; its preallocation requirement is verified by loader structure. One fix pass, full suites repeated.
+
+Review minor comments addressed: crash-test description no longer implies production file-permission read-only coverage; unit query_only covers production ReadOnly mapping. Crash fixture now flushes a dirty 200KB update with one-page cache, exits without cleanup, and asserts a nonempty rollback journal before recovery. This strengthens actual hot-journal evidence.
+
+Initial T02 CI 39940659648: all five jobs success (Windows, Linux, macOS arm64/x86_64, Clang ASan/UBSan). Final review-fix run pending.

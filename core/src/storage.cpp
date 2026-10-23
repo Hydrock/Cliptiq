@@ -30,7 +30,7 @@ CREATE TABLE history(id TEXT PRIMARY KEY,digest TEXT NOT NULL,created_ms INTEGER
 CREATE INDEX history_digest ON history(digest);
 CREATE INDEX history_created ON history(created_ms);
 CREATE INDEX history_used ON history(used_ms);
-CREATE TABLE representations(entry_id TEXT NOT NULL REFERENCES history(id) ON DELETE CASCADE,ordinal INTEGER NOT NULL,item_index INTEGER NOT NULL,platform TEXT NOT NULL,native_type TEXT NOT NULL,kind INTEGER NOT NULL,data BLOB NOT NULL,PRIMARY KEY(entry_id,ordinal));
+CREATE TABLE representations(entry_id TEXT NOT NULL REFERENCES history(id) ON DELETE CASCADE,ordinal INTEGER NOT NULL,item_index INTEGER NOT NULL,platform TEXT NOT NULL,native_type TEXT NOT NULL,kind INTEGER NOT NULL,data BLOB NOT NULL,text_encoding INTEGER NOT NULL DEFAULT 0,PRIMARY KEY(entry_id,ordinal));
 CREATE TABLE history_assets(entry_id TEXT NOT NULL REFERENCES history(id) ON DELETE CASCADE,kind TEXT NOT NULL,data BLOB NOT NULL,PRIMARY KEY(entry_id,kind));
 CREATE TABLE snippet_folders(id TEXT PRIMARY KEY,title TEXT NOT NULL,position INTEGER NOT NULL);
 CREATE TABLE snippets(id TEXT PRIMARY KEY,folder_id TEXT REFERENCES snippet_folders(id),title TEXT NOT NULL,content TEXT NOT NULL,position INTEGER NOT NULL);

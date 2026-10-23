@@ -1,4 +1,4 @@
-"""Exercise process interruption and persistent read-only storage with real SQLite."""
+"""Exercise process interruption and rollback-journal recovery with real SQLite."""
 import pathlib
 import sqlite3
 import subprocess
@@ -12,6 +12,8 @@ with tempfile.TemporaryDirectory(prefix='cliptiq-crash-') as folder:
     subprocess.run([str(exe), '--seed', str(path)], check=True)
     result = subprocess.run([str(exe), '--interrupt', str(path)])
     assert result.returncode == 23, result.returncode
+    journal = path.with_name(path.name + '-journal')
+    assert journal.exists() and journal.stat().st_size > 512
     with closing(sqlite3.connect(path)) as db:
         assert db.execute('SELECT count(*) FROM history').fetchone()[0] == 1
         assert db.execute('PRAGMA integrity_check').fetchone()[0] == 'ok'
