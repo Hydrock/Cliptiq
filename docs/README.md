@@ -7,7 +7,7 @@
 3. [Предлагаемый дизайн](superpowers/specs/2026-10-23-cliptiq-design.md): архитектура, альтернативы, данные, ограничения, размер и варианты поставки.
 4. [План реализации: 17 задач](superpowers/plans/2026-10-23-cliptiq-port.md): файлы, контракты, проверки, зависимости, этапы и release gate.
 
-T02 создаёт общее C++ ядро истории (см. [контракты](../core/README.md)). Пользователь подтвердил Cliptiq и разрешил этап T01: [прототипы](../experiments/footprint/README.md), [результаты и решение](support/architecture-decision.md). В документах дизайна числа size ceiling — предложенные цели; реальные измерения вынесены отдельно. Команды T04–T17 по-прежнему инструкции будущему исполнителю, не выполненные проверки.
+T02 создаёт общее C++ ядро истории (см. [контракты](../core/README.md)). Пользователь подтвердил Cliptiq и разрешил этап T01: [прототипы](../experiments/footprint/README.md), [результаты и решение](support/architecture-decision.md). В документах дизайна числа size ceiling — предложенные цели; реальные измерения вынесены отдельно. Команды T05–T17 остаются инструкциями будущему исполнителю.
 
 Имя Cliptiq подтверждено. Открытые решения: точные size budgets; OCR/diagnostics distribution; поддерживаемые Wayland desktops и необходимые integrations. ClipClap не принят как замена.
 
@@ -15,6 +15,8 @@ T02 создаёт общее C++ ядро истории (см. [контрак
 
 T01 закрыт в согласованных границах: [итоговые замеры и ограничения](support/t01-results.md). Пользователь принял C++ с нативными оболочками и разрешил T02.
 
-T02 завершён: [постоянная история, CI и размеры](support/t02-results.md). T03–T17 не начаты.
+T02 завершён: [постоянная история, CI и размеры](support/t02-results.md). Последующие этапы отражены ниже.
 
-T03 завершён: [privacy policy, capability contract, CI и добавка размера](support/t03-results.md). T04 не начат.
+T03 завершён: [privacy policy, capability contract, CI и добавка размера](support/t03-results.md). T04 описан ниже.
+
+T04: [macOS backend, privacy integration и замеры](support/t04-results.md). Автоматическая часть реализована; ручная приёмка TextEdit/Safari/Finder/Preview и реальных permission dialogs остаётся открыта. T05 не начат.

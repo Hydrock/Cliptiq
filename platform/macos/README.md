@@ -30,7 +30,9 @@ RootPasteboardItem (UINT32_MAX) explicitly identifies those representations.
 Legacy NSFilenamesPboardType is retained on the root, including its complete path
 array even when AppKit synthesizes a root public.file-url for the first path.
 It cannot be put on NSPasteboardItem; replay writes its raw data on the root
-before modern items. Other root fallback forms are attached to the first replay
+before modern items. The other six legacy aliases replay unchanged bytes under
+their modern UTI because NSPasteboardItem rejects legacy names. Alias/modern
+collisions are rejected before clearing the clipboard. Other root fallback forms are attached to the first replay
 item so root readers can retrieve them. Sparse normal indices replay as ordered
 native items, preserving grouping, not numeric gaps. Clipboard replay is not a
 transaction: validation/preparation occurs before clearContents, but a native

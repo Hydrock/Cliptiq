@@ -10,7 +10,7 @@
 
 **Spec:** [дизайн](../specs/2026-10-23-cliptiq-design.md). **Coverage:** [аудит с ID функций](../../research/2026-10-23-clipy-audit.md). **Naming:** [проверка имён](../../research/2026-10-23-naming.md).
 
-Статус: полный план охвата исследуемой ревизии; пользователь разрешил T01, [прототипы и первые измерения выполнены](../../support/architecture-decision.md). T01 закрыт в согласованных границах ([итог](../../support/t01-results.md)); T02 завершён ([результаты](../../support/t02-results.md)); T03 завершён ([результаты](../../support/t03-results.md)); T04–T17 не начаты. Release binaries не созданы.
+Статус: полный план охвата исследуемой ревизии; пользователь разрешил T01, [прототипы и первые измерения выполнены](../../support/architecture-decision.md). T01 закрыт в согласованных границах ([итог](../../support/t01-results.md)); T02 завершён ([результаты](../../support/t02-results.md)); T03 завершён ([результаты](../../support/t03-results.md)); T04 реализуется с native CI; ручная macOS-приёмка остаётся открыта ([результаты](../../support/t04-results.md)). T05–T17 не начаты. Release binaries не созданы.
 
 ## Global Constraints
 
@@ -119,11 +119,13 @@ Capture contract: сохранять все разрешённые representatio
 
 **Interfaces:** `ClipboardBackend::capabilities()->Capabilities`, `read_snapshot()->Result<ClipboardSnapshot>`, `write_snapshot(const ClipboardSnapshot&)->Result<string>` (own-write token), `start(CaptureCallback)->Result<void>`, `stop()`. Backend lifetime принадлежит application; callback вызывается на UI dispatcher, storage work ставится в worker queue.
 
-- [ ] Failing integration cases: root filenames/TIFF fallback, PNG preference, multiple items + metadata, stable source change token. Fixture bytes из upstream tests воссоздать/атрибутировать.
-- [ ] Настроить native test target; `ctest --preset test -R macos_clipboard --output-on-failure` на Mac, не эмулировать успешный OS test на Windows.
-- [ ] NSPasteboard.changeCount polling 500 ms; snapshot consistency check до/после чтения с bounded retry; современный и legacy format mapping. При отказе pasteboard access показать capability reason.
+- [x] Failing integration cases: root filenames/TIFF fallback, PNG preference, multiple items + metadata, stable source change token. Fixture bytes из upstream tests воссоздать/атрибутировать.
+- [x] Настроить native test target; `ctest --preset test -R macos_clipboard --output-on-failure` на Mac, не эмулировать успешный OS test на Windows.
+- [x] NSPasteboard.changeCount polling 500 ms; snapshot consistency check до/после чтения с bounded retry; современный и legacy format mapping. При отказе pasteboard access показать capability reason.
 - [ ] Проверить TextEdit/Safari/Finder/Preview, permission granted/denied, image-only/RTF/RTFD/PDF/multiple files; результаты записать с OS build.
-- [ ] Commit `feat(macos): add native clipboard capture and replay`.
+- [x] Commit `feat(macos): add native clipboard capture and replay`.
+
+**Статус:** backend и автоматические проверки подготовлены. Ручная проверка приложений и настоящих permission dialogs не выполнена: доступен Windows executor и macOS hosted CI, интерактивного Mac нет. Named-pasteboard tests и injected accessBehavior эту строку не закрывают. T05 не начинать без отдельного разрешения.
 
 ### T05. Windows clipboard backend
 
