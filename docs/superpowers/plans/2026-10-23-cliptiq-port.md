@@ -10,7 +10,7 @@
 
 **Spec:** [дизайн](../specs/2026-10-23-cliptiq-design.md). **Coverage:** [аудит с ID функций](../../research/2026-10-23-clipy-audit.md). **Naming:** [проверка имён](../../research/2026-10-23-naming.md).
 
-Статус: полный план охвата исследуемой ревизии; пользователь разрешил T01, [прототипы и первые измерения выполнены](../../support/architecture-decision.md). T01 закрыт в согласованных границах ([итог](../../support/t01-results.md)); T02 завершён ([результаты](../../support/t02-results.md)); T03–T17 не начаты. Release binaries не созданы.
+Статус: полный план охвата исследуемой ревизии; пользователь разрешил T01, [прототипы и первые измерения выполнены](../../support/architecture-decision.md). T01 закрыт в согласованных границах ([итог](../../support/t01-results.md)); T02 завершён ([результаты](../../support/t02-results.md)); T03 завершён ([результаты](../../support/t03-results.md)); T04–T17 не начаты. Release binaries не созданы.
 
 ## Global Constraints
 
@@ -107,11 +107,11 @@ Capture contract: сохранять все разрешённые representatio
 
 **Interfaces:** `evaluate_capture(const ClipboardSnapshot&, const CapturePolicy&, const Capabilities&)->CaptureDecision`; decision = Accept/Reject + reason + filtered snapshot. Policy содержит enabled kinds, concealed/remote flags, excluded apps и unknown_source_mode. После policy только принятый snapshot может попасть в T02/T12/T16.
 
-- [ ] Failing tests: `transient_always_rejected`, `concealed_option`, `remote_primary_file_rejected`, `remote_secondary_file_removed`, `marker_prefix_exclusion`, `unknown_source_is_not_known_safe`, `screenshot_uses_same_policy`, `html_off_keeps_text_rtf_only`, `unknown_type_is_not_persisted`, `unknown_source_with_exclusions_is_rejected`.
-- [ ] Запустить `ctest --preset test -R policy --output-on-failure`, подтвердить meaningful failure.
-- [ ] Реализовать правила из C11–16 с платформенными отличиями; source confidence сохранять честно. No hidden telemetry/default network events.
-- [ ] Повторить tests до PASS, проверить что reject вызывает ноль storage/thumbnail/OCR операций fake spies.
-- [ ] Commit `feat: gate capture through explicit privacy policy`.
+- [x] Failing tests: `transient_always_rejected`, `concealed_option`, `remote_primary_file_rejected`, `remote_secondary_file_removed`, `marker_prefix_exclusion`, `unknown_source_is_not_known_safe`, `screenshot_uses_same_policy`, `html_off_keeps_text_rtf_only`, `unknown_type_is_not_persisted`, `unknown_source_with_exclusions_is_rejected`.
+- [x] Запустить `ctest --preset test -R policy --output-on-failure`, подтвердить meaningful failure.
+- [x] Реализовать правила из C11–16 с платформенными отличиями; source confidence сохранять честно. No hidden telemetry/default network events.
+- [x] Повторить tests до PASS, проверить что reject вызывает ноль storage/thumbnail/OCR операций fake spies.
+- [x] Commit `feat: gate capture through explicit privacy policy`.
 
 ### T04. macOS clipboard backend
 
@@ -288,4 +288,4 @@ Capture contract: сохранять все разрешённые representatio
 3. Разрешены ли явные адаптации: Firebase → local diagnostics, OCR/index отдельным pack/build, Wayland limited mode без compositor integration? Если цель — буквальная полнота на каждом backend, packs/integrations входят в full distribution и её размер.
 4. После T01 фиксируем численный size ceiling по archive/app-owned/clean-machine total отдельно. «Маленькая сборка» без этих трёх чисел не является критерием приёмки.
 
-Для каждого варианта указаны работа, dependency и критерий проверки. Пользователь разрешил T01: установка инструментов, prototypes, CI и загрузка документов выполнены в его рамках. T02 persistent core завершён; T03+ не начаты. Документы и эксперименты опубликованы в origin/codex/portability-plan.
+Для каждого варианта указаны работа, dependency и критерий проверки. Пользователь разрешил T01: установка инструментов, prototypes, CI и загрузка документов выполнены в его рамках. T02 persistent core завершён; T03 privacy/capability завершён; T04+ не начаты. Документы и эксперименты опубликованы в origin/codex/portability-plan.

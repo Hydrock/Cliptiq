@@ -17,3 +17,7 @@ RED: 27 initial scenarios compiled against not-implemented policy; 24 failed for
 Final fresh review (gpt-6-astra, read-only): no critical/important defects. One nonblocking measurement qualification addressed in core/POLICY.md and results: paired delta includes sink wiring/result recovery and registry setup, not policy code in isolation. No deferred minors.
 
 Local paired Windows size: baseline 844800 bytes, with policy dispatch 856576 (11776 added), ZIP delta 4632 bytes. This is a dirty-worktree exploratory result; final source-hashed CI evidence takes precedence. No new third-party runtime/library dependency was added.
+
+Task T03: complete (commits 909c1e2..6824d00; Windows Debug/MinSizeRel, Linux GCC ASan/UBSan/Release and final CI 39943798856 -> PASS). 34 policy cases + 29 history cases + crash suite pass; final CI 5/5 (Windows/Linux/Mac both CPU, Clang sanitizers). Source-hashed paired sizes, compiler identities and raw logs are published in t03-measurements.
+
+Final review clean, no deferred minors. Results uploaded to existing feature branch/draft PR; no merge/release. T04+ not started.
