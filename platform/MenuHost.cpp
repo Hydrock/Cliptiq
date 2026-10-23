@@ -1,5 +1,8 @@
 #include "Application.hpp"
 #include "cliptiq/menu.hpp"
+#ifdef CLIPTIQ_WITH_PASTE
+#include "cliptiq/paste.hpp"
+#endif
 #if CLIPTIQ_MENU_MODE == 2
 #include "cliptiq/native_menu.hpp"
 #endif
@@ -30,6 +33,27 @@ int host(int argc, char **argv) {
     std::string path = ":memory:";
     MenuKind kind = MenuKind::Main;
     TrayStyle tray = TrayStyle::Standard;
+#ifdef CLIPTIQ_WITH_PASTE
+    bool auto_paste = true;
+    Shortcut shortcut = Shortcut::Paste;
+    ModifierBindings bindings;
+#ifdef __APPLE__
+    bindings.plain = Super;
+#endif
+    auto modifier = [](const std::string &v) -> unsigned {
+      if (v == "none")
+        return 0;
+      if (v == "ctrl")
+        return Control;
+      if (v == "shift")
+        return Shift;
+      if (v == "alt")
+        return Alt;
+      if (v == "super")
+        return Super;
+      throw std::runtime_error("Modifier must be none/ctrl/shift/alt/super");
+    };
+#endif
     for (int i = 1; i < argc; ++i) {
       std::string arg = argv[i];
       if (arg == "--smoke")
@@ -38,6 +62,23 @@ int host(int argc, char **argv) {
         capture = true;
       else if (arg == "--demo")
         demo = true;
+#ifdef CLIPTIQ_WITH_PASTE
+      else if (arg == "--no-auto-paste")
+        auto_paste = false;
+      else if (arg == "--terminal-paste")
+        shortcut = Shortcut::TerminalPaste;
+      else if ((arg == "--plain-modifier" || arg == "--delete-modifier" ||
+                arg == "--paste-delete-modifier") &&
+               i + 1 < argc) {
+        auto bit = modifier(argv[++i]);
+        if (arg == "--plain-modifier")
+          bindings.plain = bit;
+        else if (arg == "--delete-modifier")
+          bindings.delete_only = bit;
+        else
+          bindings.paste_delete = bit;
+      }
+#endif
       else if (arg == "--no-tray")
         tray = TrayStyle::Hidden;
       else if (arg == "--history")
@@ -62,6 +103,9 @@ int host(int argc, char **argv) {
     if (smoke && !getenv("CLIPTIQ_TEST_ISOLATED"))
       throw std::runtime_error("Private display launcher required for smoke");
 #endif
+#endif
+#ifdef CLIPTIQ_WITH_PASTE
+    take(selection_action(0, bindings));
 #endif
     auto store = take(open_store(path));
     if (demo || smoke) {
@@ -110,8 +154,33 @@ int host(int argc, char **argv) {
 #endif
 #if CLIPTIQ_MENU_MODE == 2
     bool quit = false, refresh = false;
+#ifdef CLIPTIQ_WITH_PASTE
+    NativePasteBackend paste;
+    if (!smoke)
+      std::cout << "Auto-paste: " << paste.capability().reason << '\n';
+    std::unique_ptr<ClipboardBackend> writer;
+    ClipboardBackend *clipboard = session ? &session->clipboard() : nullptr;
+    // Writer-only backend: never start a capture monitor without --capture.
+    if (!clipboard && !smoke) {
+#ifdef _WIN32
+      writer = std::make_unique<windows::WindowsClipboardBackend>();
+#elif defined(__APPLE__)
+      writer = std::make_unique<macos::MacClipboardBackend>();
+#else
+      writer = linux_backend::open_backend();
+#endif
+      clipboard = writer.get();
+    }
+    std::optional<MenuCommand> pending_selection;
+#endif
     NativeMenuOptions options;
     options.tray_style = tray;
+#ifdef CLIPTIQ_WITH_PASTE
+    if (!smoke)
+      options.invocation_provider = [&] {
+        return InvocationContext{paste.capture_target()};
+      };
+#endif
     NativeMenu ui(options, [&](MenuCommand command) {
       auto valid = validate_menu_command(store, command);
       if (!valid) {
@@ -125,8 +194,15 @@ int host(int argc, char **argv) {
         if (!clear)
           std::cerr << clear.error().message << '\n';
         refresh = true;
-      } else
+      } else {
+#ifdef CLIPTIQ_WITH_PASTE
+        if (!smoke && (command.action == MenuAction::SelectHistory ||
+                       command.action == MenuAction::SelectSnippet))
+          pending_selection = std::move(command);
+#else
         std::cout << "Selected " << command.id << '\n';
+#endif
+      }
     });
     ok(ui.initialize());
     for (auto &i : model.items)
@@ -139,6 +215,44 @@ int host(int argc, char **argv) {
     unsigned iterations = 0;
     while (!quit) {
       ok(ui.process_events(smoke ? 1 : 5));
+#ifdef CLIPTIQ_WITH_PASTE
+      if (pending_selection && clipboard) {
+        SelectionIntent intent;
+        intent.command = std::move(*pending_selection);
+        pending_selection.reset();
+        auto action =
+            selection_action(intent.command.invocation.modifiers, bindings);
+        if (!action)
+          std::cerr << action.error().message << '\n';
+        else {
+          intent.action = action.value();
+          intent.auto_paste = auto_paste;
+          intent.shortcut = shortcut;
+          intent.now_ms =
+              std::chrono::duration_cast<std::chrono::milliseconds>(
+                  std::chrono::system_clock::now().time_since_epoch())
+                  .count();
+          auto result = execute_selection(store, intent, *clipboard, paste);
+          if (!result)
+            std::cerr << result.error().message << '\n';
+          else {
+            std::cout << "Selection status="
+                      << static_cast<unsigned>(result.value().status) << " "
+                      << result.value().reason << '\n';
+            if (result.value().history_error)
+              std::cerr << result.value().history_error->message << '\n';
+          }
+        }
+        refresh = true;
+      }
+#ifndef _WIN32
+#ifndef __APPLE__
+      if (writer)
+        ok(static_cast<linux_backend::LinuxClipboardBackend *>(writer.get())
+               ->dispatch(0));
+#endif
+#endif
+#endif
 #ifndef _WIN32
 #ifndef __APPLE__
       if (session)

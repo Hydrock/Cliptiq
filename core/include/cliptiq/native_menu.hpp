@@ -12,6 +12,9 @@ struct NativeMenuOptions {
   TrayStyle tray_style = TrayStyle::Standard;
   unsigned preview_width = 100, preview_height = 32;
   bool icons = true;
+  // Called on the GUI thread before a native popup takes focus. Empty means
+  // copy/manual paste only. External DBusMenu events cannot invent a target.
+  std::function<InvocationContext()> invocation_provider;
 };
 struct NativeMenuStatus {
   bool launcher_visible = false, tray_available = false;

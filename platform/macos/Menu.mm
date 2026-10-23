@@ -105,6 +105,11 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
     auto cb = callback;
     MenuCommand c{it->second.action, it->second.id, model.revision};
     c.invocation = invocation;
+    auto held = NSEvent.modifierFlags;
+    c.invocation.modifiers = ((held & NSEventModifierFlagControl) ? 1u : 0u) |
+                             ((held & NSEventModifierFlagShift) ? 2u : 0u) |
+                             ((held & NSEventModifierFlagOption) ? 4u : 0u) |
+                             ((held & NSEventModifierFlagCommand) ? 8u : 0u);
     invocation = {};
     if (cb)
       cb(std::move(c));
@@ -148,6 +153,8 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
   }
   void popup(const InvocationContext &ctx = {}) {
     invocation = ctx;
+    if (invocation.target.empty() && options.invocation_provider)
+      invocation = options.invocation_provider();
     explicit_tracking = true;
     struct Reset {
       State *s;
@@ -225,7 +232,9 @@ Result<void> NativeMenu::initialize() {
   s->target->will_open = [weak](NSMenu *menu) {
     if (auto s = weak.lock())
       if (menu == s->menu && !s->explicit_tracking)
-        s->invocation = {};
+        s->invocation = s->options.invocation_provider
+                            ? s->options.invocation_provider()
+                            : InvocationContext{};
   };
   s->target->did_close = [weak](NSMenu *menu) {
     if (auto s = weak.lock())

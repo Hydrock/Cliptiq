@@ -106,6 +106,11 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
     auto cb = callback;
     MenuCommand c{it->second.action, it->second.id, model.revision};
     c.invocation = invocation;
+    c.invocation.modifiers =
+        ((GetKeyState(VK_CONTROL) & 0x8000) ? 1u : 0u) |
+        ((GetKeyState(VK_SHIFT) & 0x8000) ? 2u : 0u) |
+        ((GetKeyState(VK_MENU) & 0x8000) ? 4u : 0u) |
+        (((GetKeyState(VK_LWIN) | GetKeyState(VK_RWIN)) & 0x8000) ? 8u : 0u);
     if (cb)
       cb(std::move(c));
   }
@@ -238,6 +243,8 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
   }
   void popup(const InvocationContext &ctx = {}) {
     invocation = ctx;
+    if (invocation.target.empty() && options.invocation_provider)
+      invocation = options.invocation_provider();
     struct Reset {
       State *s;
       ~Reset() { s->invocation = {}; }

@@ -88,6 +88,12 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
     auto cb = callback;
     MenuCommand c{it->second.item.action, it->second.item.id, model.revision};
     c.invocation = external ? InvocationContext{} : invocation;
+    GdkModifierType held{};
+    if (!external && gtk_get_current_event_state(&held))
+      c.invocation.modifiers = ((held & GDK_CONTROL_MASK) ? 1u : 0u) |
+                               ((held & GDK_SHIFT_MASK) ? 2u : 0u) |
+                               ((held & GDK_MOD1_MASK) ? 4u : 0u) |
+                               ((held & GDK_SUPER_MASK) ? 8u : 0u);
     invocation = {};
     if (cb)
       cb(std::move(c));
@@ -110,7 +116,9 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
                        auto s = static_cast<State *>(data);
                        if (w == s->menu && !s->explicit_opening) {
                          ++s->opening;
-                         s->invocation = {};
+                         s->invocation = s->options.invocation_provider
+                                             ? s->options.invocation_provider()
+                                             : InvocationContext{};
                        }
                      }),
                      this);
@@ -222,6 +230,8 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
     gtk_menu_popdown(GTK_MENU(menu));
     ++opening;
     invocation = ctx;
+    if (invocation.target.empty() && options.invocation_provider)
+      invocation = options.invocation_provider();
     auto event = gtk_get_current_event();
     bool wayland = GDK_IS_WAYLAND_DISPLAY(gtk_widget_get_display(window));
     if (wayland && !event) {

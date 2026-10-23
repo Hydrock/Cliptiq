@@ -46,6 +46,7 @@ struct InvocationContext {
   std::string target, activation_token;
   bool keyboard = false;
   std::optional<int> x, y;
+  unsigned modifiers = 0;
 };
 struct MenuCommand {
   MenuAction action = MenuAction::None;

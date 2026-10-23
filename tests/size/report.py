@@ -143,5 +143,7 @@ report['menu'] = {'baseline': menu_baseline, 'model': menu_model, 'native': menu
     'total_added_bytes': menu_native['executable_bytes'] - menu_baseline['executable_bytes'],
     'scope': 'same history/capture-capable review host baseline, shared model + Unicode17, then native popup/tray/launcher; no capture in smoke; system GUI libraries not bundled; not full product'}
 report['source_files_sha256']['platform/MenuHost.cpp'] = hashlib.sha256((root / 'platform/MenuHost.cpp').read_bytes()).hexdigest()
+paste_native = menu_variant('paste_native_probe')
+report['paste'] = {'baseline': menu_native, 'with_paste': paste_native, 'added_bytes': paste_native['executable_bytes']-menu_native['executable_bytes'], 'added_zip_bytes': paste_native['zip_bytes']-menu_native['zip_bytes'], 'scope': 'paired same native menu/capture-capable host without and with selection pipeline, modifier mapping and native paste; smoke never reads/writes clipboard or sends input; system libraries not bundled; not full product'}
 (root / 'out' / 't02-size.json').write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
 print(json.dumps(report, indent=2))

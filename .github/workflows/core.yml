@@ -1,4 +1,4 @@
-name: Portable core and native clipboards (T02-T07)
+name: Portable core and native clipboards (T02-T08)
 on:
   workflow_dispatch:
   push:
@@ -13,6 +13,8 @@ on:
       - 'tools/install-linux-backend-deps.sh'
       - 'tests/integration/linux*'
       - 'tests/integration/native_menu_test.cpp'
+      - 'tests/integration/native_paste_test.cpp'
+      - 'tests/integration/menu_paste_bridge_test.cpp'
       - 'tests/integration/menu_regression_test.cpp'
       - 'tests/fixtures/linux/**'
       - 'cmake/**'
