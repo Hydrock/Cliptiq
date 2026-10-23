@@ -10,7 +10,7 @@
 
 **Spec:** [дизайн](../specs/2026-10-23-cliptiq-design.md). **Coverage:** [аудит с ID функций](../../research/2026-10-23-clipy-audit.md). **Naming:** [проверка имён](../../research/2026-10-23-naming.md).
 
-Статус: полный план охвата исследуемой ревизии; пользователь разрешил T01, [прототипы и первые измерения выполнены](../../support/architecture-decision.md). T01 ещё не закрыт целиком; T02–T17 не начаты. Product code и release binaries не созданы.
+Статус: полный план охвата исследуемой ревизии; пользователь разрешил T01, [прототипы и первые измерения выполнены](../../support/architecture-decision.md). T01 закрыт в согласованных границах ([итог](../../support/t01-results.md)); T02–T17 не начаты. Product code и release binaries не созданы.
 
 ## Global Constraints
 

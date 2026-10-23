@@ -13,6 +13,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--lane', choices=['gtk3', 'gtk4', 'ocr'], required=True)
     parser.add_argument('--image', default='ubuntu:24.04')
+    parser.add_argument('--deb', type=Path, help='optional local packaging fixture to install/remove offline (GTK3 lane)')
     args = parser.parse_args()
     docker = shutil.which('docker') or 'C:/Program Files/Docker/Docker/resources/bin/docker.exe'
     lane = 'linux-x86_64-base-' + ('gtk4' if args.lane == 'gtk4' else 'gtk3') + ('-ocr' if args.lane == 'ocr' else '')
@@ -40,10 +41,15 @@ def main():
     image = json.loads(run('image', 'inspect', args.image))[0]
     image_ref = image['RepoDigests'][0]
     try:
+        extra_mount = []
+        if args.deb:
+            if args.lane != 'gtk3' or not args.deb.resolve().is_file():
+                raise RuntimeError('--deb requires an existing GTK3 packaging fixture')
+            extra_mount = ['--mount', f'type=bind,source={args.deb.resolve()},target=/payload/update.deb,readonly']
         run('create', '--name', name,
             '--mount', f'type=bind,source={ROOT / "experiments/clean-install"},target=/work,readonly',
             '--mount', f'type=bind,source={dist},target=/app,readonly',
-            '--mount', f'type=bind,source={output},target=/out', image_ref, 'sleep', 'infinity')
+            '--mount', f'type=bind,source={output},target=/out', *extra_mount, image_ref, 'sleep', 'infinity')
         run('start', name)
         run('exec', name, 'sh', '/work/linux_measure.sh', 'download', args.lane)
         run('network', 'disconnect', 'bridge', name)

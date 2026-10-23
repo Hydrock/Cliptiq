@@ -1,0 +1,49 @@
+{
+  "probe_bytes": 14472,
+  "sha256": "aabc20e8dad0971ef4cd8108ea8210c10c350b3e67b73123a20e47d1f0ce87c9",
+  "elf_runtime_dependencies": [
+    {
+      "path": "/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
+      "bytes": 236616
+    },
+    {
+      "path": "/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0",
+      "bytes": 1302184
+    },
+    {
+      "path": "/usr/lib/x86_64-linux-gnu/libXau.so.6.0.0",
+      "bytes": 18696
+    },
+    {
+      "path": "/usr/lib/x86_64-linux-gnu/libXdmcp.so.6.0.0",
+      "bytes": 26776
+    },
+    {
+      "path": "/usr/lib/x86_64-linux-gnu/libXext.so.6.4.0",
+      "bytes": 77512
+    },
+    {
+      "path": "/usr/lib/x86_64-linux-gnu/libXtst.so.6.1.0",
+      "bytes": 27128
+    },
+    {
+      "path": "/usr/lib/x86_64-linux-gnu/libbsd.so.0.12.1",
+      "bytes": 80888
+    },
+    {
+      "path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+      "bytes": 2129424
+    },
+    {
+      "path": "/usr/lib/x86_64-linux-gnu/libmd.so.0.1.0",
+      "bytes": 55536
+    },
+    {
+      "path": "/usr/lib/x86_64-linux-gnu/libxcb.so.1.1.0",
+      "bytes": 162392
+    }
+  ],
+  "elf_runtime_bytes": 4117152,
+  "app_owned_production_bytes": null,
+  "offline_install_total_bytes": null
+}

@@ -42,12 +42,6 @@ macOS Vision и Linux Tesseract также распознали generated fixtur
 
 Предложенные пределы 5 MiB download / 10 MiB app-owned остаются **целями**, не достигнутым размером полного продукта. Не замораживать final size acceptance по маленькому spike.
 
-## Что ещё нужно закрыть в T01
+## Закрытие T01
 
-1. Clean-machine offline closure: ОС + missing toolkit/CRT/model packages отдельно, включая данные и plugins; текущие GitHub runner/WSL — не чистые целевые desktop VM.
-2. Mac Sparkle/update integration footprint; подписанная установленная сборка, macOS x86_64 lane. Сейчас только AppKit/Vision arm64 prototype.
-3. Native Linux tray/hotkey/Wayland capability spike; Xvfb/GTK window не доказывает GNOME/KDE/Sway compatibility.
-4. OCR full pack/reproducible redistribution, RU/EN engine availability и quality; Windows supported packaging policy.
-5. Стабилизировать dependency/toolchain pins для product build и утвердить численные budgets по всем трём категориям: download, app-owned и offline total.
-
-T01 начат и дал реальные comparative builds на трёх ОС, но **не отмечен целиком завершённым**. T02 product core не начат. Snapshot reports, checksum/flags и dependency inventories находятся в `docs/support/measurements/`; скрипты воспроизведения — в `tools/`.
+См. [итоговый отчёт](t01-results.md): успешная полная CI матрица, isolated-profile installation, clean Linux dependency delta, Sparkle обоих CPU, Windows/Linux update payload и Linux protocol probes. T01 закрыт в согласованных границах. Чистые Windows/macOS ВМ недоступны; ограничение согласовано пользователем и сохранено в evidence. Production signing/update end-to-end и реальные desktop проверки не объявлены выполненными и остаются release gates последующих задач. T02 не начат.

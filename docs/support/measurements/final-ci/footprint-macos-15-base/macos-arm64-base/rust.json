@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "target": "macos",
+  "arch": "arm64",
+  "toolchain": {
+    "cmake": "cmake version 4.4.3",
+    "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)",
+    "sqlite": "3.53.4",
+    "host": "macOS-15.7.9-arm64-arm-64bit-Mach-O",
+    "cc": "Apple clang version 17.0.0 (clang-1700.0.13.5)"
+  },
+  "flags": {
+    "fts5": false,
+    "static_crt": null,
+    "gtk": null,
+    "cpp": "MinSizeRel",
+    "cpp_lto": false,
+    "ocr_probe": false,
+    "rust": "opt-level=z panic=abort lto=thin codegen-units=1"
+  },
+  "app_bytes": 1222798,
+  "archive_bytes": 592151,
+  "dependency_delta_bytes": null,
+  "ocr_bytes": 0,
+  "total_offline_bytes": null,
+  "idle_memory_bytes": 20414464,
+  "startup_ms": 50.4728,
+  "measurement_scope": "prototype; host OS libraries excluded, clean-machine closure unverified",
+  "archive_sha256": "dea8fcacea0293565602b1268f5abd03f6df7064c7811c57cab8d44997f17487",
+  "files": [
+    {
+      "path": "NOTICE.txt",
+      "bytes": 422,
+      "sha256": "2d2825762056493c9cdba84e15e2cdaf42e51dc82bef0f7b489741ef9fc14ae3"
+    },
+    {
+      "path": "probe_rust",
+      "bytes": 1222376,
+      "sha256": "7683692a83775ea45ac1460f53551a08a7b4ad8e824b3949f5fd229a83aa1fd5"
+    }
+  ],
+  "runtime": {
+    "entries": 33,
+    "representations": 35,
+    "native_ui_ready": true,
+    "fts5": false,
+    "idle_memory_bytes": 20414464,
+    "startup_ms": 50.4728,
+    "startup_definition": "main-to-fixture-and-hidden-native-window; loader time excluded",
+    "clipboard_roundtrip": "not exercised; user clipboard preserved",
+    "ocr": "not implemented",
+    "samples": [
+      {
+        "entries": 33,
+        "representations": 35,
+        "native_ui_ready": true,
+        "fts5": false,
+        "idle_memory_bytes": 20381696,
+        "startup_ms": 45.265,
+        "startup_definition": "main-to-fixture-and-hidden-native-window; loader time excluded",
+        "clipboard_roundtrip": "not exercised; user clipboard preserved",
+        "ocr": "not implemented"
+      },
+      {
+        "entries": 33,
+        "representations": 35,
+        "native_ui_ready": true,
+        "fts5": false,
+        "idle_memory_bytes": 20430848,
+        "startup_ms": 50.4728,
+        "startup_definition": "main-to-fixture-and-hidden-native-window; loader time excluded",
+        "clipboard_roundtrip": "not exercised; user clipboard preserved",
+        "ocr": "not implemented"
+      },
+      {
+        "entries": 33,
+        "representations": 35,
+        "native_ui_ready": true,
+        "fts5": false,
+        "idle_memory_bytes": 20414464,
+        "startup_ms": 54.032,
+        "startup_definition": "main-to-fixture-and-hidden-native-window; loader time excluded",
+        "clipboard_roundtrip": "not exercised; user clipboard preserved",
+        "ocr": "not implemented"
+      },
+      {
+        "entries": 33,
+        "representations": 35,
+        "native_ui_ready": true,
+        "fts5": false,
+        "idle_memory_bytes": 20332544,
+        "startup_ms": 46.4513,
+        "startup_definition": "main-to-fixture-and-hidden-native-window; loader time excluded",
+        "clipboard_roundtrip": "not exercised; user clipboard preserved",
+        "ocr": "not implemented"
+      },
+      {
+        "entries": 33,
+        "representations": 35,
+        "native_ui_ready": true,
+        "fts5": false,
+        "idle_memory_bytes": 20447232,
+        "startup_ms": 52.1259,
+        "startup_definition": "main-to-fixture-and-hidden-native-window; loader time excluded",
+        "clipboard_roundtrip": "not exercised; user clipboard preserved",
+        "ocr": "not implemented"
+      }
+    ]
+  },
+  "language": "rust",
+  "lane": "macos-arm64-base",
+  "feature_scope": "33 entries / 35 representations, SQLite, XML, shared native host; no updater/history monitor; no OCR",
+  "native_ui_ready": true
+}

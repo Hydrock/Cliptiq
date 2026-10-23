@@ -12,3 +12,5 @@ Product code ещё не создаётся. Пользователь подтв
 Имя Cliptiq подтверждено. Открытые решения: окончательный native stack после T01; точные size budgets; OCR/diagnostics distribution; поддерживаемые Wayland desktops и необходимые integrations. ClipClap не принят как замена.
 
 Исходная исследовательская копия `reference/Clipy` исключена из Git. Она не входит в поставку и не должна превращаться в nested repository внутри Cliptiq.
+
+T01 закрыт в согласованных границах: [итоговые замеры и ограничения](support/t01-results.md). T02 не начат.

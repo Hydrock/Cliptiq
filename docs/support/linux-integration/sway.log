@@ -1,0 +1,126 @@
+00:00:00.000 [INFO] [sway/main.c:338] Sway version 1.9
+00:00:00.000 [INFO] [sway/main.c:339] wlroots version 0.17.1
+00:00:00.002 [INFO] [sway/main.c:120] Linux SmiteVils-PC 6.6.87.2-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Thu Jun  5 18:30:46 UTC 2025 x86_64 x86_64 x86_64 GNU/Linux
+00:00:00.003 [INFO] [sway/main.c:136] Contents of /etc/lsb-release:
+00:00:00.004 [INFO] [sway/main.c:120] DISTRIB_ID=Ubuntu
+00:00:00.005 [INFO] [sway/main.c:120] DISTRIB_RELEASE=24.04
+00:00:00.005 [INFO] [sway/main.c:120] DISTRIB_CODENAME=noble
+00:00:00.006 [INFO] [sway/main.c:120] DISTRIB_DESCRIPTION="Ubuntu 24.04.3 LTS"
+00:00:00.006 [INFO] [sway/main.c:136] Contents of /etc/os-release:
+00:00:00.007 [INFO] [sway/main.c:120] PRETTY_NAME="Ubuntu 24.04.3 LTS"
+00:00:00.007 [INFO] [sway/main.c:120] NAME="Ubuntu"
+00:00:00.008 [INFO] [sway/main.c:120] VERSION_ID="24.04"
+00:00:00.008 [INFO] [sway/main.c:120] VERSION="24.04.3 LTS (Noble Numbat)"
+00:00:00.009 [INFO] [sway/main.c:120] VERSION_CODENAME=noble
+00:00:00.010 [INFO] [sway/main.c:120] ID=ubuntu
+00:00:00.010 [INFO] [sway/main.c:120] ID_LIKE=debian
+00:00:00.011 [INFO] [sway/main.c:120] HOME_URL="https://www.ubuntu.com/"
+00:00:00.012 [INFO] [sway/main.c:120] SUPPORT_URL="https://help.ubuntu.com/"
+00:00:00.012 [INFO] [sway/main.c:120] BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+00:00:00.013 [INFO] [sway/main.c:120] PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
+00:00:00.014 [INFO] [sway/main.c:120] UBUNTU_CODENAME=noble
+00:00:00.014 [INFO] [sway/main.c:120] LOGO=ubuntu-logo
+00:00:00.015 [INFO] [sway/main.c:136] Contents of /etc/debian_version:
+00:00:00.016 [INFO] [sway/main.c:120] trixie/sid
+00:00:00.016 [INFO] [sway/main.c:108] LD_LIBRARY_PATH=
+00:00:00.017 [INFO] [sway/main.c:108] LD_PRELOAD=
+00:00:00.018 [INFO] [sway/main.c:108] PATH=/home/smitevils/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib:/mnt/c/Users/SmiteVils/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell:/mnt/c/Users/SmiteVils/.codex/tmp/arg0-windows/codex-arg0SJ9Ses:/mnt/c/Users/SmiteVils/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/libheif/libheif/bin:/mnt/c/Users/SmiteVils/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/jxrlib/jxrlib/bin:/mnt/c/Users/SmiteVils/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/poppler/Library/bin:/mnt/c/Users/SmiteVils/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/mnt/c/Python314/Scripts/:/mnt/c/Python314/:/mnt/c/Program Files/Meta Horizon/Support/oculus-runtime:/mnt/c/WINDOWS/system32:/mnt/c/WINDOWS:/mnt/c/WINDOWS/System32/Wbem:/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/:/mnt/c/WINDOWS/System32/OpenSSH/:/mnt/c/Program Files/NVIDIA Corporation/NVIDIA App/NvDLISR:/mnt/c/Program Files (x86)/NVIDIA Corporation/PhysX/Common:/mnt/c/Program Files/dotnet/:/mnt/c/ProgramData/chocolatey/bin:/mnt/c/Program Files/Tailscale/:/mnt/c/Program Files/Sunshine:/mnt/c/Program Files/Sunshine/tools:/mnt/c/Program Files/Git/cmd:/mnt/c/Program Files/Exiftool:/mnt/c/Program Files/nodejs/:/mnt/c/Program Files/Docker/Docker/resources/bin:/mnt/c/Users/SmiteVils/AppData/Local/hermes/bin:/mnt/c/Users/SmiteVils/.cargo/bin:/mnt/c/Users/SmiteVils/AppData/Local/Programs/Jan/resources/bin:/mnt/c/Users/SmiteVils/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell:/mnt/c/Users/SmiteVils/AppData/Local/Microsoft/WindowsApps:/mnt/c/Users/SmiteVils/.lmstudio/bin:/mnt/c/Users/SmiteVils/AppData/Local/Programs/Microsoft VS Code/bin:/mnt/c/Users/SmiteVils/AppData/Local/Programs/Ollama:/mnt/c/Users/SmiteVils/AppData/Local/Python/bin:/mnt/c/Users/SmiteVils/AppData/Local/Python/pythoncore-3.14-64/Lib/site-packages/pip:/mnt/c/Users/SmiteVils/AppData/Local/PowerToys/DSCModules/:/mnt/c/Program Files (x86)/Inno Setup 6:/mnt/c/Users/SmiteVils/AppData/Roaming/npm:/mnt/c/Users/SmiteVils/AppData/Local/Programs/superfile/:/mnt/c/Users/SmiteVils/AppData/Local/Freenet/bin:/mnt/c/Users/SmiteVils/AppData/Local/Microsoft/WinGet/Packages/Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe/ffmpeg-9.0.2-full_build/bin:/mnt/c/Users/SmiteVils/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/mnt/c/Users/SmiteVils/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin:/mnt/c/Users/SmiteVils/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/git/cmd:/mnt/c/Users/SmiteVils/AppData/Local/OpenAI/Codex/bin/ce4759538b7f2f1a:/mnt/c/Users/SmiteVils/AppData/Local/OpenAI/Codex/bin/896a0166b774037a:/snap/bin
+00:00:00.021 [INFO] [sway/main.c:108] SWAYSOCK=
+00:00:00.022 [INFO] [sway/main.c:376] Starting sway version 1.9
+00:00:00.023 [DEBUG] [sway/server.c:129] Initializing Wayland server
+00:00:00.024 [INFO] [wlr] [backend/backend.c:309] Loading user-specified backends due to WLR_BACKENDS: headless
+00:00:00.025 [INFO] [wlr] [backend/headless/backend.c:67] Creating headless backend
+00:00:00.026 [INFO] [wlr] [util/env.c:25] Loading WLR_RENDERER option: pixman
+00:00:00.026 [INFO] [wlr] [render/pixman/renderer.c:537] Creating pixman renderer
+00:00:00.027 [DEBUG] [wlr] [render/allocator/allocator.c:124] Trying to create shm allocator
+00:00:00.028 [DEBUG] [wlr] [render/allocator/shm.c:118] Created shm allocator
+00:00:00.029 [DEBUG] [wlr] [types/wlr_drm_lease_v1.c:710] No DRM backend supplied, failed to create wlr_drm_lease_v1_manager
+00:00:00.029 [DEBUG] [sway/server.c:264] Failed to create wlr_drm_lease_device_v1
+00:00:00.030 [INFO] [sway/server.c:265] VR will not be available
+00:00:00.031 [INFO] [wlr] [backend/headless/backend.c:67] Creating headless backend
+00:00:00.033 [INFO] [sway/config.c:416] Loading config from /tmp/tmp.v3XpwaKGcC/sway.conf
+00:00:00.034 [DEBUG] [sway/config.c:838] Read line 1: output * resolution 800x600
+00:00:00.034 [INFO] [sway/commands.c:381] Config command: output * resolution 800x600
+00:00:00.035 [INFO] [sway/commands.c:404] After replacement: output * resolution 800x600
+00:00:00.035 [DEBUG] [sway/commands.c:436] Subcommand: resolution 800x600
+00:00:00.036 [DEBUG] [sway/config/output.c:231] Adding output * config
+00:00:00.036 [DEBUG] [sway/config/output.c:235] Config stored for output * (enabled: -1) (800x600@-1.000000Hz position -1,-1 scale -1.000000 subpixel unknown transform -1) (bg (null) (null)) (power -1) (max render time: -1)
+00:00:00.037 [DEBUG] [sway/config.c:838] Read line 2: seat seat0 fallback true
+00:00:00.038 [INFO] [sway/commands.c:381] Config command: seat seat0 fallback true
+00:00:00.038 [INFO] [sway/commands.c:404] After replacement: seat seat0 fallback true
+00:00:00.039 [DEBUG] [sway/commands.c:436] Subcommand: fallback true
+00:00:00.039 [DEBUG] [sway/config/seat.c:66] Adding non-wildcard seat config
+00:00:00.040 [DEBUG] [sway/config/seat.c:83] Config stored for seat seat0
+00:00:00.076 [INFO] [sway/realtime.c:35] Failed to set scheduling priority to 1
+00:00:00.077 [DEBUG] [sway/server.c:357] Initializing Xwayland (lazy=1)
+00:00:00.077 [ERROR] [wlr] [xwayland/sockets.c:106] sticky bit not set on /tmp/.X11-unix
+00:00:00.078 [ERROR] [wlr] [xwayland/sockets.c:106] sticky bit not set on /tmp/.X11-unix
+00:00:00.078 [ERROR] [wlr] [xwayland/sockets.c:106] sticky bit not set on /tmp/.X11-unix
+00:00:00.079 [ERROR] [wlr] [xwayland/sockets.c:106] sticky bit not set on /tmp/.X11-unix
+00:00:00.080 [ERROR] [wlr] [xwayland/sockets.c:106] sticky bit not set on /tmp/.X11-unix
+00:00:00.080 [ERROR] [wlr] [xwayland/sockets.c:106] sticky bit not set on /tmp/.X11-unix
+00:00:00.081 [ERROR] [wlr] [xwayland/sockets.c:106] sticky bit not set on /tmp/.X11-unix
+00:00:00.081 [ERROR] [wlr] [xwayland/sockets.c:106] sticky bit not set on /tmp/.X11-unix
+00:00:00.082 [ERROR] [wlr] [xwayland/sockets.c:106] sticky bit not set on /tmp/.X11-unix
+00:00:00.083 [ERROR] [wlr] [xwayland/sockets.c:106] sticky bit not set on /tmp/.X11-unix
+00:00:00.083 [ERROR] [wlr] [xwayland/sockets.c:106] sticky bit not set on /tmp/.X11-unix
+00:00:00.084 [ERROR] [wlr] [xwayland/sockets.c:106] sticky bit not set on /tmp/.X11-unix
+00:00:00.084 [ERROR] [wlr] [xwayland/sockets.c:106] sticky bit not set on /tmp/.X11-unix
+00:00:00.085 [ERROR] [wlr] [xwayland/sockets.c:106] sticky bit not set on /tmp/.X11-unix
+00:00:00.086 [ERROR] [wlr] [xwayland/sockets.c:106] sticky bit not set on /tmp/.X11-unix
+00:00:00.086 [ERROR] [wlr] [xwayland/sockets.c:106] sticky bit not set on /tmp/.X11-unix
+00:00:00.087 [ERROR] [wlr] [xwayland/sockets.c:106] sticky bit not set on /tmp/.X11-unix
+00:00:00.087 [ERROR] [wlr] [xwayland/sockets.c:106] sticky bit not set on /tmp/.X11-unix
+00:00:00.088 [ERROR] [wlr] [xwayland/sockets.c:106] sticky bit not set on /tmp/.X11-unix
+00:00:00.089 [ERROR] [wlr] [xwayland/sockets.c:106] sticky bit not set on /tmp/.X11-unix
+00:00:00.089 [ERROR] [wlr] [xwayland/sockets.c:106] sticky bit not set on /tmp/.X11-unix
+00:00:00.090 [ERROR] [wlr] [xwayland/sockets.c:106] sticky bit not set on /tmp/.X11-unix
+00:00:00.090 [ERROR] [wlr] [xwayland/sockets.c:106] sticky bit not set on /tmp/.X11-unix
+00:00:00.091 [ERROR] [wlr] [xwayland/sockets.c:106] sticky bit not set on /tmp/.X11-unix
+00:00:00.092 [ERROR] [wlr] [xwayland/sockets.c:106] sticky bit not set on /tmp/.X11-unix
+00:00:00.092 [ERROR] [wlr] [xwayland/sockets.c:106] sticky bit not set on /tmp/.X11-unix
+00:00:00.093 [ERROR] [wlr] [xwayland/sockets.c:106] sticky bit not set on /tmp/.X11-unix
+00:00:00.093 [ERROR] [wlr] [xwayland/sockets.c:106] sticky bit not set on /tmp/.X11-unix
+00:00:00.094 [ERROR] [wlr] [xwayland/sockets.c:106] sticky bit not set on /tmp/.X11-unix
+00:00:00.095 [ERROR] [wlr] [xwayland/sockets.c:106] sticky bit not set on /tmp/.X11-unix
+00:00:00.095 [ERROR] [wlr] [xwayland/sockets.c:106] sticky bit not set on /tmp/.X11-unix
+00:00:00.096 [ERROR] [wlr] [xwayland/sockets.c:106] sticky bit not set on /tmp/.X11-unix
+00:00:00.096 [ERROR] [wlr] [xwayland/sockets.c:106] sticky bit not set on /tmp/.X11-unix
+00:00:00.097 [ERROR] [wlr] [xwayland/sockets.c:216] No display available in the first 33
+00:00:00.097 [ERROR] [sway/server.c:363] Failed to start Xwayland
+00:00:00.098 [INFO] [sway/server.c:384] Starting backend on wayland display 'wayland-1'
+00:00:00.098 [INFO] [wlr] [backend/headless/backend.c:17] Starting headless backend
+00:00:00.099 [DEBUG] [sway/desktop/output.c:1019] New output 0x5a30395222e0: HEADLESS-1 (non-desktop: 0)
+00:00:00.100 [DEBUG] [sway/config/output.c:401] Turning on output HEADLESS-1
+00:00:00.100 [DEBUG] [sway/config/output.c:409] Set HEADLESS-1 mode to 800x600 (-1.000000 Hz)
+00:00:00.101 [DEBUG] [sway/config/output.c:256] Assigning custom mode to HEADLESS-1
+00:00:00.101 [DEBUG] [sway/config/output.c:473] Auto-detected output scale: 1.000000
+00:00:00.102 [DEBUG] [sway/config/output.c:520] Committing output HEADLESS-1
+00:00:00.102 [DEBUG] [wlr] [types/output/render.c:168] Attaching empty buffer to output for modeset
+00:00:00.103 [DEBUG] [wlr] [types/output/swapchain.c:27] Choosing primary buffer format XR24 (0x34325258) for output 'HEADLESS-1'
+00:00:00.104 [DEBUG] [wlr] [types/output/swapchain.c:96] Testing swapchain for output 'HEADLESS-1'
+00:00:00.105 [DEBUG] [wlr] [render/swapchain.c:106] Allocating new swapchain buffer
+00:00:00.105 [DEBUG] [wlr] [render/pixman/renderer.c:152] Created pixman buffer 800x600
+00:00:00.107 [DEBUG] [wlr] [types/output/cursor.c:458] Falling back to software cursor on output 'HEADLESS-1'
+00:00:00.108 [DEBUG] [sway/tree/workspace.c:277] Workspace: Generating new workspace name for output HEADLESS-1
+00:00:00.109 [DEBUG] [sway/tree/output.c:127] Creating default workspace 1
+00:00:00.109 [DEBUG] [sway/tree/workspace.c:65] Adding workspace 1 for output HEADLESS-1
+00:00:00.126 [DEBUG] [wlr] [xcursor/wlr_xcursor.c:225] Loaded cursor theme 'default' at size 24 (59 available cursors)
+00:00:00.126 [DEBUG] [sway/desktop/layer_shell.c:229] Usable area changed, rearranging output
+00:00:00.127 [DEBUG] [sway/tree/arrange.c:263] Usable area for ws: 800x600@0,0
+00:00:00.127 [DEBUG] [sway/tree/arrange.c:297] Arranging workspace '1' at 0.000000, 0.000000
+00:00:00.128 [DEBUG] [sway/tree/arrange.c:263] Usable area for ws: 800x600@0,0
+00:00:00.128 [DEBUG] [sway/tree/arrange.c:297] Arranging workspace '1' at 0.000000, 0.000000
+00:00:00.129 [DEBUG] [sway/desktop/transaction.c:398] Transaction 0x5a3039554060 committing with 2 instructions
+00:00:00.129 [DEBUG] [sway/desktop/transaction.c:294] Applying transaction 0x5a3039554060
+00:00:00.130 [INFO] [wlr] [backend/headless/backend.c:17] Starting headless backend
+00:00:00.131 [INFO] [sway/server.c:396] Running compositor on wayland display 'wayland-1'
+00:00:00.336 [DEBUG] [wlr] [types/wlr_compositor.c:692] New wlr_surface 0x5a30395958c0 (res 0x5a3039556e40)
+00:00:00.336 [DEBUG] [wlr] [types/wlr_compositor.c:692] New wlr_surface 0x5a3039595cd0 (res 0x5a30395571a0)
+00:00:00.455 [DEBUG] [wlr] [types/wlr_data_control_v1.c:51] Ignoring duplicate MIME type offer text/plain;charset=utf-8
+00:00:00.507 [INFO] [sway/main.c:418] Shutting down sway
+00:00:00.507 [DEBUG] [sway/tree/output.c:264] Disabling output 'HEADLESS-1'
+00:00:00.508 [DEBUG] [sway/tree/workspace.c:145] Destroying workspace '1'
+00:00:00.508 [DEBUG] [sway/tree/output.c:287] Destroying output 'HEADLESS-1'
+00:00:00.509 [DEBUG] [sway/desktop/transaction.c:398] Transaction 0x5a303953a8e0 committing with 2 instructions
+00:00:00.509 [DEBUG] [sway/desktop/transaction.c:294] Applying transaction 0x5a303953a8e0
