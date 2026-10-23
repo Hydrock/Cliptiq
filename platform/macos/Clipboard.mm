@@ -36,11 +36,6 @@ const Type* lookup(const std::string& name) {
  for(const auto& t:types)if(name==t.name)return &t;
  return nullptr;
 }
-const char* replay_type(const Type& type) {
- // Legacy names are not valid NSPasteboardItem UTIs. Publish unchanged bytes
- // through the corresponding UTI; filenames remain a complete root array.
- return type.modern&&std::string(type.name)!="NSFilenamesPboardType"?type.modern:type.name;
-}
 bool marker(NSString* type) {
  return [type isEqualToString:@"org.nspasteboard.TransientType"] ||
         [type isEqualToString:@"org.nspasteboard.ConcealedType"] ||
@@ -242,7 +237,7 @@ Result<std::string> MacClipboardBackend::write_snapshot(const ClipboardSnapshot&
   std::set<std::pair<std::uint32_t,std::string>> seen;
   for(const auto& r:snapshot.representations) {
    const auto known=lookup(r.native_type);
-   if(r.platform!="macos"||!known||known->kind!=r.kind||r.text_encoding!=TextEncoding::Utf8||!seen.emplace(r.item_index,replay_type(*known)).second)
+   if(r.platform!="macos"||!known||known->kind!=r.kind||r.text_encoding!=TextEncoding::Utf8||!seen.emplace(r.item_index,r.native_type).second)
     return Error{ErrorCode::Unsupported,"Replay requires known, non-duplicate native macOS representations"};
    if(r.data.size()>limits.representation_bytes||r.data.size()>limits.entry_bytes-total)
     return Error{ErrorCode::TooLarge,"Replay exceeds configured limits"};
@@ -253,12 +248,12 @@ Result<std::string> MacClipboardBackend::write_snapshot(const ClipboardSnapshot&
    }
    if(r.item_index==RootPasteboardItem){roots.push_back(&r);continue;}
    if(!groups.count(r.item_index)){auto item=[NSPasteboardItem new];groups.emplace(r.item_index,item);[objects addObject:item];}
-   if(![groups.at(r.item_index) setData:[NSData dataWithBytes:r.data.data() length:r.data.size()] forType:native(replay_type(*known))])
+   if(![groups.at(r.item_index) setData:[NSData dataWithBytes:r.data.data() length:r.data.size()] forType:native(r.native_type)])
     return Error{ErrorCode::Io,"Unable to prepare native replay data"};
   }
   if(objects.count==0&&!roots.empty())[objects addObject:[NSPasteboardItem new]];
   for(const auto* r:roots) {
-   auto first=objects.firstObject;auto type=native(replay_type(*lookup(r->native_type)));
+   auto first=objects.firstObject;auto type=native(r->native_type);
    if([first.types containsObject:type])return Error{ErrorCode::InvalidArgument,"Conflicting root/item replay type"};
    if(![first setData:[NSData dataWithBytes:r->data.data() length:r->data.size()] forType:type])return Error{ErrorCode::Io,"Unable to prepare root replay data"};
   }
