@@ -39,7 +39,7 @@ constexpr UINT CaptureMessage=WM_APP+51,TaskMessage=WM_APP+52,StopMessage=WM_APP
 struct WindowsClipboardBackend::State{
  ClipboardOptions options;HWND window=nullptr;DWORD thread=GetCurrentThreadId();
  std::atomic<bool> active{false};std::atomic<std::uint64_t> generation{0};CaptureCallback callback;
- DWORD observed=0;bool pending=false;unsigned retries=0;std::optional<ErrorCode> last_error;
+ DWORD observed=0;bool own_pending=false;bool pending=false;unsigned retries=0;std::optional<ErrorCode> last_error;
  std::mutex tasks_mutex;std::deque<std::function<void()>> tasks;
  explicit State(ClipboardOptions o):options(std::move(o)){}
  Capabilities capabilities()const{Capabilities c;c.platform=CapturePlatform::Windows;c.source_app={CapabilityStatus::Limited,"Clipboard owner executable is best effort, not proven authorship; inaccessible owner is Unknown"};for(const auto& t:types)c.native_types.push_back({"windows",t.name,t.kind,t.encoding});if(window){c.capture={CapabilityStatus::Available,"Win32 transferable formats; cooperative privacy hints only; delayed providers may block"};c.write={CapabilityStatus::Available,"Win32 replay, no auto-paste; virtual/OLE-only data unsupported"};}else c.capture.reason="Message window unavailable on this window station";return c;}
@@ -60,7 +60,10 @@ struct WindowsClipboardBackend::State{
   }return Error{ErrorCode::Busy,"Clipboard busy or changed during three read attempts"};
  });}
  void cleanup(std::uint64_t g){if(g!=generation)return;if(window){RemoveClipboardFormatListener(window);KillTimer(window,1);}pending=false;retries=0;callback={};}
- void capture(){if(!active||!callback)return;auto current=GetClipboardSequenceNumber();if(current&&current==observed)return;auto result=read();if(!result&&result.error().code==ErrorCode::Busy&&retries++<3){SetTimer(window,1,20,nullptr);return;}retries=0;KillTimer(window,1);if(result){observed=static_cast<DWORD>(std::stoul(result.value().sequence_token.substr(8)));last_error.reset();}else{if(last_error==result.error().code)return;last_error=result.error().code;}auto notify=callback;if(active&&notify)notify(std::move(result));}
+ // Windows can commit its final sequence on CloseClipboard. Confirm it under
+ // a second lock only while still our owner; never sample an unlocked rival.
+ bool confirm_own(){Open open;if(!OpenClipboard(window))return false;open.opened=true;own_pending=false;if(GetClipboardOwner()!=window)return false;observed=GetClipboardSequenceNumber();return true;}
+ void capture(){if(!active||!callback)return;if(own_pending&&confirm_own())return;auto current=GetClipboardSequenceNumber();if(current&&current==observed)return;auto result=read();if(!result&&result.error().code==ErrorCode::Busy&&retries++<3){SetTimer(window,1,20,nullptr);return;}retries=0;KillTimer(window,1);if(result){observed=static_cast<DWORD>(std::stoul(result.value().sequence_token.substr(8)));last_error.reset();}else{if(last_error==result.error().code)return;last_error=result.error().code;}auto notify=callback;if(active&&notify)notify(std::move(result));}
  static LRESULT CALLBACK procedure(HWND hwnd,UINT message,WPARAM w,LPARAM l){
   auto holder=reinterpret_cast<std::shared_ptr<State>*>(GetWindowLongPtrW(hwnd,GWLP_USERDATA));if(message==WM_NCCREATE){holder=static_cast<std::shared_ptr<State>*>(reinterpret_cast<CREATESTRUCTW*>(l)->lpCreateParams);SetWindowLongPtrW(hwnd,GWLP_USERDATA,reinterpret_cast<LONG_PTR>(holder));(*holder)->window=hwnd;}if(!holder)return DefWindowProcW(hwnd,message,w,l);auto self=*holder;
   try{if(message==WM_CLIPBOARDUPDATE){if(self->active&&!self->pending){self->pending=true;PostMessageW(hwnd,CaptureMessage,static_cast<WPARAM>(self->generation.load()),0);}return 0;}if(message==CaptureMessage){if(w==self->generation){self->pending=false;self->capture();}return 0;}if(message==WM_TIMER&&w==1){KillTimer(hwnd,1);self->capture();return 0;}if(message==StopMessage){self->cleanup(static_cast<std::uint64_t>(w));return 0;}if(message==TaskMessage){std::function<void()> task;{std::lock_guard<std::mutex> lock(self->tasks_mutex);if(!self->tasks.empty()){task=std::move(self->tasks.front());self->tasks.pop_front();}}if(task)task();return 0;}if(message==DestroyMessage){DestroyWindow(hwnd);return 0;}}catch(...){self->last_error=ErrorCode::Internal;}
@@ -89,6 +92,6 @@ Result<std::string> WindowsClipboardBackend::write_snapshot(const ClipboardSnaps
  for(auto& pair:prepared){if(!SetClipboardData(pair.first,pair.second.handle))return Error{ErrorCode::Io,"Native clipboard rejected replay; clipboard may be partial"};pair.second.handle=nullptr;}
  // Sample while ownership is protected; after unlock another copy may win.
  const auto own_sequence=GetClipboardSequenceNumber();
- if(!CloseClipboard()){open.opened=false;return Error{ErrorCode::Io,"Replay close failed"};}open.opened=false;s->observed=own_sequence;s->last_error.reset();return "windows:"+std::to_string(s->observed);
+ if(!CloseClipboard()){open.opened=false;return Error{ErrorCode::Io,"Replay close failed"};}open.opened=false;s->observed=own_sequence;s->own_pending=true;s->confirm_own();s->last_error.reset();return "windows:"+std::to_string(s->observed);
  });}
 }
