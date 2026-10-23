@@ -1,4 +1,5 @@
 #pragma once
+#include <algorithm>
 #include "ext-data-control-v1-server-header.h"
 #include "wlr-data-control-unstable-v1-server-header.h"
 #include <atomic>
