@@ -12,7 +12,7 @@ struct IsolatedClipboard {
  HDESK previous_desktop=GetThreadDesktop(GetCurrentThreadId()),desktop=nullptr;
  IsolatedClipboard() {
   const auto name=L"Cliptiq-test-"+std::to_wstring(GetCurrentProcessId())+L"-"+std::to_wstring(GetTickCount64());
-  station=CreateWindowStationW(name.c_str(),0,WINSTA_ALL_ACCESS,nullptr);
+  station=CreateWindowStationW(name.c_str(),0,WINSTA_ACCESSCLIPBOARD|WINSTA_ACCESSGLOBALATOMS|WINSTA_CREATEDESKTOP|WINSTA_ENUMDESKTOPS|WINSTA_READATTRIBUTES|WINSTA_WRITEATTRIBUTES,nullptr);
   if(!station)throw std::runtime_error("CreateWindowStation failed: "+std::to_string(GetLastError()));
   if(!SetProcessWindowStation(station))throw std::runtime_error("SetProcessWindowStation failed: "+std::to_string(GetLastError()));
   desktop=CreateDesktopW(L"test",nullptr,nullptr,0,GENERIC_ALL,nullptr);
