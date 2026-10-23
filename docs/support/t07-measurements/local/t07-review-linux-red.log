@@ -1,0 +1,131 @@
+Preset CMake variables:
+
+  BUILD_TESTING="ON"
+  CMAKE_BUILD_TYPE="Debug"
+
+-- Configuring done (2.8s)
+-- Generating done (0.3s)
+-- Build files have been written to: /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+[1/21] Building CXX object CMakeFiles/grapheme_test.dir/tests/unit/grapheme_test.cpp.o
+[2/21] Building CXX object CMakeFiles/menu_preview_test.dir/tests/unit/menu_preview_test.cpp.o
+[3/21] Linking CXX executable grapheme_test
+[4/21] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/menu_preview.cpp.o
+[5/21] Building CXX object CMakeFiles/menu_regression_test.dir/tests/integration/menu_regression_test.cpp.o
+[6/21] Building CXX object CMakeFiles/cliptiq_menu_host.dir/platform/MenuHost.cpp.o
+[7/21] Building CXX object CMakeFiles/native_menu_test.dir/tests/integration/native_menu_test.cpp.o
+[8/21] Building CXX object CMakeFiles/cliptiq_menu_native.dir/platform/linux/Menu.cpp.o
+[9/21] Linking CXX static library libcliptiq_core.a
+[10/21] Linking CXX static library libcliptiq_menu_native.a
+[11/21] Linking CXX executable menu_preview_test
+[12/21] Linking CXX executable history_test
+[13/21] Linking CXX executable policy_test
+[14/21] Linking CXX executable menu_test
+[15/21] Linking CXX executable menu_regression_test
+[16/21] Linking CXX executable native_menu_test
+[17/21] Linking CXX executable linux_clipboard_test
+[18/21] Linking CXX executable linux_x11_wire_test
+[19/21] Linking CXX executable linux_wayland_wire_test
+[20/21] Linking CXX executable linux_native_clipboard_test
+[21/21] Linking CXX executable cliptiq_menu_host
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+      Start  1: menu_unicode_conformance
+ 1/17 Test  #1: menu_unicode_conformance ...........   Passed    0.01 sec
+      Start  2: menu_regression_context_x11
+ 2/17 Test  #2: menu_regression_context_x11 ........***Failed    0.33 sec
+dbus-daemon[17836]: [session uid=1000 pid=17836] Activating service name='org.a11y.Bus' requested by ':1.0' (uid=1000 pid=17851 comm="/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard" label="kernel")
+dbus-daemon[17836]: [session uid=1000 pid=17836] Successfully activated service 'org.a11y.Bus'
+dbus-daemon[17836]: [session uid=1000 pid=17836] Activating service name='org.gtk.vfs.Daemon' requested by ':1.2' (uid=1000 pid=17851 comm="/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard" label="kernel")
+dbus-daemon[17836]: [session uid=1000 pid=17836] Successfully activated service 'org.gtk.vfs.Daemon'
+
+(menu_regression_test:17851): Gtk-WARNING **: 22:40:06.281: no trigger event for menu popup
+dbus-daemon[17859]: Activating service name='org.a11y.atspi.Registry' requested by ':1.0' (uid=1000 pid=17851 comm="/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard" label="kernel")
+dbus-daemon[17859]: Successfully activated service 'org.a11y.atspi.Registry'
+
+(menu_regression_test:17851): Gtk-WARNING **: 22:40:06.292: no trigger event for menu popup
+SpiRegistry daemon is running with well-known name - org.a11y.atspi.Registry
+
+(menu_regression_test:17851): Gtk-WARNING **: 22:40:06.297: no trigger event for menu popup
+FAIL menu_review: calls==2&&command.invocation.target.empty()&&command.invocation.activation_token.empty()
+A connection to the bus can't be made
+
+      Start  3: menu_regression_context_wayland
+ 3/17 Test  #3: menu_regression_context_wayland ....***Failed    0.27 sec
+dbus-daemon[17883]: [session uid=1000 pid=17883] Activating service name='org.a11y.Bus' requested by ':1.1' (uid=1000 pid=17889 comm="/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard" label="kernel")
+dbus-daemon[17883]: [session uid=1000 pid=17883] Successfully activated service 'org.a11y.Bus'
+dbus-daemon[17883]: [session uid=1000 pid=17883] Activating service name='org.gtk.vfs.Daemon' requested by ':1.0' (uid=1000 pid=17889 comm="/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard" label="kernel")
+dbus-daemon[17883]: [session uid=1000 pid=17883] Successfully activated service 'org.gtk.vfs.Daemon'
+FAIL menu_review: command.invocation.target.empty()
+00:00:00.010 [DEBUG] [sway/tree/workspace.c:277] Workspace: Generating new workspace name for output HEADLESS-1
+00:00:00.010 [DEBUG] [sway/tree/output.c:127] Creating default workspace 1
+00:00:00.010 [DEBUG] [sway/tree/workspace.c:65] Adding workspace 1 for output HEADLESS-1
+00:00:00.016 [DEBUG] [wlr] [xcursor/wlr_xcursor.c:225] Loaded cursor theme 'default' at size 24 (59 available cursors)
+00:00:00.016 [DEBUG] [sway/desktop/layer_shell.c:229] Usable area changed, rearranging output
+00:00:00.016 [DEBUG] [sway/tree/arrange.c:263] Usable area for ws: 800x600@0,0
+00:00:00.016 [DEBUG] [sway/tree/arrange.c:297] Arranging workspace '1' at 0.000000, 0.000000
+00:00:00.016 [DEBUG] [sway/tree/arrange.c:263] Usable area for ws: 800x600@0,0
+00:00:00.016 [DEBUG] [sway/tree/arrange.c:297] Arranging workspace '1' at 0.000000, 0.000000
+00:00:00.016 [DEBUG] [sway/desktop/transaction.c:398] Transaction 0x5b204e9ff200 committing with 2 instructions
+00:00:00.016 [DEBUG] [sway/desktop/transaction.c:294] Applying transaction 0x5b204e9ff200
+00:00:00.016 [INFO] [wlr] [backend/headless/backend.c:17] Starting headless backend
+00:00:00.016 [INFO] [sway/server.c:396] Running compositor on wayland display 'wayland-1'
+00:00:00.047 [DEBUG] [wlr] [types/wlr_compositor.c:692] New wlr_surface 0x5b204ea40d40 (res 0x5b204ea01ea0)
+00:00:00.047 [DEBUG] [wlr] [types/wlr_compositor.c:692] New wlr_surface 0x5b204ea41150 (res 0x5b204ea02200)
+00:00:00.086 [DEBUG] [wlr] [types/wlr_compositor.c:692] New wlr_surface 0x5b204ea41560 (res 0x5b204ea0f1f0)
+00:00:00.086 [DEBUG] [wlr] [types/xdg_shell/wlr_xdg_surface.c:388] new xdg_surface 0x5b204ea41970 (res 0x5b204ea0f310)
+00:00:00.086 [DEBUG] [sway/desktop/xdg_shell.c:530] New xdg_shell toplevel title='Cliptiq' app_id='menu_regression_test'
+00:00:00.086 [DEBUG] [wlr] [types/wlr_server_decoration.c:104] new server_decoration 0x5b204ea0f850 (res 0x5b204ea0f970)
+00:00:00.086 [DEBUG] [wlr] [types/wlr_xdg_activation_v1.c:112] Rejecting token commit request: serial 0 was never given to client
+A connection to the bus can't be made
+
+      Start  4: menu_regression_coordinates
+ 4/17 Test  #4: menu_regression_coordinates ........***Failed    0.42 sec
+dbus-daemon[17914]: [session uid=1000 pid=17914] Activating service name='org.a11y.Bus' requested by ':1.0' (uid=1000 pid=17929 comm="/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard" label="kernel")
+dbus-daemon[17914]: [session uid=1000 pid=17914] Successfully activated service 'org.a11y.Bus'
+dbus-daemon[17914]: [session uid=1000 pid=17914] Activating service name='org.gtk.vfs.Daemon' requested by ':1.2' (uid=1000 pid=17929 comm="/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard" label="kernel")
+dbus-daemon[17914]: [session uid=1000 pid=17914] Successfully activated service 'org.gtk.vfs.Daemon'
+
+(menu_regression_test:17929): Gtk-WARNING **: 22:40:06.952: no trigger event for menu popup
+dbus-daemon[17937]: Activating service name='org.a11y.atspi.Registry' requested by ':1.0' (uid=1000 pid=17929 comm="/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard" label="kernel")
+dbus-daemon[17937]: Successfully activated service 'org.a11y.atspi.Registry'
+SpiRegistry daemon is running with well-known name - org.a11y.atspi.Registry
+
+(menu_regression_test:17929): Gtk-WARNING **: 22:40:06.982: no trigger event for menu popup
+FAIL menu_review: b.first-a.first>=60&&b.second-a.second>=60
+A connection to the bus can't be made
+
+      Start  5: menu_native_x11
+ 5/17 Test  #5: menu_native_x11 ....................   Passed    0.41 sec
+      Start  6: menu_native_wayland
+ 6/17 Test  #6: menu_native_wayland ................   Passed    0.35 sec
+      Start  7: menu_preview
+ 7/17 Test  #7: menu_preview .......................   Passed    0.01 sec
+      Start  8: menu
+ 8/17 Test  #8: menu ...............................   Passed    0.44 sec
+      Start  9: linux_clipboard_protocol
+ 9/17 Test  #9: linux_clipboard_protocol ...........   Passed    0.04 sec
+      Start 10: linux_clipboard_wayland_wire
+10/17 Test #10: linux_clipboard_wayland_wire .......   Passed    1.47 sec
+      Start 11: linux_clipboard_x11_wire
+11/17 Test #11: linux_clipboard_x11_wire ...........   Passed    0.56 sec
+      Start 12: linux_clipboard_external_clients
+12/17 Test #12: linux_clipboard_external_clients ...   Passed    2.43 sec
+      Start 13: linux_clipboard_x11
+13/17 Test #13: linux_clipboard_x11 ................   Passed    0.78 sec
+      Start 14: linux_clipboard_wayland
+14/17 Test #14: linux_clipboard_wayland ............   Passed    0.41 sec
+      Start 15: policy
+15/17 Test #15: policy .............................   Passed    0.02 sec
+      Start 16: history
+16/17 Test #16: history ............................   Passed    0.18 sec
+      Start 17: history_crash
+17/17 Test #17: history_crash ......................   Passed    0.42 sec
+
+82% tests passed, 3 tests failed out of 17
+
+Total Test time (real) =   8.70 sec
+
+The following tests FAILED:
+	  2 - menu_regression_context_x11 (Failed)
+	  3 - menu_regression_context_wayland (Failed)
+	  4 - menu_regression_coordinates (Failed)
+Errors while running CTest

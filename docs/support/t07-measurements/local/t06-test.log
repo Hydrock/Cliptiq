@@ -1,0 +1,52 @@
+Preset CMake variables:
+
+  BUILD_TESTING="ON"
+  CMAKE_BUILD_TYPE="Debug"
+
+-- Configuring done (2.8s)
+-- Generating done (0.3s)
+-- Build files have been written to: /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+[1/5] Building CXX object CMakeFiles/cliptiq_menu_native.dir/platform/linux/Menu.cpp.o
+[2/5] Linking CXX static library libcliptiq_menu_native.a
+[3/5] Linking CXX executable menu_regression_test
+[4/5] Linking CXX executable native_menu_test
+[5/5] Linking CXX executable cliptiq_menu_host
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+      Start  1: menu_unicode_conformance
+ 1/17 Test  #1: menu_unicode_conformance ...........   Passed    0.02 sec
+      Start  2: menu_regression_context_x11
+ 2/17 Test  #2: menu_regression_context_x11 ........   Passed    0.83 sec
+      Start  3: menu_regression_context_wayland
+ 3/17 Test  #3: menu_regression_context_wayland ....   Passed    0.31 sec
+      Start  4: menu_regression_coordinates
+ 4/17 Test  #4: menu_regression_coordinates ........   Passed    0.64 sec
+      Start  5: menu_native_x11
+ 5/17 Test  #5: menu_native_x11 ....................   Passed    0.64 sec
+      Start  6: menu_native_wayland
+ 6/17 Test  #6: menu_native_wayland ................   Passed    0.56 sec
+      Start  7: menu_preview
+ 7/17 Test  #7: menu_preview .......................   Passed    0.01 sec
+      Start  8: menu
+ 8/17 Test  #8: menu ...............................   Passed    0.79 sec
+      Start  9: linux_clipboard_protocol
+ 9/17 Test  #9: linux_clipboard_protocol ...........   Passed    0.06 sec
+      Start 10: linux_clipboard_wayland_wire
+10/17 Test #10: linux_clipboard_wayland_wire .......   Passed    1.77 sec
+      Start 11: linux_clipboard_x11_wire
+11/17 Test #11: linux_clipboard_x11_wire ...........   Passed    0.83 sec
+      Start 12: linux_clipboard_external_clients
+12/17 Test #12: linux_clipboard_external_clients ...   Passed    2.70 sec
+      Start 13: linux_clipboard_x11
+13/17 Test #13: linux_clipboard_x11 ................   Passed    0.81 sec
+      Start 14: linux_clipboard_wayland
+14/17 Test #14: linux_clipboard_wayland ............   Passed    0.45 sec
+      Start 15: policy
+15/17 Test #15: policy .............................   Passed    0.03 sec
+      Start 16: history
+16/17 Test #16: history ............................   Passed    0.29 sec
+      Start 17: history_crash
+17/17 Test #17: history_crash ......................   Passed    0.42 sec
+
+100% tests passed, 0 tests failed out of 17
+
+Total Test time (real) =  11.37 sec

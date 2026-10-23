@@ -10,7 +10,7 @@
 
 **Spec:** [дизайн](../specs/2026-10-23-cliptiq-design.md). **Coverage:** [аудит с ID функций](../../research/2026-10-23-clipy-audit.md). **Naming:** [проверка имён](../../research/2026-10-23-naming.md).
 
-Статус: полный план охвата исследуемой ревизии; пользователь разрешил T01, [прототипы и первые измерения выполнены](../../support/architecture-decision.md). T01 закрыт в согласованных границах ([итог](../../support/t01-results.md)); T02 завершён ([результаты](../../support/t02-results.md)); T03 завершён ([результаты](../../support/t03-results.md)); T04 реализуется с native CI; ручная macOS-приёмка остаётся открыта ([результаты](../../support/t04-results.md)). T05 реализован с native CI; ручная Windows-приёмка открыта ([результаты](../../support/t05-results.md)). T06 автоматическая часть реализована ([результаты](../../support/t06-results.md)); Linux desktop manual gate открыт. T07–T17 не начаты. Release binaries не созданы.
+Статус: полный план охвата исследуемой ревизии; пользователь разрешил T01, [прототипы и первые измерения выполнены](../../support/architecture-decision.md). T01 закрыт в согласованных границах ([итог](../../support/t01-results.md)); T02 завершён ([результаты](../../support/t02-results.md)); T03 завершён ([результаты](../../support/t03-results.md)); T04 реализуется с native CI; ручная macOS-приёмка остаётся открыта ([результаты](../../support/t04-results.md)). T05 реализован с native CI; ручная Windows-приёмка открыта ([результаты](../../support/t05-results.md)). T06 автоматическая часть реализована ([результаты](../../support/t06-results.md)); Linux desktop manual gate открыт. T07 автоматическая часть реализована ([результаты](../../support/t07-results.md)); интерактивная приёмка OPEN. T08–T17 не начаты. Release binaries не созданы.
 
 ## Global Constraints
 
@@ -139,7 +139,7 @@ Capture contract: сохранять все разрешённые representatio
 - [ ] Notepad/browser/Office или LibreOffice/Explorer/image editor smoke; virtual files/OLE-only objects явно классифицировать unsupported, не объявлять поддержкой всех Windows clipboard formats.
 - [x] Commit `feat(windows): add native multi-format clipboard backend`.
 
-**Статус:** backend и автоматические native проверки реализованы; ручная Notepad/browser/Office/Explorer/image editor приёмка не выполнена. Отдельная window station в CI не заменяет этот критерий. T04 manual открыт; T06 не начат.
+**Статус:** backend и автоматические native проверки реализованы; ручная Notepad/browser/Office/Explorer/image editor приёмка не выполнена. Отдельная window station в CI не заменяет этот критерий. T04 manual открыт; T06 автоматическая часть реализована, desktop gate открыт.
 
 ### T06. Linux X11 и Wayland backend
 
@@ -161,11 +161,13 @@ Capture contract: сохранять все разрешённые representatio
 
 **Interfaces:** `build_menu(Store&, MenuKind, const MenuSettings&)->Result<MenuModel>`; `MenuItem` = label/action/entry-or-snippet ID/children/number/tooltip/preview reference/enabled; `render_menu(MenuModel, InvocationContext)->Result<void>`. InvocationContext содержит target и activation token, если предоставлен.
 
-- [ ] Failing tests: inline0/1/100, folder1/10/100, zero/one numbering, first-ten shortcuts, title Unicode truncation, tooltip limits, snippets above/below, clear disabled empty.
-- [ ] `ctest --preset test -R menu --output-on-failure`, затем реализовать общую model и adapters. Платформы не повторяют SQL/menu grouping алгоритм.
-- [ ] AppKit NSMenu/NSStatusItem; Win32 native/owner draw; GTK popup + SNI/DBusMenu без GtkStatusIcon. Проверить image/tooltips в tray host; если host не рисует, полный popup даёт доступ к preview. Wayland не обещать произвольную абсолютную позицию.
+- [x] Failing tests: inline0/1/100, folder1/10/100, zero/one numbering, first-ten shortcuts, title Unicode truncation, tooltip limits, snippets above/below, clear disabled empty.
+- [x] `ctest --preset test -R menu --output-on-failure`, затем реализовать общую model и adapters. Платформы не повторяют SQL/menu grouping алгоритм.
+- [x] AppKit NSMenu/NSStatusItem; Win32 native/owner draw; GTK popup + SNI/DBusMenu без GtkStatusIcon. Проверить image/tooltips в tray host; если host не рисует, полный popup даёт доступ к preview. Wayland не обещать произвольную абсолютную позицию.
 - [ ] Keyboard-only navigation, screen reader labels, DPI100/150/200%, dark/high-contrast, hidden/no tray, Explorer restart, compositor restart. Видимый fallback launcher сохраняет доступ.
-- [ ] Commit `feat: add native history and snippets menus`.
+- [x] Commit `feat: add native history and snippets menus`.
+
+Автоматическая часть: source19b9375, [CI39997567519](https://github.com/Hydrock/Cliptiq/actions/runs/39997567519) —7/7. [Evidence](../../support/t07-results.md). Generic Windows type icons deferred Minor; real keyboard/screen-reader/multi-monitor/desktop checklist выше остаётся OPEN. T04–T06 manual OPEN. T08 не начат.
 
 ### T08. Вставка и modifier actions
 
@@ -294,4 +296,4 @@ Capture contract: сохранять все разрешённые representatio
 3. Разрешены ли явные адаптации: Firebase → local diagnostics, OCR/index отдельным pack/build, Wayland limited mode без compositor integration? Если цель — буквальная полнота на каждом backend, packs/integrations входят в full distribution и её размер.
 4. После T01 фиксируем численный size ceiling по archive/app-owned/clean-machine total отдельно. «Маленькая сборка» без этих трёх чисел не является критерием приёмки.
 
-Для каждого варианта указаны работа, dependency и критерий проверки. Пользователь разрешил T01: установка инструментов, prototypes, CI и загрузка документов выполнены в его рамках. T02 persistent core завершён; T03 privacy/capability завершён; T04+ не начаты. Документы и эксперименты опубликованы в origin/codex/portability-plan.
+Для каждого варианта указаны работа, dependency и критерий проверки. Пользователь разрешил T01: установка инструментов, prototypes, CI и загрузка документов выполнены в его рамках. T02 persistent core завершён; T03 privacy/capability завершён; T04–T07 автоматические части реализованы; их manual gates OPEN. T08+ не начаты. Документы и эксперименты опубликованы в origin/codex/portability-plan.

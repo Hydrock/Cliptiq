@@ -1,0 +1,74 @@
+{
+  "id": 39997567519,
+  "html_url": "https://github.com/Hydrock/Cliptiq/actions/runs/39997567519",
+  "head_sha": "19b93758382ae8570a377597f536e2cceaa41678",
+  "status": "completed",
+  "conclusion": "success",
+  "created_at": "2026-10-23T17:44:38Z",
+  "updated_at": "2026-10-23T17:47:46Z",
+  "jobs": [
+    {
+      "id": 120564978941,
+      "name": "history (windows-2025)",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/Hydrock/Cliptiq/actions/runs/39997567519/job/120564978941",
+      "started_at": "2026-10-23T17:44:43Z",
+      "completed_at": "2026-10-23T17:46:27Z"
+    },
+    {
+      "id": 120564979312,
+      "name": "history (macos-15-intel)",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/Hydrock/Cliptiq/actions/runs/39997567519/job/120564979312",
+      "started_at": "2026-10-23T17:44:43Z",
+      "completed_at": "2026-10-23T17:47:45Z"
+    },
+    {
+      "id": 120564979338,
+      "name": "sanitizers",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/Hydrock/Cliptiq/actions/runs/39997567519/job/120564979338",
+      "started_at": "2026-10-23T17:44:42Z",
+      "completed_at": "2026-10-23T17:45:55Z"
+    },
+    {
+      "id": 120564979421,
+      "name": "history (macos-15)",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/Hydrock/Cliptiq/actions/runs/39997567519/job/120564979421",
+      "started_at": "2026-10-23T17:44:43Z",
+      "completed_at": "2026-10-23T17:46:12Z"
+    },
+    {
+      "id": 120564979559,
+      "name": "macos_backend_sanitizers",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/Hydrock/Cliptiq/actions/runs/39997567519/job/120564979559",
+      "started_at": "2026-10-23T17:44:45Z",
+      "completed_at": "2026-10-23T17:45:45Z"
+    },
+    {
+      "id": 120564979652,
+      "name": "windows_backend_asan",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/Hydrock/Cliptiq/actions/runs/39997567519/job/120564979652",
+      "started_at": "2026-10-23T17:44:42Z",
+      "completed_at": "2026-10-23T17:45:55Z"
+    },
+    {
+      "id": 120564979723,
+      "name": "history (ubuntu-24.04)",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/Hydrock/Cliptiq/actions/runs/39997567519/job/120564979723",
+      "started_at": "2026-10-23T17:44:42Z",
+      "completed_at": "2026-10-23T17:46:24Z"
+    }
+  ]
+}

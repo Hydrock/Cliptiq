@@ -1,0 +1,52 @@
+{
+  "120564978941": {
+    "url": "https://github.com/Hydrock/Cliptiq/actions/runs/39997567519/job/120564978941",
+    "observed_lines": [
+      "2026-10-23T17:45:09.3710619Z -- The C compiler identification is MSVC 19.51.36260.0",
+      "2026-10-23T17:45:10.3303442Z -- The CXX compiler identification is MSVC 19.51.36260.0",
+      "2026-10-23T17:45:48.0837713Z -- The C compiler identification is MSVC 19.51.36260.0",
+      "2026-10-23T17:45:48.2756148Z -- The CXX compiler identification is MSVC 19.51.36260.0",
+      "2026-10-23T17:46:23.0109854Z     \"CMAKE_CXX_COMPILER:FILEPATH=C:/Program Files/Microsoft Visual Studio/18/Enterprise/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/cl.exe\",",
+      "2026-10-23T17:46:23.0111058Z     \"CMAKE_C_COMPILER:FILEPATH=C:/Program Files/Microsoft Visual Studio/18/Enterprise/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/cl.exe\","
+    ]
+  },
+  "120564979312": {
+    "url": "https://github.com/Hydrock/Cliptiq/actions/runs/39997567519/job/120564979312",
+    "observed_lines": [
+      "2026-10-23T17:44:52.6882160Z -- The C compiler identification is AppleClang 17.0.0.17000013",
+      "2026-10-23T17:44:55.3384320Z -- The CXX compiler identification is AppleClang 17.0.0.17000013",
+      "2026-10-23T17:44:57.0900440Z -- The OBJCXX compiler identification is AppleClang 17.0.0.17000013",
+      "2026-10-23T17:45:52.5212240Z -- The C compiler identification is AppleClang 17.0.0.17000013",
+      "2026-10-23T17:45:52.7135270Z -- The CXX compiler identification is AppleClang 17.0.0.17000013",
+      "2026-10-23T17:45:54.9467500Z -- The OBJCXX compiler identification is AppleClang 17.0.0.17000013",
+      "2026-10-23T17:47:08.9400400Z     \"CMAKE_CXX_COMPILER:FILEPATH=/usr/bin/c++\",",
+      "2026-10-23T17:47:08.9402070Z     \"CMAKE_C_COMPILER:FILEPATH=/usr/bin/cc\","
+    ]
+  },
+  "120564979421": {
+    "url": "https://github.com/Hydrock/Cliptiq/actions/runs/39997567519/job/120564979421",
+    "observed_lines": [
+      "2026-10-23T17:44:48.9045950Z -- The C compiler identification is AppleClang 17.0.0.17000013",
+      "2026-10-23T17:44:50.3800690Z -- The CXX compiler identification is AppleClang 17.0.0.17000013",
+      "2026-10-23T17:44:51.1805940Z -- The OBJCXX compiler identification is AppleClang 17.0.0.17000013",
+      "2026-10-23T17:45:15.7612310Z -- The C compiler identification is AppleClang 17.0.0.17000013",
+      "2026-10-23T17:45:15.9013030Z -- The CXX compiler identification is AppleClang 17.0.0.17000013",
+      "2026-10-23T17:45:16.8811280Z -- The OBJCXX compiler identification is AppleClang 17.0.0.17000013",
+      "2026-10-23T17:46:07.0277420Z     \"CMAKE_CXX_COMPILER:FILEPATH=/usr/bin/c++\",",
+      "2026-10-23T17:46:07.0278300Z     \"CMAKE_C_COMPILER:FILEPATH=/usr/bin/cc\","
+    ]
+  },
+  "120564979723": {
+    "url": "https://github.com/Hydrock/Cliptiq/actions/runs/39997567519/job/120564979723",
+    "observed_lines": [
+      "2026-10-23T17:45:30.5092929Z -- The C compiler identification is GNU 13.3.0",
+      "2026-10-23T17:45:30.6670017Z -- The CXX compiler identification is GNU 13.3.0",
+      "2026-10-23T17:45:52.7094704Z 100% tests passed, 0 tests failed out of 17",
+      "2026-10-23T17:45:52.8023609Z -- The C compiler identification is GNU 13.3.0",
+      "2026-10-23T17:45:52.8455188Z -- The CXX compiler identification is GNU 13.3.0",
+      "2026-10-23T17:46:19.1772884Z 100% tests passed, 0 tests failed out of 17",
+      "2026-10-23T17:46:20.9540748Z     \"CMAKE_CXX_COMPILER:FILEPATH=/usr/bin/c++\",",
+      "2026-10-23T17:46:20.9541622Z     \"CMAKE_C_COMPILER:FILEPATH=/usr/bin/cc\","
+    ]
+  }
+}

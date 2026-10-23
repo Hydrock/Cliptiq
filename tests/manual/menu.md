@@ -13,3 +13,5 @@ For macOS13+ arm64/Intel, Windows10/11 and real Linux X11/GNOME/KDE/Sway/Hyprlan
 - History changes while popup is open, stale/deleted item, snippet folder order, Clear against concurrent capture. Settings/editor/paste are owned by future tasks and must not be mistaken for finished features.
 
 Do not mark this checklist complete from a fixture screenshot or isolated native property test. Full support requires the later snippets/launcher/integration routes from the design.
+
+Review regressions now covered automatically: Windows keyboard button routing and actual96/144/192DPI HBITMAP refresh, native invocation cancel/reopen lifetime on all platforms, X11 coordinate changes. Modal display seams on Windows/AppKit are not actual desktop keyboard acceptance. Deferred visual Minor: Windows generic type icons/options parity; RGBA previews and swatches remain available.
