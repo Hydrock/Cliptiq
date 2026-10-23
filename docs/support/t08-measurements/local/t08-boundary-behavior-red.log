@@ -1,0 +1,6 @@
+PASS issued_target_success_and_chords
+PASS uipi_unknown_and_held_modifiers_no_input
+PASS unrelated_focus_and_denied_restore_no_input
+PASS normal_self_restore_then_dispatch
+FAIL closed_replaced_process_and_reused_hwnd_rejected: !p.dispatch(t, Shortcut::Paste) && f.batches.empty()
+FAIL every_partial_prefix_releases_only_injected_keys: down[code] && (event.ki.dwFlags & KEYEVENTF_KEYUP)

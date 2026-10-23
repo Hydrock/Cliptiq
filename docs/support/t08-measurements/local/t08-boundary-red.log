@@ -1,0 +1,6 @@
+FAIL issued_target_success_and_chords: Native call boundary not implemented
+FAIL closed_replaced_process_and_reused_hwnd_rejected: Native call boundary not implemented
+FAIL uipi_unknown_and_held_modifiers_no_input: Native call boundary not implemented
+FAIL unrelated_focus_and_denied_restore_no_input: Native call boundary not implemented
+FAIL normal_self_restore_then_dispatch: Native call boundary not implemented
+FAIL every_partial_prefix_releases_only_injected_keys: Native call boundary not implemented

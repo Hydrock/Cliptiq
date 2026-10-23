@@ -1,0 +1,353 @@
+Start testing: Oct 23 18:40 UTC
+----------------------------------------------------------
+1/13 Testing: paste_native
+1/13 Test: paste_native
+Command: "/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-test/native_paste_test"
+Directory: /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-test
+"paste_native" start time: Oct 23 18:40 UTC
+Output:
+----------------------------------------------------------
+PASS forged_and_missing_targets_never_dispatch
+PASS native_denial_safe_no_permission_prompt
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"paste_native" end time: Oct 23 18:40 UTC
+"paste_native" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/13 Testing: paste_native_boundary
+2/13 Test: paste_native_boundary
+Command: "/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-test/paste_boundary_test"
+Directory: /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-test
+"paste_native_boundary" start time: Oct 23 18:40 UTC
+Output:
+----------------------------------------------------------
+PASS issued_target_and_terminal_both_clipboard_command_v
+PASS permission_denial_and_revocation
+PASS closed_changed_window_and_unrelated_focus
+PASS held_modifiers_key_and_missing_keymap_or_allocation
+PASS normal_restore_denial_and_window_recheck
+PASS native_denial_preserves_paste_delete_history
+<end of output>
+Test time =   0.18 sec
+----------------------------------------------------------
+Test Passed.
+"paste_native_boundary" end time: Oct 23 18:40 UTC
+"paste_native_boundary" time elapsed: 00:00:00
+----------------------------------------------------------
+
+3/13 Testing: paste
+3/13 Test: paste
+Command: "/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-test/paste_test"
+Directory: /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-test
+"paste" start time: Oct 23 18:40 UTC
+Output:
+----------------------------------------------------------
+PASS auto_off_copies_original_all_formats_and_touches
+PASS plain_keeps_only_text_without_rich_formats
+PASS image_only_plain_never_overwrites_clipboard
+PASS delete_only_removes_history_without_write_or_input
+PASS paste_delete_removes_only_after_backend_acceptance
+PASS denied_paste_delete_keeps_sole_record_and_manual_copy
+PASS auto_off_paste_delete_does_not_delete
+PASS failed_write_never_dispatches_or_deletes
+PASS stale_menu_revision_has_no_side_effect
+PASS concurrent_revision_after_dispatch_does_not_delete
+PASS terminal_shortcut_and_missing_target_manual
+PASS snippets_copied_without_history_deletion
+PASS destructive_modifier_never_deletes_snippet
+PASS modifier_binding_unique_single_and_conflicting_held_cancel
+PASS invalid_action_shortcut_or_clock_rejected_before_write
+PASS snippet_encoded_and_entry_limits_before_writer
+<end of output>
+Test time =   0.03 sec
+----------------------------------------------------------
+Test Passed.
+"paste" end time: Oct 23 18:40 UTC
+"paste" time elapsed: 00:00:00
+----------------------------------------------------------
+
+4/13 Testing: menu_unicode_conformance
+4/13 Test: menu_unicode_conformance
+Command: "/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-test/grapheme_test" "/Users/runner/work/Cliptiq/Cliptiq/third_party/libgrapheme/data/GraphemeBreakTest.txt"
+Directory: /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-test
+"menu_unicode_conformance" start time: Oct 23 18:40 UTC
+Output:
+----------------------------------------------------------
+PASS Unicode17_grapheme_conformance 766 cases
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"menu_unicode_conformance" end time: Oct 23 18:40 UTC
+"menu_unicode_conformance" time elapsed: 00:00:00
+----------------------------------------------------------
+
+5/13 Testing: menu_regression_context
+5/13 Test: menu_regression_context
+Command: "/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-test/menu_regression_test" "context"
+Directory: /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-test
+"menu_regression_context" start time: Oct 23 18:40 UTC
+Output:
+----------------------------------------------------------
+PASS native_menu_review_context
+<end of output>
+Test time =   0.47 sec
+----------------------------------------------------------
+Test Passed.
+"menu_regression_context" end time: Oct 23 18:40 UTC
+"menu_regression_context" time elapsed: 00:00:00
+----------------------------------------------------------
+
+6/13 Testing: paste_menu_status_lifecycle
+6/13 Test: paste_menu_status_lifecycle
+Command: "/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-test/menu_regression_test" "status_lifecycle"
+Directory: /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-test
+"paste_menu_status_lifecycle" start time: Oct 23 18:40 UTC
+Output:
+----------------------------------------------------------
+PASS appkit_close_before_action_retains_target_then_expires
+<end of output>
+Test time =   0.35 sec
+----------------------------------------------------------
+Test Passed.
+"paste_menu_status_lifecycle" end time: Oct 23 18:40 UTC
+"paste_menu_status_lifecycle" time elapsed: 00:00:00
+----------------------------------------------------------
+
+7/13 Testing: menu_native
+7/13 Test: menu_native
+Command: "/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-test/native_menu_test"
+Directory: /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-test
+"menu_native" start time: Oct 23 18:40 UTC
+Output:
+----------------------------------------------------------
+PASS hidden_tray_keeps_launcher
+PASS native_structure_enabled_labels_preview_and_selection
+PASS old_native_item_cannot_select_replacement
+PASS tray_style_changes_preserve_fallback
+<end of output>
+Test time =   0.26 sec
+----------------------------------------------------------
+Test Passed.
+"menu_native" end time: Oct 23 18:40 UTC
+"menu_native" time elapsed: 00:00:00
+----------------------------------------------------------
+
+8/13 Testing: menu_preview
+8/13 Test: menu_preview
+Command: "/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-test/menu_preview_test"
+Directory: /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-test
+"menu_preview" start time: Oct 23 18:40 UTC
+Output:
+----------------------------------------------------------
+PASS swatch_rgba
+PASS aspect_fit_32
+PASS invalid_provider_dimensions_rejected
+PASS short_provider_buffer_rejected
+PASS empty_reference_no_provider
+PASS preview_dpi_96
+PASS preview_dpi_144
+PASS preview_dpi_192
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"menu_preview" end time: Oct 23 18:40 UTC
+"menu_preview" time elapsed: 00:00:00
+----------------------------------------------------------
+
+9/13 Testing: menu
+9/13 Test: menu
+Command: "/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-test/menu_test"
+Directory: /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-test
+"menu" start time: Oct 23 18:40 UTC
+Output:
+----------------------------------------------------------
+PASS empty_clear_disabled
+PASS grouping_0_1
+PASS grouping_0_10
+PASS grouping_0_100
+PASS grouping_1_1
+PASS grouping_1_10
+PASS grouping_1_100
+PASS grouping_100_1
+PASS grouping_100_10
+PASS grouping_100_100
+PASS zero_one_numbering_and_ten_shortcuts
+PASS numbering_and_shortcuts_independent
+PASS graphemes_first_line_trim_and_ellipsis
+PASS invalid_utf8_controls_are_sanitized
+PASS utf16_history_title_and_tooltip
+PASS snippet_order_above_below_and_kinds
+PASS tooltip_and_title_limits
+PASS hex_swatches_and_image_reference
+PASS revision_and_deleted_ids_reject_stale_commands
+PASS build_does_not_mutate_history
+PASS clear_command_checks_revision_before_deleting
+PASS native_model_depth_and_text_budget
+PASS global_commands_survive_history_refresh
+PASS native_model_rejects_invalid_utf8_and_nul
+<end of output>
+Test time =   0.23 sec
+----------------------------------------------------------
+Test Passed.
+"menu" end time: Oct 23 18:40 UTC
+"menu" time elapsed: 00:00:00
+----------------------------------------------------------
+
+10/13 Testing: macos_clipboard
+10/13 Test: macos_clipboard
+Command: "/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-test/macos_clipboard_test"
+Directory: /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-test
+"macos_clipboard" start time: Oct 23 18:40 UTC
+Output:
+----------------------------------------------------------
+PASS multiple_items_and_native_metadata
+PASS png_preference_preserves_other_item_tiff
+PASS root_filenames_tiff_fallback
+PASS stable_token_when_foreground_changes
+PASS change_during_read_bounded_retry
+PASS permission_denied_no_payload_read
+PASS privacy_transient_before_payload
+PASS unknown_source_exclusions_and_marker_prefix
+PASS html_disabled_and_native_roundtrip
+PASS replay_files_flags_and_item_boundaries
+PASS oversize_read_and_invalid_write_are_atomic
+PASS poll_500ms_main_thread_own_write_suppression
+PASS stop_and_destroy_inside_callback
+PASS session_privacy_and_worker_persistence
+PASS session_rejection_creates_no_database
+PASS system_rtfd_pdf_and_image_only_bytes
+PASS remote_native_primary_and_secondary_privacy
+PASS legacy_root_replay_and_unknown_type_dropped
+PASS main_thread_contract
+PASS off_main_stop_then_immediate_restart
+PASS worker_queue_overflow_is_explicit
+PASS worker_byte_limit_before_database_creation
+PASS ask_default_and_permission_recovery_injected
+PASS disabled_and_unknown_item_payload_never_fetched
+PASS session_destroy_inside_completion
+PASS initial_existing_clipboard_is_captured_like_clipy
+PASS legacy_alias_replay_uses_valid_modern_item_types
+PASS legacy_modern_collision_rejected_before_clear
+<end of output>
+Test time =   9.76 sec
+----------------------------------------------------------
+Test Passed.
+"macos_clipboard" end time: Oct 23 18:41 UTC
+"macos_clipboard" time elapsed: 00:00:09
+----------------------------------------------------------
+
+11/13 Testing: policy
+11/13 Test: policy
+Command: "/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-test/policy_test"
+Directory: /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-test
+"policy" start time: Oct 23 18:41 UTC
+Output:
+----------------------------------------------------------
+PASS transient_always_rejected
+PASS concealed_option
+PASS remote_primary_file_rejected
+PASS remote_secondary_file_removed
+PASS marker_prefix_exclusion
+PASS unknown_source_is_not_known_safe
+PASS screenshot_uses_same_policy
+PASS html_off_keeps_text_rtf_only
+PASS unknown_type_is_not_persisted
+PASS unknown_source_with_exclusions_is_rejected
+PASS foreground_exclusion_and_best_effort
+PASS capabilities_default_unavailable
+PASS unavailable_source_overrides_claimed_identity
+PASS limited_source_downgrades_known
+PASS missing_id_is_unknown
+PASS remote_macos_option_and_platform_scope
+PASS remote_marker_and_original_primary_before_filter
+PASS marker_representation_is_never_payload
+PASS all_kinds_can_be_disabled
+PASS each_supported_kind_and_item_order
+PASS spoofed_registered_kind_is_filtered
+PASS rejected_inputs_call_no_consumers
+PASS filtered_snapshot_only_reaches_consumers
+PASS store_error_or_no_retained_id_skips_derivatives
+PASS ocr_requires_request_and_capability
+PASS invalid_inputs_fail_closed
+PASS reason_messages_are_stable_non_sensitive
+PASS each_kind_toggle_filters_only_its_class
+PASS native_encoding_and_platform_must_match_registration
+PASS all_source_policy_modes
+PASS unknown_flags_remain_unknown
+PASS remote_secondary_pruning_keeps_item_indices
+PASS unsupported_primary_does_not_promote_remote_file
+PASS limited_capture_does_not_enable_other_capabilities
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"policy" end time: Oct 23 18:41 UTC
+"policy" time elapsed: 00:00:00
+----------------------------------------------------------
+
+12/13 Testing: history
+12/13 Test: history
+Command: "/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-test/history_test"
+Directory: /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-test
+"history" start time: Oct 23 18:41 UTC
+Output:
+----------------------------------------------------------
+PASS preserves_all_representations
+PASS duplicate_mode_switch_keeps_digest
+PASS duplicate_flags
+PASS blank_text_ignored
+PASS last_used_preserves_created
+PASS limit_three
+PASS periodic_clear_is_not_ttl
+PASS clear_preserves_snippets
+PASS oversize_is_atomic
+PASS quota_prunes_by_current_sort
+PASS reopen_and_periodic_state
+PASS transaction_failure_rolls_back
+PASS read_only_and_full_are_errors
+PASS corrupt_db_not_replaced
+PASS digest_has_unambiguous_boundaries
+PASS invalid_policy_and_empty_snapshot
+PASS revision_clear_compact
+PASS sha256_standard_vectors
+PASS collision_is_not_equality
+PASS source_changes_do_not_create_new_content
+PASS rtf_blank_and_primary_order
+PASS metadata_and_representation_limits
+PASS cleanup_disable_change_and_clock_rewind
+PASS foreign_and_future_db_preserved
+PASS load_rechecks_persisted_limits
+PASS duplicate_candidate_limits_checked
+PASS returned_id_survives_pruning
+PASS native_utf16_blank_text_ignored
+PASS utf16_roundtrip_and_big_endian_blank
+<end of output>
+Test time =   0.14 sec
+----------------------------------------------------------
+Test Passed.
+"history" end time: Oct 23 18:41 UTC
+"history" time elapsed: 00:00:00
+----------------------------------------------------------
+
+13/13 Testing: history_crash
+13/13 Test: history_crash
+Command: "/opt/homebrew/Frameworks/Python.framework/Versions/3.14/bin/python3.14" "/Users/runner/work/Cliptiq/Cliptiq/tests/integration/history_crash.py" "/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-test/history_test"
+Directory: /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-test
+"history_crash" start time: Oct 23 18:41 UTC
+Output:
+----------------------------------------------------------
+PASS process interruption rollback and reopen
+<end of output>
+Test time =   0.26 sec
+----------------------------------------------------------
+Test Passed.
+"history_crash" end time: Oct 23 18:41 UTC
+"history_crash" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Oct 23 18:41 UTC

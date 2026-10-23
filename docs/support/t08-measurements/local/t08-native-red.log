@@ -1,0 +1,31 @@
+Preset CMake variables:
+
+  BUILD_TESTING="ON"
+  CMAKE_BUILD_TYPE="Debug"
+
+-- Checking for modules 'x11;xtst'
+--   Found x11, version 1.8.7
+--   Found xtst, version 1.2.3
+-- Configuring done (1.9s)
+-- Generating done (0.2s)
+-- Build files have been written to: /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+[1/4] Building CXX object CMakeFiles/cliptiq_paste_native.dir/platform/linux/Paste.cpp.o
+[2/4] Linking CXX static library libcliptiq_paste_native.a
+[3/4] Building CXX object CMakeFiles/native_paste_test.dir/tests/integration/native_paste_test.cpp.o
+[4/4] Linking CXX executable native_paste_test
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+    Start 1: paste_native_x11
+1/2 Test #1: paste_native_x11 .................***Failed    0.15 sec
+PASS forged_and_missing_targets_never_dispatch
+FAIL native_paste: !target.empty()
+
+    Start 2: paste_native_wayland
+2/2 Test #2: paste_native_wayland .............   Passed    0.15 sec
+
+50% tests passed, 1 tests failed out of 2
+
+Total Test time (real) =   0.33 sec
+
+The following tests FAILED:
+	  1 - paste_native_x11 (Failed)
+Errors while running CTest

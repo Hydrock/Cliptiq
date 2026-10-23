@@ -10,7 +10,7 @@
 
 **Spec:** [дизайн](../specs/2026-10-23-cliptiq-design.md). **Coverage:** [аудит с ID функций](../../research/2026-10-23-clipy-audit.md). **Naming:** [проверка имён](../../research/2026-10-23-naming.md).
 
-Статус: полный план охвата исследуемой ревизии; пользователь разрешил T01, [прототипы и первые измерения выполнены](../../support/architecture-decision.md). T01 закрыт в согласованных границах ([итог](../../support/t01-results.md)); T02 завершён ([результаты](../../support/t02-results.md)); T03 завершён ([результаты](../../support/t03-results.md)); T04 реализуется с native CI; ручная macOS-приёмка остаётся открыта ([результаты](../../support/t04-results.md)). T05 реализован с native CI; ручная Windows-приёмка открыта ([результаты](../../support/t05-results.md)). T06 автоматическая часть реализована ([результаты](../../support/t06-results.md)); Linux desktop manual gate открыт. T07 автоматическая часть реализована ([результаты](../../support/t07-results.md)); интерактивная приёмка OPEN. T08–T17 не начаты. Release binaries не созданы.
+Статус: полный план охвата исследуемой ревизии; пользователь разрешил T01, [прототипы и первые измерения выполнены](../../support/architecture-decision.md). T01 закрыт в согласованных границах ([итог](../../support/t01-results.md)); T02 завершён ([результаты](../../support/t02-results.md)); T03 завершён ([результаты](../../support/t03-results.md)); T04 реализуется с native CI; ручная macOS-приёмка остаётся открыта ([результаты](../../support/t04-results.md)). T05 реализован с native CI; ручная Windows-приёмка открыта ([результаты](../../support/t05-results.md)). T06 автоматическая часть реализована ([результаты](../../support/t06-results.md)); Linux desktop manual gate открыт. T07 автоматическая часть реализована ([результаты](../../support/t07-results.md)); интерактивная приёмка OPEN. T08 автоматическая часть реализована ([результаты](../../support/t08-results.md)); app-to-app manual OPEN. T09–T17 не начаты. Release binaries не созданы.
 
 ## Global Constraints
 
@@ -167,7 +167,7 @@ Capture contract: сохранять все разрешённые representatio
 - [ ] Keyboard-only navigation, screen reader labels, DPI100/150/200%, dark/high-contrast, hidden/no tray, Explorer restart, compositor restart. Видимый fallback launcher сохраняет доступ.
 - [x] Commit `feat: add native history and snippets menus`.
 
-Автоматическая часть: source19b9375, [CI39997567519](https://github.com/Hydrock/Cliptiq/actions/runs/39997567519) —7/7. [Evidence](../../support/t07-results.md). Generic Windows type icons deferred Minor; real keyboard/screen-reader/multi-monitor/desktop checklist выше остаётся OPEN. T04–T06 manual OPEN. T08 не начат.
+Автоматическая часть: source19b9375, [CI39997567519](https://github.com/Hydrock/Cliptiq/actions/runs/39997567519) —7/7. [Evidence](../../support/t07-results.md). Generic Windows type icons deferred Minor; real keyboard/screen-reader/multi-monitor/desktop checklist выше остаётся OPEN. T04–T06 manual OPEN. T08 автоматическая часть реализована, manual OPEN; T09 не начат.
 
 ### T08. Вставка и modifier actions
 
@@ -175,11 +175,13 @@ Capture contract: сохранять все разрешённые representatio
 
 **Interfaces:** `execute_selection(Store&, SelectionIntent, ClipboardBackend&, PasteBackend&)->Result<SelectionOutcome>`; intent включает entry/snippet, Plain/Original/DeleteOnly/PasteDelete и captured target; outcome = Copied/Dispatched/NeedsManualPaste/Cancelled. `PasteBackend::dispatch(TargetToken, Shortcut)->Result<void>` не подтверждает приём текста чужим приложением.
 
-- [ ] Failing tests: auto off just copies; delete only no write; image-only plain no empty overwrite; self-write не recapture; denied permission/UIPI/focus changed сохраняет запись; accepted paste-delete удаляет entry.
-- [ ] `ctest --preset test -R paste --output-on-failure`, затем core intent pipeline и native implementations.
-- [ ] Mac Accessibility + CGEvent/keymap; Windows SendInput/held modifier checks/foreground rules; X11 XTest/XKB; Wayland только authorised integration/portal session, иначе NeedsManualPaste. Никаких root/uinput обходов по умолчанию.
+- [x] Failing tests: auto off just copies; delete only no write; image-only plain no empty overwrite; self-write не recapture; denied permission/UIPI/focus changed сохраняет запись; accepted paste-delete удаляет entry.
+- [x] `ctest --preset test -R paste --output-on-failure`, затем core intent pipeline и native implementations.
+- [x] Mac Accessibility + CGEvent/keymap; Windows SendInput/held modifier checks/foreground rules; X11 XTest/XKB; Wayland только authorised integration/portal session, иначе NeedsManualPaste. Никаких root/uinput обходов по умолчанию.
 - [ ] Browser/editor/terminal, RU/EN layouts, held modifiers, elevated target, blocked portal, target closes during popup. Возврат focus не обходить агрессивными hacks.
-- [ ] Commit `feat: add safe native paste actions and manual fallback`.
+- [x] Commit `feat: add safe native paste actions and manual fallback`.
+
+Автоматическая часть: sourceaffd2d7, [CI40005189737](https://github.com/Hydrock/Cliptiq/actions/runs/40005189737) —7/7. [Результаты](../../support/t08-results.md). Реальные app-to-app/permission/desktop пункты выше OPEN; T04–T07 manual OPEN. T09 не начат.
 
 ### T09. Настройки и глобальные shortcuts
 
@@ -296,4 +298,4 @@ Capture contract: сохранять все разрешённые representatio
 3. Разрешены ли явные адаптации: Firebase → local diagnostics, OCR/index отдельным pack/build, Wayland limited mode без compositor integration? Если цель — буквальная полнота на каждом backend, packs/integrations входят в full distribution и её размер.
 4. После T01 фиксируем численный size ceiling по archive/app-owned/clean-machine total отдельно. «Маленькая сборка» без этих трёх чисел не является критерием приёмки.
 
-Для каждого варианта указаны работа, dependency и критерий проверки. Пользователь разрешил T01: установка инструментов, prototypes, CI и загрузка документов выполнены в его рамках. T02 persistent core завершён; T03 privacy/capability завершён; T04–T07 автоматические части реализованы; их manual gates OPEN. T08+ не начаты. Документы и эксперименты опубликованы в origin/codex/portability-plan.
+Для каждого варианта указаны работа, dependency и критерий проверки. Пользователь разрешил T01: установка инструментов, prototypes, CI и загрузка документов выполнены в его рамках. T02 persistent core завершён; T03 privacy/capability завершён; T04–T08 автоматические части реализованы; их manual gates OPEN. T09+ не начаты. Документы и эксперименты опубликованы в origin/codex/portability-plan.

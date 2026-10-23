@@ -7,7 +7,7 @@
 3. [Предлагаемый дизайн](superpowers/specs/2026-10-23-cliptiq-design.md): архитектура, альтернативы, данные, ограничения, размер и варианты поставки.
 4. [План реализации: 17 задач](superpowers/plans/2026-10-23-cliptiq-port.md): файлы, контракты, проверки, зависимости, этапы и release gate.
 
-T02 создаёт общее C++ ядро истории (см. [контракты](../core/README.md)). Пользователь подтвердил Cliptiq и разрешил этап T01: [прототипы](../experiments/footprint/README.md), [результаты и решение](support/architecture-decision.md). В документах дизайна числа size ceiling — предложенные цели; реальные измерения вынесены отдельно. Команды T08–T17 остаются инструкциями будущему исполнителю.
+T02 создаёт общее C++ ядро истории (см. [контракты](../core/README.md)). Пользователь подтвердил Cliptiq и разрешил этап T01: [прототипы](../experiments/footprint/README.md), [результаты и решение](support/architecture-decision.md). В документах дизайна числа size ceiling — предложенные цели; реальные измерения вынесены отдельно. Команды T09–T17 остаются инструкциями будущему исполнителю.
 
 Имя Cliptiq подтверждено. Открытые решения: точные size budgets; OCR/diagnostics distribution; поддерживаемые Wayland desktops и необходимые integrations. ClipClap не принят как замена.
 
@@ -23,4 +23,4 @@ T04: [macOS backend, privacy integration и замеры](support/t04-results.md
 
 T05: [Windows backend, privacy integration и размеры](support/t05-results.md). Автоматическая реализация подготовлена; ручная Windows app-to-app приёмка открыта. T04 manual остаётся открытой.
 
-T06: [Linux X11/Wayland, privacy, CI и размеры](support/t06-results.md). Автоматическая часть реализована; Linux desktop/clean-install manual gates открыты. T04/T05 manual OPEN. T07 автоматическая часть реализована: [меню, native UI, CI и размеры](support/t07-results.md). T04–T06 manual и T07 interactive OPEN; T08 не начат.
+T06: [Linux X11/Wayland, privacy, CI и размеры](support/t06-results.md). Автоматическая часть реализована; Linux desktop/clean-install manual gates открыты. T04/T05 manual OPEN. T07 автоматическая часть реализована: [меню, native UI, CI и размеры](support/t07-results.md). T04–T06 manual и T07 interactive OPEN; T08 автоматическая часть реализована: [вставка, CI и размеры](support/t08-results.md); ручная app-to-app приёмка OPEN. T09 не начат.

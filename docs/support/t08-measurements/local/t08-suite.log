@@ -1,0 +1,48 @@
+ninja: no work to do.
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+      Start  1: paste_native_x11
+ 1/21 Test  #1: paste_native_x11 ...................   Passed    0.66 sec
+      Start  2: paste_native_wayland
+ 2/21 Test  #2: paste_native_wayland ...............   Passed    5.16 sec
+      Start  3: paste_menu_bridge
+ 3/21 Test  #3: paste_menu_bridge ..................   Passed    0.32 sec
+      Start  4: paste
+ 4/21 Test  #4: paste ..............................   Passed    0.06 sec
+      Start  5: menu_unicode_conformance
+ 5/21 Test  #5: menu_unicode_conformance ...........   Passed    0.01 sec
+      Start  6: menu_regression_context_x11
+ 6/21 Test  #6: menu_regression_context_x11 ........   Passed    0.25 sec
+      Start  7: menu_regression_context_wayland
+ 7/21 Test  #7: menu_regression_context_wayland ....   Passed    0.26 sec
+      Start  8: menu_regression_coordinates
+ 8/21 Test  #8: menu_regression_coordinates ........   Passed    0.29 sec
+      Start  9: menu_native_x11
+ 9/21 Test  #9: menu_native_x11 ....................   Passed    0.44 sec
+      Start 10: menu_native_wayland
+10/21 Test #10: menu_native_wayland ................   Passed    0.63 sec
+      Start 11: menu_preview
+11/21 Test #11: menu_preview .......................   Passed    0.01 sec
+      Start 12: menu
+12/21 Test #12: menu ...............................   Passed    0.43 sec
+      Start 13: linux_clipboard_protocol
+13/21 Test #13: linux_clipboard_protocol ...........   Passed    0.05 sec
+      Start 14: linux_clipboard_wayland_wire
+14/21 Test #14: linux_clipboard_wayland_wire .......   Passed    1.71 sec
+      Start 15: linux_clipboard_x11_wire
+15/21 Test #15: linux_clipboard_x11_wire ...........   Passed    0.78 sec
+      Start 16: linux_clipboard_external_clients
+16/21 Test #16: linux_clipboard_external_clients ...   Passed    2.64 sec
+      Start 17: linux_clipboard_x11
+17/21 Test #17: linux_clipboard_x11 ................   Passed    0.83 sec
+      Start 18: linux_clipboard_wayland
+18/21 Test #18: linux_clipboard_wayland ............   Passed    0.53 sec
+      Start 19: policy
+19/21 Test #19: policy .............................   Passed    0.03 sec
+      Start 20: history
+20/21 Test #20: history ............................   Passed    0.20 sec
+      Start 21: history_crash
+21/21 Test #21: history_crash ......................   Passed    0.64 sec
+
+100% tests passed, 0 tests failed out of 21
+
+Total Test time (real) =  16.23 sec

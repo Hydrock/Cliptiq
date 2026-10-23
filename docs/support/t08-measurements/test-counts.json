@@ -1,0 +1,13 @@
+{
+  "linux-backend-sanitizers/LastTest.log": 21,
+  "macos-backend-sanitizers/LastTest.log": 13,
+  "windows-backend-asan/LastTest.log": 15,
+  "core-windows-2025/core-Windows-test/Testing/Temporary/LastTest.log": 15,
+  "core-windows-2025/core-Windows-release/Testing/Temporary/LastTest.log": 15,
+  "core-ubuntu-24.04/core-Linux-test/Testing/Temporary/LastTest.log": 21,
+  "core-ubuntu-24.04/core-Linux-release/Testing/Temporary/LastTest.log": 21,
+  "core-macos-15-intel/core-Darwin-test/Testing/Temporary/LastTest.log": 13,
+  "core-macos-15-intel/core-Darwin-release/Testing/Temporary/LastTest.log": 13,
+  "core-macos-15/core-Darwin-test/Testing/Temporary/LastTest.log": 13,
+  "core-macos-15/core-Darwin-release/Testing/Temporary/LastTest.log": 13
+}

@@ -1,0 +1,16 @@
+[1/2] Building CXX object CMakeFiles/native_paste_test.dir/tests/integration/native_paste_test.cpp.o
+[2/2] Linking CXX executable native_paste_test
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+    Start 1: paste_native_x11
+1/1 Test #1: paste_native_x11 .................***Failed    0.16 sec
+PASS forged_and_missing_targets_never_dispatch
+FAIL native_paste: paste.capture_target().empty()
+
+
+0% tests passed, 1 tests failed out of 1
+
+Total Test time (real) =   0.18 sec
+
+The following tests FAILED:
+	  1 - paste_native_x11 (Failed)
+Errors while running CTest
