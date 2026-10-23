@@ -7,3 +7,8 @@
 /dist/
 .DS_Store
 Thumbs.db
+/.toolchains/
+/.superpowers/
+/experiments/footprint/native-rust/target/
+__pycache__/
+*.pyc
