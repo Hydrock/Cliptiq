@@ -64,3 +64,19 @@ jobs:
       - run: cmake --preset sanitize -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
       - run: cmake --build --preset sanitize
       - run: ctest --preset sanitize --output-on-failure
+  macos_backend_sanitizers:
+    runs-on: macos-15
+    timeout-minutes: 15
+    env:
+      ASAN_OPTIONS: detect_leaks=0
+    steps:
+      - uses: actions/checkout@v4
+      - run: python tools/fetch-footprint-deps.py
+      - run: cmake --preset sanitize
+      - run: cmake --build --preset sanitize
+      - run: ctest --preset sanitize --output-on-failure
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: macos-backend-sanitizers
+          path: out/core-Darwin-sanitize/Testing/Temporary/LastTest.log

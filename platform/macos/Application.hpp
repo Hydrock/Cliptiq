@@ -2,8 +2,12 @@
 #include "Clipboard.hpp"
 
 namespace cliptiq::macos {
+struct CaptureSummary {
+    CaptureDisposition disposition;
+    CaptureReason reason;
+};
 struct CaptureEvent {
-    CaptureDecision decision;
+    CaptureSummary decision;
     std::optional<EntryId> entry_id;
 };
 using CaptureEventCallback = std::function<void(Result<CaptureEvent>)>;
