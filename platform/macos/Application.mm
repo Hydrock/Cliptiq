@@ -36,7 +36,7 @@ struct MacCaptureSession::Impl {
  Impl(std::string path,std::string board,Limits limits):backend(std::move(board),ClipboardOptions{limits,{},{}}),worker(std::make_shared<Worker>(std::move(path),limits)){}
  bool running=false;
 };
-MacCaptureSession::MacCaptureSession(std::string path,std::string board,Limits limits):impl_(new Impl(std::move(path),std::move(board),limits)){}
+MacCaptureSession::MacCaptureSession(std::string path,std::string board,Limits limits,CaptureQueueLimits):impl_(new Impl(std::move(path),std::move(board),limits)){}
 MacCaptureSession::~MacCaptureSession(){stop();}
 MacClipboardBackend& MacCaptureSession::clipboard(){return impl_->backend;}
 Result<void> MacCaptureSession::start(CapturePolicy policy,HistoryPolicy history,CaptureEventCallback callback) {
