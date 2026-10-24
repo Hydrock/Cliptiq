@@ -53,6 +53,10 @@ int run() {
 #endif
     auto store = take(open_store(":memory:"));
     auto settings = default_settings(CapturePlatform::X11);
+#ifdef _WIN32
+    for (unsigned n = 0; n < 30; ++n)
+      settings.hotkeys["folder:existing-" + std::to_string(n)] = {};
+#endif
     Capabilities caps;
     caps.platform = CapturePlatform::X11;
     caps.capture = {CapabilityStatus::Available, "fixture"};
@@ -76,6 +80,21 @@ int run() {
     NMHDR notify{GetDlgItem(window, 200), 200, UINT(TCN_SELCHANGE)};
     SendMessageW(window, WM_NOTIFY, 200, reinterpret_cast<LPARAM>(&notify));
     SetFocus(GetDlgItem(window, 1000 + index));
+    auto shortcut = GetDlgItem(window, 1000 + index);
+    BYTE old_keys[256], keys[256]{};
+    CHECK(GetKeyboardState(old_keys));
+    keys[VK_MENU] = 0x80;
+    CHECK(SetKeyboardState(keys));
+    SendMessageW(shortcut, WM_SYSKEYDOWN, 'Q', 0);
+    CHECK(SetKeyboardState(old_keys));
+    wchar_t recorded[128]{};
+    GetWindowTextW(shortcut, recorded, 128);
+    bool alt_recorded = std::wstring(recorded) == L"Alt+Q";
+    SCROLLINFO scroll{sizeof(scroll), SIF_ALL};
+    auto panel = GetParent(shortcut);
+    bool scrollable = GetScrollInfo(panel, SB_VERT, &scroll) && scroll.nMax > int(scroll.nPage);
+    std::cout << "Alt recorder=" << alt_recorded << " folder page scrollable=" << scrollable << '\n';
+    CHECK(alt_recorded && scrollable);
     CHECK(ui.record_chord(take(parse_chord("Ctrl+Alt+Q"))));
     SendMessageW(window, WM_COMMAND, 100, 0);
 #elif defined(__APPLE__)
@@ -90,6 +109,9 @@ int run() {
     auto shortcut = (NSTextField *)find(window.contentView, @"hotkey:main");
     CHECK(shortcut);
     [window makeFirstResponder:shortcut];
+    [window resignKeyWindow];
+    CHECK(!ui.record_chord(take(parse_chord("Ctrl+Alt+W"))));
+    [window makeKeyWindow];
     CHECK(ui.record_chord(take(parse_chord("Ctrl+Alt+Q"))));
     [(NSButton *)find(window.contentView, @"apply") performClick:nil];
 #else
@@ -105,6 +127,19 @@ int run() {
     auto shortcut = find(window, "hotkey:main");
     CHECK(shortcut);
     gtk_window_set_focus(GTK_WINDOW(window), shortcut);
+    CHECK(!gtk_window_is_active(GTK_WINDOW(window)) || gtk_widget_get_visible(window));
+    // A background window retains its remembered shortcut-field focus.
+    auto other = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_widget_show_all(other);
+    gtk_window_present(GTK_WINDOW(other));
+    gdk_window_focus(gtk_widget_get_window(other), GDK_CURRENT_TIME);
+    for (int n = 0; n < 30; ++n) { CHECK(ui.process_events()); g_usleep(2000); }
+    CHECK(!gtk_window_is_active(GTK_WINDOW(window)));
+    CHECK(!ui.record_chord(take(parse_chord("Ctrl+Alt+W"))));
+    gtk_widget_destroy(other);
+    gtk_window_present(GTK_WINDOW(window));
+    gdk_window_focus(gtk_widget_get_window(window), GDK_CURRENT_TIME);
+    for (int n = 0; n < 30; ++n) { CHECK(ui.process_events()); g_usleep(2000); }
     CHECK(ui.record_chord(take(parse_chord("Ctrl+Alt+Q"))));
     gtk_button_clicked(GTK_BUTTON(apply));
     auto future = find(window, "login");

@@ -82,7 +82,7 @@ Result<unsigned> NativeHotkeys::acquire(const ActionId &a, const KeyChord &c) {
                   ((c.modifiers & Super) ? MOD_WIN : 0);
   if (!RegisterHotKey(s.window, int(id), mods, key))
     return Error{ErrorCode::Busy, "Windows shortcut is reserved or owned by "
-                                  "another app; previous binding retained"};
+                                  "another app; previous binding retained (Win32 " + std::to_string(GetLastError()) + ")"};
   s.actions[id] = a;
   return id;
 }

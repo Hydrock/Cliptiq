@@ -90,6 +90,26 @@ int run() {
       CHECK(events == 2);
       XkbLockModifiers(display, XkbUseCoreKbd, LockMask, 0);
       XSync(display, False);
+      auto z = XKeysymToKeycode(display, XK_z);
+      int width = 0;
+      auto mapping = XGetKeyboardMapping(display, q, 1, &width);
+      auto other_mapping = XGetKeyboardMapping(display, z, 1, &width);
+      CHECK(mapping && other_mapping && width > 0);
+      XChangeKeyboardMapping(display, q, width, other_mapping, 1);
+      XChangeKeyboardMapping(display, z, width, mapping, 1);
+      XSync(display, False);
+      CHECK(native.dispatch());
+      auto original_q = q;
+      q = z;
+      emit();
+      CHECK(events == 3 && selected == "main");
+      XChangeKeyboardMapping(display, original_q, width, mapping, 1);
+      XChangeKeyboardMapping(display, z, width, other_mapping, 1);
+      XSync(display, False);
+      XFree(mapping);
+      XFree(other_mapping);
+      CHECK(native.dispatch());
+      q = original_q;
       std::cout
           << "PASS "
              "native_x11_conflict_rollback_real_activation_and_caps_lock\n";
