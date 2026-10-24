@@ -1,0 +1,38 @@
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+    Start 50: import_native_x11
+1/2 Test #50: import_native_x11 ................***Failed    0.60 sec
+Replay requires recognized native formats at item zero
+
+    Start 51: import_native_wayland
+2/2 Test #51: import_native_wayland ............***Failed    0.33 sec
+Replay requires recognized native formats at item zero
+00:00:00.037 [DEBUG] [sway/config/output.c:520] Committing output HEADLESS-1
+00:00:00.037 [DEBUG] [wlr] [types/output/render.c:168] Attaching empty buffer to output for modeset
+00:00:00.037 [DEBUG] [wlr] [types/output/swapchain.c:27] Choosing primary buffer format XR24 (0x34325258) for output 'HEADLESS-1'
+00:00:00.037 [DEBUG] [wlr] [types/output/swapchain.c:96] Testing swapchain for output 'HEADLESS-1'
+00:00:00.037 [DEBUG] [wlr] [render/swapchain.c:106] Allocating new swapchain buffer
+00:00:00.037 [DEBUG] [wlr] [render/pixman/renderer.c:152] Created pixman buffer 800x600
+00:00:00.038 [DEBUG] [wlr] [types/output/cursor.c:458] Falling back to software cursor on output 'HEADLESS-1'
+00:00:00.038 [DEBUG] [sway/tree/workspace.c:277] Workspace: Generating new workspace name for output HEADLESS-1
+00:00:00.038 [DEBUG] [sway/tree/output.c:127] Creating default workspace 1
+00:00:00.038 [DEBUG] [sway/tree/workspace.c:65] Adding workspace 1 for output HEADLESS-1
+00:00:00.054 [DEBUG] [wlr] [xcursor/wlr_xcursor.c:225] Loaded cursor theme 'default' at size 24 (59 available cursors)
+00:00:00.054 [DEBUG] [sway/desktop/layer_shell.c:229] Usable area changed, rearranging output
+00:00:00.054 [DEBUG] [sway/tree/arrange.c:263] Usable area for ws: 800x600@0,0
+00:00:00.054 [DEBUG] [sway/tree/arrange.c:297] Arranging workspace '1' at 0.000000, 0.000000
+00:00:00.054 [DEBUG] [sway/tree/arrange.c:263] Usable area for ws: 800x600@0,0
+00:00:00.054 [DEBUG] [sway/tree/arrange.c:297] Arranging workspace '1' at 0.000000, 0.000000
+00:00:00.054 [DEBUG] [sway/desktop/transaction.c:398] Transaction 0x62081e9b3240 committing with 2 instructions
+00:00:00.054 [DEBUG] [sway/desktop/transaction.c:294] Applying transaction 0x62081e9b3240
+00:00:00.054 [INFO] [wlr] [backend/headless/backend.c:17] Starting headless backend
+00:00:00.054 [INFO] [sway/server.c:396] Running compositor on wayland display 'wayland-1'
+
+
+0% tests passed, 2 tests failed out of 2
+
+Total Test time (real) =   0.97 sec
+
+The following tests FAILED:
+	 50 - import_native_x11 (Failed)
+	 51 - import_native_wayland (Failed)
+Errors while running CTest

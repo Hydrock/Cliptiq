@@ -1,0 +1,14 @@
+# Upstream checkout is local research material, not a nested product repository.
+/reference/
+
+# Future build artifacts
+/build/
+/out/
+/dist/
+.DS_Store
+Thumbs.db
+/.toolchains/
+/.superpowers/
+/experiments/footprint/native-rust/target/
+__pycache__/
+*.pyc

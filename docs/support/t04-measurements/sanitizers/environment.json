@@ -1,0 +1,11 @@
+{
+  "ci_run": "https://github.com/Hydrock/Cliptiq/actions/runs/39955178077",
+  "source_commit": "0ab616c52080d0671cec5853600cc64f983ac4f6",
+  "job_id": "120419121892",
+  "compiler_identifications": [
+    "Clang 18.1.3"
+  ],
+  "ci_log_sha256": "d92fec67e5da2e58abfc9c82cf9a111d482287fb303017df71a49a9813e5fc76",
+  "sanitizers": "AddressSanitizer + UndefinedBehaviorSanitizer",
+  "leak_detection": "compiler defaults"
+}

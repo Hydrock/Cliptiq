@@ -1,0 +1,30 @@
+{
+  "120562962174": {
+    "source": "0e3432aa9319a554fef8cce0ec547e5b639dd534",
+    "url": "https://github.com/Hydrock/Cliptiq/actions/runs/39996984324/job/120562962174",
+    "failure_lines": [
+      "2026-10-23T17:40:49.1220350Z 2/9 Test #2: menu_regression_context ..........***Failed    0.54 sec",
+      "2026-10-23T17:40:49.1322950Z FAIL menu_review: calls==1&&command.invocation.target.empty()&&command.invocation.activation_token.empty()",
+      "2026-10-23T17:41:00.2231090Z 89% tests passed, 1 tests failed out of 9",
+      "2026-10-23T17:41:00.2233180Z The following tests FAILED:",
+      "2026-10-23T17:41:00.2234200Z \t  2 - menu_regression_context (Failed)"
+    ]
+  },
+  "120562962403": {
+    "source": "0e3432aa9319a554fef8cce0ec547e5b639dd534",
+    "url": "https://github.com/Hydrock/Cliptiq/actions/runs/39996984324/job/120562962403",
+    "failure_lines": [
+      "2026-10-23T17:41:06.1150754Z  2/12 Test  #2: menu_regression_keyboard .........***Failed    0.05 sec",
+      "2026-10-23T17:41:06.1151207Z FAIL menu_review: GetFocus()==GetDlgItem(window,1)",
+      "2026-10-23T17:41:06.1317224Z  3/12 Test  #3: menu_regression_dpi ..............***Failed    0.02 sec",
+      "2026-10-23T17:41:06.1318180Z FAIL menu_review: actual.bmWidth==LONG(16*dpi/96)&&actual.bmHeight==LONG(16*dpi/96)",
+      "2026-10-23T17:41:06.1520254Z  4/12 Test  #4: menu_regression_context ..........***Failed    0.02 sec",
+      "2026-10-23T17:41:06.1521395Z FAIL menu_review: calls==1&&command.invocation.target.empty()&&command.invocation.activation_token.empty()",
+      "2026-10-23T17:41:08.8336934Z 75% tests passed, 3 tests failed out of 12",
+      "2026-10-23T17:41:08.8337846Z The following tests FAILED:",
+      "2026-10-23T17:41:08.8339931Z \t  2 - menu_regression_keyboard (Failed)",
+      "2026-10-23T17:41:08.8340429Z \t  3 - menu_regression_dpi (Failed)",
+      "2026-10-23T17:41:08.8340873Z \t  4 - menu_regression_context (Failed)"
+    ]
+  }
+}

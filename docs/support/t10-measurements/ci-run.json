@@ -1,0 +1,74 @@
+{
+  "id": 40061508988,
+  "html_url": "https://github.com/Hydrock/Cliptiq/actions/runs/40061508988",
+  "head_sha": "879cc511c3b6f51baeb31c71d5e629634ce1ff7d",
+  "status": "completed",
+  "conclusion": "success",
+  "created_at": "2026-10-24T04:13:43Z",
+  "updated_at": "2026-10-24T04:16:34Z",
+  "jobs": [
+    {
+      "id": 120775823745,
+      "name": "macos_backend_sanitizers",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/Hydrock/Cliptiq/actions/runs/40061508988/job/120775823745",
+      "started_at": "2026-10-24T04:13:47Z",
+      "completed_at": "2026-10-24T04:15:14Z"
+    },
+    {
+      "id": 120775823888,
+      "name": "windows_backend_asan",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/Hydrock/Cliptiq/actions/runs/40061508988/job/120775823888",
+      "started_at": "2026-10-24T04:13:47Z",
+      "completed_at": "2026-10-24T04:15:26Z"
+    },
+    {
+      "id": 120775823900,
+      "name": "history (ubuntu-24.04)",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/Hydrock/Cliptiq/actions/runs/40061508988/job/120775823900",
+      "started_at": "2026-10-24T04:13:46Z",
+      "completed_at": "2026-10-24T04:16:00Z"
+    },
+    {
+      "id": 120775823903,
+      "name": "sanitizers",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/Hydrock/Cliptiq/actions/runs/40061508988/job/120775823903",
+      "started_at": "2026-10-24T04:13:46Z",
+      "completed_at": "2026-10-24T04:15:34Z"
+    },
+    {
+      "id": 120775823925,
+      "name": "history (macos-15-intel)",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/Hydrock/Cliptiq/actions/runs/40061508988/job/120775823925",
+      "started_at": "2026-10-24T04:13:48Z",
+      "completed_at": "2026-10-24T04:16:34Z"
+    },
+    {
+      "id": 120775823935,
+      "name": "history (macos-15)",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/Hydrock/Cliptiq/actions/runs/40061508988/job/120775823935",
+      "started_at": "2026-10-24T04:13:47Z",
+      "completed_at": "2026-10-24T04:15:41Z"
+    },
+    {
+      "id": 120775823959,
+      "name": "history (windows-2025)",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/Hydrock/Cliptiq/actions/runs/40061508988/job/120775823959",
+      "started_at": "2026-10-24T04:13:47Z",
+      "completed_at": "2026-10-24T04:16:05Z"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "120587047415": {
+    "url": "https://github.com/Hydrock/Cliptiq/actions/runs/40003977152/job/120587047415",
+    "failure_lines": [
+      "2026-10-23T18:31:57.3633950Z  2/13 Test  #2: paste_native_boundary ............***Failed    0.01 sec",
+      "2026-10-23T18:31:57.3635760Z FAIL issued_target_and_terminal_both_clipboard_command_v: Native call boundary not implemented",
+      "2026-10-23T18:31:57.3665610Z FAIL permission_denial_and_revocation: Native call boundary not implemented",
+      "2026-10-23T18:31:57.3666560Z FAIL closed_changed_window_and_unrelated_focus: Native call boundary not implemented",
+      "2026-10-23T18:31:57.3667250Z FAIL held_modifiers_key_and_missing_keymap_or_allocation: Native call boundary not implemented",
+      "2026-10-23T18:31:57.3668110Z FAIL normal_restore_denial_and_window_recheck: Native call boundary not implemented",
+      "2026-10-23T18:31:57.3942700Z  3/13 Test  #3: paste ............................***Failed    0.03 sec",
+      "2026-10-23T18:31:57.3965950Z FAIL snippet_encoded_and_entry_limits_before_writer: !result&&result.error().code==ErrorCode::TooLarge&&clipboard.writes==0&&paste.calls==0",
+      "2026-10-23T18:31:58.2953720Z  6/13 Test  #6: paste_menu_status_lifecycle ......***Failed    0.16 sec",
+      "2026-10-23T18:31:58.3054400Z FAIL menu_review: selected==1&&got.invocation.target==\"issued-status-target\"",
+      "2026-10-23T18:32:09.1840890Z 77% tests passed, 3 tests failed out of 13",
+      "2026-10-23T18:32:09.1844290Z \t  2 - paste_native_boundary (Failed)",
+      "2026-10-23T18:32:09.1845210Z \t  3 - paste (Failed)",
+      "2026-10-23T18:32:09.1845960Z \t  6 - paste_menu_status_lifecycle (Failed)"
+    ]
+  },
+  "120589392839": {
+    "url": "https://github.com/Hydrock/Cliptiq/actions/runs/40004663133/job/120589392839",
+    "failure_lines": [
+      "2026-10-23T18:36:45.9585900Z  2/13 Test  #2: paste_native_boundary ............***Failed    0.04 sec",
+      "2026-10-23T18:36:45.9588250Z FAIL issued_target_and_terminal_both_clipboard_command_v: f.flags[0]==kCGEventFlagMaskCommand&&f.flags[1]==kCGEventFlagMaskCommand",
+      "2026-10-23T18:36:57.6035720Z 92% tests passed, 1 tests failed out of 13",
+      "2026-10-23T18:36:57.6039970Z \t  2 - paste_native_boundary (Failed)"
+    ]
+  }
+}

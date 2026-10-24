@@ -1,0 +1,16 @@
+{
+  "job_url": "https://github.com/Hydrock/Cliptiq/actions/runs/40056122028/job/120759379075",
+  "lines": [
+    "2026-10-24T02:56:42.5277137Z (menu_native_probe:6619): dbind-WARNING **: 02:56:42.527: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files",
+    "2026-10-24T02:56:42.7081207Z (menu_native_probe:6636): dbind-WARNING **: 02:56:42.707: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files",
+    "2026-10-24T02:56:43.0235086Z (paste_native_probe:6669): dbind-WARNING **: 02:56:43.023: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files",
+    "2026-10-24T02:56:43.2030245Z (paste_native_probe:6686): dbind-WARNING **: 02:56:43.202: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files",
+    "2026-10-24T02:56:43.5203835Z (settings_native_probe:6719): dbind-WARNING **: 02:56:43.520: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files",
+    "2026-10-24T02:56:43.5626383Z (settings_native_probe:6719): Gtk-WARNING **: 02:56:43.562: Could not load a pixbuf from /org/gtk/libgtk/theme/Adwaita/assets/check-symbolic.svg.",
+    "2026-10-24T02:56:43.5627249Z This may indicate that pixbuf loaders or the mime database could not be found.",
+    "2026-10-24T02:56:43.8011435Z (settings_native_probe:6737): dbind-WARNING **: 02:56:43.800: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files",
+    "2026-10-24T02:56:43.8400943Z (settings_native_probe:6737): Gtk-WARNING **: 02:56:43.839: Could not load a pixbuf from /org/gtk/libgtk/theme/Adwaita/assets/check-symbolic.svg.",
+    "2026-10-24T02:56:43.8402364Z This may indicate that pixbuf loaders or the mime database could not be found."
+  ],
+  "scope": "Headless smoke GTK theme/AT-SPI warnings; theme loaders, resources and accessibility services are outside ELF closure. Actual presentation/manual acceptance remains OPEN."
+}

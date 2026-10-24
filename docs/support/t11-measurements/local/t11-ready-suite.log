@@ -1,0 +1,134 @@
+Preset CMake variables:
+
+  BUILD_TESTING="ON"
+  CMAKE_BUILD_TYPE="Debug"
+
+-- Configuring done (2.3s)
+-- Generating done (0.5s)
+-- Build files have been written to: /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+[1/37] Building CXX object CMakeFiles/xml_test.dir/tests/unit/xml_test.cpp.o
+[2/37] Building CXX object CMakeFiles/cliptiq_xml.dir/core/src/xml.cpp.o
+[3/37] Building CXX object CMakeFiles/native_xml_test.dir/tests/integration/native_xml_test.cpp.o
+[4/37] Building CXX object CMakeFiles/cliptiq_xml.dir/core/src/xml_file.cpp.o
+[5/37] Building CXX object CMakeFiles/cliptiq_editor_native.dir/platform/linux/SnippetEditor.cpp.o
+[6/37] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/snippets.cpp.o
+[7/37] Building CXX object CMakeFiles/cliptiq_editor_xml_native.dir/platform/linux/SnippetEditor.cpp.o
+[8/37] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/editor.cpp.o
+[9/37] Linking CXX static library libcliptiq_core.a
+[10/37] Linking CXX static library libcliptiq_editor_native.a
+[11/37] Linking CXX static library libcliptiq_xml.a
+[12/37] Linking CXX executable menu_preview_test
+[13/37] Linking CXX executable history_test
+[14/37] Linking CXX executable native_hotkeys_test
+[15/37] Linking CXX static library libcliptiq_editor_xml_native.a
+[16/37] Linking CXX executable menu_regression_test
+[17/37] Linking CXX executable native_menu_test
+[18/37] Linking CXX executable policy_test
+[19/37] Linking CXX executable menu_test
+[20/37] Linking CXX executable hotkeys_test
+[21/37] Linking CXX executable paste_test
+[22/37] Linking CXX executable linux_clipboard_test
+[23/37] Linking CXX executable linux_hotkey_portal_test
+[24/37] Linking CXX executable menu_paste_bridge_test
+[25/37] Linking CXX executable settings_test
+[26/37] Linking CXX executable xml_test
+[27/37] Linking CXX executable editor_test
+[28/37] Linking CXX executable native_settings_test
+[29/37] Linking CXX executable snippets_test
+[30/37] Linking CXX executable native_paste_test
+[31/37] Linking CXX executable snippet_integration_test
+[32/37] Linking CXX executable linux_x11_wire_test
+[33/37] Linking CXX executable linux_wayland_wire_test
+[34/37] Linking CXX executable linux_native_clipboard_test
+[35/37] Linking CXX executable native_xml_test
+[36/37] Linking CXX executable native_editor_test
+[37/37] Linking CXX executable cliptiq_menu_host
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+      Start  1: xml_native_x11
+ 1/37 Test  #1: xml_native_x11 .....................   Passed    0.33 sec
+      Start  2: xml_native_wayland
+ 2/37 Test  #2: xml_native_wayland .................   Passed    0.30 sec
+      Start  3: xml
+ 3/37 Test  #3: xml ................................   Passed    0.03 sec
+      Start  4: xml_interop
+ 4/37 Test  #4: xml_interop ........................***Failed    0.24 sec
+Traceback (most recent call last):
+  File "/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/tests/integration/xml_interop.py", line 13, in <module>
+    assert model(again)==model(generated)==model(out)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+
+      Start  5: editor_native_x11
+ 5/37 Test  #5: editor_native_x11 ..................   Passed    0.44 sec
+      Start  6: editor_native_wayland
+ 6/37 Test  #6: editor_native_wayland ..............   Passed    0.42 sec
+      Start  7: snippets_menu_hotkeys
+ 7/37 Test  #7: snippets_menu_hotkeys ..............   Passed    0.02 sec
+      Start  8: editor
+ 8/37 Test  #8: editor .............................   Passed    0.24 sec
+      Start  9: snippets
+ 9/37 Test  #9: snippets ...........................   Passed    0.08 sec
+      Start 10: settings_native_x11
+10/37 Test #10: settings_native_x11 ................   Passed    0.43 sec
+      Start 11: hotkeys_native_x11
+11/37 Test #11: hotkeys_native_x11 .................   Passed    0.54 sec
+      Start 12: settings_native_wayland
+12/37 Test #12: settings_native_wayland ............   Passed    0.50 sec
+      Start 13: hotkeys_native_wayland
+13/37 Test #13: hotkeys_native_wayland .............   Passed    0.16 sec
+      Start 14: settings
+14/37 Test #14: settings ...........................   Passed    0.02 sec
+      Start 15: hotkeys
+15/37 Test #15: hotkeys ............................   Passed    0.00 sec
+      Start 16: paste_native_x11
+16/37 Test #16: paste_native_x11 ...................   Passed    0.30 sec
+      Start 17: paste_native_wayland
+17/37 Test #17: paste_native_wayland ...............   Passed    0.16 sec
+      Start 18: hotkeys_portal_protocol
+18/37 Test #18: hotkeys_portal_protocol ............   Passed    0.37 sec
+      Start 19: paste_menu_bridge
+19/37 Test #19: paste_menu_bridge ..................   Passed    0.24 sec
+      Start 20: paste
+20/37 Test #20: paste ..............................   Passed    0.03 sec
+      Start 21: menu_unicode_conformance
+21/37 Test #21: menu_unicode_conformance ...........   Passed    0.01 sec
+      Start 22: menu_regression_context_x11
+22/37 Test #22: menu_regression_context_x11 ........   Passed    0.23 sec
+      Start 23: menu_regression_context_wayland
+23/37 Test #23: menu_regression_context_wayland ....   Passed    0.21 sec
+      Start 24: menu_regression_coordinates
+24/37 Test #24: menu_regression_coordinates ........   Passed    0.27 sec
+      Start 25: menu_native_x11
+25/37 Test #25: menu_native_x11 ....................   Passed    0.31 sec
+      Start 26: menu_native_wayland
+26/37 Test #26: menu_native_wayland ................   Passed    0.27 sec
+      Start 27: menu_preview
+27/37 Test #27: menu_preview .......................   Passed    0.00 sec
+      Start 28: menu
+28/37 Test #28: menu ...............................   Passed    0.31 sec
+      Start 29: linux_clipboard_protocol
+29/37 Test #29: linux_clipboard_protocol ...........   Passed    0.04 sec
+      Start 30: linux_clipboard_wayland_wire
+30/37 Test #30: linux_clipboard_wayland_wire .......   Passed    1.49 sec
+      Start 31: linux_clipboard_x11_wire
+31/37 Test #31: linux_clipboard_x11_wire ...........   Passed    0.41 sec
+      Start 32: linux_clipboard_external_clients
+32/37 Test #32: linux_clipboard_external_clients ...   Passed    2.39 sec
+      Start 33: linux_clipboard_x11
+33/37 Test #33: linux_clipboard_x11 ................   Passed    0.69 sec
+      Start 34: linux_clipboard_wayland
+34/37 Test #34: linux_clipboard_wayland ............   Passed    0.43 sec
+      Start 35: policy
+35/37 Test #35: policy .............................   Passed    0.03 sec
+      Start 36: history
+36/37 Test #36: history ............................   Passed    0.34 sec
+      Start 37: history_crash
+37/37 Test #37: history_crash ......................   Passed    0.44 sec
+
+97% tests passed, 1 tests failed out of 37
+
+Total Test time (real) =  12.95 sec
+
+The following tests FAILED:
+	  4 - xml_interop (Failed)
+Errors while running CTest

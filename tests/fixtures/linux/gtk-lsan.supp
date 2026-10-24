@@ -1,0 +1,4 @@
+# GTK/Pango process-global font caches and AT-SPI adapter initialization.
+# Applied only to native GTK menu tests; core/backend tests keep full LSan.
+leak:libfontconfig.so
+leak:atk_bridge_adaptor_init

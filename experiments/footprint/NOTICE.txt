@@ -1,0 +1,6 @@
+Cliptiq footprint measurement prototype, not a product release.
+SQLite 3.53.4: public domain, https://www.sqlite.org/copyright.html
+Rust standard library: MIT OR Apache-2.0, https://github.com/rust-lang/rust
+MSVC runtime, when statically linked: Microsoft redistributable runtime terms.
+Linux/macOS system libraries remain external dependencies.
+Toolchain license closure must be reviewed before a public product release.

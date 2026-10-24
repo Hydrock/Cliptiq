@@ -1,0 +1,27 @@
+[1/4] Building CXX object CMakeFiles/cliptiq_menu_native.dir/platform/linux/Menu.cpp.o
+[2/4] Building CXX object CMakeFiles/menu_paste_bridge_test.dir/tests/integration/menu_paste_bridge_test.cpp.o
+[3/4] Linking CXX static library libcliptiq_menu_native.a
+[4/4] Linking CXX executable menu_paste_bridge_test
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+    Start 3: paste_menu_bridge
+1/1 Test #3: paste_menu_bridge ................***Failed    0.66 sec
+dbus-daemon[22122]: [session uid=1000 pid=22122] Activating service name='org.a11y.Bus' requested by ':1.0' (uid=1000 pid=22137 comm="/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard" label="kernel")
+dbus-daemon[22122]: [session uid=1000 pid=22122] Successfully activated service 'org.a11y.Bus'
+dbus-daemon[22122]: [session uid=1000 pid=22122] Activating service name='org.gtk.vfs.Daemon' requested by ':1.2' (uid=1000 pid=22137 comm="/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard" label="kernel")
+dbus-daemon[22122]: [session uid=1000 pid=22122] Successfully activated service 'org.gtk.vfs.Daemon'
+
+(menu_paste_bridge_test:22137): Gtk-WARNING **: 23:16:10.774: no trigger event for menu popup
+dbus-daemon[22145]: Activating service name='org.a11y.atspi.Registry' requested by ':1.0' (uid=1000 pid=22137 comm="/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard" label="kernel")
+dbus-daemon[22145]: Successfully activated service 'org.a11y.atspi.Registry'
+SpiRegistry daemon is running with well-known name - org.a11y.atspi.Registry
+FAIL menu_paste_bridge: openings==1
+A connection to the bus can't be made
+
+
+0% tests passed, 1 tests failed out of 1
+
+Total Test time (real) =   0.68 sec
+
+The following tests FAILED:
+	  3 - paste_menu_bridge (Failed)
+Errors while running CTest

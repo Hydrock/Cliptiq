@@ -1,0 +1,48 @@
+[0/1] Re-running CMake...
+-- Configuring done (2.2s)
+-- Generating done (0.3s)
+-- Build files have been written to: /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+[1/4] Building CXX object CMakeFiles/native_paste_test.dir/tests/integration/native_paste_test.cpp.o
+[2/4] Building CXX object CMakeFiles/paste_test.dir/tests/unit/paste_test.cpp.o
+[3/4] Linking CXX executable paste_test
+[4/4] Linking CXX executable native_paste_test
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+    Start 1: paste_native_x11
+1/2 Test #1: paste_native_x11 .................***Failed    0.60 sec
+PASS forged_and_missing_targets_never_dispatch
+PASS self_launcher_target_rejected
+PASS real_xtest_ctrl_v_and_single_use_token
+PASS terminal_ctrl_shift_v
+PASS unrelated_focus_change_rejected
+PASS held_modifier_not_released_or_used
+PASS ru_layout_physical_paste_key
+FAIL native_paste: dvorak==XKeysymToKeycode(d,XStringToKeysym("v"))
+
+    Start 4: paste
+2/2 Test #4: paste ............................***Failed    0.03 sec
+PASS auto_off_copies_original_all_formats_and_touches
+PASS plain_keeps_only_text_without_rich_formats
+PASS image_only_plain_never_overwrites_clipboard
+PASS delete_only_removes_history_without_write_or_input
+PASS paste_delete_removes_only_after_backend_acceptance
+PASS denied_paste_delete_keeps_sole_record_and_manual_copy
+PASS auto_off_paste_delete_does_not_delete
+PASS failed_write_never_dispatches_or_deletes
+PASS stale_menu_revision_has_no_side_effect
+PASS concurrent_revision_after_dispatch_does_not_delete
+PASS terminal_shortcut_and_missing_target_manual
+PASS snippets_copied_without_history_deletion
+PASS destructive_modifier_never_deletes_snippet
+PASS modifier_binding_unique_single_and_conflicting_held_cancel
+PASS invalid_action_shortcut_or_clock_rejected_before_write
+FAIL snippet_encoded_and_entry_limits_before_writer: !result&&result.error().code==ErrorCode::TooLarge&&clipboard.writes==0&&paste.calls==0
+
+
+0% tests passed, 2 tests failed out of 2
+
+Total Test time (real) =   0.66 sec
+
+The following tests FAILED:
+	  1 - paste_native_x11 (Failed)
+	  4 - paste (Failed)
+Errors while running CTest

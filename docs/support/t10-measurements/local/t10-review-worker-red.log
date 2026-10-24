@@ -1,0 +1,52 @@
+[1/31] Building CXX object CMakeFiles/snippet_integration_test.dir/tests/integration/snippet_integration_test.cpp.o
+[2/31] Building CXX object CMakeFiles/editor_test.dir/tests/unit/editor_test.cpp.o
+[3/31] Building CXX object CMakeFiles/cliptiq_editor_native.dir/platform/linux/SnippetEditor.cpp.o
+[4/31] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/editor.cpp.o
+[5/31] Building CXX object CMakeFiles/cliptiq_menu_host.dir/platform/MenuHost.cpp.o
+[6/31] Building CXX object CMakeFiles/native_editor_test.dir/tests/integration/native_editor_test.cpp.o
+[7/31] Linking CXX static library libcliptiq_core.a
+[8/31] Linking CXX static library libcliptiq_editor_native.a
+[9/31] Linking CXX executable menu_preview_test
+[10/31] Linking CXX executable history_test
+[11/31] Linking CXX executable native_hotkeys_test
+[12/31] Linking CXX executable menu_regression_test
+[13/31] Linking CXX executable native_menu_test
+[14/31] Linking CXX executable policy_test
+[15/31] Linking CXX executable menu_test
+[16/31] Linking CXX executable hotkeys_test
+[17/31] Linking CXX executable paste_test
+[18/31] Linking CXX executable editor_test
+[19/31] Linking CXX executable linux_clipboard_test
+[20/31] Linking CXX executable linux_hotkey_portal_test
+[21/31] Linking CXX executable menu_paste_bridge_test
+[22/31] Linking CXX executable settings_test
+[23/31] Linking CXX executable native_settings_test
+[24/31] Linking CXX executable snippets_test
+[25/31] Linking CXX executable native_paste_test
+[26/31] Linking CXX executable snippet_integration_test
+[27/31] Linking CXX executable linux_x11_wire_test
+[28/31] Linking CXX executable linux_wayland_wire_test
+[29/31] Linking CXX executable native_editor_test
+[30/31] Linking CXX executable linux_native_clipboard_test
+[31/31] Linking CXX executable cliptiq_menu_host
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+    Start 4: editor
+1/1 Test #4: editor ...........................***Failed    1.26 sec
+PASS autosave_undo_redo_resets_at_selection_boundary
+PASS cancelled_drag_and_stale_drag_do_not_mutate
+PASS delete_confirmation_empty_folder_and_binding_conflicts
+PASS failed_edit_preserves_document_and_undo
+PASS failed_autosave_blocks_navigation_until_corrected_or_explicit_reload
+PASS drag_revision_is_checked_inside_write_transaction
+PASS folder_drop_does_not_overwrite_concurrent_other_folder_reorder
+PASS committed_snapshot_does_not_adopt_peer_revision
+FAIL background_autosave_keeps_event_loop_responsive_under_write_contention: e.queue_content("first")
+
+
+0% tests passed, 1 tests failed out of 1
+
+Total Test time (real) =   1.31 sec
+
+The following tests FAILED:
+	  4 - editor (Failed)
+Errors while running CTest

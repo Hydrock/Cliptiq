@@ -1,0 +1,19 @@
+Preset CMake variables:
+
+  BUILD_TESTING="ON"
+  CMAKE_BUILD_TYPE="Debug"
+
+-- Configuring done (2.2s)
+-- Generating done (0.3s)
+-- Build files have been written to: /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+[1/4] Building CXX object CMakeFiles/cliptiq_settings_native.dir/platform/linux/Hotkeys.cpp.o
+[2/4] Building CXX object CMakeFiles/cliptiq_settings_native.dir/platform/linux/PortalHotkeys.cpp.o
+[3/4] Linking CXX static library libcliptiq_settings_native.a
+[4/4] Linking CXX executable linux_hotkey_portal_test
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+    Start 9: hotkeys_portal_protocol
+1/1 Test #9: hotkeys_portal_protocol ..........   Passed    0.38 sec
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.41 sec

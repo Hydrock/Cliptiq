@@ -1,0 +1,21 @@
+[1/2] Building CXX object CMakeFiles/xml_test.dir/tests/unit/xml_test.cpp.o
+[2/2] Linking CXX executable xml_test
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+    Start 1: xml
+1/1 Test #1: xml ..............................***Failed    0.03 sec
+PASS roundtrip_whitespace_unicode_disabled_entity_escape
+PASS fallback_titles_cdata_and_empty_folders
+PASS append_not_replace_and_atomic_rollback
+PASS malformed_is_atomic_external_entity_rejected
+PASS size_count_utf8_and_store_limits
+PASS atomic_destination_and_bounded_file_read
+FAIL xml_line_ending_normalization_and_nested_transaction_preservation: f[0].snippets[0].content=="A\n\nB\nC\nD"
+
+
+0% tests passed, 1 tests failed out of 1
+
+Total Test time (real) =   0.05 sec
+
+The following tests FAILED:
+	  1 - xml (Failed)
+Errors while running CTest

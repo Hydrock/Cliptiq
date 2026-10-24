@@ -1,0 +1,90 @@
+Preset CMake variables:
+
+  BUILD_TESTING="ON"
+  CMAKE_BUILD_TYPE="Debug"
+
+-- Configuring done (2.1s)
+-- Generating done (0.4s)
+-- Build files have been written to: /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+[1/34] Building CXX object CMakeFiles/snippet_integration_test.dir/tests/integration/snippet_integration_test.cpp.o
+[2/34] Building CXX object CMakeFiles/native_xml_test.dir/tests/integration/native_xml_test.cpp.o
+[3/34] Building CXX object CMakeFiles/editor_test.dir/tests/unit/editor_test.cpp.o
+[4/34] Building CXX object CMakeFiles/cliptiq_editor_native.dir/platform/linux/SnippetEditor.cpp.o
+[5/34] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/editor.cpp.o
+[6/34] Building CXX object CMakeFiles/cliptiq_menu_host.dir/platform/MenuHost.cpp.o
+[7/34] Building CXX object CMakeFiles/native_editor_test.dir/tests/integration/native_editor_test.cpp.o
+[8/34] Linking CXX static library libcliptiq_core.a
+[9/34] Linking CXX static library libcliptiq_editor_native.a
+[10/34] Linking CXX executable menu_preview_test
+[11/34] Linking CXX executable history_test
+[12/34] Linking CXX executable native_hotkeys_test
+[13/34] Linking CXX executable menu_regression_test
+[14/34] Linking CXX executable native_menu_test
+[15/34] Linking CXX executable policy_test
+[16/34] Linking CXX executable menu_test
+[17/34] Linking CXX executable hotkeys_test
+[18/34] Linking CXX executable paste_test
+[19/34] Linking CXX executable xml_test
+[20/34] Linking CXX executable linux_clipboard_test
+[21/34] Linking CXX executable linux_hotkey_portal_test
+[22/34] Linking CXX executable menu_paste_bridge_test
+[23/34] Linking CXX executable settings_test
+[24/34] Linking CXX executable editor_test
+[25/34] Linking CXX executable native_settings_test
+[26/34] Linking CXX executable snippets_test
+[27/34] Linking CXX executable native_paste_test
+[28/34] Linking CXX executable snippet_integration_test
+[29/34] Linking CXX executable linux_x11_wire_test
+[30/34] Linking CXX executable linux_wayland_wire_test
+[31/34] Linking CXX executable linux_native_clipboard_test
+[32/34] Linking CXX executable native_xml_test
+[33/34] Linking CXX executable native_editor_test
+[34/34] Linking CXX executable cliptiq_menu_host
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+    Start 1: xml_native_x11
+1/2 Test #1: xml_native_x11 ...................***Failed    0.28 sec
+dbus-daemon[74630]: [session uid=1000 pid=74630] Activating service name='org.a11y.Bus' requested by ':1.0' (uid=1000 pid=74645 comm="/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard" label="kernel")
+dbus-daemon[74630]: [session uid=1000 pid=74630] Successfully activated service 'org.a11y.Bus'
+dbus-daemon[74630]: [session uid=1000 pid=74630] Activating service name='org.gtk.vfs.Daemon' requested by ':1.2' (uid=1000 pid=74645 comm="/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard" label="kernel")
+dbus-daemon[74630]: [session uid=1000 pid=74630] Successfully activated service 'org.gtk.vfs.Daemon'
+FAIL native_xml: ui.import_xml_path(input)
+A connection to the bus can't be made
+
+    Start 2: xml_native_wayland
+2/2 Test #2: xml_native_wayland ...............***Failed    0.28 sec
+dbus-daemon[74674]: [session uid=1000 pid=74674] Activating service name='org.a11y.Bus' requested by ':1.1' (uid=1000 pid=74680 comm="/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard" label="kernel")
+dbus-daemon[74674]: [session uid=1000 pid=74674] Successfully activated service 'org.a11y.Bus'
+dbus-daemon[74674]: [session uid=1000 pid=74674] Activating service name='org.gtk.vfs.Daemon' requested by ':1.0' (uid=1000 pid=74680 comm="/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard" label="kernel")
+dbus-daemon[74674]: [session uid=1000 pid=74674] Successfully activated service 'org.gtk.vfs.Daemon'
+FAIL native_xml: ui.import_xml_path(input)
+00:00:00.007 [DEBUG] [wlr] [types/output/swapchain.c:27] Choosing primary buffer format XR24 (0x34325258) for output 'HEADLESS-1'
+00:00:00.007 [DEBUG] [wlr] [types/output/swapchain.c:96] Testing swapchain for output 'HEADLESS-1'
+00:00:00.007 [DEBUG] [wlr] [render/swapchain.c:106] Allocating new swapchain buffer
+00:00:00.007 [DEBUG] [wlr] [render/pixman/renderer.c:152] Created pixman buffer 800x600
+00:00:00.008 [DEBUG] [wlr] [types/output/cursor.c:458] Falling back to software cursor on output 'HEADLESS-1'
+00:00:00.008 [DEBUG] [sway/tree/workspace.c:277] Workspace: Generating new workspace name for output HEADLESS-1
+00:00:00.008 [DEBUG] [sway/tree/output.c:127] Creating default workspace 1
+00:00:00.008 [DEBUG] [sway/tree/workspace.c:65] Adding workspace 1 for output HEADLESS-1
+00:00:00.012 [DEBUG] [wlr] [xcursor/wlr_xcursor.c:225] Loaded cursor theme 'default' at size 24 (59 available cursors)
+00:00:00.012 [DEBUG] [sway/desktop/layer_shell.c:229] Usable area changed, rearranging output
+00:00:00.012 [DEBUG] [sway/tree/arrange.c:263] Usable area for ws: 800x600@0,0
+00:00:00.012 [DEBUG] [sway/tree/arrange.c:297] Arranging workspace '1' at 0.000000, 0.000000
+00:00:00.012 [DEBUG] [sway/tree/arrange.c:263] Usable area for ws: 800x600@0,0
+00:00:00.012 [DEBUG] [sway/tree/arrange.c:297] Arranging workspace '1' at 0.000000, 0.000000
+00:00:00.012 [DEBUG] [sway/desktop/transaction.c:398] Transaction 0x57876aeaf230 committing with 2 instructions
+00:00:00.012 [DEBUG] [sway/desktop/transaction.c:294] Applying transaction 0x57876aeaf230
+00:00:00.012 [INFO] [wlr] [backend/headless/backend.c:17] Starting headless backend
+00:00:00.012 [INFO] [sway/server.c:396] Running compositor on wayland display 'wayland-1'
+00:00:00.073 [DEBUG] [wlr] [types/wlr_compositor.c:692] New wlr_surface 0x57876aef0d40 (res 0x57876aeb1ea0)
+00:00:00.073 [DEBUG] [wlr] [types/wlr_compositor.c:692] New wlr_surface 0x57876aef10f0 (res 0x57876aeb2200)
+A connection to the bus can't be made
+
+
+0% tests passed, 2 tests failed out of 2
+
+Total Test time (real) =   0.58 sec
+
+The following tests FAILED:
+	  1 - xml_native_x11 (Failed)
+	  2 - xml_native_wayland (Failed)
+Errors while running CTest

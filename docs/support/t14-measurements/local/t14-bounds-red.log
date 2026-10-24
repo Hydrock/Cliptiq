@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "C:\Users\SmiteVils\Documents\ChatGPT\ClipBoard Project\tests\integration\import_bounds.py", line 9, in <module>
+    assert 'tiffRepresentation' not in swift,'Legacy import must not expand an NSImage to TIFF before limits'
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Legacy import must not expand an NSImage to TIFF before limits

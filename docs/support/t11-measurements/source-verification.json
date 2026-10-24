@@ -1,0 +1,9 @@
+{
+  "runtime_source": "98b3950634c650ce9b0333dba73989e37efcd2bf",
+  "hosted_reports": 4,
+  "hosted_source_file_digests_verified": 408,
+  "local_exact_git_blob_hashes": 79,
+  "local_line_ending_only_hashes": 23,
+  "linux_paired_binary_hashes_match_ci": true,
+  "scope": "Hosted source hashes equal Git blobs; local Windows checkout may use CRLF, verified as line-ending-only transform. Paired Linux executable SHA256 matches CI exactly."
+}

@@ -1,0 +1,20 @@
+[1/6] Building CXX object CMakeFiles/cliptiq_paste_native.dir/platform/linux/Paste.cpp.o
+[2/6] Building CXX object CMakeFiles/native_paste_test.dir/tests/integration/native_paste_test.cpp.o
+[3/6] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/paste.cpp.o
+[4/6] Linking CXX static library libcliptiq_core.a
+[5/6] Linking CXX static library libcliptiq_paste_native.a
+[6/6] Linking CXX executable native_paste_test
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+    Start 1: paste_native_x11
+1/1 Test #1: paste_native_x11 .................***Failed    0.21 sec
+PASS forged_and_missing_targets_never_dispatch
+FAIL native_paste: paste.capability().status==CapabilityStatus::Limited
+
+
+0% tests passed, 1 tests failed out of 1
+
+Total Test time (real) =   0.23 sec
+
+The following tests FAILED:
+	  1 - paste_native_x11 (Failed)
+Errors while running CTest

@@ -1,0 +1,42 @@
+Preset CMake variables:
+
+  BUILD_TESTING="ON"
+  CMAKE_BUILD_TYPE="Debug"
+
+-- Configuring done (2.3s)
+-- Generating done (0.3s)
+-- Build files have been written to: /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+[1/7] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/hotkeys.cpp.o
+[2/7] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/settings.cpp.o
+[3/7] Building CXX object CMakeFiles/settings_test.dir/tests/unit/settings_test.cpp.o
+[4/7] Building CXX object CMakeFiles/hotkeys_test.dir/tests/unit/hotkeys_test.cpp.o
+[5/7] Linking CXX static library libcliptiq_core.a
+[6/7] Linking CXX executable hotkeys_test
+[7/7] Linking CXX executable settings_test
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+    Start 1: settings
+1/2 Test #1: settings .........................***Failed    0.02 sec
+FAIL defaults_audit_and_platform_shortcuts: map::at
+FAIL atomic_roundtrip_and_privacy_projection: save_settings(store,s)
+FAIL ranges_rejected_without_partial_write: !r&&r.error().code==ErrorCode::InvalidArgument
+PASS settings_cannot_unbind_or_duplicate_and_invalid_values
+FAIL eight_groups_and_unknown_capability_disabled_reason: g
+PASS corrupt_and_future_settings_not_silently_defaulted
+
+    Start 2: hotkeys
+2/2 Test #2: hotkeys ..........................***Failed    0.01 sec
+FAIL chord_roundtrip_meaning_and_reserved: T09 not implemented
+FAIL conflict_keeps_previous_and_settings_protected: T09 not implemented
+FAIL batch_os_or_persistence_failure_rolls_back: r.replace(s.hotkeys,[]{return Result<void>{};})
+FAIL disabled_deleted_folders_release_routes: T09 not implemented
+FAIL registry_lifetime_releases_and_unknown_actions_rejected: T09 not implemented
+
+
+0% tests passed, 2 tests failed out of 2
+
+Total Test time (real) =   0.05 sec
+
+The following tests FAILED:
+	  1 - settings (Failed)
+	  2 - hotkeys (Failed)
+Errors while running CTest

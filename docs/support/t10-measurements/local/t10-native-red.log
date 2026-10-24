@@ -1,0 +1,38 @@
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+    Start 1: editor_native_x11
+1/2 Test #1: editor_native_x11 ................***Failed    0.38 sec
+FAIL native_editor: ui.show(session)
+
+    Start 2: editor_native_wayland
+2/2 Test #2: editor_native_wayland ............***Failed    5.18 sec
+FAIL native_editor: ui.show(session)
+00:00:00.005 [INFO] [sway/commands.c:381] Config command: xwayland disable
+00:00:00.005 [INFO] [sway/commands.c:404] After replacement: xwayland disable
+00:00:00.033 [INFO] [sway/realtime.c:35] Failed to set scheduling priority to 1
+00:00:00.033 [INFO] [sway/server.c:384] Starting backend on wayland display 'wayland-1'
+00:00:00.033 [INFO] [wlr] [backend/headless/backend.c:17] Starting headless backend
+00:00:00.033 [DEBUG] [sway/desktop/output.c:1019] New output 0x588250ddb2e0: HEADLESS-1 (non-desktop: 0)
+00:00:00.033 [DEBUG] [sway/config/output.c:401] Turning on output HEADLESS-1
+00:00:00.033 [DEBUG] [sway/config/output.c:409] Set HEADLESS-1 mode to 800x600 (-1.000000 Hz)
+00:00:00.033 [DEBUG] [sway/config/output.c:256] Assigning custom mode to HEADLESS-1
+00:00:00.033 [DEBUG] [sway/config/output.c:473] Auto-detected output scale: 1.000000
+00:00:00.033 [DEBUG] [sway/config/output.c:520] Committing output HEADLESS-1
+00:00:00.033 [DEBUG] [wlr] [types/output/render.c:168] Attaching empty buffer to output for modeset
+00:00:00.033 [DEBUG] [wlr] [types/output/swapchain.c:27] Choosing primary buffer format XR24 (0x34325258) for output 'HEADLESS-1'
+00:00:00.033 [DEBUG] [wlr] [types/output/swapchain.c:96] Testing swapchain for output 'HEADLESS-1'
+00:00:00.033 [DEBUG] [wlr] [render/swapchain.c:106] Allocating new swapchain buffer
+00:00:00.033 [DEBUG] [wlr] [render/pixman/renderer.c:152] Created pixman buffer 800x600
+00:00:00.034 [DEBUG] [wlr] [types/output/cursor.c:458] Falling back to software cursor on output 'HEADLESS-1'
+00:00:00.034 [DEBUG] [sway/tree/workspace.c:277] Workspace: Generating new workspace name for output HEADLESS-1
+00:00:00.034 [DEBUG] [sway/tree/output.c:127] Creating default workspace 1
+00:00:00.034 [DEBUG] [sway/tree/workspace.c:65] Adding workspace 1 for output HEADLESS-1
+
+
+0% tests passed, 2 tests failed out of 2
+
+Total Test time (real) =   5.58 sec
+
+The following tests FAILED:
+	  1 - editor_native_x11 (Failed)
+	  2 - editor_native_wayland (Failed)
+Errors while running CTest

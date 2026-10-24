@@ -1,0 +1,79 @@
+Preset CMake variables:
+
+  BUILD_TESTING="ON"
+  CLIPTIQ_SANITIZE="ON"
+  CMAKE_BUILD_TYPE="Debug"
+
+-- Configuring done (2.0s)
+-- Generating done (0.2s)
+-- Build files have been written to: /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-sanitize
+[1/23] Building CXX object CMakeFiles/cliptiq_paste_native.dir/platform/linux/Paste.cpp.o
+[2/23] Building CXX object CMakeFiles/native_paste_test.dir/tests/integration/native_paste_test.cpp.o
+[3/23] Building CXX object CMakeFiles/menu_regression_test.dir/tests/integration/menu_regression_test.cpp.o
+[4/23] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/paste.cpp.o
+[5/23] Building CXX object CMakeFiles/paste_test.dir/tests/unit/paste_test.cpp.o
+[6/23] Building CXX object CMakeFiles/cliptiq_menu_host.dir/platform/MenuHost.cpp.o
+[7/23] Building CXX object CMakeFiles/menu_paste_bridge_test.dir/tests/integration/menu_paste_bridge_test.cpp.o
+[8/23] Linking CXX static library libcliptiq_core.a
+[9/23] Linking CXX static library libcliptiq_paste_native.a
+[10/23] Linking CXX executable menu_preview_test
+[11/23] Linking CXX executable history_test
+[12/23] Linking CXX executable menu_regression_test
+[13/23] Linking CXX executable native_menu_test
+[14/23] Linking CXX executable policy_test
+[15/23] Linking CXX executable menu_test
+[16/23] Linking CXX executable paste_test
+[17/23] Linking CXX executable menu_paste_bridge_test
+[18/23] Linking CXX executable linux_clipboard_test
+[19/23] Linking CXX executable native_paste_test
+[20/23] Linking CXX executable linux_x11_wire_test
+[21/23] Linking CXX executable linux_wayland_wire_test
+[22/23] Linking CXX executable linux_native_clipboard_test
+[23/23] Linking CXX executable cliptiq_menu_host
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-sanitize
+      Start  1: paste_native_x11
+ 1/21 Test  #1: paste_native_x11 ...................   Passed    0.59 sec
+      Start  2: paste_native_wayland
+ 2/21 Test  #2: paste_native_wayland ...............   Passed    0.31 sec
+      Start  3: paste_menu_bridge
+ 3/21 Test  #3: paste_menu_bridge ..................   Passed    0.65 sec
+      Start  4: paste
+ 4/21 Test  #4: paste ..............................   Passed    0.25 sec
+      Start  5: menu_unicode_conformance
+ 5/21 Test  #5: menu_unicode_conformance ...........   Passed    0.01 sec
+      Start  6: menu_regression_context_x11
+ 6/21 Test  #6: menu_regression_context_x11 ........   Passed    0.51 sec
+      Start  7: menu_regression_context_wayland
+ 7/21 Test  #7: menu_regression_context_wayland ....   Passed    0.46 sec
+      Start  8: menu_regression_coordinates
+ 8/21 Test  #8: menu_regression_coordinates ........   Passed    0.55 sec
+      Start  9: menu_native_x11
+ 9/21 Test  #9: menu_native_x11 ....................   Passed    0.60 sec
+      Start 10: menu_native_wayland
+10/21 Test #10: menu_native_wayland ................   Passed    0.65 sec
+      Start 11: menu_preview
+11/21 Test #11: menu_preview .......................   Passed    0.01 sec
+      Start 12: menu
+12/21 Test #12: menu ...............................   Passed    0.98 sec
+      Start 13: linux_clipboard_protocol
+13/21 Test #13: linux_clipboard_protocol ...........   Passed    0.14 sec
+      Start 14: linux_clipboard_wayland_wire
+14/21 Test #14: linux_clipboard_wayland_wire .......   Passed    1.73 sec
+      Start 15: linux_clipboard_x11_wire
+15/21 Test #15: linux_clipboard_x11_wire ...........   Passed    0.76 sec
+      Start 16: linux_clipboard_external_clients
+16/21 Test #16: linux_clipboard_external_clients ...   Passed    2.77 sec
+      Start 17: linux_clipboard_x11
+17/21 Test #17: linux_clipboard_x11 ................   Passed    0.99 sec
+      Start 18: linux_clipboard_wayland
+18/21 Test #18: linux_clipboard_wayland ............   Passed    0.62 sec
+      Start 19: policy
+19/21 Test #19: policy .............................   Passed    0.22 sec
+      Start 20: history
+20/21 Test #20: history ............................   Passed    0.54 sec
+      Start 21: history_crash
+21/21 Test #21: history_crash ......................   Passed    1.07 sec
+
+100% tests passed, 0 tests failed out of 21
+
+Total Test time (real) =  14.53 sec

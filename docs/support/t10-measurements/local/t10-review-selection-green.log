@@ -1,0 +1,13 @@
+[1/4] Building CXX object CMakeFiles/cliptiq_editor_native.dir/platform/linux/SnippetEditor.cpp.o
+[2/4] Linking CXX static library libcliptiq_editor_native.a
+[3/4] Linking CXX executable native_editor_test
+[4/4] Linking CXX executable cliptiq_menu_host
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+    Start 1: editor_native_x11
+1/2 Test #1: editor_native_x11 ................   Passed    0.29 sec
+    Start 2: editor_native_wayland
+2/2 Test #2: editor_native_wayland ............   Passed    0.24 sec
+
+100% tests passed, 0 tests failed out of 2
+
+Total Test time (real) =   0.56 sec

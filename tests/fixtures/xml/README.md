@@ -1,0 +1,3 @@
+# Clipy XML layout fixture
+
+Hand-authored from pinned Clipy develop71b0e82623d5c73b4b717d81233eb78db8bbe258, CPYSnippetsEditorWindowController.swift:21–27,158–229 and snippetRepository.insertFolders. Not an export captured from a running Clipy. `shouldTrimWhitespace=false`, fallback titles `untitled folder`/`untitled snippet`, content default empty; one level, append import; all folders/snippets exported without enabled/UUID/hotkeys. Fixture adds valid standard entities, CDATA/comment-separated text and numeric CR to exercise independent parsers. Live Clipy macOS interchange acceptance remains OPEN.

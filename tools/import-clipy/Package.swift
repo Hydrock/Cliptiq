@@ -1,0 +1,3 @@
+// swift-tools-version:5.10
+import PackageDescription
+let package = Package(name: "CliptiqLegacy", platforms: [.macOS(.v13)], products: [.executable(name: "cliptiq-legacy", targets: ["CliptiqLegacy"])], dependencies: [.package(url: "https://github.com/realm/realm-swift.git", exact: "10.54.6")], targets: [.executableTarget(name: "CliptiqLegacy", dependencies: [.product(name: "RealmSwift", package: "realm-swift")], path: ".", exclude: ["CMakeLists.txt", "main.cpp", "main.mm", "README.md", "Package.swift"], sources: ["legacy.swift"], linkerSettings: [.linkedLibrary("sqlite3")])], swiftLanguageVersions: [.v5])

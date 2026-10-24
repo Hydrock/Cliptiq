@@ -1,0 +1,77 @@
+interface: 'wl_shm',                                     version:  1, name:  1
+	formats (fourcc):
+	0x30334258 = 'XB30'
+	0x30334241 = 'AB30'
+	0x30335258 = 'XR30'
+	0x30335241 = 'AR30'
+	0x36314742 = 'BG16'
+	0x36314752 = 'RG16'
+	0x34325842 = 'BX24'
+	0x34324142 = 'BA24'
+	0x34325852 = 'RX24'
+	0x34324152 = 'RA24'
+	0x34324241 = 'AB24'
+	         1 = 'XR24'
+	0x34324258 = 'XB24'
+	         0 = 'AR24'
+interface: 'wl_compositor',                              version:  6, name:  2
+interface: 'wl_subcompositor',                           version:  1, name:  3
+interface: 'wl_data_device_manager',                     version:  3, name:  4
+interface: 'zwlr_gamma_control_manager_v1',              version:  1, name:  5
+interface: 'zxdg_output_manager_v1',                     version:  3, name:  6
+	xdg_output_v1
+		output: 45
+		name: 'HEADLESS-1'
+		description: 'Headless output 1'
+		logical_x: 0, logical_y: 0
+		logical_width: 800, logical_height: 600
+interface: 'ext_idle_notifier_v1',                       version:  1, name:  7
+interface: 'zwp_idle_inhibit_manager_v1',                version:  1, name:  8
+interface: 'zwlr_layer_shell_v1',                        version:  4, name:  9
+interface: 'xdg_wm_base',                                version:  2, name: 10
+interface: 'zwp_tablet_manager_v2',                      version:  1, name: 11
+interface: 'org_kde_kwin_server_decoration_manager',     version:  1, name: 12
+interface: 'zxdg_decoration_manager_v1',                 version:  1, name: 13
+interface: 'zwp_relative_pointer_manager_v1',            version:  1, name: 14
+interface: 'zwp_pointer_constraints_v1',                 version:  1, name: 15
+interface: 'wp_presentation',                            version:  1, name: 16
+	presentation clock id: 1 (CLOCK_MONOTONIC)
+interface: 'zwlr_output_manager_v1',                     version:  4, name: 17
+interface: 'zwlr_output_power_manager_v1',               version:  1, name: 18
+interface: 'zwp_input_method_manager_v2',                version:  1, name: 19
+interface: 'zwp_text_input_manager_v3',                  version:  1, name: 20
+interface: 'zwlr_foreign_toplevel_manager_v1',           version:  3, name: 21
+interface: 'ext_session_lock_manager_v1',                version:  1, name: 22
+interface: 'zwlr_export_dmabuf_manager_v1',              version:  1, name: 23
+interface: 'zwlr_screencopy_manager_v1',                 version:  3, name: 24
+interface: 'zwlr_data_control_manager_v1',               version:  2, name: 25
+interface: 'wp_security_context_manager_v1',             version:  1, name: 26
+interface: 'wp_viewporter',                              version:  1, name: 27
+interface: 'wp_single_pixel_buffer_manager_v1',          version:  1, name: 28
+interface: 'wp_content_type_manager_v1',                 version:  1, name: 29
+interface: 'wp_fractional_scale_manager_v1',             version:  1, name: 30
+interface: 'zxdg_exporter_v1',                           version:  1, name: 31
+interface: 'zxdg_importer_v1',                           version:  1, name: 32
+interface: 'zxdg_exporter_v2',                           version:  1, name: 33
+interface: 'zxdg_importer_v2',                           version:  1, name: 34
+interface: 'xdg_activation_v1',                          version:  1, name: 35
+interface: 'wp_cursor_shape_manager_v1',                 version:  1, name: 36
+interface: 'zwp_virtual_keyboard_manager_v1',            version:  1, name: 37
+interface: 'zwlr_virtual_pointer_manager_v1',            version:  2, name: 38
+interface: 'zwlr_input_inhibit_manager_v1',              version:  1, name: 39
+interface: 'zwp_keyboard_shortcuts_inhibit_manager_v1',  version:  1, name: 40
+interface: 'zwp_pointer_gestures_v1',                    version:  3, name: 41
+interface: 'wl_seat',                                    version:  8, name: 42
+	name: seat0
+	capabilities:
+interface: 'zwp_primary_selection_device_manager_v1',    version:  1, name: 44
+interface: 'wl_output',                                  version:  4, name: 45
+	name: HEADLESS-1
+	description: Headless output 1
+	x: 0, y: 0, scale: 1,
+	physical_width: 0 mm, physical_height: 0 mm,
+	make: 'Unknown', model: 'Unknown',
+	subpixel_orientation: unknown, output_transform: normal,
+	mode:
+		width: 800 px, height: 600 px, refresh: 0.000 Hz,
+		flags: current

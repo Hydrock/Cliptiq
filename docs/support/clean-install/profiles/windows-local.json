@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "host": "Windows-11-10.0.26200-SP0",
+  "architecture": "x86_64",
+  "scope": "fresh HOME/profile and minimal PATH on ephemeral CI/developer OS; not a clean stock-OS VM",
+  "clean_vm_verified": false,
+  "third_party_runtime_closure_check": "declared linked dependency allowlist, not absence of preinstalled software",
+  "variants": {
+    "cpp": {
+      "installed_app_owned_bytes": 942502,
+      "download_zip_bytes": 532032,
+      "linked_os_dependencies": [
+        "USER32.dll",
+        "SHELL32.dll",
+        "KERNEL32.dll",
+        "ntdll.dll"
+      ],
+      "fresh_profile_fixture": {
+        "entries": 33,
+        "representations": 35,
+        "png_roundtrip": true,
+        "html_rtf_roundtrip": true,
+        "xml_escape": true
+      },
+      "fresh_profile_lifecycle": {
+        "native_window_lifecycle": true
+      },
+      "signature": "unsigned measurement executable; not a signed installer"
+    },
+    "rust": {
+      "installed_app_owned_bytes": 1044390,
+      "download_zip_bytes": 585119,
+      "linked_os_dependencies": [
+        "api-ms-win-core-synch-l1-2-0.dll",
+        "USER32.dll",
+        "SHELL32.dll",
+        "ntdll.dll",
+        "KERNEL32.dll"
+      ],
+      "fresh_profile_fixture": {
+        "entries": 33,
+        "representations": 35,
+        "png_roundtrip": true,
+        "html_rtf_roundtrip": true,
+        "xml_escape": true
+      },
+      "fresh_profile_lifecycle": {
+        "native_window_lifecycle": true
+      },
+      "signature": "unsigned measurement executable; not a signed installer"
+    }
+  }
+}

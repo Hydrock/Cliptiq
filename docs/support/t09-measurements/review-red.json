@@ -1,0 +1,42 @@
+{
+  "120757664722": {
+    "url": "https://github.com/Hydrock/Cliptiq/actions/runs/40055565156/job/120757664722",
+    "failure_lines": [
+      "2026-10-24T02:47:07.2514227Z  1/19 Test  #1: settings_native ..................***Failed    0.05 sec",
+      "2026-10-24T02:47:07.2514494Z Alt recorder=0 folder page scrollable=0",
+      "2026-10-24T02:47:07.2514673Z FAIL native_settings: alt_recorded && scrollable",
+      "2026-10-24T02:47:07.4025788Z  2/19 Test  #2: hotkeys_native ...................***Failed    0.01 sec",
+      "2026-10-24T02:47:07.4026174Z FAIL native_hotkeys: Windows shortcut is reserved or owned by another app; previous binding retained (Win32 1459)",
+      "2026-10-24T02:47:09.8290869Z 89% tests passed, 2 tests failed out of 19",
+      "2026-10-24T02:47:09.8292956Z \t  1 - settings_native (Failed)",
+      "2026-10-24T02:47:09.8293198Z \t  2 - hotkeys_native (Failed)"
+    ]
+  },
+  "120757664688": {
+    "url": "https://github.com/Hydrock/Cliptiq/actions/runs/40055565156/job/120757664688",
+    "failure_lines": [
+      "2026-10-24T02:47:08.1594860Z  1/17 Test  #1: settings_native ..................***Failed    0.56 sec",
+      "2026-10-24T02:47:08.1690620Z FAIL native_settings: !ui.record_chord(take(parse_chord(\"Ctrl+Alt+W\")))",
+      "2026-10-24T02:47:20.7437390Z 94% tests passed, 1 tests failed out of 17",
+      "2026-10-24T02:47:20.7442640Z \t  1 - settings_native (Failed)"
+    ]
+  },
+  "120758472492": {
+    "url": "https://github.com/Hydrock/Cliptiq/actions/runs/40055825784/job/120758472492",
+    "failure_lines": [
+      "2026-10-24T02:50:52.5381690Z  1/17 Test  #1: settings_native ..................***Failed    0.39 sec",
+      "2026-10-24T02:50:52.5484340Z FAIL native_settings: ui.record_chord(take(parse_chord(\"Ctrl+Alt+Q\")))",
+      "2026-10-24T02:51:03.7869160Z 94% tests passed, 1 tests failed out of 17",
+      "2026-10-24T02:51:03.7876550Z \t  1 - settings_native (Failed)"
+    ]
+  },
+  "120758994736": {
+    "url": "https://github.com/Hydrock/Cliptiq/actions/runs/40055995329/job/120758994736",
+    "failure_lines": [
+      "2026-10-24T02:53:12.0657970Z  1/17 Test  #1: settings_native ..................***Failed    0.33 sec",
+      "2026-10-24T02:53:12.0759410Z FAIL native_settings: window.isKeyWindow",
+      "2026-10-24T02:53:23.5234740Z 94% tests passed, 1 tests failed out of 17",
+      "2026-10-24T02:53:23.5237100Z \t  1 - settings_native (Failed)"
+    ]
+  }
+}

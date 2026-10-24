@@ -1,0 +1,20 @@
+{
+  "version": "3.0.0",
+  "unicode": "17.0.0",
+  "url": "https://dl.suckless.org/libgrapheme/libgrapheme-3.0.0.tar.gz",
+  "archive_sha256": "32585af73dda62fbcc0fed14f199aa1bc988ad01dad0bfbd06cf175d9cf3d68c",
+  "files": {
+    "LICENSE": "2665f9170b28064c14a31c1c7a0fa27f3689eaad5498d0adce8781d502425073",
+    "data/LICENSE": "abf84f74dea2812799e1dbef7f0581adf7db244881e4febb8684f441568da0ad",
+    "grapheme.h": "589a50218626fc1b4dad430664eb31dda3c237136b8199715e90543f87159132",
+    "src/character.c": "9c5df056356b89af6fa10ddfb278efca320e4fd686924fd6b7c0db6053290de8",
+    "src/util.c": "a13a4f3312d56aa325e8e61b98cd93d6b176cabe1b6fad0495dcc25e85064cdc",
+    "src/util.h": "16b562df26ea682aabd6a74b2d7d89d0915f6620bb168a7a8237405916e2fe61",
+    "src/utf8.c": "e88950d47465ed3006aa4ce63e9051b4a6fe193998f948700bf596da01e6b837",
+    "gen/character.h": "7b99193052892cdb7cc005a9465c17b9798649df2bde7f37c45ffdd17156b218",
+    "gen/types.h": "693fa272255288ad7878a12e18d5fc72cee62ddec0f8084d40a8d623308df9df",
+    "src/cliptiq-util.c": "16eea9fd340f52be3da09183db0dd9c5aa063aad7e1b0ec01331c1cc4b17563a",
+    "data/GraphemeBreakTest.txt": "e2d134d2c52919bace503ebb6a551c1855fe1a1faec18478c78fff254a1793ec"
+  },
+  "adaptation": "src/cliptiq-util.c omits only unused herodotus_reader_next_word_break, avoiding MSVC unresolved unused word API; upstream util.c retained for provenance"
+}

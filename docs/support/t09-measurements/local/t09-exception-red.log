@@ -1,0 +1,18 @@
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+    Start 6: hotkeys
+1/1 Test #6: hotkeys ..........................***Failed    0.00 sec
+PASS chord_roundtrip_meaning_and_reserved
+PASS conflict_keeps_previous_and_settings_protected
+PASS batch_os_or_persistence_failure_rolls_back
+FAIL throwing_persistence_releases_candidates_preserves_old: threw && b.held == before && r.registered("main")
+PASS disabled_deleted_folders_release_routes
+PASS registry_lifetime_releases_and_unknown_actions_rejected
+
+
+0% tests passed, 1 tests failed out of 1
+
+Total Test time (real) =   0.03 sec
+
+The following tests FAILED:
+	  6 - hotkeys (Failed)
+Errors while running CTest

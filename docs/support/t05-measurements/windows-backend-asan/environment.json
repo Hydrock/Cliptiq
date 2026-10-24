@@ -1,0 +1,12 @@
+{
+  "ci_run": "https://github.com/Hydrock/Cliptiq/actions/runs/39972287168",
+  "source_commit": "c33256583e51eff549d790bd48b5d9b42a7ef107",
+  "job_id": "120477815304",
+  "compiler_identifications": [
+    "MSVC 19.51.36260.0"
+  ],
+  "ci_log_sha256": "62ec745798fae614348a0f96bc6fdf2663ce128f9da2dfbd33cba293ff1d77ea",
+  "sanitizers": "MSVC AddressSanitizer",
+  "flags": "/fsanitize=address /EHsc; RelWithDebInfo; /INCREMENTAL:NO",
+  "leak_audit": false
+}

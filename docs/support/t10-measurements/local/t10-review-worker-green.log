@@ -1,0 +1,40 @@
+Preset CMake variables:
+
+  BUILD_TESTING="ON"
+  CMAKE_BUILD_TYPE="Debug"
+
+-- Configuring done (2.1s)
+-- Generating done (0.6s)
+-- Build files have been written to: /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+[1/25] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/editor.cpp.o
+[2/25] Linking CXX static library libcliptiq_core.a
+[3/25] Linking CXX executable menu_preview_test
+[4/25] Linking CXX executable history_test
+[5/25] Linking CXX executable native_hotkeys_test
+[6/25] Linking CXX executable policy_test
+[7/25] Linking CXX executable menu_regression_test
+[8/25] Linking CXX executable native_menu_test
+[9/25] Linking CXX executable menu_test
+[10/25] Linking CXX executable hotkeys_test
+[11/25] Linking CXX executable paste_test
+[12/25] Linking CXX executable linux_clipboard_test
+[13/25] Linking CXX executable linux_hotkey_portal_test
+[14/25] Linking CXX executable menu_paste_bridge_test
+[15/25] Linking CXX executable settings_test
+[16/25] Linking CXX executable editor_test
+[17/25] Linking CXX executable native_settings_test
+[18/25] Linking CXX executable snippets_test
+[19/25] Linking CXX executable native_paste_test
+[20/25] Linking CXX executable snippet_integration_test
+[21/25] Linking CXX executable linux_x11_wire_test
+[22/25] Linking CXX executable linux_wayland_wire_test
+[23/25] Linking CXX executable native_editor_test
+[24/25] Linking CXX executable linux_native_clipboard_test
+[25/25] Linking CXX executable cliptiq_menu_host
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+    Start 4: editor
+1/1 Test #4: editor ...........................   Passed    0.27 sec
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.29 sec

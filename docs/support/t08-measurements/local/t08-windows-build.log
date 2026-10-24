@@ -1,0 +1,20 @@
+-- Configuring done (0.4s)
+-- Generating done (0.1s)
+-- Build files have been written to: C:/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Windows-test
+[1/2] Building CXX object CMakeFiles\paste_boundary_test.dir\tests\integration\windows_paste_boundary_test.cpp.obj
+[2/2] Linking CXX executable paste_boundary_test.exe
+Test project C:/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Windows-test
+    Start  2: paste_native_boundary
+1/5 Test  #2: paste_native_boundary ............   Passed    0.69 sec
+    Start  3: paste
+2/5 Test  #3: paste ............................   Passed    0.04 sec
+    Start  4: menu_unicode_conformance
+3/5 Test  #4: menu_unicode_conformance .........   Passed    0.02 sec
+    Start  9: menu_preview
+4/5 Test  #9: menu_preview .....................   Passed    0.01 sec
+    Start 10: menu
+5/5 Test #10: menu .............................   Passed    0.25 sec
+
+100% tests passed, 0 tests failed out of 5
+
+Total Test time (real) =   1.90 sec

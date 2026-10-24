@@ -1,0 +1,39 @@
+[1/8] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/menu_preview.cpp.o
+[2/8] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/paste.cpp.o
+[3/8] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/hotkeys.cpp.o
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/src/hotkeys.cpp: In function ‘cliptiq::Result<void> cliptiq::{anonymous}::chord_valid(const cliptiq::KeyChord&)’:
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/src/hotkeys.cpp:8:2: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+    8 |  if(!key||!c.modifiers||(c.modifiers&~15u)||!(c.modifiers&(Control|Alt|Super))||unsigned(c.meaning)>1||c.physical_code>255||(c.meaning==KeyMeaning::Logical&&c.physical_code)||(c.modifiers==Super&&c.key=="V"))return Error{ErrorCode::InvalidArgument,"Invalid/reserved shortcut; use Ctrl/Alt/Super and a letter, digit or F1-F11"};return {};}
+      |  ^~
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/src/hotkeys.cpp:8:328: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+    8 |  if(!key||!c.modifiers||(c.modifiers&~15u)||!(c.modifiers&(Control|Alt|Super))||unsigned(c.meaning)>1||c.physical_code>255||(c.meaning==KeyMeaning::Logical&&c.physical_code)||(c.modifiers==Super&&c.key=="V"))return Error{ErrorCode::InvalidArgument,"Invalid/reserved shortcut; use Ctrl/Alt/Super and a letter, digit or F1-F11"};return {};}
+      |                                                                                                                                                                                                                                                                                                                                        ^~~~~~
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/src/hotkeys.cpp: In function ‘cliptiq::Result<cliptiq::KeyChord> cliptiq::parse_chord(const std::string&)’:
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/src/hotkeys.cpp:11:1015: warning: enumerated and non-enumerated type in conditional expression [-Wextra]
+   11 | Result<KeyChord> parse_chord(const std::string &input){if(input.empty()||input.size()>128)return Error{ErrorCode::InvalidArgument,"Invalid shortcut length"};std::string text=input;KeyChord c;if(text[0]=='@'){auto colon=text.find(':');if(colon==std::string::npos||colon<2||colon>4)return Error{ErrorCode::InvalidArgument,"Invalid physical keycode"};unsigned code=0;for(std::size_t i=1;i<colon;++i){if(text[i]<'0'||text[i]>'9')return Error{ErrorCode::InvalidArgument,"Invalid physical keycode"};code=code*10+unsigned(text[i]-'0');}if(code>255)return Error{ErrorCode::InvalidArgument,"Physical keycode too large"};c.meaning=KeyMeaning::Physical;c.physical_code=code;text=text.substr(colon+1);}if(text.empty()||text.front()=='+'||text.back()=='+'||text.find("++")!=std::string::npos)return Error{ErrorCode::InvalidArgument,"Empty shortcut component"};std::istringstream in(text);std::string token;while(std::getline(in,token,'+')){unsigned bit=token=="Ctrl"?Control:token=="Shift"?Shift:token=="Alt"?Alt:token=="Super"?Super:0;if(bit){if(!c.key.empty()||(c.modifiers&bit))return Error{ErrorCode::InvalidArgument,"Duplicate/out-of-order shortcut modifier"};c.modifiers|=bit;}else{if(!c.key.empty())return Error{ErrorCode::InvalidArgument,"Multiple shortcut keys"};c.key=token;}}
+      |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         ~~~~~~~~~~~~~~^~~~~~~~
+[4/8] Building CXX object CMakeFiles/settings_test.dir/tests/unit/settings_test.cpp.o
+[5/8] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/menu.cpp.o
+[6/8] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/settings.cpp.o
+[7/8] Linking CXX static library libcliptiq_core.a
+[8/8] Linking CXX executable settings_test
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+    Start 5: settings
+1/1 Test #5: settings .........................***Failed    0.02 sec
+PASS defaults_audit_and_platform_shortcuts
+PASS atomic_roundtrip_and_privacy_projection
+PASS ranges_rejected_without_partial_write
+PASS settings_cannot_unbind_or_duplicate_and_invalid_values
+PASS eight_groups_and_unknown_capability_disabled_reason
+PASS corrupt_and_future_settings_not_silently_defaulted
+FAIL future_schema_save_does_not_overwrite_and_physical_meaning_roundtrip: !result&&result.error().code==ErrorCode::Unsupported
+FAIL count_prunes_now_types_do_not_erase_old_and_folder_route: take(list_history(store)).size()==3
+
+
+0% tests passed, 1 tests failed out of 1
+
+Total Test time (real) =   0.05 sec
+
+The following tests FAILED:
+	  5 - settings (Failed)
+Errors while running CTest

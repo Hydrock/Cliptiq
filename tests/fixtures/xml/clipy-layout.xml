@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<folders>
+  <folder><title>  Папка 😀 &amp; &lt; &gt; &quot; &apos;  </title><snippets>
+    <snippet><title>  title  </title><content>  first
+second&#13;last  </content></snippet>
+    <snippet><title><![CDATA[CDATA]]></title><content>  <![CDATA[<&>]]><!--separate-->&#x1F600; </content></snippet>
+    <snippet><title/><content/></snippet>
+  </snippets></folder>
+  <folder><title> </title><snippets/></folder>
+  <folder/>
+</folders>

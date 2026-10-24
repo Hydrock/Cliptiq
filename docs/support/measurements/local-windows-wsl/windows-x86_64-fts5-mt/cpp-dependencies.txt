@@ -1,0 +1,24 @@
+Microsoft (R) COFF/PE Dumper Version 14.51.36247.0
+Copyright (C) Microsoft Corporation.  All rights reserved.
+
+
+Dump of file ${WORKSPACE}\build\footprint\windows-x86_64-fts5-mt\probe_cpp.exe
+
+File Type: EXECUTABLE IMAGE
+
+  Image has the following dependencies:
+
+    USER32.dll
+    SHELL32.dll
+    KERNEL32.dll
+    ntdll.dll
+
+  Summary
+
+        8000 .data
+        1000 .fptable
+        A000 .pdata
+       29000 .rdata
+        2000 .reloc
+        1000 .rsrc
+       CF000 .text

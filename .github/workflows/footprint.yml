@@ -1,0 +1,55 @@
+name: Native footprint prototypes
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'experiments/footprint/**'
+      - 'tools/**'
+      - 'tests/tools/**'
+      - '.github/workflows/footprint.yml'
+permissions:
+  contents: read
+jobs:
+  measure:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {os: windows-2025, lane: base-mt, args: ''}
+          - {os: windows-2025, lane: fts5-mt, args: '--fts5'}
+          - {os: windows-2025, lane: base-md, args: '--dynamic-crt'}
+          - {os: ubuntu-24.04, lane: gtk3-base, args: ''}
+          - {os: ubuntu-24.04, lane: gtk3-fts5, args: '--fts5'}
+          - {os: ubuntu-24.04, lane: gtk4-base, args: '--gtk4'}
+          - {os: ubuntu-24.04, lane: gtk4-fts5, args: '--gtk4 --fts5'}
+          - {os: macos-15, lane: base, args: ''}
+          - {os: macos-15, lane: fts5, args: '--fts5'}
+          - {os: macos-15, lane: ocr, args: '--ocr'}
+          - {os: windows-2025, lane: ocr, args: '--ocr'}
+          - {os: ubuntu-24.04, lane: ocr, args: '--ocr'}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Linux native dependencies
+        if: runner.os == 'Linux'
+        timeout-minutes: 8
+        run: bash experiments/footprint/ci-linux-deps.sh ${{ matrix.args }}
+      - name: macOS Ninja
+        if: runner.os == 'macOS'
+        run: command -v ninja || brew install ninja
+      - name: Tool tests
+        run: python -m unittest discover -s tests/tools -v
+      - name: Native builds and measurements (Windows/macOS)
+        if: runner.os != 'Linux'
+        run: python tools/build-footprint.py ${{ matrix.args }}
+      - name: Native builds and measurements (Linux Xvfb)
+        if: runner.os == 'Linux'
+        run: xvfb-run -a python tools/build-footprint.py ${{ matrix.args }}
+      - name: Preserve results and logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: footprint-${{ matrix.os }}-${{ matrix.lane }}
+          path: out/footprint/
+          retention-days: 14

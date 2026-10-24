@@ -1,0 +1,25 @@
+[Desktop Entry]
+Type=Application
+Name=Cliptiq
+Comment=Clipboard history and snippets
+Comment[ru]=История буфера обмена и сниппеты
+Exec=cliptiq --show-main
+TryExec=cliptiq
+Terminal=false
+Categories=Utility;
+Actions=History;Snippets;Settings;
+
+[Desktop Action History]
+Name=History
+Name[ru]=История
+Exec=cliptiq --show-history
+
+[Desktop Action Snippets]
+Name=Snippets
+Name[ru]=Сниппеты
+Exec=cliptiq --show-snippets
+
+[Desktop Action Settings]
+Name=Settings
+Name[ru]=Настройки
+Exec=cliptiq --show-settings

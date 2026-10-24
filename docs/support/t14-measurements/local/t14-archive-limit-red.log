@@ -1,0 +1,20 @@
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+    Start 49: import
+1/1 Test #49: import ...........................***Failed    2.53 sec
+Traceback (most recent call last):
+  File "/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/tests/integration/import_fixtures.py", line 70, in <module>
+    archived=root/'large-archive.neutral';archived.write_bytes(n.read_bytes());d=sqlite3.connect(archived);d.execute('INSERT INTO migration_settings VALUES(?,?,NULL)',('legacy.archive.h0',b'A'*(17*1024*1024)));d.commit();d.close();run('import',archived,root/'large-archive.dest')
+                                                                                                                                                                                                                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/tests/integration/import_fixtures.py", line 6, in run
+    assert (r.returncode==0)==ok,(args,r.stdout,r.stderr)
+           ^^^^^^^^^^^^^^^^^^^^^
+AssertionError: (('import', PosixPath('/tmp/cliptiq-import-test-713w46jf/large-archive.neutral'), PosixPath('/tmp/cliptiq-import-test-713w46jf/large-archive.dest')), '', 'Settings archive too large\n')
+
+
+0% tests passed, 1 tests failed out of 1
+
+Total Test time (real) =   2.56 sec
+
+The following tests FAILED:
+	 49 - import (Failed)
+Errors while running CTest
