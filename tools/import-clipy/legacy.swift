@@ -5,6 +5,9 @@ import SQLite3
 import CryptoKit
 import ImageIO
 
+// Offline migration never opts into Realm SDK analytics, including debugger runs.
+setenv("REALM_DISABLE_ANALYTICS","1",1)
+
 // Schema7 field names mirror Clipy (MIT); no upstream migration callbacks run.
 final class CPYClip: Object {
  @objc dynamic var dataPath=""; @objc dynamic var title=""; @objc dynamic var dataHash=""

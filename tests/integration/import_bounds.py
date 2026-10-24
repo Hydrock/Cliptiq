@@ -10,5 +10,6 @@ assert 'tiffRepresentation' not in swift,'Legacy import must not expand an NSIma
 assert 'decodeObject(of:NSImage.self' not in swift,'Legacy NSImage must be mapped to inert archive reader'
 assert 'Data(contentsOf:' not in swift,'Legacy file reads must remain bounded if the source grows'
 assert 'dataWithContentsOfURL' not in prefs,'Preferences must use bounded regular-file reader'
+assert 'setenv("REALM_DISABLE_ANALYTICS","1",1)' in swift,'Offline helper must disable Realm SDK analytics'
 assert '40000000/height' in swift and 'CGImageSourceCreateWithData' in swift
 print('PASS no unbounded image expansion/whole-file preferences reader in migration')

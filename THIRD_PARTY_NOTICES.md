@@ -57,3 +57,4 @@ THE SOFTWARE.
 
 Icons are copyrighted by their respective authors.
 
+T14 optional macOS migration helper uses RealmSwift10.54.6 and RealmCore14.14.0 (Apache-2.0), pinned in tools/import-clipy/Package.resolved. Their complete license and upstream third-party notices are in tools/import-clipy/licenses/ and accompany the separate migration package. Realm is not linked or bundled into the main Cliptiq application. SDK analytics is explicitly disabled in the offline helper.

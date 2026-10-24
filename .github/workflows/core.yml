@@ -154,7 +154,11 @@ jobs:
           name: windows-backend-asan
           path: out/core-Windows-asan/Testing/Temporary/LastTest.log
   legacy_migration:
-    runs-on: macos-15
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-15, macos-15-intel]
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
@@ -180,7 +184,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: legacy-migration
+          name: legacy-migration-${{ matrix.os }}
           path: |
             out/t14-legacy-size.json
             tools/import-clipy/Package.resolved

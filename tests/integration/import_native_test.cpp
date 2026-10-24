@@ -104,6 +104,25 @@ int run() {
     if (read.representations.empty())
       throw std::runtime_error(
           "Native clipboard empty after imported Unicode copy");
+    Bytes expected;
+#ifdef _WIN32
+    for (char16_t c : std::u16string(u"Привет 🌍")) {
+      expected.push_back(std::uint8_t(c));
+      expected.push_back(std::uint8_t(c >> 8));
+    }
+    expected.push_back(0);
+    expected.push_back(0);
+#else
+    std::string unicode = u8"Привет 🌍";
+    expected.assign(unicode.begin(), unicode.end());
+#endif
+    bool exact = false;
+    for (auto &r : read.representations)
+      if (r.kind == CanonicalKind::Text && r.data == expected)
+        exact = true;
+    if (!exact)
+      throw std::runtime_error(
+          "Imported Unicode changed during native clipboard replay");
 #ifdef __APPLE__
     intent.command = {
         MenuAction::SelectHistory, "files", take(data_revision(store)), {}};

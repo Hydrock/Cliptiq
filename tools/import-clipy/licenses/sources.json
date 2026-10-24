@@ -1,0 +1,14 @@
+{
+  "RealmSwift-LICENSE": {
+    "url": "https://raw.githubusercontent.com/realm/realm-swift/1c105d34f25af7851c5a3ff146be006de247a6b4/LICENSE",
+    "sha256": "69849221bfb90053de2134ef5e6d540287b4b98062326492f1f96f5da685524b"
+  },
+  "RealmCore-LICENSE": {
+    "url": "https://raw.githubusercontent.com/realm/realm-core/cccb3ca9e26ec452a29f2f0d4050d1e38b8a3d43/LICENSE",
+    "sha256": "69849221bfb90053de2134ef5e6d540287b4b98062326492f1f96f5da685524b"
+  },
+  "RealmCore-THIRD-PARTY-NOTICES": {
+    "url": "https://raw.githubusercontent.com/realm/realm-core/cccb3ca9e26ec452a29f2f0d4050d1e38b8a3d43/THIRD-PARTY-NOTICES",
+    "sha256": "e3b0c149c0cee5e161777ba79b178ebfb6a457fdf18158f7a054152d77a5bf56"
+  }
+}
