@@ -6,7 +6,7 @@ XPC downloader targets compile this same file. No installer/verifier is changed.
 from pathlib import Path
 import hashlib,sys
 def patch(root):
- p=Path(root)/'Downloader/SPUDownloader.m';s=p.read_text()
+ p=Path(root)/'Downloader/SPUDownloader.m';s=p.read_text(encoding="utf-8")
  assert hashlib.sha256(p.read_bytes()).hexdigest()=='3f5c760d96634562716654090c75ef28ec4e1f53809dfce613c92a86534d3ad0'
  s=s.replace('<NSURLSessionDownloadDelegate>','<NSURLSessionDataDelegate>')
  s=s.replace('    BOOL _receivedExpectedBytes;','''    BOOL _receivedExpectedBytes;
@@ -23,7 +23,7 @@ def patch(root):
     _cliptiqData = [NSMutableData data];
     _downloadSession = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:[NSOperationQueue mainQueue]];
     _sessionTask = [_downloadSession dataTaskWithRequest:request];
-    
+
 '''+s[b:]
  s=s.replace('    _delegate = nil;','''    _delegate = nil;
     _cliptiqData = nil;
@@ -99,6 +99,6 @@ def patch(root):
 
 @end
 '''
- p.write_text(s)
+ p.write_bytes(s.encode("utf-8"))
  return hashlib.sha256(p.read_bytes()).hexdigest()
 if __name__=='__main__':print(patch(sys.argv[1]))

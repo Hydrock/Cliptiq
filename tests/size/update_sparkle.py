@@ -62,7 +62,7 @@ derived=out/'t15-sparkle-derived'
 run(['xcodebuild','-project',source/'Sparkle.xcodeproj','-scheme','Sparkle','-configuration','Release','-derivedDataPath',derived,'-arch',platform.machine(),'CODE_SIGNING_ALLOWED=NO','CODE_SIGN_IDENTITY=','DEVELOPMENT_TEAM=','build'])
 framework=derived/'Build/Products/Release/Sparkle.framework'
 assert framework.exists()
-(framework/'.cliptiq-byte-bounds').write_text(source_digest+'\n'+patched_digest+'\n')
+Path(str(framework)+'.cliptiq-byte-bounds').write_text(source_digest+'\n'+patched_digest+'\n')
 run(['cmake','-S',root,'-B',build,'-G','Ninja','-DCMAKE_BUILD_TYPE=MinSizeRel','-DBUILD_TESTING=ON',f'-DCLIPTIQ_SPARKLE_FRAMEWORK={framework}'])
 run(['cmake','--build',build,'--target','cliptiq_app','update_test','update_native_test','--parallel','3'])
 run(['ctest','--test-dir',build,'-R','^update','--output-on-failure'])
