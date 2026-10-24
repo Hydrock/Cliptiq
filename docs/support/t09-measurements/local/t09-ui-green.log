@@ -1,0 +1,14 @@
+[1/5] Building CXX object CMakeFiles/cliptiq_settings_native.dir/platform/linux/Settings.cpp.o
+[2/5] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/settings.cpp.o
+[3/5] Linking CXX static library libcliptiq_core.a
+[4/5] Linking CXX static library libcliptiq_settings_native.a
+[5/5] Linking CXX executable native_settings_test
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+    Start 1: settings_native_x11
+1/2 Test #1: settings_native_x11 ..............   Passed    0.32 sec
+    Start 3: settings_native_wayland
+2/2 Test #3: settings_native_wayland ..........   Passed    0.24 sec
+
+100% tests passed, 0 tests failed out of 2
+
+Total Test time (real) =   0.58 sec

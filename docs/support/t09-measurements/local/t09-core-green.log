@@ -1,0 +1,25 @@
+[1/5] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/hotkeys.cpp.o
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/src/hotkeys.cpp: In function ‘cliptiq::Result<void> cliptiq::{anonymous}::chord_valid(const cliptiq::KeyChord&)’:
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/src/hotkeys.cpp:8:2: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+    8 |  if(!key||!c.modifiers||(c.modifiers&~15u)||!(c.modifiers&(Control|Alt|Super))||unsigned(c.meaning)>1||c.physical_code>255||(c.meaning==KeyMeaning::Logical&&c.physical_code)||(c.modifiers==Super&&c.key=="V"))return Error{ErrorCode::InvalidArgument,"Invalid/reserved shortcut; use Ctrl/Alt/Super and a letter, digit or F1-F11"};return {};}
+      |  ^~
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/src/hotkeys.cpp:8:328: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+    8 |  if(!key||!c.modifiers||(c.modifiers&~15u)||!(c.modifiers&(Control|Alt|Super))||unsigned(c.meaning)>1||c.physical_code>255||(c.meaning==KeyMeaning::Logical&&c.physical_code)||(c.modifiers==Super&&c.key=="V"))return Error{ErrorCode::InvalidArgument,"Invalid/reserved shortcut; use Ctrl/Alt/Super and a letter, digit or F1-F11"};return {};}
+      |                                                                                                                                                                                                                                                                                                                                        ^~~~~~
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/src/hotkeys.cpp: In function ‘cliptiq::Result<cliptiq::KeyChord> cliptiq::parse_chord(const std::string&)’:
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/src/hotkeys.cpp:11:233: warning: enumerated and non-enumerated type in conditional expression [-Wextra]
+   11 | Result<KeyChord> parse_chord(const std::string &text){KeyChord c;std::istringstream in(text);std::string token;while(std::getline(in,token,'+')){unsigned bit=token=="Ctrl"?Control:token=="Shift"?Shift:token=="Alt"?Alt:token=="Super"?Super:0;if(bit){if(!c.key.empty()||(c.modifiers&bit))return Error{ErrorCode::InvalidArgument,"Duplicate/out-of-order shortcut modifier"};c.modifiers|=bit;}else{if(!c.key.empty())return Error{ErrorCode::InvalidArgument,"Multiple shortcut keys"};c.key=token;}}
+      |                                                                                                                                                                                                                           ~~~~~~~~~~~~~~^~~~~~~~
+[2/5] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/settings.cpp.o
+[3/5] Linking CXX static library libcliptiq_core.a
+[4/5] Linking CXX executable hotkeys_test
+[5/5] Linking CXX executable settings_test
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+    Start 1: settings
+1/2 Test #1: settings .........................   Passed    0.02 sec
+    Start 2: hotkeys
+2/2 Test #2: hotkeys ..........................   Passed    0.01 sec
+
+100% tests passed, 0 tests failed out of 2
+
+Total Test time (real) =   0.11 sec

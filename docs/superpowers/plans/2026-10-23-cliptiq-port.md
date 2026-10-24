@@ -181,7 +181,7 @@ Capture contract: сохранять все разрешённые representatio
 - [ ] Browser/editor/terminal, RU/EN layouts, held modifiers, elevated target, blocked portal, target closes during popup. Возврат focus не обходить агрессивными hacks.
 - [x] Commit `feat: add safe native paste actions and manual fallback`.
 
-Автоматическая часть: sourceaffd2d7, [CI40005189737](https://github.com/Hydrock/Cliptiq/actions/runs/40005189737) —7/7. [Результаты](../../support/t08-results.md). Реальные app-to-app/permission/desktop пункты выше OPEN; T04–T07 manual OPEN. T09 не начат.
+Автоматическая часть: sourceaffd2d7, [CI40005189737](https://github.com/Hydrock/Cliptiq/actions/runs/40005189737) —7/7. [Результаты](../../support/t08-results.md). Реальные app-to-app/permission/desktop пункты выше OPEN; T04–T07 manual OPEN. T09 отражён ниже.
 
 ### T09. Настройки и глобальные shortcuts
 
@@ -189,11 +189,15 @@ Capture contract: сохранять все разрешённые representatio
 
 **Interfaces:** `load_settings(Store&)->Result<Settings>`; `save_settings(Store&, Settings)->Result<void>` with validation; `bind_hotkey(ActionId, optional<KeyChord>)->Result<BindingStatus>`. Action IDs main/history/snippets/settings/editor/clear/folder:<uuid>. KeyChord хранит platform-specific logical/physical meaning явно.
 
-- [ ] Failing tests: defaults/ranges из аудита, settings cannot unbind, conflict rollback, disabled/deleted folder, unknown backend capability hides misleading claim.
-- [ ] `ctest --preset test -R 'settings|hotkeys' --output-on-failure`; native adapters проверяются отдельно.
-- [ ] Mac defaults сохранить. Windows/Linux proposed defaults: main Ctrl+Alt+V, history Ctrl+Alt+H, snippets Ctrl+Alt+B, settings Ctrl+Alt+Shift+V; editor/clear unset. Не занимать Win+V. При конфликте предлагаемое сочетание не считается зарегистрированным. X11 lock masks; Wayland portal user-controlled binding, `.desktop`/`cliptiq --show-*` fallback.
-- [ ] Все восемь settings groups представлены; unavailable controls дают reason/recovery. Не хранить настройки в неподконтрольном чужом namespace. Запись atomic, live reload там где Clipy, restart indication только где нужно.
-- [ ] Commit `feat: add persistent settings and platform shortcut bindings`.
+- [x] Failing tests: defaults/ranges из аудита, settings cannot unbind, conflict rollback, disabled/deleted folder, unknown backend capability hides misleading claim.
+- [x] `ctest --preset test -R 'settings|hotkeys' --output-on-failure`; native adapters проверяются отдельно.
+- [x] Mac defaults сохранить. Windows/Linux proposed defaults: main Ctrl+Alt+V, history Ctrl+Alt+H, snippets Ctrl+Alt+B, settings Ctrl+Alt+Shift+V; editor/clear unset. Не занимать Win+V. При конфликте предлагаемое сочетание не считается зарегистрированным. X11 lock masks; Wayland portal user-controlled binding, `.desktop`/`cliptiq --show-*` fallback.
+- [x] Все восемь settings groups представлены; unavailable controls дают reason/recovery. Не хранить настройки в неподконтрольном чужом namespace. Запись atomic, live reload там где Clipy, restart indication только где нужно.
+- [x] Commit `feat: add persistent settings and platform shortcut bindings`.
+
+Автоматическая часть: source3c49ba7, [CI40056122028](https://github.com/Hydrock/Cliptiq/actions/runs/40056122028) —7/7. [Результаты](../../support/t09-results.md).
+
+- [ ] T09 real desktop/permission/activation/layout/accessibility/DPI и clean Windows/macOS VM приёмка. T04–T08 manual OPEN. Cross-action swaps используют промежуточный свободный chord; Windows CI noninteractive1459 не подменяет успешную регистрацию; desktop fallback пока отдельный процесс, без IPC.
 
 ### T10. Сниппеты и редактор на трёх ОС
 

@@ -19,3 +19,11 @@ Final: Ruling: T04-T08 clipboard/app-to-app acceptance remains OPEN; one old X11
 Final: Ruling: T10 editor/CRUD/enabled-folder persistence and T12/T13/T15 integrations stay excluded/disabled with reasons. Cost: these product features are not yet available.
 Final: Ruling: desktop/CLI launcher currently starts another review host; single-instance IPC/lifecycle packaging remains later-stage work. Cost: using desktop fallback may create a second host, whose conflicting registrations are rejected, not forwarded to an existing process.
 Final: Ruling: final CI, footprint and upload evidence are established by the implementer's verified artifacts after review; reviewer did not attest them. Cost: evidence depends on the recorded exact-source provenance and CI logs.
+
+Final: fixed background shortcut recorder — settings_native X11/Wayland/Mac negative focus regression RED→GREEN; actual event-path fixture avoids asserting unavailable headless activation grants. Final CI Linux28/Windows20/Mac17 groups.
+Final: fixed X11 logical remap recovery — hotkeys_native_x11 swaps Q/Z mappings and receives the new native key; RED→GREEN, full Linux28/28.
+Final: fixed Windows long folder shortcut list — settings_native thirty-folder scroll range/recovery reachability/Apply stability; CI RED scrollable=0→GREEN; Windows20/20.
+Final: fixed Windows Alt recorder — settings_native WM_SYSKEYDOWN with owned thread keyboard state; CI RED Alt recorder=0→GREEN; Windows20/20.
+Final verification: source3c49ba72b019c577f9c8cc39fd3b310b3ce7f58c; CI40056122028 seven of seven success, Debug+MinSizeRel four targets, three sanitizer jobs. Local GCC Debug/MinSizeRel/ASan+UBSan28/28; MSVC compile+seven safe groups. Exact source hashes checked and paired Linux binary hashes match CI. No deferred Minor in T09; existing T07 generic Windows type icons remain open. Metadata and raw evidence preserved. Docs/evidence publication follows measured source; T10 untouched.
+
+Implementation packaging choice follows user's existing upload authorization: update existing draft PR1 on codex/portability-plan, no merge/release/new worktree cleanup. The checkout is the user's ongoing repository and is kept for further approved stages/manual work.

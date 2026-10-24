@@ -56,3 +56,5 @@ and Windows can share a checkout. `sanitize` enables ASan/UBSan on GCC/Clang.
 `release -DCLIPTIQ_BUILD_SIZE_PROBE=ON` builds the linked API fixture;
 `python tests/size/report.py` reports its actual executable/ZIP and static archive
 sizes. Archives contain unlinked code and are not installed-product sizes.
+
+T09: [persistent settings, native panels and global shortcut contract](SETTINGS.md).

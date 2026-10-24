@@ -2,7 +2,7 @@
 
 Планируемый компактный менеджер буфера обмена для macOS, Windows и Linux на основе поведения [Clipy](https://github.com/Clipy/Clipy).
 
-Реализовано C++17 ядро постоянной истории и privacy/capability gate (T02–T03). Добавлены macOS, Windows и Linux X11/Wayland clipboard backends (T04–T06). Добавлены модель меню и нативные popup/tray/launcher (T07); добавлена безопасная вставка и modifier actions (T08). Готовых пользовательских пакетов пока нет.
+Реализовано C++17 ядро постоянной истории и privacy/capability gate (T02–T03). Добавлены macOS, Windows и Linux X11/Wayland clipboard backends (T04–T06). Добавлены модель меню и нативные popup/tray/launcher (T07); добавлена безопасная вставка и modifier actions (T08). Добавлены постоянные настройки и нативные глобальные горячие клавиши (T09). Готовых пользовательских пакетов пока нет.
 
 [Исследование, матрица функций и план переноса](docs/README.md)
 
@@ -16,4 +16,4 @@
 
 [Linux backend и ограничения](platform/linux/README.md) · [Результаты T06](docs/support/t06-results.md)
 
-[T07: меню, native UI, проверки и размеры](docs/support/t07-results.md). Ручная приёмка T04–T06 и интерактивная T07 открыта. [T08: вставка, проверки и размеры](docs/support/t08-results.md). Ручная app-to-app T08 открыта. T09 не начат.
+[T07: меню, native UI, проверки и размеры](docs/support/t07-results.md). Ручная приёмка T04–T06 и интерактивная T07 открыта. [T08: вставка, проверки и размеры](docs/support/t08-results.md). Ручная app-to-app T08 открыта. [T09: настройки, горячие клавиши, конфликты и размеры](docs/support/t09-results.md). Ручная T04–T09 открыта; T10 не начат.

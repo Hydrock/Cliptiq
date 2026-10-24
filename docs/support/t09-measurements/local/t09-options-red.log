@@ -1,0 +1,26 @@
+[1/4] Building CXX object CMakeFiles/native_settings_test.dir/tests/integration/native_settings_test.cpp.o
+[2/4] Building CXX object CMakeFiles/cliptiq_menu_native.dir/platform/linux/Menu.cpp.o
+[3/4] Linking CXX static library libcliptiq_menu_native.a
+[4/4] Linking CXX executable native_settings_test
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+    Start 1: settings_native_x11
+1/1 Test #1: settings_native_x11 ..............***Failed    0.31 sec
+dbus-daemon[34956]: [session uid=1000 pid=34956] Activating service name='org.a11y.Bus' requested by ':1.0' (uid=1000 pid=34971 comm="/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard" label="kernel")
+dbus-daemon[34956]: [session uid=1000 pid=34956] Successfully activated service 'org.a11y.Bus'
+dbus-daemon[34956]: [session uid=1000 pid=34956] Activating service name='org.gtk.vfs.Daemon' requested by ':1.2' (uid=1000 pid=34971 comm="/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard" label="kernel")
+dbus-daemon[34956]: [session uid=1000 pid=34956] Successfully activated service 'org.gtk.vfs.Daemon'
+dbus-daemon[34979]: Activating service name='org.a11y.atspi.Registry' requested by ':1.0' (uid=1000 pid=34971 comm="/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard" label="kernel")
+dbus-daemon[34979]: Successfully activated service 'org.a11y.atspi.Registry'
+SpiRegistry daemon is running with well-known name - org.a11y.atspi.Registry
+PASS eight_native_panels_apply_to_real_store_and_disabled_future_controls
+FAIL native_settings: menu.set_options(options)
+A connection to the bus can't be made
+
+
+0% tests passed, 1 tests failed out of 1
+
+Total Test time (real) =   0.33 sec
+
+The following tests FAILED:
+	  1 - settings_native_x11 (Failed)
+Errors while running CTest
