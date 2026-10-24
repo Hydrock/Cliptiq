@@ -1,0 +1,34 @@
+{
+  "source_commit": "5380462ede50273817be0dbcb4a2e832fabdf93b",
+  "target": "windows",
+  "arch": "x86_64",
+  "variant": "ocr",
+  "release_ready": false,
+  "manual_acceptance": "open",
+  "package_checks": "native inventory/architecture/dependency validation and relocated --version; Linux DEB extract; Windows MSIX semantic validation",
+  "system_dependencies": [
+    "GDI32.dll",
+    "COMCTL32.dll",
+    "USER32.dll",
+    "ole32.dll",
+    "SHELL32.dll",
+    "COMDLG32.dll",
+    "WINHTTP.dll",
+    "ADVAPI32.dll",
+    "KERNEL32.dll"
+  ],
+  "debian_dependencies": null,
+  "rpm_dependencies": null,
+  "packages": [
+    {
+      "path": "cliptiq-x86_64-ocr.msix",
+      "bytes": 5443436,
+      "sha256": "6f8fecbf954709eeccc1b7561e2625c694d33f69b4f2327d18703e3060402285"
+    },
+    {
+      "path": "cliptiq-0.1.0-windows-x86_64-ocr.zip",
+      "bytes": 5319390,
+      "sha256": "73effd36f3a0c7bf588d3416747ee9f5e8d874a6db78d2ce2b0cea781f061ded"
+    }
+  ]
+}

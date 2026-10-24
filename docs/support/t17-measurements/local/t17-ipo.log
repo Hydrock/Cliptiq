@@ -1,0 +1,132 @@
+-- The C compiler identification is GNU 13.3.0
+-- The CXX compiler identification is GNU 13.3.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE  
+-- Found PkgConfig: /usr/bin/pkg-config (found version "1.8.1") 
+-- Checking for modules 'xcb;xcb-xfixes'
+--   Found xcb, version 1.15
+--   Found xcb-xfixes, version 1.15
+-- Checking for module 'wayland-client'
+--   Found wayland-client, version 1.22.0
+-- Checking for module 'gtk+-3.0'
+--   Found gtk+-3.0, version 3.24.41
+-- Checking for modules 'x11;xtst'
+--   Found x11, version 1.8.7
+--   Found xtst, version 1.2.3
+-- Configuring done (7.4s)
+-- Generating done (0.8s)
+-- Build files have been written to: /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/t17-ipo-Linux
+[1/65] Building C object CMakeFiles/cliptiq_grapheme.dir/third_party/libgrapheme/src/utf8.c.o
+[2/65] Building C object CMakeFiles/cliptiq_grapheme.dir/third_party/libgrapheme/src/cliptiq-util.c.o
+[3/65] Building C object CMakeFiles/cliptiq_grapheme.dir/third_party/libgrapheme/src/character.c.o
+[4/65] Linking C static library libcliptiq_grapheme.a
+[5/65] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/sha256.cpp.o
+[6/65] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/storage.cpp.o
+[7/65] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/history.cpp.o
+[8/65] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/policy.cpp.o
+[9/65] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/menu.cpp.o
+[10/65] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/menu_preview.cpp.o
+[11/65] Building C object CMakeFiles/cliptiq_sqlite.dir/.toolchains/sqlite/sqlite3.c.o
+[12/65] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/paste.cpp.o
+[13/65] Linking C static library libcliptiq_sqlite.a
+[14/65] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/settings.cpp.o
+[15/65] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/hotkeys.cpp.o
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/src/hotkeys.cpp: In function ‘cliptiq::Result<cliptiq::KeyChord> cliptiq::parse_chord(const std::string&)’:
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/src/hotkeys.cpp:67:39: warning: enumerated and non-enumerated type in conditional expression [-Wextra]
+   67 |                    : token == "Super" ? Super
+      |                      ~~~~~~~~~~~~~~~~~^~~~~~~
+   68 |                                       : 0;
+      |                                       ~~~
+[16/65] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/snippets.cpp.o
+[17/65] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/locale.cpp.o
+[18/65] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/editor.cpp.o
+[19/65] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/media.cpp.o
+[20/65] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/ocr.cpp.o
+[21/65] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/locale_catalogue.cpp.o
+[22/65] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/update.cpp.o
+[23/65] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/index_invalidation.cpp.o
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/src/index_invalidation.cpp: In constructor ‘cliptiq::detail::IndexGate::IndexGate(const std::string&, const std::string&, bool, bool)’:
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/src/index_invalidation.cpp:119:52: warning: suggest parentheses around ‘&&’ within ‘||’ [-Wparentheses]
+  119 |   if (fs::is_symlink(status) || fs::exists(status) && !fs::is_directory(status))
+      |                                 ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/src/index_invalidation.cpp: In member function ‘void cliptiq::detail::IndexGate::clear()’:
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/src/index_invalidation.cpp:161:24: warning: suggest parentheses around ‘&&’ within ‘||’ [-Wparentheses]
+  161 |     if (fs::exists(st) && !regular(p) || fs::is_symlink(st))
+      |         ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~
+[24/65] Building CXX object CMakeFiles/cliptiq_lifecycle.dir/platform/posix/LifecycleLock.cpp.o
+[25/65] Building CXX object CMakeFiles/cliptiq_lifecycle.dir/platform/Lifecycle.cpp.o
+[26/65] Building CXX object CMakeFiles/cliptiq_lifecycle.dir/platform/linux/Lifecycle.cpp.o
+[27/65] Building CXX object CMakeFiles/cliptiq_paste_native.dir/platform/linux/Paste.cpp.o
+[28/65] Building CXX object CMakeFiles/cliptiq_settings_native.dir/platform/linux/Hotkeys.cpp.o
+[29/65] Building CXX object CMakeFiles/cliptiq_settings_native.dir/platform/linux/PortalHotkeys.cpp.o
+[30/65] Building CXX object CMakeFiles/cliptiq_settings_native.dir/platform/linux/Settings.cpp.o
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/platform/linux/Settings.cpp: In member function ‘bool cliptiq::NativeSettings::confirm_clear() const’:
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/platform/linux/Settings.cpp:210:39: warning: format not a string literal and no format arguments [-Wformat-security]
+  210 |   auto dialog = gtk_message_dialog_new(
+      |                 ~~~~~~~~~~~~~~~~~~~~~~^
+  211 |       state_->window ? GTK_WINDOW(state_->window) : nullptr, GTK_DIALOG_MODAL,
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  212 |       GTK_MESSAGE_QUESTION, GTK_BUTTONS_OK_CANCEL,
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  213 |       lc("Clear Cliptiq history? Snippets and current system clipboard "
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  214 |          "remain."));
+      |          ~~~~~~~~~~~                   
+[31/65] Building CXX object CMakeFiles/cliptiq_menu_native.dir/platform/linux/Menu.cpp.o
+[32/65] Building CXX object CMakeFiles/cliptiq_xml_parser.dir/third_party/tinyxml2/tinyxml2.cpp.o
+[33/65] Linking CXX static library libcliptiq_xml_parser.a
+[34/65] Building CXX object CMakeFiles/cliptiq_media_native.dir/platform/Media.cpp.o
+[35/65] Building CXX object CMakeFiles/cliptiq_media_native.dir/platform/linux/Media.cpp.o
+[36/65] Linking CXX static library libcliptiq_core.a
+[37/65] Linking CXX static library libcliptiq_lifecycle.a
+[38/65] Building CXX object CMakeFiles/cliptiq_xml.dir/core/src/xml.cpp.o
+[39/65] Linking CXX static library libcliptiq_paste_native.a
+[40/65] Linking CXX static library libcliptiq_menu_native.a
+[41/65] Linking CXX static library libcliptiq_settings_native.a
+[42/65] Linking CXX static library libcliptiq_media_native.a
+[43/65] Building CXX object CMakeFiles/cliptiq_updates_native.dir/platform/Updates.cpp.o
+[44/65] Building CXX object CMakeFiles/cliptiq_xml.dir/core/src/xml_file.cpp.o
+[45/65] Generating protocols/ext-data-control-v1-protocol.c
+[46/65] Generating protocols/wlr-data-control-unstable-v1-protocol.c
+[47/65] Linking CXX static library libcliptiq_xml.a
+[48/65] Generating protocols/ext-data-control-v1-client-header.h
+[49/65] Generating protocols/ext-data-control-v1-server-header.h
+[50/65] Generating protocols/wlr-data-control-unstable-v1-client-header.h
+[51/65] Generating protocols/wlr-data-control-unstable-v1-server-header.h
+[52/65] Building C object CMakeFiles/cliptiq_linux_protocols.dir/protocols/wlr-data-control-unstable-v1-protocol.c.o
+[53/65] Building C object CMakeFiles/cliptiq_linux_protocols.dir/protocols/ext-data-control-v1-protocol.c.o
+[54/65] Linking C static library libcliptiq_linux_protocols.a
+[55/65] Building CXX object CMakeFiles/cliptiq_editor_xml_native.dir/platform/linux/SnippetEditor.cpp.o
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/platform/linux/SnippetEditor.cpp: In member function ‘void cliptiq::NativeSnippetEditor::State::remove()’:
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/platform/linux/SnippetEditor.cpp:305:41: warning: format not a string literal and no format arguments [-Wformat-security]
+  305 |     auto dialog = gtk_message_dialog_new(
+      |                   ~~~~~~~~~~~~~~~~~~~~~~^
+  306 |         GTK_WINDOW(window), GTK_DIALOG_MODAL, GTK_MESSAGE_QUESTION,
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  307 |         GTK_BUTTONS_YES_NO,
+      |         ~~~~~~~~~~~~~~~~~~~              
+  308 |         lc("Delete selected item? A folder also deletes its snippets."));
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[56/65] Building CXX object CMakeFiles/cliptiq_updates_native.dir/platform/linux/Updates.cpp.o
+[57/65] Building CXX object CMakeFiles/cliptiq_linux.dir/platform/linux/Transfer.cpp.o
+[58/65] Building CXX object CMakeFiles/cliptiq_linux.dir/platform/linux/ClipboardX11.cpp.o
+[59/65] Linking CXX static library libcliptiq_editor_xml_native.a
+[60/65] Building CXX object CMakeFiles/cliptiq_linux.dir/platform/linux/ClipboardWayland.cpp.o
+[61/65] Building CXX object CMakeFiles/cliptiq_linux.dir/platform/linux/Application.cpp.o
+[62/65] Linking CXX static library libcliptiq_updates_native.a
+[63/65] Linking CXX static library libcliptiq_linux.a
+[64/65] Building CXX object CMakeFiles/cliptiq_menu_host.dir/platform/MenuHost.cpp.o
+[65/65] Linking CXX executable cliptiq_menu_host
+out/t17-ipo-Linux/cliptiq_menu_host 1427336
+out/core-Linux-release/cliptiq_menu_host 1517680

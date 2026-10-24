@@ -1,0 +1,86 @@
+Start testing: Oct 24 15:14 UTC
+----------------------------------------------------------
+42/51 Testing: ocr
+42/51 Test: ocr
+Command: "/Users/runner/work/Cliptiq/Cliptiq/out/ocr-Darwin-native/ocr_test"
+Directory: /Users/runner/work/Cliptiq/Cliptiq/out/ocr-Darwin-native
+"ocr" start time: Oct 24 15:14 UTC
+Output:
+----------------------------------------------------------
+OCR Unicode, empty Done, limits, cancel, supersession, privacy and deletion passed
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"ocr" end time: Oct 24 15:14 UTC
+"ocr" time elapsed: 00:00:00
+----------------------------------------------------------
+
+43/51 Testing: fts
+43/51 Test: fts
+Command: "/Users/runner/work/Cliptiq/Cliptiq/out/ocr-Darwin-native/fts_test"
+Directory: /Users/runner/work/Cliptiq/Cliptiq/out/ocr-Darwin-native
+"fts" start time: Oct 24 15:14 UTC
+Output:
+----------------------------------------------------------
+companion index isolation, invalidation, recovery and Base compatibility passed
+<end of output>
+Test time =   0.06 sec
+----------------------------------------------------------
+Test Passed.
+"fts" end time: Oct 24 15:14 UTC
+"fts" time elapsed: 00:00:00
+----------------------------------------------------------
+
+44/51 Testing: ocr_queue
+44/51 Test: ocr_queue
+Command: "/Users/runner/work/Cliptiq/Cliptiq/out/ocr-Darwin-native/ocr_queue_test"
+Directory: /Users/runner/work/Cliptiq/Cliptiq/out/ocr-Darwin-native
+"ocr_queue" start time: Oct 24 15:14 UTC
+Output:
+----------------------------------------------------------
+async privacy revocation prevents publication
+<end of output>
+Test time =   1.04 sec
+----------------------------------------------------------
+Test Passed.
+"ocr_queue" end time: Oct 24 15:14 UTC
+"ocr_queue" time elapsed: 00:00:01
+----------------------------------------------------------
+
+45/51 Testing: native_ocr
+45/51 Test: native_ocr
+Command: "/Users/runner/work/Cliptiq/Cliptiq/out/ocr-Darwin-native/native_ocr_test" "/tessdata" "/Users/runner/work/Cliptiq/Cliptiq/tests/fixtures/ocr"
+Directory: /Users/runner/work/Cliptiq/Cliptiq/out/ocr-Darwin-native
+"native_ocr" start time: Oct 24 15:14 UTC
+Output:
+----------------------------------------------------------
+eng: fixture result: Cliptiq clipboard 123
+eng: recognized
+rus: fixture result: Привет мир 123
+rus: recognized
+<end of output>
+Test time =   6.73 sec
+----------------------------------------------------------
+Test Passed.
+"native_ocr" end time: Oct 24 15:14 UTC
+"native_ocr" time elapsed: 00:00:06
+----------------------------------------------------------
+
+46/51 Testing: fts_transaction_race
+46/51 Test: fts_transaction_race
+Command: "/Users/runner/work/Cliptiq/Cliptiq/out/ocr-Darwin-native/fts_transaction_race"
+Directory: /Users/runner/work/Cliptiq/Cliptiq/out/ocr-Darwin-native
+"fts_transaction_race" start time: Oct 24 15:14 UTC
+Output:
+----------------------------------------------------------
+index gate spans complete main deletion transaction
+<end of output>
+Test time =   1.06 sec
+----------------------------------------------------------
+Test Passed.
+"fts_transaction_race" end time: Oct 24 15:14 UTC
+"fts_transaction_race" time elapsed: 00:00:01
+----------------------------------------------------------
+
+End testing: Oct 24 15:14 UTC

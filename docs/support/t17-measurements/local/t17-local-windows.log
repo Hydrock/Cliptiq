@@ -1,0 +1,206 @@
+-- Configuring done (3.2s)
+-- Generating done (0.2s)
+-- Build files have been written to: C:/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Windows-release
+ninja: no work to do.
+Test project C:/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Windows-release
+      Start  1: xml_native
+ 1/52 Test  #1: xml_native .......................***Failed    0.02 sec
+FAIL native_xml: CreateWindowStation failed: 5
+
+      Start  2: xml
+ 2/52 Test  #2: xml ..............................   Passed    0.03 sec
+      Start  3: xml_bounded_scan
+ 3/52 Test  #3: xml_bounded_scan .................   Passed    0.57 sec
+      Start  4: xml_interop
+ 4/52 Test  #4: xml_interop ......................   Passed    0.11 sec
+      Start  5: editor_native
+ 5/52 Test  #5: editor_native ....................***Failed    0.01 sec
+FAIL native_editor: CreateWindowStation failed: 5
+
+      Start  6: snippets_menu_hotkeys
+ 6/52 Test  #6: snippets_menu_hotkeys ............   Passed    0.01 sec
+      Start  7: editor
+ 7/52 Test  #7: editor ...........................***Failed    0.17 sec
+PASS autosave_undo_redo_resets_at_selection_boundary
+PASS cancelled_drag_and_stale_drag_do_not_mutate
+PASS delete_confirmation_empty_folder_and_binding_conflicts
+PASS failed_edit_preserves_document_and_undo
+PASS failed_autosave_blocks_navigation_until_corrected_or_explicit_reload
+FAIL drag_revision_is_checked_inside_write_transaction: Cannot open index gate
+FAIL folder_drop_does_not_overwrite_concurrent_other_folder_reorder: Cannot open index gate
+FAIL committed_snapshot_does_not_adopt_peer_revision: Cannot open index gate
+FAIL background_autosave_keeps_event_loop_responsive_under_write_contention: Cannot open index gate
+
+      Start  8: snippets
+ 8/52 Test  #8: snippets .........................***Failed    0.02 sec
+PASS folder_snippet_crud_unicode_multiline_and_entity_cas
+PASS reorder_move_normalizes_duplicates_atomically
+PASS disabled_menu_and_folder_hotkeys_cleanup
+PASS limits_invalid_utf8_and_no_partial_revision
+FAIL restart_and_v1_migration_preserve_old_data: Cannot open index gate
+legacy snippet edit=1 folder rename=1
+PASS legacy_sparse_positions_allow_content_edits_and_repair_order
+
+      Start  9: hotkeys_native_boundary
+ 9/52 Test  #9: hotkeys_native_boundary ..........***Failed    0.02 sec
+CreateWindowStation failed: 5
+
+      Start 10: settings_native
+10/52 Test #10: settings_native ..................***Failed    0.01 sec
+FAIL native_settings: CreateWindowStation failed: 5
+
+      Start 11: lifecycle_ui_ru
+11/52 Test #11: lifecycle_ui_ru ..................***Failed    0.01 sec
+FAIL native_settings: CreateWindowStation failed: 5
+
+      Start 12: hotkeys_native
+12/52 Test #12: hotkeys_native ...................***Failed    0.01 sec
+FAIL native_hotkeys: CreateWindowStation failed: 5
+
+      Start 13: settings
+13/52 Test #13: settings .........................   Passed    0.01 sec
+      Start 14: hotkeys
+14/52 Test #14: hotkeys ..........................   Passed    0.01 sec
+      Start 15: paste_native
+15/52 Test #15: paste_native .....................***Failed    0.01 sec
+FAIL native_paste: CreateWindowStation failed: 5
+
+      Start 16: paste_native_boundary
+16/52 Test #16: paste_native_boundary ............   Passed    0.01 sec
+      Start 17: paste
+17/52 Test #17: paste ............................   Passed    0.02 sec
+      Start 18: menu_unicode_conformance
+18/52 Test #18: menu_unicode_conformance .........   Passed    0.01 sec
+      Start 19: menu_regression_keyboard
+19/52 Test #19: menu_regression_keyboard .........***Failed    0.01 sec
+FAIL menu_review: CreateWindowStation failed: 5
+
+      Start 20: menu_regression_dpi
+20/52 Test #20: menu_regression_dpi ..............***Failed    0.01 sec
+FAIL menu_review: CreateWindowStation failed: 5
+
+      Start 21: menu_regression_context
+21/52 Test #21: menu_regression_context ..........***Failed    0.01 sec
+FAIL menu_review: CreateWindowStation failed: 5
+
+      Start 22: menu_native
+22/52 Test #22: menu_native ......................***Failed    0.01 sec
+FAIL native_menu: CreateWindowStation failed: 5
+
+      Start 23: lifecycle
+23/52 Test #23: lifecycle ........................   Passed    0.60 sec
+      Start 24: lifecycle_process
+24/52 Test #24: lifecycle_process ................   Passed    0.94 sec
+      Start 25: lifecycle_locale_schema
+25/52 Test #25: lifecycle_locale_schema ..........   Passed    0.08 sec
+      Start 26: lifecycle_gui
+26/52 Test #26: lifecycle_gui ....................   Passed    0.07 sec
+      Start 27: media_review_clear
+27/52 Test #27: media_review_clear ...............   Passed    1.43 sec
+      Start 28: media_review_root
+28/52 Test #28: media_review_root ................   Passed    1.42 sec
+      Start 29: media_review_error
+29/52 Test #29: media_review_error ...............   Passed    0.33 sec
+      Start 30: native_media
+30/52 Test #30: native_media .....................   Passed    7.87 sec
+      Start 31: media
+31/52 Test #31: media ............................   Passed    0.01 sec
+      Start 32: menu_preview
+32/52 Test #32: menu_preview .....................   Passed    0.01 sec
+      Start 33: menu
+33/52 Test #33: menu .............................   Passed    0.07 sec
+      Start 34: windows_clipboard
+34/52 Test #34: windows_clipboard ................***Failed    0.02 sec
+ISOLATION/SETUP FAILED: CreateWindowStation failed: 5
+
+      Start 35: windows_formats
+35/52 Test #35: windows_formats ..................   Passed    0.03 sec
+      Start 36: policy
+36/52 Test #36: policy ...........................   Passed    0.01 sec
+      Start 37: history
+37/52 Test #37: history ..........................***Failed    0.32 sec
+PASS preserves_all_representations
+PASS duplicate_mode_switch_keeps_digest
+PASS duplicate_flags
+PASS blank_text_ignored
+PASS last_used_preserves_created
+PASS limit_three
+PASS periodic_clear_is_not_ttl
+PASS clear_preserves_snippets
+PASS oversize_is_atomic
+PASS quota_prunes_by_current_sort
+FAIL reopen_and_periodic_state: Cannot open index gate
+PASS transaction_failure_rolls_back
+PASS read_only_and_full_are_errors
+PASS corrupt_db_not_replaced
+PASS digest_has_unambiguous_boundaries
+PASS invalid_policy_and_empty_snapshot
+PASS revision_clear_compact
+PASS sha256_standard_vectors
+PASS collision_is_not_equality
+PASS source_changes_do_not_create_new_content
+PASS rtf_blank_and_primary_order
+PASS metadata_and_representation_limits
+PASS cleanup_disable_change_and_clock_rewind
+FAIL foreign_and_future_db_preserved: Cannot open index gate
+FAIL load_rechecks_persisted_limits: Cannot open index gate
+PASS duplicate_candidate_limits_checked
+PASS returned_id_survives_pruning
+PASS native_utf16_blank_text_ignored
+PASS utf16_roundtrip_and_big_endian_blank
+
+      Start 38: history_crash
+38/52 Test #38: history_crash ....................   Passed    0.42 sec
+      Start 39: import
+39/52 Test #39: import ...........................   Passed    3.31 sec
+      Start 40: import_native
+40/52 Test #40: import_native ....................***Failed    0.01 sec
+CreateWindowStation failed: 5
+
+      Start 41: import_bounds
+41/52 Test #41: import_bounds ....................   Passed    0.05 sec
+      Start 42: update
+42/52 Test #42: update ...........................   Passed    0.01 sec
+      Start 43: update_native
+43/52 Test #43: update_native ....................   Passed    0.01 sec
+      Start 44: update_authenticode
+44/52 Test #44: update_authenticode ..............   Passed    2.75 sec
+      Start 45: ocr
+45/52 Test #45: ocr ..............................   Passed    0.02 sec
+      Start 46: fts
+46/52 Test #46: fts ..............................   Passed    0.12 sec
+      Start 47: ocr_queue
+47/52 Test #47: ocr_queue ........................   Passed    3.12 sec
+      Start 48: distribution_tools
+48/52 Test #48: distribution_tools ...............   Passed    0.65 sec
+      Start 49: feature_coverage
+49/52 Test #49: feature_coverage .................   Passed    0.11 sec
+      Start 50: package_entry
+50/52 Test #50: package_entry ....................   Passed    0.08 sec
+      Start 51: bounded_fuzz_smoke
+51/52 Test #51: bounded_fuzz_smoke ...............   Passed    0.04 sec
+      Start 52: release_blocked
+52/52 Test #52: release_blocked ..................   Passed    0.09 sec
+
+69% tests passed, 16 tests failed out of 52
+
+Total Test time (real) =  25.17 sec
+
+The following tests FAILED:
+	  1 - xml_native (Failed)
+	  5 - editor_native (Failed)
+	  7 - editor (Failed)
+	  8 - snippets (Failed)
+	  9 - hotkeys_native_boundary (Failed)
+	 10 - settings_native (Failed)
+	 11 - lifecycle_ui_ru (Failed)
+	 12 - hotkeys_native (Failed)
+	 15 - paste_native (Failed)
+	 19 - menu_regression_keyboard (Failed)
+	 20 - menu_regression_dpi (Failed)
+	 21 - menu_regression_context (Failed)
+	 22 - menu_native (Failed)
+	 34 - windows_clipboard (Failed)
+	 37 - history (Failed)
+	 40 - import_native (Failed)
+Errors while running CTest

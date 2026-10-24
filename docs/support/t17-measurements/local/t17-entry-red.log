@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/tests/integration/package_entry.py", line 5, in <module>
+    assert result.returncode==0,(binary,result.returncode,result.stderr)
+           ^^^^^^^^^^^^^^^^^^^^
+AssertionError: (PosixPath('/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-release/cliptiq_menu_host'), 1, 'Usage: cliptiq_menu_host [--database PATH] [--demo] [--capture] [--history|--snippets] [--no-tray] [--smoke]\n')

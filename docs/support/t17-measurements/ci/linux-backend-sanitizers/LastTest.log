@@ -1,0 +1,1397 @@
+Start testing: Oct 24 15:08 UTC
+----------------------------------------------------------
+1/62 Testing: xml_native_x11
+1/62 Test: xml_native_x11
+Command: "/usr/bin/python3.12" "/home/runner/work/Cliptiq/Cliptiq/tools/run-linux-isolated.py" "x11" "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/native_xml_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"xml_native_x11" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+
+(native_xml_test:4493): dbind-WARNING **: 15:08:03.949: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files
+
+(native_xml_test:4493): Gtk-WARNING **: 15:08:04.448: Could not load a pixbuf from /org/gtk/libgtk/theme/Adwaita/assets/check-symbolic.svg.
+This may indicate that pixbuf loaders or the mime database could not be found.
+-----------------------------------------------------
+Suppressions used:
+  count      bytes template
+   1894      55109 libfontconfig.so
+      2         56 atk_bridge_adaptor_init
+-----------------------------------------------------
+
+PASS native_xml_background_append_export_menu_invalid_atomic_dirty_gate
+<end of output>
+Test time =   5.13 sec
+----------------------------------------------------------
+Test Passed.
+"xml_native_x11" end time: Oct 24 15:08 UTC
+"xml_native_x11" time elapsed: 00:00:05
+----------------------------------------------------------
+
+2/62 Testing: xml_native_wayland
+2/62 Test: xml_native_wayland
+Command: "/usr/bin/python3.12" "/home/runner/work/Cliptiq/Cliptiq/tools/run-linux-isolated.py" "wayland" "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/native_xml_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"xml_native_wayland" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+
+(native_xml_test:4516): dbind-WARNING **: 15:08:06.001: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files
+
+(native_xml_test:4516): Gtk-WARNING **: 15:08:06.121: Could not load a pixbuf from /org/gtk/libgtk/theme/Adwaita/assets/check-symbolic.svg.
+This may indicate that pixbuf loaders or the mime database could not be found.
+-----------------------------------------------------
+Suppressions used:
+  count      bytes template
+   1920      55590 libfontconfig.so
+      2         56 atk_bridge_adaptor_init
+-----------------------------------------------------
+
+PASS native_xml_background_append_export_menu_invalid_atomic_dirty_gate
+<end of output>
+Test time =   0.97 sec
+----------------------------------------------------------
+Test Passed.
+"xml_native_wayland" end time: Oct 24 15:08 UTC
+"xml_native_wayland" time elapsed: 00:00:00
+----------------------------------------------------------
+
+3/62 Testing: xml
+3/62 Test: xml
+Command: "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/xml_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"xml" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+PASS roundtrip_whitespace_unicode_disabled_entity_escape
+PASS fallback_titles_cdata_and_empty_folders
+PASS append_not_replace_and_atomic_rollback
+PASS malformed_is_atomic_external_entity_rejected
+PASS size_count_utf8_and_store_limits
+PASS atomic_destination_and_bounded_file_read
+PASS xml_line_ending_normalization_and_nested_transaction_preservation
+PASS depth_node_budgets_and_no_partial_import_on_existing_count_limit
+<end of output>
+Test time =   0.11 sec
+----------------------------------------------------------
+Test Passed.
+"xml" end time: Oct 24 15:08 UTC
+"xml" time elapsed: 00:00:00
+----------------------------------------------------------
+
+4/62 Testing: xml_bounded_scan
+4/62 Test: xml_bounded_scan
+Command: "/usr/bin/python3.12" "/home/runner/work/Cliptiq/Cliptiq/tests/integration/xml_bounded_scan.py" "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/xml_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"xml_bounded_scan" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+PASS adversarial37000 text segments +63MiB suffix completed in 2.77 seconds;20s fixture gate, not throughput guarantee
+<end of output>
+Test time =   2.84 sec
+----------------------------------------------------------
+Test Passed.
+"xml_bounded_scan" end time: Oct 24 15:08 UTC
+"xml_bounded_scan" time elapsed: 00:00:02
+----------------------------------------------------------
+
+5/62 Testing: xml_interop
+5/62 Test: xml_interop
+Command: "/usr/bin/python3.12" "/home/runner/work/Cliptiq/Cliptiq/tests/integration/xml_interop.py" "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/xml_test" "/home/runner/work/Cliptiq/Cliptiq/tests/fixtures/xml/clipy-layout.xml"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"xml_interop" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+PASS independent ElementTree reads C++ output and C++ reads ElementTree output; whitespace/Unicode/entities/CDATA/fallback/order
+<end of output>
+Test time =   0.09 sec
+----------------------------------------------------------
+Test Passed.
+"xml_interop" end time: Oct 24 15:08 UTC
+"xml_interop" time elapsed: 00:00:00
+----------------------------------------------------------
+
+6/62 Testing: editor_native_x11
+6/62 Test: editor_native_x11
+Command: "/usr/bin/python3.12" "/home/runner/work/Cliptiq/Cliptiq/tools/run-linux-isolated.py" "x11" "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/native_editor_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"editor_native_x11" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+
+(native_editor_test:4556): dbind-WARNING **: 15:08:09.539: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files
+
+(native_editor_test:4556): Gtk-WARNING **: 15:08:09.623: Could not load a pixbuf from /org/gtk/libgtk/theme/Adwaita/assets/check-symbolic.svg.
+This may indicate that pixbuf loaders or the mime database could not be found.
+-----------------------------------------------------
+Suppressions used:
+  count      bytes template
+   1894      55148 libfontconfig.so
+      2         56 atk_bridge_adaptor_init
+-----------------------------------------------------
+
+PASS native_editor_autosave_unicode_undo_enabled_menu_folder_binding_conflict_and_drag_contract
+<end of output>
+Test time =   0.54 sec
+----------------------------------------------------------
+Test Passed.
+"editor_native_x11" end time: Oct 24 15:08 UTC
+"editor_native_x11" time elapsed: 00:00:00
+----------------------------------------------------------
+
+7/62 Testing: editor_native_wayland
+7/62 Test: editor_native_wayland
+Command: "/usr/bin/python3.12" "/home/runner/work/Cliptiq/Cliptiq/tools/run-linux-isolated.py" "wayland" "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/native_editor_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"editor_native_wayland" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+
+(native_editor_test:4577): dbind-WARNING **: 15:08:10.067: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files
+
+(native_editor_test:4577): Gtk-WARNING **: 15:08:10.152: Could not load a pixbuf from /org/gtk/libgtk/theme/Adwaita/assets/check-symbolic.svg.
+This may indicate that pixbuf loaders or the mime database could not be found.
+-----------------------------------------------------
+Suppressions used:
+  count      bytes template
+   1920      55629 libfontconfig.so
+      2         56 atk_bridge_adaptor_init
+-----------------------------------------------------
+
+PASS native_editor_autosave_unicode_undo_enabled_menu_folder_binding_conflict_and_drag_contract
+<end of output>
+Test time =   0.52 sec
+----------------------------------------------------------
+Test Passed.
+"editor_native_wayland" end time: Oct 24 15:08 UTC
+"editor_native_wayland" time elapsed: 00:00:00
+----------------------------------------------------------
+
+8/62 Testing: snippets_menu_hotkeys
+8/62 Test: snippets_menu_hotkeys
+Command: "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/snippet_integration_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"snippets_menu_hotkeys" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+PASS disabled_folder_preferences_never_register_and_reenable_restores
+PASS menu_selection_and_paste_cannot_replay_disabled_or_deleted_snippets
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"snippets_menu_hotkeys" end time: Oct 24 15:08 UTC
+"snippets_menu_hotkeys" time elapsed: 00:00:00
+----------------------------------------------------------
+
+9/62 Testing: editor
+9/62 Test: editor
+Command: "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/editor_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"editor" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+PASS autosave_undo_redo_resets_at_selection_boundary
+PASS cancelled_drag_and_stale_drag_do_not_mutate
+PASS delete_confirmation_empty_folder_and_binding_conflicts
+PASS failed_edit_preserves_document_and_undo
+PASS failed_autosave_blocks_navigation_until_corrected_or_explicit_reload
+PASS drag_revision_is_checked_inside_write_transaction
+PASS folder_drop_does_not_overwrite_concurrent_other_folder_reorder
+PASS committed_snapshot_does_not_adopt_peer_revision
+PASS background_autosave_keeps_event_loop_responsive_under_write_contention
+<end of output>
+Test time =   0.20 sec
+----------------------------------------------------------
+Test Passed.
+"editor" end time: Oct 24 15:08 UTC
+"editor" time elapsed: 00:00:00
+----------------------------------------------------------
+
+10/62 Testing: snippets
+10/62 Test: snippets
+Command: "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/snippets_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"snippets" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+PASS folder_snippet_crud_unicode_multiline_and_entity_cas
+PASS reorder_move_normalizes_duplicates_atomically
+PASS disabled_menu_and_folder_hotkeys_cleanup
+PASS limits_invalid_utf8_and_no_partial_revision
+PASS restart_and_v1_migration_preserve_old_data
+legacy snippet edit=1 folder rename=1
+PASS legacy_sparse_positions_allow_content_edits_and_repair_order
+<end of output>
+Test time =   0.12 sec
+----------------------------------------------------------
+Test Passed.
+"snippets" end time: Oct 24 15:08 UTC
+"snippets" time elapsed: 00:00:00
+----------------------------------------------------------
+
+11/62 Testing: settings_native_x11
+11/62 Test: settings_native_x11
+Command: "/usr/bin/python3.12" "/home/runner/work/Cliptiq/Cliptiq/tools/run-linux-isolated.py" "x11" "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/native_settings_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"settings_native_x11" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+
+(native_settings_test:4613): dbind-WARNING **: 15:08:10.977: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files
+
+(native_settings_test:4613): Gtk-WARNING **: 15:08:11.074: Could not load a pixbuf from /org/gtk/libgtk/theme/Adwaita/assets/check-symbolic.svg.
+This may indicate that pixbuf loaders or the mime database could not be found.
+-----------------------------------------------------
+Suppressions used:
+  count      bytes template
+    597      17485 libfontconfig.so
+      2         56 atk_bridge_adaptor_init
+-----------------------------------------------------
+
+PASS eight_native_panels_apply_to_real_store_and_disabled_future_controls
+PASS live_native_options_rebuild_preview_bitmap
+<end of output>
+Test time =   0.58 sec
+----------------------------------------------------------
+Test Passed.
+"settings_native_x11" end time: Oct 24 15:08 UTC
+"settings_native_x11" time elapsed: 00:00:00
+----------------------------------------------------------
+
+12/62 Testing: lifecycle_ui_ru_x11
+12/62 Test: lifecycle_ui_ru_x11
+Command: "/usr/bin/python3.12" "/home/runner/work/Cliptiq/Cliptiq/tools/run-linux-isolated.py" "x11" "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/native_settings_test" "--ru"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"lifecycle_ui_ru_x11" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+
+(native_settings_test:4642): dbind-WARNING **: 15:08:11.554: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files
+
+(native_settings_test:4642): Gtk-WARNING **: 15:08:11.653: Could not load a pixbuf from /org/gtk/libgtk/theme/Adwaita/assets/check-symbolic.svg.
+This may indicate that pixbuf loaders or the mime database could not be found.
+-----------------------------------------------------
+Suppressions used:
+  count      bytes template
+    597      17485 libfontconfig.so
+      2         56 atk_bridge_adaptor_init
+-----------------------------------------------------
+
+PASS eight_native_panels_apply_to_real_store_and_disabled_future_controls
+PASS live_native_options_rebuild_preview_bitmap
+<end of output>
+Test time =   0.68 sec
+----------------------------------------------------------
+Test Passed.
+"lifecycle_ui_ru_x11" end time: Oct 24 15:08 UTC
+"lifecycle_ui_ru_x11" time elapsed: 00:00:00
+----------------------------------------------------------
+
+13/62 Testing: hotkeys_native_x11
+13/62 Test: hotkeys_native_x11
+Command: "/usr/bin/python3.12" "/home/runner/work/Cliptiq/Cliptiq/tools/run-linux-isolated.py" "x11" "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/native_hotkeys_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"hotkeys_native_x11" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+PASS native_x11_conflict_rollback_real_activation_and_caps_lock
+PASS no_ambient_key_injection
+<end of output>
+Test time =   0.58 sec
+----------------------------------------------------------
+Test Passed.
+"hotkeys_native_x11" end time: Oct 24 15:08 UTC
+"hotkeys_native_x11" time elapsed: 00:00:00
+----------------------------------------------------------
+
+14/62 Testing: settings_native_wayland
+14/62 Test: settings_native_wayland
+Command: "/usr/bin/python3.12" "/home/runner/work/Cliptiq/Cliptiq/tools/run-linux-isolated.py" "wayland" "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/native_settings_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"settings_native_wayland" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+
+(native_settings_test:4823): dbind-WARNING **: 15:08:12.793: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files
+
+(native_settings_test:4823): Gtk-WARNING **: 15:08:12.891: Could not load a pixbuf from /org/gtk/libgtk/theme/Adwaita/assets/check-symbolic.svg.
+This may indicate that pixbuf loaders or the mime database could not be found.
+-----------------------------------------------------
+Suppressions used:
+  count      bytes template
+    605      17633 libfontconfig.so
+      2         56 atk_bridge_adaptor_init
+-----------------------------------------------------
+
+PASS eight_native_panels_apply_to_real_store_and_disabled_future_controls
+PASS live_native_options_rebuild_preview_bitmap
+<end of output>
+Test time =   0.89 sec
+----------------------------------------------------------
+Test Passed.
+"settings_native_wayland" end time: Oct 24 15:08 UTC
+"settings_native_wayland" time elapsed: 00:00:00
+----------------------------------------------------------
+
+15/62 Testing: lifecycle_ui_ru_wayland
+15/62 Test: lifecycle_ui_ru_wayland
+Command: "/usr/bin/python3.12" "/home/runner/work/Cliptiq/Cliptiq/tools/run-linux-isolated.py" "wayland" "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/native_settings_test" "--ru"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"lifecycle_ui_ru_wayland" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+
+(native_settings_test:4840): dbind-WARNING **: 15:08:13.688: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files
+
+(native_settings_test:4840): Gtk-WARNING **: 15:08:13.786: Could not load a pixbuf from /org/gtk/libgtk/theme/Adwaita/assets/check-symbolic.svg.
+This may indicate that pixbuf loaders or the mime database could not be found.
+-----------------------------------------------------
+Suppressions used:
+  count      bytes template
+    605      17633 libfontconfig.so
+      2         56 atk_bridge_adaptor_init
+-----------------------------------------------------
+
+PASS eight_native_panels_apply_to_real_store_and_disabled_future_controls
+PASS live_native_options_rebuild_preview_bitmap
+<end of output>
+Test time =   0.91 sec
+----------------------------------------------------------
+Test Passed.
+"lifecycle_ui_ru_wayland" end time: Oct 24 15:08 UTC
+"lifecycle_ui_ru_wayland" time elapsed: 00:00:00
+----------------------------------------------------------
+
+16/62 Testing: hotkeys_native_wayland
+16/62 Test: hotkeys_native_wayland
+Command: "/usr/bin/python3.12" "/home/runner/work/Cliptiq/Cliptiq/tools/run-linux-isolated.py" "wayland" "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/native_hotkeys_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"hotkeys_native_wayland" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+PASS wayland_no_unapproved_global_grab
+<end of output>
+Test time =   0.13 sec
+----------------------------------------------------------
+Test Passed.
+"hotkeys_native_wayland" end time: Oct 24 15:08 UTC
+"hotkeys_native_wayland" time elapsed: 00:00:00
+----------------------------------------------------------
+
+17/62 Testing: settings
+17/62 Test: settings
+Command: "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/settings_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"settings" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+PASS defaults_audit_and_platform_shortcuts
+PASS atomic_roundtrip_and_privacy_projection
+PASS ranges_rejected_without_partial_write
+PASS settings_cannot_unbind_or_duplicate_and_invalid_values
+PASS eight_groups_and_unknown_capability_disabled_reason
+PASS corrupt_and_future_settings_not_silently_defaulted
+PASS future_schema_save_does_not_overwrite_and_physical_meaning_roundtrip
+PASS count_prunes_now_types_do_not_erase_old_and_folder_route
+<end of output>
+Test time =   0.08 sec
+----------------------------------------------------------
+Test Passed.
+"settings" end time: Oct 24 15:08 UTC
+"settings" time elapsed: 00:00:00
+----------------------------------------------------------
+
+18/62 Testing: hotkeys
+18/62 Test: hotkeys
+Command: "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/hotkeys_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"hotkeys" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+PASS chord_roundtrip_meaning_and_reserved
+PASS conflict_keeps_previous_and_settings_protected
+PASS batch_os_or_persistence_failure_rolls_back
+PASS throwing_persistence_releases_candidates_preserves_old
+PASS disabled_deleted_folders_release_routes
+PASS registry_lifetime_releases_and_unknown_actions_rejected
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"hotkeys" end time: Oct 24 15:08 UTC
+"hotkeys" time elapsed: 00:00:00
+----------------------------------------------------------
+
+19/62 Testing: paste_native_x11
+19/62 Test: paste_native_x11
+Command: "/usr/bin/python3.12" "/home/runner/work/Cliptiq/Cliptiq/tools/run-linux-isolated.py" "x11" "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/native_paste_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"paste_native_x11" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+PASS forged_and_missing_targets_never_dispatch
+PASS self_launcher_target_rejected
+PASS real_xtest_ctrl_v_and_single_use_token
+PASS terminal_ctrl_shift_v
+PASS unrelated_focus_change_rejected
+PASS held_modifier_not_released_or_used
+PASS ru_layout_physical_paste_key
+PASS dvorak_effective_v_shortcut
+PASS remapped_effective_v_shortcut
+PASS closed_target_rejected
+PASS selection_native_write_self_capture_suppressed
+<end of output>
+Test time =   0.50 sec
+----------------------------------------------------------
+Test Passed.
+"paste_native_x11" end time: Oct 24 15:08 UTC
+"paste_native_x11" time elapsed: 00:00:00
+----------------------------------------------------------
+
+20/62 Testing: paste_native_wayland
+20/62 Test: paste_native_wayland
+Command: "/usr/bin/python3.12" "/home/runner/work/Cliptiq/Cliptiq/tools/run-linux-isolated.py" "wayland" "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/native_paste_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"paste_native_wayland" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+PASS forged_and_missing_targets_never_dispatch
+PASS wayland_without_authorized_session_manual_fallback
+<end of output>
+Test time =   0.11 sec
+----------------------------------------------------------
+Test Passed.
+"paste_native_wayland" end time: Oct 24 15:08 UTC
+"paste_native_wayland" time elapsed: 00:00:00
+----------------------------------------------------------
+
+21/62 Testing: hotkeys_portal_protocol
+21/62 Test: hotkeys_portal_protocol
+Command: "/usr/bin/python3.12" "/home/runner/work/Cliptiq/Cliptiq/tools/run-linux-isolated.py" "fixture" "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/linux_hotkey_portal_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"hotkeys_portal_protocol" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+PASS independent_portal_grant_actual_trigger_activation_denial_rollback_and_closed_session
+<end of output>
+Test time =   0.32 sec
+----------------------------------------------------------
+Test Passed.
+"hotkeys_portal_protocol" end time: Oct 24 15:08 UTC
+"hotkeys_portal_protocol" time elapsed: 00:00:00
+----------------------------------------------------------
+
+22/62 Testing: paste_menu_bridge
+22/62 Test: paste_menu_bridge
+Command: "/usr/bin/python3.12" "/home/runner/work/Cliptiq/Cliptiq/tools/run-linux-isolated.py" "x11" "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/menu_paste_bridge_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"paste_menu_bridge" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+
+(menu_paste_bridge_test:4956): dbind-WARNING **: 15:08:15.767: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files
+
+(menu_paste_bridge_test:4956): Gtk-WARNING **: 15:08:15.845: no trigger event for menu popup
+-----------------------------------------------------
+Suppressions used:
+  count      bytes template
+    597      17493 libfontconfig.so
+      2         56 atk_bridge_adaptor_init
+-----------------------------------------------------
+
+PASS native_menu_provider_to_history_selection_pipeline
+<end of output>
+Test time =   0.41 sec
+----------------------------------------------------------
+Test Passed.
+"paste_menu_bridge" end time: Oct 24 15:08 UTC
+"paste_menu_bridge" time elapsed: 00:00:00
+----------------------------------------------------------
+
+23/62 Testing: paste
+23/62 Test: paste
+Command: "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/paste_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"paste" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+PASS auto_off_copies_original_all_formats_and_touches
+PASS plain_keeps_only_text_without_rich_formats
+PASS image_only_plain_never_overwrites_clipboard
+PASS delete_only_removes_history_without_write_or_input
+PASS paste_delete_removes_only_after_backend_acceptance
+PASS denied_paste_delete_keeps_sole_record_and_manual_copy
+PASS auto_off_paste_delete_does_not_delete
+PASS failed_write_never_dispatches_or_deletes
+PASS stale_menu_revision_has_no_side_effect
+PASS concurrent_revision_after_dispatch_does_not_delete
+PASS terminal_shortcut_and_missing_target_manual
+PASS snippets_copied_without_history_deletion
+PASS destructive_modifier_never_deletes_snippet
+PASS modifier_binding_unique_single_and_conflicting_held_cancel
+PASS invalid_action_shortcut_or_clock_rejected_before_write
+PASS snippet_encoded_and_entry_limits_before_writer
+<end of output>
+Test time =   0.21 sec
+----------------------------------------------------------
+Test Passed.
+"paste" end time: Oct 24 15:08 UTC
+"paste" time elapsed: 00:00:00
+----------------------------------------------------------
+
+24/62 Testing: menu_unicode_conformance
+24/62 Test: menu_unicode_conformance
+Command: "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/grapheme_test" "/home/runner/work/Cliptiq/Cliptiq/third_party/libgrapheme/data/GraphemeBreakTest.txt"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"menu_unicode_conformance" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+PASS Unicode17_grapheme_conformance 766 cases
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"menu_unicode_conformance" end time: Oct 24 15:08 UTC
+"menu_unicode_conformance" time elapsed: 00:00:00
+----------------------------------------------------------
+
+25/62 Testing: menu_regression_context_x11
+25/62 Test: menu_regression_context_x11
+Command: "/usr/bin/python3.12" "/home/runner/work/Cliptiq/Cliptiq/tools/run-linux-isolated.py" "x11" "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/menu_regression_test" "context"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"menu_regression_context_x11" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+
+(menu_regression_test:4987): dbind-WARNING **: 15:08:16.383: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files
+
+(menu_regression_test:4987): Gtk-WARNING **: 15:08:16.460: no trigger event for menu popup
+
+(menu_regression_test:4987): Gtk-WARNING **: 15:08:16.468: no trigger event for menu popup
+
+(menu_regression_test:4987): Gtk-WARNING **: 15:08:16.472: no trigger event for menu popup
+-----------------------------------------------------
+Suppressions used:
+  count      bytes template
+    597      17485 libfontconfig.so
+      2         56 atk_bridge_adaptor_init
+-----------------------------------------------------
+
+PASS native_menu_review_context
+<end of output>
+Test time =   0.34 sec
+----------------------------------------------------------
+Test Passed.
+"menu_regression_context_x11" end time: Oct 24 15:08 UTC
+"menu_regression_context_x11" time elapsed: 00:00:00
+----------------------------------------------------------
+
+26/62 Testing: menu_regression_context_wayland
+26/62 Test: menu_regression_context_wayland
+Command: "/usr/bin/python3.12" "/home/runner/work/Cliptiq/Cliptiq/tools/run-linux-isolated.py" "wayland" "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/menu_regression_test" "context"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"menu_regression_context_wayland" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+
+(menu_regression_test:5006): dbind-WARNING **: 15:08:16.704: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files
+-----------------------------------------------------
+Suppressions used:
+  count      bytes template
+    605      17633 libfontconfig.so
+      2         56 atk_bridge_adaptor_init
+-----------------------------------------------------
+
+PASS native_menu_review_context
+<end of output>
+Test time =   0.32 sec
+----------------------------------------------------------
+Test Passed.
+"menu_regression_context_wayland" end time: Oct 24 15:08 UTC
+"menu_regression_context_wayland" time elapsed: 00:00:00
+----------------------------------------------------------
+
+27/62 Testing: menu_regression_coordinates
+27/62 Test: menu_regression_coordinates
+Command: "/usr/bin/python3.12" "/home/runner/work/Cliptiq/Cliptiq/tools/run-linux-isolated.py" "x11" "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/menu_regression_test" "coordinates"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"menu_regression_coordinates" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+
+(menu_regression_test:5031): dbind-WARNING **: 15:08:17.044: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files
+
+(menu_regression_test:5031): Gtk-WARNING **: 15:08:17.121: no trigger event for menu popup
+
+(menu_regression_test:5031): Gtk-WARNING **: 15:08:17.146: no trigger event for menu popup
+-----------------------------------------------------
+Suppressions used:
+  count      bytes template
+    597      17485 libfontconfig.so
+      2         56 atk_bridge_adaptor_init
+-----------------------------------------------------
+
+PASS native_menu_review_coordinates
+<end of output>
+Test time =   0.38 sec
+----------------------------------------------------------
+Test Passed.
+"menu_regression_coordinates" end time: Oct 24 15:08 UTC
+"menu_regression_coordinates" time elapsed: 00:00:00
+----------------------------------------------------------
+
+28/62 Testing: menu_native_x11
+28/62 Test: menu_native_x11
+Command: "/usr/bin/python3.12" "/home/runner/work/Cliptiq/Cliptiq/tools/run-linux-isolated.py" "x11" "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/native_menu_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"menu_native_x11" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+
+(native_menu_test:5059): dbind-WARNING **: 15:08:17.419: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files
+
+(native_menu_test:5059): Gtk-WARNING **: 15:08:17.509: no trigger event for menu popup
+
+(native_menu_test:5059): Gtk-WARNING **: 15:08:17.517: no trigger event for menu popup
+-----------------------------------------------------
+Suppressions used:
+  count      bytes template
+   1300      37948 libfontconfig.so
+      2         56 atk_bridge_adaptor_init
+-----------------------------------------------------
+
+PASS hidden_tray_keeps_launcher
+PASS native_structure_enabled_labels_preview_and_selection
+PASS old_native_item_cannot_select_replacement
+PASS tray_style_changes_preserve_fallback
+PASS invocation_context_preserved_without_paste
+PASS independent_sni_dbusmenu_layout_events_and_watcher_restart
+<end of output>
+Test time =   0.42 sec
+----------------------------------------------------------
+Test Passed.
+"menu_native_x11" end time: Oct 24 15:08 UTC
+"menu_native_x11" time elapsed: 00:00:00
+----------------------------------------------------------
+
+29/62 Testing: menu_native_wayland
+29/62 Test: menu_native_wayland
+Command: "/usr/bin/python3.12" "/home/runner/work/Cliptiq/Cliptiq/tools/run-linux-isolated.py" "wayland" "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/native_menu_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"menu_native_wayland" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+
+(native_menu_test:5079): dbind-WARNING **: 15:08:17.822: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files
+-----------------------------------------------------
+Suppressions used:
+  count      bytes template
+    605      17617 libfontconfig.so
+      2         56 atk_bridge_adaptor_init
+-----------------------------------------------------
+
+PASS hidden_tray_keeps_launcher
+PASS native_structure_enabled_labels_preview_and_selection
+PASS old_native_item_cannot_select_replacement
+PASS tray_style_changes_preserve_fallback
+PASS invocation_context_preserved_without_paste
+PASS independent_sni_dbusmenu_layout_events_and_watcher_restart
+<end of output>
+Test time =   0.38 sec
+----------------------------------------------------------
+Test Passed.
+"menu_native_wayland" end time: Oct 24 15:08 UTC
+"menu_native_wayland" time elapsed: 00:00:00
+----------------------------------------------------------
+
+30/62 Testing: lifecycle
+30/62 Test: lifecycle
+Command: "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/lifecycle_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"lifecycle" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+PASS fixed routes, second-instance forwarding, settings recovery, bounded IPC, restart, locale fallback and visible startup failure
+<end of output>
+Test time =   0.42 sec
+----------------------------------------------------------
+Test Passed.
+"lifecycle" end time: Oct 24 15:08 UTC
+"lifecycle" time elapsed: 00:00:00
+----------------------------------------------------------
+
+31/62 Testing: lifecycle_process
+31/62 Test: lifecycle_process
+Command: "/usr/bin/python3.12" "/home/runner/work/Cliptiq/Cliptiq/tests/integration/lifecycle_process.py" "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/lifecycle_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"lifecycle_process" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+PASS separate processes, four fixed routes, settings recovery, crash/restart lock release
+<end of output>
+Test time =   1.03 sec
+----------------------------------------------------------
+Test Passed.
+"lifecycle_process" end time: Oct 24 15:08 UTC
+"lifecycle_process" time elapsed: 00:00:01
+----------------------------------------------------------
+
+32/62 Testing: lifecycle_locale_schema
+32/62 Test: lifecycle_locale_schema
+Command: "/usr/bin/python3.12" "/home/runner/work/Cliptiq/Cliptiq/tools/generate-locales.py" "--check"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"lifecycle_locale_schema" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+Locale schema: 136 keys; 9 languages; 426 compiled rows
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"lifecycle_locale_schema" end time: Oct 24 15:08 UTC
+"lifecycle_locale_schema" time elapsed: 00:00:00
+----------------------------------------------------------
+
+33/62 Testing: media_review_clear
+33/62 Test: media_review_clear
+Command: "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/media_review_test" "clear"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"media_review_clear" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+PASS clear
+<end of output>
+Test time =   0.96 sec
+----------------------------------------------------------
+Test Passed.
+"media_review_clear" end time: Oct 24 15:08 UTC
+"media_review_clear" time elapsed: 00:00:00
+----------------------------------------------------------
+
+34/62 Testing: media_review_root
+34/62 Test: media_review_root
+Command: "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/media_review_test" "root"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"media_review_root" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+PASS root
+<end of output>
+Test time =   0.96 sec
+----------------------------------------------------------
+Test Passed.
+"media_review_root" end time: Oct 24 15:08 UTC
+"media_review_root" time elapsed: 00:00:00
+----------------------------------------------------------
+
+35/62 Testing: media_review_error
+35/62 Test: media_review_error
+Command: "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/media_review_test" "error"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"media_review_error" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+PASS error
+<end of output>
+Test time =   0.24 sec
+----------------------------------------------------------
+Test Passed.
+"media_review_error" end time: Oct 24 15:08 UTC
+"media_review_error" time elapsed: 00:00:00
+----------------------------------------------------------
+
+36/62 Testing: native_media
+36/62 Test: native_media
+Command: "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/native_media_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"native_media" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+PASS native codec, malformed/40MP, partial write, event coalescing, pixel dedup both orders, privacy exclusions/types, stop, deletion race
+<end of output>
+Test time =   6.77 sec
+----------------------------------------------------------
+Test Passed.
+"native_media" end time: Oct 24 15:08 UTC
+"native_media" time elapsed: 00:00:06
+----------------------------------------------------------
+
+37/62 Testing: media
+37/62 Test: media
+Command: "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/media_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"media" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+PASS privacy, aspect-fit, bounds, dimensions, stale generation, deletion race, malformed image
+<end of output>
+Test time =   0.03 sec
+----------------------------------------------------------
+Test Passed.
+"media" end time: Oct 24 15:08 UTC
+"media" time elapsed: 00:00:00
+----------------------------------------------------------
+
+38/62 Testing: menu_preview
+38/62 Test: menu_preview
+Command: "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/menu_preview_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"menu_preview" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+PASS swatch_rgba
+PASS aspect_fit_32
+PASS invalid_provider_dimensions_rejected
+PASS short_provider_buffer_rejected
+PASS empty_reference_no_provider
+PASS preview_dpi_96
+PASS preview_dpi_144
+PASS preview_dpi_192
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"menu_preview" end time: Oct 24 15:08 UTC
+"menu_preview" time elapsed: 00:00:00
+----------------------------------------------------------
+
+39/62 Testing: menu
+39/62 Test: menu
+Command: "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/menu_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"menu" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+PASS empty_clear_disabled
+PASS grouping_0_1
+PASS grouping_0_10
+PASS grouping_0_100
+PASS grouping_1_1
+PASS grouping_1_10
+PASS grouping_1_100
+PASS grouping_100_1
+PASS grouping_100_10
+PASS grouping_100_100
+PASS zero_one_numbering_and_ten_shortcuts
+PASS numbering_and_shortcuts_independent
+PASS graphemes_first_line_trim_and_ellipsis
+PASS invalid_utf8_controls_are_sanitized
+PASS utf16_history_title_and_tooltip
+PASS snippet_order_above_below_and_kinds
+PASS tooltip_and_title_limits
+PASS hex_swatches_and_image_reference
+PASS revision_and_deleted_ids_reject_stale_commands
+PASS build_does_not_mutate_history
+PASS clear_command_checks_revision_before_deleting
+PASS native_model_depth_and_text_budget
+PASS global_commands_survive_history_refresh
+PASS native_model_rejects_invalid_utf8_and_nul
+PASS settings_history_limit_applies_without_erasing_store
+<end of output>
+Test time =   1.41 sec
+----------------------------------------------------------
+Test Passed.
+"menu" end time: Oct 24 15:08 UTC
+"menu" time elapsed: 00:00:01
+----------------------------------------------------------
+
+40/62 Testing: linux_clipboard_protocol
+40/62 Test: linux_clipboard_protocol
+Command: "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/linux_clipboard_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"linux_clipboard_protocol" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+PASS stream_bytes_and_complete_eof
+PASS stream_overflow_is_sticky
+PASS stream_generation_change_cancels_partial
+PASS stream_timeout_never_returns_partial
+PASS mime_stream_over_32_mib_rejected
+PASS fd_receiver_nonblocking_eof
+PASS fd_send_closed_receiver_survives_sigpipe
+PASS gnome_cut_replay_becomes_copy
+PASS binary_rtf_preserved
+PASS unknown_type_not_persistable
+PASS wayland_unknown_source_exclusions
+PASS markers_precede_payload_filtering
+PASS no_display_capability_fails_closed
+PASS stalled_sends_do_not_retain_unrequested_snapshot_formats
+<end of output>
+Test time =   0.08 sec
+----------------------------------------------------------
+Test Passed.
+"linux_clipboard_protocol" end time: Oct 24 15:08 UTC
+"linux_clipboard_protocol" time elapsed: 00:00:00
+----------------------------------------------------------
+
+41/62 Testing: linux_clipboard_wayland_wire
+41/62 Test: linux_clipboard_wayland_wire
+Command: "/usr/bin/python3.12" "/home/runner/work/Cliptiq/Cliptiq/tools/run-linux-isolated.py" "fixture" "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/linux_wayland_wire_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"linux_clipboard_wayland_wire" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+PASS ext_preferred_over_wlr_and_fd_roundtrip
+PASS no_data_control_unavailable_without_fallback
+PASS finished_device_is_unavailable
+PASS stalled_fd_times_out_without_partial
+PASS offer_cancel_discards_partial
+PASS offer_change_discards_partial_and_next_read_recovers
+PASS fd_byte_limit_rejects_before_snapshot
+PASS disabled_html_and_unknown_never_requested
+PASS transient_marker_prevents_all_fd_requests
+PASS unknown_source_exclusions_prevent_fd_requests
+PASS multi_seat_requires_explicit_selection
+PASS cancelled_fd_never_opens_history
+PASS kde_sensitive_hint_blocks_payload_and_database
+PASS actual_32_mib_plus_one_fd_rejected
+<end of output>
+Test time =   1.27 sec
+----------------------------------------------------------
+Test Passed.
+"linux_clipboard_wayland_wire" end time: Oct 24 15:08 UTC
+"linux_clipboard_wayland_wire" time elapsed: 00:00:01
+----------------------------------------------------------
+
+42/62 Testing: linux_clipboard_x11_wire
+42/62 Test: linux_clipboard_x11_wire
+Command: "/usr/bin/python3.12" "/home/runner/work/Cliptiq/Cliptiq/tools/run-linux-isolated.py" "x11" "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/linux_x11_wire_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"linux_clipboard_x11_wire" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+PASS independent_targets_incr_roundtrip
+PASS incr_owner_death_discards_partial
+PASS incr_announcement_over_limit_rejected
+PASS selection_owner_stall_has_deadline
+PASS disabled_unknown_no_payload_requests
+PASS owner_wm_class_exclusion_prevents_payload
+PASS latin1_string_becomes_utf8
+PASS same_owner_timestamp_still_notifies_new_copy
+PASS final_owner_reply_does_not_hide_queued_reassertion
+PASS duplicate_targets_during_source_reply_is_ignored
+PASS duplicate_targets_during_finish_reply_is_ignored
+PASS kde_sensitive_hint_blocks_payload_and_database
+<end of output>
+Test time =   0.49 sec
+----------------------------------------------------------
+Test Passed.
+"linux_clipboard_x11_wire" end time: Oct 24 15:08 UTC
+"linux_clipboard_x11_wire" time elapsed: 00:00:00
+----------------------------------------------------------
+
+43/62 Testing: linux_clipboard_external_clients
+43/62 Test: linux_clipboard_external_clients
+Command: "/usr/bin/python3.12" "/home/runner/work/Cliptiq/Cliptiq/tools/run-linux-isolated.py" "wayland" "/usr/bin/python3.12" "/home/runner/work/Cliptiq/Cliptiq/tests/integration/linux_wl_clipboard.py" "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/linux_native_clipboard_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"linux_clipboard_external_clients" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+wl-copy sensitive_option_available: False
+PASS independent_wl_copy_and_wl_paste_roundtrip
+PASS external_wl_copy_sensitive_no_database
+<end of output>
+Test time =   2.37 sec
+----------------------------------------------------------
+Test Passed.
+"linux_clipboard_external_clients" end time: Oct 24 15:08 UTC
+"linux_clipboard_external_clients" time elapsed: 00:00:02
+----------------------------------------------------------
+
+44/62 Testing: linux_clipboard_x11
+44/62 Test: linux_clipboard_x11
+Command: "/usr/bin/python3.12" "/home/runner/work/Cliptiq/Cliptiq/tools/run-linux-isolated.py" "x11" "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/linux_native_clipboard_test" "x11"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"linux_clipboard_x11" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+PASS x11_native_utf8_binary_rtf_roundtrip
+PASS x11_large_incr_or_fd_roundtrip
+PASS x11_html_disabled_preserves_text
+PASS x11_transient_capture_is_metadata_only
+PASS x11_unknown_source_exclusions_fail_closed
+PASS x11_listener_own_write_stop
+PASS x11_privacy_worker_reject_creates_no_database
+PASS x11_worker_persists_only_accepted_filtered_bytes
+PASS x11_worker_queue_byte_limit_skips_without_database
+PASS x11_session_callback_can_destroy_owner
+PASS x11_session_stop_restart_discards_old_callbacks
+PASS x11_native_supported_format_matrix
+PASS x11_native_tiff_without_png_is_preserved
+PASS x11_invalid_native_limits_are_unavailable
+<end of output>
+Test time =   0.57 sec
+----------------------------------------------------------
+Test Passed.
+"linux_clipboard_x11" end time: Oct 24 15:08 UTC
+"linux_clipboard_x11" time elapsed: 00:00:00
+----------------------------------------------------------
+
+45/62 Testing: linux_clipboard_wayland
+45/62 Test: linux_clipboard_wayland
+Command: "/usr/bin/python3.12" "/home/runner/work/Cliptiq/Cliptiq/tools/run-linux-isolated.py" "wayland" "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/linux_native_clipboard_test" "wayland"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"linux_clipboard_wayland" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+PASS wayland_native_utf8_binary_rtf_roundtrip
+PASS wayland_large_incr_or_fd_roundtrip
+PASS wayland_html_disabled_preserves_text
+PASS wayland_transient_capture_is_metadata_only
+PASS wayland_unknown_source_exclusions_fail_closed
+PASS wayland_listener_own_write_stop
+PASS wayland_privacy_worker_reject_creates_no_database
+PASS wayland_worker_persists_only_accepted_filtered_bytes
+PASS wayland_worker_queue_byte_limit_skips_without_database
+PASS wayland_session_callback_can_destroy_owner
+PASS wayland_session_stop_restart_discards_old_callbacks
+PASS wayland_native_supported_format_matrix
+PASS wayland_native_tiff_without_png_is_preserved
+PASS wayland_invalid_native_limits_are_unavailable
+<end of output>
+Test time =   0.32 sec
+----------------------------------------------------------
+Test Passed.
+"linux_clipboard_wayland" end time: Oct 24 15:08 UTC
+"linux_clipboard_wayland" time elapsed: 00:00:00
+----------------------------------------------------------
+
+46/62 Testing: policy
+46/62 Test: policy
+Command: "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/policy_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"policy" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+PASS transient_always_rejected
+PASS concealed_option
+PASS remote_primary_file_rejected
+PASS remote_secondary_file_removed
+PASS marker_prefix_exclusion
+PASS unknown_source_is_not_known_safe
+PASS screenshot_uses_same_policy
+PASS html_off_keeps_text_rtf_only
+PASS unknown_type_is_not_persisted
+PASS unknown_source_with_exclusions_is_rejected
+PASS foreground_exclusion_and_best_effort
+PASS capabilities_default_unavailable
+PASS unavailable_source_overrides_claimed_identity
+PASS limited_source_downgrades_known
+PASS missing_id_is_unknown
+PASS remote_macos_option_and_platform_scope
+PASS remote_marker_and_original_primary_before_filter
+PASS marker_representation_is_never_payload
+PASS all_kinds_can_be_disabled
+PASS each_supported_kind_and_item_order
+PASS spoofed_registered_kind_is_filtered
+PASS rejected_inputs_call_no_consumers
+PASS filtered_snapshot_only_reaches_consumers
+PASS store_error_or_no_retained_id_skips_derivatives
+PASS ocr_requires_request_and_capability
+PASS invalid_inputs_fail_closed
+PASS reason_messages_are_stable_non_sensitive
+PASS each_kind_toggle_filters_only_its_class
+PASS native_encoding_and_platform_must_match_registration
+PASS all_source_policy_modes
+PASS unknown_flags_remain_unknown
+PASS remote_secondary_pruning_keeps_item_indices
+PASS unsupported_primary_does_not_promote_remote_file
+PASS limited_capture_does_not_enable_other_capabilities
+<end of output>
+Test time =   0.10 sec
+----------------------------------------------------------
+Test Passed.
+"policy" end time: Oct 24 15:08 UTC
+"policy" time elapsed: 00:00:00
+----------------------------------------------------------
+
+47/62 Testing: history
+47/62 Test: history
+Command: "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/history_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"history" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+PASS preserves_all_representations
+PASS duplicate_mode_switch_keeps_digest
+PASS duplicate_flags
+PASS blank_text_ignored
+PASS last_used_preserves_created
+PASS limit_three
+PASS periodic_clear_is_not_ttl
+PASS clear_preserves_snippets
+PASS oversize_is_atomic
+PASS quota_prunes_by_current_sort
+PASS reopen_and_periodic_state
+PASS transaction_failure_rolls_back
+PASS read_only_and_full_are_errors
+PASS corrupt_db_not_replaced
+PASS digest_has_unambiguous_boundaries
+PASS invalid_policy_and_empty_snapshot
+PASS revision_clear_compact
+PASS sha256_standard_vectors
+PASS collision_is_not_equality
+PASS source_changes_do_not_create_new_content
+PASS rtf_blank_and_primary_order
+PASS metadata_and_representation_limits
+PASS cleanup_disable_change_and_clock_rewind
+PASS foreign_and_future_db_preserved
+PASS load_rechecks_persisted_limits
+PASS duplicate_candidate_limits_checked
+PASS returned_id_survives_pruning
+PASS native_utf16_blank_text_ignored
+PASS utf16_roundtrip_and_big_endian_blank
+<end of output>
+Test time =   0.44 sec
+----------------------------------------------------------
+Test Passed.
+"history" end time: Oct 24 15:08 UTC
+"history" time elapsed: 00:00:00
+----------------------------------------------------------
+
+48/62 Testing: history_crash
+48/62 Test: history_crash
+Command: "/usr/bin/python3.12" "/home/runner/work/Cliptiq/Cliptiq/tests/integration/history_crash.py" "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/history_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"history_crash" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+PASS process interruption rollback/WAL and reopen
+<end of output>
+Test time =   0.26 sec
+----------------------------------------------------------
+Test Passed.
+"history_crash" end time: Oct 24 15:08 UTC
+"history_crash" time elapsed: 00:00:00
+----------------------------------------------------------
+
+49/62 Testing: import
+49/62 Test: import
+Command: "/usr/bin/python3.12" "/home/runner/work/Cliptiq/Cliptiq/tests/integration/import_fixtures.py" "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/tools/import-clipy/cliptiq-import" "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/import_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"import" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+PASS Clipy SQLite v1-v4, duplicate preservation, states/order/times/assets, idempotence, atomic failures, WAL/source hashes
+<end of output>
+Test time =   5.59 sec
+----------------------------------------------------------
+Test Passed.
+"import" end time: Oct 24 15:08 UTC
+"import" time elapsed: 00:00:05
+----------------------------------------------------------
+
+50/62 Testing: import_native_x11
+50/62 Test: import_native_x11
+Command: "/usr/bin/python3.12" "/home/runner/work/Cliptiq/Cliptiq/tools/run-linux-isolated.py" "x11" "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/import_native_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"import_native_x11" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+PASS imported Unicode through native clipboard, macOS repeated types, paste-delete provenance cleanup
+<end of output>
+Test time =   0.21 sec
+----------------------------------------------------------
+Test Passed.
+"import_native_x11" end time: Oct 24 15:08 UTC
+"import_native_x11" time elapsed: 00:00:00
+----------------------------------------------------------
+
+51/62 Testing: import_native_wayland
+51/62 Test: import_native_wayland
+Command: "/usr/bin/python3.12" "/home/runner/work/Cliptiq/Cliptiq/tools/run-linux-isolated.py" "wayland" "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/import_native_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"import_native_wayland" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+PASS imported Unicode through native clipboard, macOS repeated types, paste-delete provenance cleanup
+<end of output>
+Test time =   0.19 sec
+----------------------------------------------------------
+Test Passed.
+"import_native_wayland" end time: Oct 24 15:08 UTC
+"import_native_wayland" time elapsed: 00:00:00
+----------------------------------------------------------
+
+52/62 Testing: import_bounds
+52/62 Test: import_bounds
+Command: "/usr/bin/python3.12" "/home/runner/work/Cliptiq/Cliptiq/tests/integration/import_bounds.py"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"import_bounds" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+PASS no unbounded image expansion/whole-file preferences reader in migration
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"import_bounds" end time: Oct 24 15:08 UTC
+"import_bounds" time elapsed: 00:00:00
+----------------------------------------------------------
+
+53/62 Testing: update
+53/62 Test: update
+Command: "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/update_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"update" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+update policy, authentication boundaries, schedule, settings and redacted diagnostics passed
+<end of output>
+Test time =   0.03 sec
+----------------------------------------------------------
+Test Passed.
+"update" end time: Oct 24 15:08 UTC
+"update" time elapsed: 00:00:00
+----------------------------------------------------------
+
+54/62 Testing: update_native
+54/62 Test: update_native
+Command: "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/update_native_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"update_native" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+unconfigured native route fails closed without side effects
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"update_native" end time: Oct 24 15:08 UTC
+"update_native" time elapsed: 00:00:00
+----------------------------------------------------------
+
+55/62 Testing: ocr
+55/62 Test: ocr
+Command: "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/ocr_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"ocr" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+OCR Unicode, empty Done, limits, cancel, supersession, privacy and deletion passed
+<end of output>
+Test time =   0.09 sec
+----------------------------------------------------------
+Test Passed.
+"ocr" end time: Oct 24 15:08 UTC
+"ocr" time elapsed: 00:00:00
+----------------------------------------------------------
+
+56/62 Testing: fts
+56/62 Test: fts
+Command: "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/fts_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"fts" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+companion index isolation, invalidation, recovery and Base compatibility passed
+<end of output>
+Test time =   0.04 sec
+----------------------------------------------------------
+Test Passed.
+"fts" end time: Oct 24 15:08 UTC
+"fts" time elapsed: 00:00:00
+----------------------------------------------------------
+
+57/62 Testing: ocr_queue
+57/62 Test: ocr_queue
+Command: "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/ocr_queue_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"ocr_queue" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+async privacy revocation prevents publication
+<end of output>
+Test time =   0.48 sec
+----------------------------------------------------------
+Test Passed.
+"ocr_queue" end time: Oct 24 15:08 UTC
+"ocr_queue" time elapsed: 00:00:00
+----------------------------------------------------------
+
+58/62 Testing: distribution_tools
+58/62 Test: distribution_tools
+Command: "/usr/bin/python3.12" "-m" "unittest" "discover" "-s" "/home/runner/work/Cliptiq/Cliptiq/tests/tools"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"distribution_tools" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+.........................
+----------------------------------------------------------------------
+Ran 25 tests in 0.139s
+
+OK
+<end of output>
+Test time =   0.19 sec
+----------------------------------------------------------
+Test Passed.
+"distribution_tools" end time: Oct 24 15:08 UTC
+"distribution_tools" time elapsed: 00:00:00
+----------------------------------------------------------
+
+59/62 Testing: feature_coverage
+59/62 Test: feature_coverage
+Command: "/usr/bin/python3.12" "/home/runner/work/Cliptiq/Cliptiq/tools/verify-coverage.py" "--audit" "/home/runner/work/Cliptiq/Cliptiq/docs/research/2026-10-23-clipy-audit.md" "--status" "/home/runner/work/Cliptiq/Cliptiq/docs/support/feature-status.json"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"feature_coverage" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+PASS: all audited IDs classified on all four platform backends; manual gates OPEN
+<end of output>
+Test time =   0.04 sec
+----------------------------------------------------------
+Test Passed.
+"feature_coverage" end time: Oct 24 15:08 UTC
+"feature_coverage" time elapsed: 00:00:00
+----------------------------------------------------------
+
+60/62 Testing: package_entry
+60/62 Test: package_entry
+Command: "/usr/bin/python3.12" "/home/runner/work/Cliptiq/Cliptiq/tests/integration/package_entry.py" "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/cliptiq_menu_host"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"package_entry" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+PASS noninteractive --version
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"package_entry" end time: Oct 24 15:08 UTC
+"package_entry" time elapsed: 00:00:00
+----------------------------------------------------------
+
+61/62 Testing: bounded_fuzz_smoke
+61/62 Test: bounded_fuzz_smoke
+Command: "/home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize/fuzz_smoke" "/home/runner/work/Cliptiq/Cliptiq/tests/fixtures/media/red.png"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"bounded_fuzz_smoke" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+PASS512 deterministic bounded XML/PNG/UTF8 mutations and native codec control
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"bounded_fuzz_smoke" end time: Oct 24 15:08 UTC
+"bounded_fuzz_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+62/62 Testing: release_blocked
+62/62 Test: release_blocked
+Command: "/usr/bin/python3.12" "/home/runner/work/Cliptiq/Cliptiq/tools/verify-release.py" "--checklist" "/home/runner/work/Cliptiq/Cliptiq/docs/support/release-checklist.json" "--expect-blocked"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/core-Linux-sanitize
+"release_blocked" start time: Oct 24 15:08 UTC
+Output:
+----------------------------------------------------------
+BLOCKED AS EXPECTED: production release remains unavailable; T04: OPEN or missing, T05: OPEN or missing, T06: OPEN or missing, T07: OPEN or missing, T08: OPEN or missing, T09: OPEN or missing, T10: OPEN or missing, T11: OPEN or missing, T12: OPEN or missing, T13: OPEN or missing, T14: OPEN or missing, T15: OPEN or missing, T16: OPEN or missing, clean-install: OPEN or missing, desktop-support-matrix: OPEN or missing, notarization: OPEN or missing, offline-closure: OPEN or missing, project-license: OPEN or missing, publisher-identity: OPEN or missing, signing: OPEN or missing
+<end of output>
+Test time =   0.03 sec
+----------------------------------------------------------
+Test Passed.
+"release_blocked" end time: Oct 24 15:08 UTC
+"release_blocked" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Oct 24 15:08 UTC

@@ -1,0 +1,14 @@
+E...s..
+======================================================================
+ERROR: test_variant_limits_and_growth_are_enforced (test_size_report.DistributionBudgetTests.test_variant_limits_and_growth_are_enforced)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\SmiteVils\Documents\ChatGPT\ClipBoard Project\tests\tools\test_size_report.py", line 95, in test_variant_limits_and_growth_are_enforced
+    limits=module.selected_budget(baseline,'linux','x86_64','base')
+           ^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'size_report' has no attribute 'selected_budget'
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.074s
+
+FAILED (errors=1, skipped=1)

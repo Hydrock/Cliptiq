@@ -1,0 +1,98 @@
+Start testing: Oct 24 15:10 Coordinated Universal Time
+----------------------------------------------------------
+45/54 Testing: ocr
+45/54 Test: ocr
+Command: "D:/a/Cliptiq/Cliptiq/out/ocr-Windows-tesseract/ocr_test.exe"
+Directory: D:/a/Cliptiq/Cliptiq/out/ocr-Windows-tesseract
+"ocr" start time: Oct 24 15:10 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+OCR Unicode, empty Done, limits, cancel, supersession, privacy and deletion passed
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"ocr" end time: Oct 24 15:10 Coordinated Universal Time
+"ocr" time elapsed: 00:00:00
+----------------------------------------------------------
+
+46/54 Testing: fts
+46/54 Test: fts
+Command: "D:/a/Cliptiq/Cliptiq/out/ocr-Windows-tesseract/fts_test.exe"
+Directory: D:/a/Cliptiq/Cliptiq/out/ocr-Windows-tesseract
+"fts" start time: Oct 24 15:10 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+companion index isolation, invalidation, recovery and Base compatibility passed
+<end of output>
+Test time =   0.39 sec
+----------------------------------------------------------
+Test Passed.
+"fts" end time: Oct 24 15:10 Coordinated Universal Time
+"fts" time elapsed: 00:00:00
+----------------------------------------------------------
+
+47/54 Testing: ocr_queue
+47/54 Test: ocr_queue
+Command: "D:/a/Cliptiq/Cliptiq/out/ocr-Windows-tesseract/ocr_queue_test.exe"
+Directory: D:/a/Cliptiq/Cliptiq/out/ocr-Windows-tesseract
+"ocr_queue" start time: Oct 24 15:10 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+async privacy revocation prevents publication
+<end of output>
+Test time =   2.21 sec
+----------------------------------------------------------
+Test Passed.
+"ocr_queue" end time: Oct 24 15:10 Coordinated Universal Time
+"ocr_queue" time elapsed: 00:00:02
+----------------------------------------------------------
+
+48/54 Testing: native_ocr
+48/54 Test: native_ocr
+Command: "D:/a/Cliptiq/Cliptiq/out/ocr-Windows-tesseract/native_ocr_test.exe" "D:/a/Cliptiq/Cliptiq/.toolchains/ocr/install-Windows/tessdata" "D:/a/Cliptiq/Cliptiq/tests/fixtures/ocr"
+Directory: D:/a/Cliptiq/Cliptiq/out/ocr-Windows-tesseract
+"native_ocr" start time: Oct 24 15:10 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+Error in pixReadMemTiff: function not present
+Error in pixReadMem: tiff: no pix returned
+Error in pixaGenerateFontFromString: pix not made
+Error in bmfCreate: font pixa not made
+Warning in changeFormatForMissingLib: png library missing; output bmp format
+eng: fixture result: Cliptig clipboard 123
+
+Error in pixReadMemTiff: function not present
+Error in pixReadMem: tiff: no pix returned
+Error in pixaGenerateFontFromString: pix not made
+Error in bmfCreate: font pixa not made
+Warning in changeFormatForMissingLib: png library missing; output bmp format
+eng: recognized
+rus: fixture result: Привет мир 123
+
+rus: recognized
+<end of output>
+Test time =   0.35 sec
+----------------------------------------------------------
+Test Passed.
+"native_ocr" end time: Oct 24 15:10 Coordinated Universal Time
+"native_ocr" time elapsed: 00:00:00
+----------------------------------------------------------
+
+49/54 Testing: fts_transaction_race
+49/54 Test: fts_transaction_race
+Command: "D:/a/Cliptiq/Cliptiq/out/ocr-Windows-tesseract/fts_transaction_race.exe"
+Directory: D:/a/Cliptiq/Cliptiq/out/ocr-Windows-tesseract
+"fts_transaction_race" start time: Oct 24 15:10 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+index gate spans complete main deletion transaction
+<end of output>
+Test time =   1.12 sec
+----------------------------------------------------------
+Test Passed.
+"fts_transaction_race" end time: Oct 24 15:11 Coordinated Universal Time
+"fts_transaction_race" time elapsed: 00:00:01
+----------------------------------------------------------
+
+End testing: Oct 24 15:11 Coordinated Universal Time

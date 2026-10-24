@@ -1,0 +1,162 @@
+{
+  "schema_version": 1,
+  "target": "macos",
+  "arch": "aarch64",
+  "toolchain": null,
+  "flags": null,
+  "app_bytes": 1871442,
+  "archive_bytes": 771189,
+  "dependency_delta_bytes": null,
+  "ocr_bytes": 0,
+  "total_offline_bytes": null,
+  "idle_memory_bytes": null,
+  "startup_ms": null,
+  "measurement_scope": "candidate app-owned files; included models counted once; clean-consumer system delta unverified",
+  "archive_sha256": "49778a566c0612e436a2ab363e32c6fa63c3e6002559f87b2f04941f46d1e01a",
+  "files": [
+    {
+      "path": "Cliptiq.app/Contents/Info.plist",
+      "bytes": 1003,
+      "sha256": "b643417657a8c3ee025bd4bc240c8e0e1589b84d06c175ba06c8fe73a4122ed2"
+    },
+    {
+      "path": "Cliptiq.app/Contents/MacOS/Cliptiq",
+      "bytes": 1856320,
+      "sha256": "29cb78fdc0736ee07c60f4c14a0e218a64c5e95a6735dfb051b09ac306ed88e1"
+    },
+    {
+      "path": "Cliptiq.app/Contents/_CodeSignature/CodeResources",
+      "bytes": 2200,
+      "sha256": "6686de10a28a2fe11b36cbb86dcbacc827cfc4ea116b4dabf1845e5aee629e9b"
+    },
+    {
+      "path": "cliptiq-package.json",
+      "bytes": 3865,
+      "sha256": "285dae3b9f1d1cb029e22cfd86bb19c516067765a9ceb1d20676a19ab74ba431"
+    },
+    {
+      "path": "licenses/THIRD_PARTY_NOTICES.md",
+      "bytes": 4491,
+      "sha256": "59779f1d823707e180b2a33c355f5193efcc0de835367e488325d1039b860f35"
+    },
+    {
+      "path": "licenses/TinyXML2-zlib.txt",
+      "bytes": 808,
+      "sha256": "9332252e9b9e46db8285d4a3f0bf25f139bf1dca6781b956d57f2302efca6432"
+    },
+    {
+      "path": "licenses/Unicode.txt",
+      "bytes": 1995,
+      "sha256": "abf84f74dea2812799e1dbef7f0581adf7db244881e4febb8684f441568da0ad"
+    },
+    {
+      "path": "licenses/libgrapheme-ISC.txt",
+      "bytes": 760,
+      "sha256": "2665f9170b28064c14a31c1c7a0fa27f3689eaad5498d0adce8781d502425073"
+    }
+  ],
+  "symlinks": [],
+  "runtime": {},
+  "budget_violations": [],
+  "variant": "base",
+  "included_ocr_bytes": 0,
+  "distribution_manifest": {
+    "schema_version": 1,
+    "target": "macos",
+    "arch": "aarch64",
+    "variant": "base",
+    "version": "0.1.0",
+    "source_commit": "5380462ede50273817be0dbcb4a2e832fabdf93b",
+    "source_dirty": false,
+    "manual_acceptance": "open",
+    "release_ready": false,
+    "signature": "ad-hoc only",
+    "project_license": "OPEN: no new project license selected by packaging",
+    "clean_machine_dependency_delta_bytes": null,
+    "toolchain": {
+      "cmake": "cmake version 4.4.3",
+      "platform": "macOS-15.7.9-arm64-arm-64bit-Mach-O",
+      "configuration": [
+        "CLIPTIQ_OCR_ENGINE:STRING=none",
+        "CMAKE_CXX_COMPILER:FILEPATH=/usr/bin/c++",
+        "CMAKE_CXX_FLAGS_MINSIZEREL:STRING=-Os -DNDEBUG",
+        "CMAKE_OSX_DEPLOYMENT_TARGET:STRING=13.0",
+        "ocr_index:BOOL=OFF"
+      ]
+    },
+    "files": [
+      {
+        "path": "Cliptiq.app/Contents/Info.plist",
+        "bytes": 1003,
+        "sha256": "b643417657a8c3ee025bd4bc240c8e0e1589b84d06c175ba06c8fe73a4122ed2"
+      },
+      {
+        "path": "Cliptiq.app/Contents/MacOS/Cliptiq",
+        "bytes": 1856320,
+        "sha256": "29cb78fdc0736ee07c60f4c14a0e218a64c5e95a6735dfb051b09ac306ed88e1"
+      },
+      {
+        "path": "Cliptiq.app/Contents/_CodeSignature/CodeResources",
+        "bytes": 2200,
+        "sha256": "6686de10a28a2fe11b36cbb86dcbacc827cfc4ea116b4dabf1845e5aee629e9b"
+      },
+      {
+        "path": "licenses/THIRD_PARTY_NOTICES.md",
+        "bytes": 4491,
+        "sha256": "59779f1d823707e180b2a33c355f5193efcc0de835367e488325d1039b860f35"
+      },
+      {
+        "path": "licenses/TinyXML2-zlib.txt",
+        "bytes": 808,
+        "sha256": "9332252e9b9e46db8285d4a3f0bf25f139bf1dca6781b956d57f2302efca6432"
+      },
+      {
+        "path": "licenses/Unicode.txt",
+        "bytes": 1995,
+        "sha256": "abf84f74dea2812799e1dbef7f0581adf7db244881e4febb8684f441568da0ad"
+      },
+      {
+        "path": "licenses/libgrapheme-ISC.txt",
+        "bytes": 760,
+        "sha256": "2665f9170b28064c14a31c1c7a0fa27f3689eaad5498d0adce8781d502425073"
+      }
+    ],
+    "symlinks": [],
+    "binaries": [
+      {
+        "path": "Cliptiq.app/Contents/MacOS/Cliptiq",
+        "format": "macho",
+        "arch": "aarch64",
+        "imports": [
+          "/System/Library/Frameworks/ApplicationServices.framework/Versions/A/ApplicationServices",
+          "/System/Library/Frameworks/Carbon.framework/Versions/A/Carbon",
+          "/System/Library/Frameworks/ImageIO.framework/Versions/A/ImageIO",
+          "/System/Library/Frameworks/ServiceManagement.framework/Versions/A/ServiceManagement",
+          "/usr/lib/libSystem.B.dylib",
+          "/System/Library/Frameworks/AppKit.framework/Versions/C/AppKit",
+          "/usr/lib/libc++.1.dylib",
+          "/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation",
+          "/System/Library/Frameworks/CoreGraphics.framework/Versions/A/CoreGraphics",
+          "/System/Library/Frameworks/CoreServices.framework/Versions/A/CoreServices",
+          "/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation",
+          "/usr/lib/libobjc.A.dylib"
+        ],
+        "rpaths": []
+      }
+    ],
+    "system_dependencies": [
+      "/System/Library/Frameworks/ApplicationServices.framework/Versions/A/ApplicationServices",
+      "/System/Library/Frameworks/Carbon.framework/Versions/A/Carbon",
+      "/System/Library/Frameworks/ImageIO.framework/Versions/A/ImageIO",
+      "/System/Library/Frameworks/ServiceManagement.framework/Versions/A/ServiceManagement",
+      "/usr/lib/libSystem.B.dylib",
+      "/System/Library/Frameworks/AppKit.framework/Versions/C/AppKit",
+      "/usr/lib/libc++.1.dylib",
+      "/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation",
+      "/System/Library/Frameworks/CoreGraphics.framework/Versions/A/CoreGraphics",
+      "/System/Library/Frameworks/CoreServices.framework/Versions/A/CoreServices",
+      "/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation",
+      "/usr/lib/libobjc.A.dylib"
+    ]
+  }
+}

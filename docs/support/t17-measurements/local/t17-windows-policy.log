@@ -1,0 +1,15 @@
+Test project C:/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Windows-release
+    Start 48: distribution_tools
+1/5 Test #48: distribution_tools ...............   Passed    0.42 sec
+    Start 49: feature_coverage
+2/5 Test #49: feature_coverage .................   Passed    0.09 sec
+    Start 50: package_entry
+3/5 Test #50: package_entry ....................   Passed    0.06 sec
+    Start 51: bounded_fuzz_smoke
+4/5 Test #51: bounded_fuzz_smoke ...............   Passed    0.02 sec
+    Start 52: release_blocked
+5/5 Test #52: release_blocked ..................   Passed    0.10 sec
+
+100% tests passed, 0 tests failed out of 5
+
+Total Test time (real) =   0.75 sec

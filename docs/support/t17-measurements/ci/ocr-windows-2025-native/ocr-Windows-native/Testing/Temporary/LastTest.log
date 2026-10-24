@@ -1,0 +1,83 @@
+Start testing: Oct 24 15:10 Coordinated Universal Time
+----------------------------------------------------------
+45/54 Testing: ocr
+45/54 Test: ocr
+Command: "D:/a/Cliptiq/Cliptiq/out/ocr-Windows-native/ocr_test.exe"
+Directory: D:/a/Cliptiq/Cliptiq/out/ocr-Windows-native
+"ocr" start time: Oct 24 15:10 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+OCR Unicode, empty Done, limits, cancel, supersession, privacy and deletion passed
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"ocr" end time: Oct 24 15:10 Coordinated Universal Time
+"ocr" time elapsed: 00:00:00
+----------------------------------------------------------
+
+46/54 Testing: fts
+46/54 Test: fts
+Command: "D:/a/Cliptiq/Cliptiq/out/ocr-Windows-native/fts_test.exe"
+Directory: D:/a/Cliptiq/Cliptiq/out/ocr-Windows-native
+"fts" start time: Oct 24 15:10 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+companion index isolation, invalidation, recovery and Base compatibility passed
+<end of output>
+Test time =   0.30 sec
+----------------------------------------------------------
+Test Passed.
+"fts" end time: Oct 24 15:10 Coordinated Universal Time
+"fts" time elapsed: 00:00:00
+----------------------------------------------------------
+
+47/54 Testing: ocr_queue
+47/54 Test: ocr_queue
+Command: "D:/a/Cliptiq/Cliptiq/out/ocr-Windows-native/ocr_queue_test.exe"
+Directory: D:/a/Cliptiq/Cliptiq/out/ocr-Windows-native
+"ocr_queue" start time: Oct 24 15:10 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+async privacy revocation prevents publication
+<end of output>
+Test time =   2.14 sec
+----------------------------------------------------------
+Test Passed.
+"ocr_queue" end time: Oct 24 15:10 Coordinated Universal Time
+"ocr_queue" time elapsed: 00:00:02
+----------------------------------------------------------
+
+48/54 Testing: native_ocr
+48/54 Test: native_ocr
+Command: "D:/a/Cliptiq/Cliptiq/out/ocr-Windows-native/native_ocr_test.exe" "/tessdata" "D:/a/Cliptiq/Cliptiq/tests/fixtures/ocr"
+Directory: D:/a/Cliptiq/Cliptiq/out/ocr-Windows-native
+"native_ocr" start time: Oct 24 15:10 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+portable identity correctly rejected; positive packaged acceptance OPEN
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"native_ocr" end time: Oct 24 15:10 Coordinated Universal Time
+"native_ocr" time elapsed: 00:00:00
+----------------------------------------------------------
+
+49/54 Testing: fts_transaction_race
+49/54 Test: fts_transaction_race
+Command: "D:/a/Cliptiq/Cliptiq/out/ocr-Windows-native/fts_transaction_race.exe"
+Directory: D:/a/Cliptiq/Cliptiq/out/ocr-Windows-native
+"fts_transaction_race" start time: Oct 24 15:10 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+index gate spans complete main deletion transaction
+<end of output>
+Test time =   1.11 sec
+----------------------------------------------------------
+Test Passed.
+"fts_transaction_race" end time: Oct 24 15:10 Coordinated Universal Time
+"fts_transaction_race" time elapsed: 00:00:01
+----------------------------------------------------------
+
+End testing: Oct 24 15:10 Coordinated Universal Time

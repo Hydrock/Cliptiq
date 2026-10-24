@@ -1,0 +1,23 @@
+F....s.F
+======================================================================
+FAIL: test_absolute_and_cwd_dependent_loader_routes_are_rejected (test_distribution.DistributionTests.test_absolute_and_cwd_dependent_loader_routes_are_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\SmiteVils\Documents\ChatGPT\ClipBoard Project\tests\tools\test_distribution.py", line 49, in test_absolute_and_cwd_dependent_loader_routes_are_rejected
+    self.assertTrue(m.validate_distribution(root,manifest,inspector=inspect),route)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: [] is not true : C:\Users\SMITEV~1\AppData\Local\Temp\tmpy_ugms26
+
+======================================================================
+FAIL: test_unsupported_native_magic_cannot_hide_as_data (test_distribution.DistributionTests.test_unsupported_native_magic_cannot_hide_as_data)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\SmiteVils\Documents\ChatGPT\ClipBoard Project\tests\tools\test_distribution.py", line 64, in test_unsupported_native_magic_cannot_hide_as_data
+    with self.assertRaises(ValueError,msg=magic.hex()):m.inspect_binary(path)
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised : cefaedfe
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.093s
+
+FAILED (failures=2, skipped=1)
