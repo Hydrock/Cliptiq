@@ -8,7 +8,7 @@ class IndexGate {
 
 public:
   IndexGate(const std::string &path, const std::string &owner = {},
-            bool create = false);
+            bool create = false, bool wait = true);
   ~IndexGate();
   std::filesystem::path file() const;
   void clear();

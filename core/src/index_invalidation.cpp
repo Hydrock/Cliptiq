@@ -64,7 +64,7 @@ struct IndexGate::Impl {
 #endif
 };
 IndexGate::IndexGate(const std::string &path, const std::string &owner,
-                     bool create)
+                     bool create, bool wait)
     : impl_(new Impl) {
   auto file = fs::absolute(fs::u8path(path)).lexically_normal();
   if (file.filename() != "search.db" ||
@@ -93,9 +93,11 @@ IndexGate::IndexGate(const std::string &path, const std::string &owner,
        (FILE_ATTRIBUTE_DIRECTORY | FILE_ATTRIBUTE_REPARSE_POINT)) ||
       info.nFileSizeHigh || info.nFileSizeLow || info.nNumberOfLinks != 1)
     fail("Invalid index gate file");
-  if (!LockFileEx(impl_->handle, LOCKFILE_EXCLUSIVE_LOCK, 0, 1, 0,
-                  &impl_->offset))
-    fail("Cannot lock index gate");
+  if (!LockFileEx(impl_->handle,
+                  LOCKFILE_EXCLUSIVE_LOCK |
+                      (wait ? 0 : LOCKFILE_FAIL_IMMEDIATELY),
+                  0, 1, 0, &impl_->offset))
+    throw Failure{{ErrorCode::Busy, "Index publication is busy"}};
   impl_->locked = true;
 #else
   impl_->fd =
@@ -106,10 +108,10 @@ IndexGate::IndexGate(const std::string &path, const std::string &owner,
     fail("Invalid index gate file");
   int result;
   do {
-    result = flock(impl_->fd, LOCK_EX);
+    result = flock(impl_->fd, LOCK_EX | (wait ? 0 : LOCK_NB));
   } while (result < 0 && errno == EINTR);
   if (result < 0)
-    fail("Cannot lock index gate");
+    throw Failure{{ErrorCode::Busy, "Index publication is busy"}};
   impl_->locked = true;
 #endif
   auto dir = impl_->path.parent_path();
@@ -171,6 +173,15 @@ std::string companion_path(sqlite3 *db) {
     return {};
   return (fs::absolute(fs::u8path(name)).parent_path() / "index/search.db")
       .u8string();
+}
+std::shared_ptr<void> mutation_gate(sqlite3 *db) {
+  auto path = companion_path(db);
+  if (path.empty())
+    return {};
+  auto name = fs::u8path(sqlite3_db_filename(db, "main")).filename().u8string();
+  auto gate = std::make_shared<IndexGate>(path, name, false, false);
+  gate->clear();
+  return gate;
 }
 void invalidate_companion(sqlite3 *db) {
   auto path = companion_path(db);

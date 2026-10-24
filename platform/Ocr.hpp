@@ -16,5 +16,6 @@ public:
   ~OcrService();
   Result<bool> poll(const CapturePolicy &, const Capabilities &);
   void cancel();
+  void retry_unavailable();
 };
 } // namespace cliptiq

@@ -11,9 +11,10 @@ if args.engine=='tesseract' and not args.reuse_deps:run(sys.executable,'packagin
 base=root/('out/ocr-'+platform.system()+'-Base');optional=root/('out/ocr-'+platform.system()+'-'+args.engine);host='cliptiq_menu_host' if platform.system()=='Linux' else 'cliptiq_app';suffix='.exe' if platform.system()=='Windows' else ''
 for folder,engine,index in [(base,'none','OFF'),(optional,args.engine,'ON')]:
  run(cmake,'-S',root,'-B',folder,'-G','Ninja','-DCMAKE_BUILD_TYPE=MinSizeRel','-Docr_index='+index,'-DCLIPTIQ_OCR_ENGINE='+engine)
- targets=[host,'fts_variant_probe'] if engine=='none' else [host,'fts_variant_probe','ocr_test','fts_test','ocr_queue_test','native_ocr_test']
+ targets=[host,'fts_variant_probe'] if engine=='none' else [host,'fts_variant_probe','ocr_test','fts_test','ocr_queue_test','native_ocr_test','fts_transaction_race']
  run(cmake,'--build',folder,'--target',*targets,'--parallel','4')
-run(ctest,'--test-dir',optional,'-R','^(ocr|fts|ocr_queue|native_ocr)$','--output-on-failure')
+run(ctest,'--test-dir',optional,'-R','^(ocr|fts.*|ocr_queue|native_ocr)$','--output-on-failure')
+if platform.system()=='Linux' and args.engine=='tesseract':run(sys.executable,'tests/integration/ocr_install_layout.py',optional)
 run(sys.executable,'tests/integration/fts_variants.py',base/('fts_variant_probe'+suffix),optional/('fts_variant_probe'+suffix))
 def executable(folder):return folder/('Cliptiq.app/Contents/MacOS/Cliptiq' if platform.system()=='Darwin' else ('Cliptiq'+suffix if platform.system()=='Windows' else host))
 def inventory(folder):

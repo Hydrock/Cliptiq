@@ -17,13 +17,15 @@ Result<Store> open_store(const std::string& path,Limits limits){return detail::g
  detail::check(raw,sqlite3_create_module(raw,"fts5vocab",nullptr,nullptr));
  sqlite3_extended_result_codes(raw,1);sqlite3_busy_timeout(raw,1000);sqlite3_limit(raw,SQLITE_LIMIT_LENGTH,65*1024*1024);
  detail::exec(raw,"PRAGMA foreign_keys=ON; PRAGMA trusted_schema=OFF");
- detail::Statement version(raw,"PRAGMA user_version");version.row();auto v=version.number(0);
- detail::Statement app(raw,"PRAGMA application_id");app.row();auto aid=app.number(0);
+ std::int64_t v,aid;
+ {detail::Statement version(raw,"PRAGMA user_version");version.row();v=version.number(0);
+ detail::Statement app(raw,"PRAGMA application_id");app.row();aid=app.number(0);}
  if(v!=0&&v!=1&&v!=2)return Error{ErrorCode::Unsupported,"unsupported database schema version"};
  if(v!=0&&aid!=0x43544951)return Error{ErrorCode::Corrupt,"database application identity mismatch"};
  if(v==0){
-  detail::Statement tables(raw,"SELECT count(*) FROM sqlite_schema WHERE name NOT LIKE 'sqlite_%'");tables.row();
-  if(tables.number(0)!=0)return Error{ErrorCode::Unsupported,"refusing to initialize a nonempty foreign database"};
+  {detail::Statement tables(raw,"SELECT count(*) FROM sqlite_schema WHERE name NOT LIKE 'sqlite_%'");tables.row();
+  if(tables.number(0)!=0)return Error{ErrorCode::Unsupported,"refusing to initialize a nonempty foreign database"};}
+  detail::exec(raw,"PRAGMA journal_mode=WAL");
   detail::Transaction tx(raw);
   detail::exec(raw,R"SQL(
 CREATE TABLE store_state(id INTEGER PRIMARY KEY CHECK(id=1),data_revision INTEGER NOT NULL DEFAULT 0,cleanup_interval INTEGER NOT NULL DEFAULT 0,cleanup_last INTEGER);
@@ -40,7 +42,7 @@ CREATE TABLE settings(key TEXT PRIMARY KEY,value BLOB NOT NULL);
 PRAGMA application_id=1129597265;
 PRAGMA user_version=1;
 )SQL");tx.commit();
- }
+ }else detail::exec(raw,"PRAGMA journal_mode=WAL");
  if(v<2){detail::Transaction migration(raw);detail::exec(raw,R"SQL(
 CREATE TABLE snippet_folder_states(id TEXT PRIMARY KEY REFERENCES snippet_folders(id) ON DELETE CASCADE,enabled INTEGER NOT NULL CHECK(enabled IN(0,1)),revision INTEGER NOT NULL CHECK(revision>=0));
 CREATE TABLE snippet_states(id TEXT PRIMARY KEY REFERENCES snippets(id) ON DELETE CASCADE,enabled INTEGER NOT NULL CHECK(enabled IN(0,1)),revision INTEGER NOT NULL CHECK(revision>=0));

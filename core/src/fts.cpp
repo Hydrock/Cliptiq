@@ -54,23 +54,20 @@ Result<void> rebuild_index(Store &s, const std::string &path,
                            std::uint64_t revision) {
   return detail::guarded<void>([&]() -> Result<void> {
     location(s, path);
-    detail::IndexGate gate(path, owner(s), true);
-    gate.clear();
     ReadSnapshot snapshot(s.connection());
     auto current = data_revision(s);
     if (!current)
       return current.error();
     if (current.value() != revision)
       return Error{ErrorCode::Busy, "Main data changed before index snapshot"};
-    auto temporary = gate.file().parent_path() / "build.db";
+    auto db = open_index(":memory:", true);
     {
-      auto db = open_index(temporary, true);
       detail::exec(db.get(),
                    "PRAGMA journal_mode=DELETE; PRAGMA max_page_count=32768; "
                    "CREATE TABLE metadata(revision INTEGER NOT NULL); CREATE "
                    "VIRTUAL TABLE search USING fts5(id UNINDEXED,snippet "
                    "UNINDEXED,title,body,tokenize='unicode61');");
-      detail::Transaction tx(db.get());
+      detail::Transaction tx(db.get(), false);
       detail::Statement meta(db.get(), "INSERT INTO metadata VALUES(?)");
       meta.bind(1, static_cast<std::int64_t>(revision));
       meta.done();
@@ -134,11 +131,26 @@ Result<void> rebuild_index(Store &s, const std::string &path,
       tx.commit();
     }
     snapshot.finish();
+    detail::IndexGate gate(path, owner(s), true);
     current = data_revision(s);
     if (!current)
       return current.error();
     if (current.value() != revision)
       return Error{ErrorCode::Busy, "Main data changed during index rebuild"};
+    gate.clear();
+    auto temporary = gate.file().parent_path() / "build.db";
+    {
+      auto output = open_index(temporary, true);
+      auto backup = sqlite3_backup_init(output.get(), "main", db.get(), "main");
+      if (!backup)
+        throw detail::Failure{
+            detail::db_error(output.get(), sqlite3_errcode(output.get()))};
+      auto copied = sqlite3_backup_step(backup, -1);
+      auto finished = sqlite3_backup_finish(backup);
+      if (copied != SQLITE_DONE)
+        throw detail::Failure{detail::db_error(output.get(), copied)};
+      detail::check(output.get(), finished);
+    }
     std::filesystem::rename(temporary, gate.file());
     return {};
   });

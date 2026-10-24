@@ -20,7 +20,7 @@ if platform.system()=='Windows':
  sys.path.insert(0,str(root/'tools'));from importlib.machinery import SourceFileLoader
  helper=SourceFileLoader('footprint',str(root/'tools/build-footprint.py')).load_module();env,cmake=helper.visual_studio_env()
 def run(*cmd):subprocess.run([str(c) for c in cmd],env=env,check=True)
-common=['-G','Ninja','-DCMAKE_BUILD_TYPE=MinSizeRel','-DBUILD_SHARED_LIBS=OFF','-DSW_BUILD=OFF','-DCMAKE_INSTALL_PREFIX='+str(prefix),'-DCMAKE_INSTALL_LIBDIR=lib','-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded']
+common=['-G','Ninja','-DCMAKE_BUILD_TYPE=MinSizeRel','-DBUILD_SHARED_LIBS=OFF','-DSW_BUILD=OFF','-DCMAKE_INSTALL_PREFIX='+str(prefix),'-DCMAKE_INSTALL_LIBDIR=lib','-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded','-DCMAKE_POLICY_DEFAULT_CMP0091=NEW']
 lept=work/('build-lept-'+platform.system());tess=work/('build-tess-'+platform.system())
 run(cmake,'-S',work/'leptonica-1.85.0','-B',lept,*common,'-DBUILD_PROG=OFF',*['-DENABLE_'+x+'=OFF' for x in ['ZLIB','PNG','GIF','JPEG','TIFF','WEBP','OPENJPEG']])
 run(cmake,'--build',lept,'--parallel','4');run(cmake,'--install',lept)

@@ -11,6 +11,9 @@ struct OcrService::Impl {
   std::atomic_bool cancelled{false};
   std::future<Result<std::string>> worker;
   std::optional<OcrTicket> ticket;
+  std::optional<Result<std::string>> ready;
+  std::chrono::steady_clock::time_point retry =
+      std::chrono::steady_clock::now();
   std::set<EntryId> attempted;
   std::int64_t cursor = 0;
   std::uint64_t revision = UINT64_MAX;
@@ -24,6 +27,11 @@ OcrService::~OcrService() {
   if (impl_->worker.valid())
     impl_->worker.wait();
 }
+void OcrService::retry_unavailable() {
+  impl_->attempted.clear();
+  impl_->cursor = 0;
+  impl_->retry = std::chrono::steady_clock::now();
+}
 void OcrService::cancel() { impl_->cancelled = true; }
 Result<bool> OcrService::poll(const CapturePolicy &policy,
                               const Capabilities &caps) {
@@ -34,16 +42,23 @@ Result<bool> OcrService::poll(const CapturePolicy &policy,
       if (s.worker.wait_for(std::chrono::seconds(0)) !=
           std::future_status::ready)
         return false;
-      auto result = s.worker.get();
-      auto done = finish_ocr(s.store, *s.ticket, std::move(result), policy,
-                             caps, s.cancelled);
+      s.ready = s.worker.get();
+    }
+    if (s.ready) {
+      auto done =
+          finish_ocr(s.store, *s.ticket, *s.ready, policy, caps, s.cancelled);
+      if (!done && done.error().code == ErrorCode::Busy)
+        return false;
       if (done && !done.value())
         s.attempted.erase(s.ticket->id);
       s.ticket.reset();
+      s.ready.reset();
       if (!done)
         return done.error();
       changed = done.value();
     }
+    if (std::chrono::steady_clock::now() - s.retry >= std::chrono::seconds(60))
+      retry_unavailable();
     if (s.cancelled || !policy.request_ocr ||
         caps.ocr.status == CapabilityStatus::Unavailable || !s.engine)
       return changed;
@@ -57,7 +72,7 @@ Result<bool> OcrService::poll(const CapturePolicy &policy,
     detail::Statement candidates(
         s.store.connection(),
         "SELECT rowid,id FROM history WHERE rowid>? AND (ocr_state IS NULL AND "
-        "ocr_text IS NULL OR ocr_state=0) ORDER BY rowid LIMIT 32");
+        "ocr_text IS NULL OR ocr_state IN(0,2)) ORDER BY rowid LIMIT 32");
     candidates.bind(1, s.cursor);
     while (candidates.row()) {
       s.cursor = candidates.number(0);
@@ -81,8 +96,13 @@ Result<bool> OcrService::poll(const CapturePolicy &policy,
       if (!generation)
         return generation.error();
       auto ticket = begin_ocr(s.store, id, generation.value(), policy, caps);
-      if (!ticket)
+      if (!ticket) {
+        if (ticket.error().code == ErrorCode::Busy) {
+          s.cursor = 0;
+          return changed;
+        }
         return ticket.error();
+      }
       s.ticket = ticket.value();
       if (s.attempted.size() >= 100000)
         return Error{ErrorCode::TooLarge,

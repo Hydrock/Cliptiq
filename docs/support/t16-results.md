@@ -5,17 +5,18 @@
 Base не включает OCR engine, модели или FTS5. Опции `ocr_index=ON` и
 `CLIPTIQ_OCR_ENGINE=native|tesseract` независимы. Индекс находится только в
 `index/search.db` профиля; main SQLite connections отключают FTS modules,
-схема history сохраняет обычные OCR-поля. Все main revision writes перед
-commit удаляют известные файлы companion под общим межпроцессным lock.
+схема history сохраняет обычные OCR-поля. Все main-транзакции удерживают общий gate до COMMIT/ROLLBACK;
+известные companion файлы удаляются до изменения данных.
 Startup Base не открывает индекс, но инвалидирует его. Namespace имеет
-owner marker; чужие файлы и symlinks не удаляются. Перестройка использует
-read snapshot и проверку revision перед публикацией; потерянный индекс
+owner marker; чужие файлы и symlinks не удаляются. Перестройка использует read snapshot и ограниченную in-memory FTS БД,
+завершает snapshot, проверяет revision под gate и публикует disk backup; потерянный индекс
 восстанавливается из main. Single-instance scope T13 общий для вариантов.
 
 OCR: один bounded worker, декодирование через T12 codecs; проверки privacy
 до декодирования и перед публикацией. ID + digest + generation + nonce
 исключают публикацию удалённой/заменённой задачи. Pending/Done/Unavailable/
-Failed, пустой Done допустим. Текст до 10 000 Unicode grapheme clusters,
+Failed, пустой Done допустим. Unavailable повторяется при перезапуске
+и в bounded60s retry epochs; Pending-результат сохраняется при временном Busy. Текст до 10 000 Unicode grapheme clusters,
 выход engine до 1 MiB, image до 40 MP. Ошибка не уничтожает импортированный
 OCR; migration NULL-state/non-NULL-text читается как Done. Очередь получает
 только retained history и повторно проверяет текущую capture policy.
@@ -33,6 +34,12 @@ correction/detection и качество разных engines не эквива�
 бренд «Cliptiq» как «Cliptig» на английской фикстуре. Это наблюдаемое
 ограничение точности, не обход ошибки исполнения. Никакие пользовательские
 данные в fixtures или логах не используются.
+
+Публикация держит gate только при записи/rename; интерактивные main writes
+при конфликте сразу возвращают Busy, а не ждут перестройки. Main использует
+WAL после проверки identity/schema, чужие БД не изменяются. Recovery
+проверяется для rollback journal и WAL. Цена in-memory перестройки — до128MiB
+индексной памяти сверх остальных данных; максимальный RSS не замерен.
 
 FTS: unicode61, literal phrase, query ≤1024 B, ≤1000 результатов, ≤100000
 history/10000 snippets, общий текст ≤64 MiB, database ≤128 MiB. Text history
@@ -52,3 +59,6 @@ CI не заменяет чистые потребительские ВМ: та�
 [Windows OCR package identity](https://learn.microsoft.com/en-us/uwp/api/windows.media.ocr),
 [Tesseract API](https://tesseract-ocr.github.io/tessapi/5.x/a02438.html),
 [SQLite FTS5](https://www.sqlite.org/fts5.html).
+
+Свежий review и полный список ограничений: [review](t16-review.md).
+Ручная T16: [чеклист](../../tests/manual/t16-ocr-fts.md), OPEN.

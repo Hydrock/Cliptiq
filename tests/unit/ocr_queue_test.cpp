@@ -49,6 +49,33 @@ int main() {
     CHECK(erase_history(store));
     CHECK(queue.poll(p, caps));
     CHECK(take(list_history(store)).empty());
+    // An Unavailable entry must be retried after switching to a working pack.
+    auto retained = *take(ingest(
+        store, screenshot_snapshot(CapturePlatform::X11, {2}, "repaired"), {},
+        4));
+    auto ticket = take(begin_ocr(
+        store, retained, take(history_erase_generation(store)),
+        CapturePolicy{{true, true, true, false, true, true, true, true, false},
+                      false,
+                      false,
+                      true},
+        caps));
+    CapturePolicy enabled;
+    enabled.request_ocr = true;
+    CHECK(take(finish_ocr(store, ticket,
+                          Error{ErrorCode::Unsupported, "models missing"},
+                          enabled, caps, false)));
+    {
+      OcrService repaired(store, std::make_unique<Engine>(),
+                          [](const Representation &) -> Result<MenuImage> {
+                            return MenuImage{1, 1, {255, 255, 255, 255}};
+                          });
+      for (int n = 0; n < 100; ++n) {
+        CHECK(repaired.poll(enabled, caps));
+        std::this_thread::sleep_for(std::chrono::milliseconds(2));
+      }
+    }
+    CHECK(take(load_ocr(store, retained)).state == OcrState::Done);
     std::cout << "async privacy revocation prevents publication\n";
   } catch (const std::exception &e) {
     std::cerr << e.what() << '\n';
