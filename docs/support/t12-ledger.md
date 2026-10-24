@@ -95,3 +95,5 @@ Final: Ruling: existing T04–T11 manual gates stay OPEN — cost: no general re
 Ruling: internal erasure metadata uses its own t12 settings namespace, with no schema
 version increase — existing T09 readers select only t09 keys; cost: older binaries do
 not advance this new generation, so simultaneous older/newer writers are unsupported.
+
+Final verification: exact runtime 132adc53f3bf6ddd9cc009dc97151de84d888269, CI400777449557/7; Linux43/Windows33/macOS30 groups in eleven green logs. Local Linux43/43 Debug/MinSizeRel/ASan+UBSan, Windows16/16 safe groups. Four hosted source hash maps and local LF-normalized sources verified, paired Linux binary hashes equal CI. T13 not started; manual gates remain OPEN.

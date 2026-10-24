@@ -16,4 +16,4 @@
 
 [Linux backend и ограничения](platform/linux/README.md) · [Результаты T06](docs/support/t06-results.md)
 
-[T07: меню, native UI, проверки и размеры](docs/support/t07-results.md). Ручная приёмка T04–T06 и интерактивная T07 открыта. [T08: вставка, проверки и размеры](docs/support/t08-results.md). Ручная app-to-app T08 открыта. [T09: настройки, горячие клавиши, конфликты и размеры](docs/support/t09-results.md). [T10: сниппеты, редактор, CI и размеры](docs/support/t10-results.md). [T11: XML import/export, проверки и размеры](docs/support/t11-results.md). Ручная T04–T11 открыта; T12 не начат.
+[T07: меню, native UI, проверки и размеры](docs/support/t07-results.md). Ручная приёмка T04–T06 и интерактивная T07 открыта. [T08: вставка, проверки и размеры](docs/support/t08-results.md). Ручная app-to-app T08 открыта. [T09: настройки, горячие клавиши, конфликты и размеры](docs/support/t09-results.md). [T10: сниппеты, редактор, CI и размеры](docs/support/t10-results.md). [T11: XML import/export, проверки и размеры](docs/support/t11-results.md). Ручная T04–T11 открыта; [T12: preview и screenshot observation](docs/support/t12-results.md). Ручная T12 OPEN; T13 не начат.

@@ -227,7 +227,7 @@ Capture contract: сохранять все разрешённые representatio
 - [ ] На Mac import/export в настоящий Clipy соответствующей baseline; fixtures не заменяют совместимость с живым приложением.
 - [x] Commit `feat: support Clipy-compatible snippet XML`.
 
-Автоматическая часть: source `98b3950634c650ce9b0333dba73989e37efcd2bf`, [CI40074549461](https://github.com/Hydrock/Cliptiq/actions/runs/40074549461) —7/7. [Результаты](../../support/t11-results.md). TinyXML2 pinned static вместо предложенного pugixml; actual wire cap64MiB вместо раннего8MiB, причины/цена в ledger/API. Native dialog/live Clipy/desktop/manual gates OPEN, T04–T10 manual OPEN, T12 не начат. Deferred Minor: premature picker progress label.
+Автоматическая часть: source `98b3950634c650ce9b0333dba73989e37efcd2bf`, [CI40074549461](https://github.com/Hydrock/Cliptiq/actions/runs/40074549461) —7/7. [Результаты](../../support/t11-results.md). TinyXML2 pinned static вместо предложенного pugixml; actual wire cap64MiB вместо раннего8MiB, причины/цена в ledger/API. Native dialog/live Clipy/desktop/manual gates OPEN, T04–T10 manual OPEN, T12 см. ниже. Deferred Minor: premature picker progress label.
 
 ### T12. Preview и screenshot file observation
 
@@ -235,11 +235,13 @@ Capture contract: сохранять все разрешённые representatio
 
 **Interfaces:** `request_preview(EntryId, PreviewSize, generation)->Result<void>`; `on_screenshot_file(path)->Result<void>` отправляет snapshot через T03. Background completion `store_preview_if_present(EntryId,generation,Bytes)` атомарно проверяет наличие/generation.
 
-- [ ] Failing tests: aspect fit 100×32, 1–512 boundaries, hex swatch format fixtures, changed dimensions regenerate, delete race, malformed image/40MP, growing file waits, own clipboard screenshot dedup.
-- [ ] `ctest --preset test -R media --output-on-failure`, затем OS codecs и bounded worker queue; preview cache ограничен, main menu не декодирует full image.
-- [ ] Исследовать Screeen detector package перед заявлением точного Mac parity; native file notification + configured screenshot locations, Windows ReadDirectoryChangesW, Linux GFileMonitor. Не сохранять любой появившийся PNG как скриншот без выбранной директории.
+- [x] Failing tests: aspect fit 100×32, 1–512 boundaries, hex swatch format fixtures, changed dimensions regenerate, delete race, malformed image/40MP, growing file waits, own clipboard screenshot dedup.
+- [x] `ctest --preset test -R media --output-on-failure`, затем OS codecs и bounded worker queue; preview cache ограничен, main menu не декодирует full image.
+- [x] Исследовать Screeen detector package перед заявлением точного Mac parity; native file notification + configured screenshot locations, Windows ReadDirectoryChangesW, Linux GFileMonitor. Не сохранять любой появившийся PNG как скриншот без выбранной директории.
 - [ ] Проверить off по умолчанию, permission denied, rename/partial write, exclude policy, watcher stop/restart. Документировать различие от «захватить экран».
-- [ ] Commit `feat: add bounded previews and screenshot folder observation`.
+- [x] Commit `feat: add bounded previews and screenshot folder observation`.
+
+Автоматическая часть: runtime `132adc53f3bf6ddd9cc009dc97151de84d888269`, [CI40077744955](https://github.com/Hydrock/Cliptiq/actions/runs/40077744955) 7/7; [результаты](../../support/t12-results.md). Ручная T04–T11 и T12 desktop acceptance OPEN. T13 не начат. Deferred Minor: preview-off resource savings.
 
 ### T13. Автозапуск, локализация и доступность приложения
 
