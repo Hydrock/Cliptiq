@@ -26,11 +26,12 @@
           d[k] = v;
       }
     }
-    for (NSString *k in
-         @[ @"modifiers", @"QWERTYKeyCode", @"keyCode", @"doubledModifiers" ]) {
+    for (NSString *k in @[ @"modifiers", @"QWERTYKeyCode", @"keyCode" ]) {
       if ([c containsValueForKey:k])
         d[k] = @([c decodeIntegerForKey:k]);
     }
+    if ([c containsValueForKey:@"doubledModifiers"])
+      d[@"doubledModifiers"] = @([c decodeBoolForKey:@"doubledModifiers"]);
     self.fields = d;
   }
   return self;
@@ -70,8 +71,13 @@ static id decode(id value) {
     id result = [u decodeObjectOfClasses:classes
                                   forKey:NSKeyedArchiveRootObjectKey];
     [u finishDecoding];
+    if (u.error)
+      std::cerr << "Legacy settings archive decode: "
+                << u.error.localizedDescription.UTF8String << '\n';
     return u.error ? nil : result;
-  } @catch (NSException *) {
+  } @catch (NSException *e) {
+    std::cerr << "Legacy settings archive rejected: " << e.reason.UTF8String
+              << '\n';
     return nil;
   }
 }

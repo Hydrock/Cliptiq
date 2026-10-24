@@ -2,7 +2,9 @@ import pathlib,subprocess,tempfile,sqlite3,sys,plistlib,json,hashlib,shutil
 cli,native=sys.argv[1:3];legacy=sys.argv[3] if len(sys.argv)>3 else None
 root=pathlib.Path(tempfile.mkdtemp(prefix='cliptiq-migration-native-'))
 def run(args,ok=True):
- r=subprocess.run(list(map(str,args)),capture_output=True,text=True);assert (r.returncode==0)==ok,(args,r.stdout,r.stderr)
+ r=subprocess.run(list(map(str,args)),capture_output=True,text=True);
+ if r.stderr:print(r.stderr)
+ assert (r.returncode==0)==ok,(args,r.stdout,r.stderr)
 def archive(classname,fields):
  objects=['$null',{}, {'$classname':classname,'$classes':[classname,'NSObject']}]
  fields=dict(fields);fields['$class']=plistlib.UID(2)
@@ -27,7 +29,7 @@ try:
   p=root/'source.sqlite3';scope['fixture'](p,4);before=p.read_bytes();neutral=root/'native.neutral';run([native,p,prefs,neutral]);assert p.read_bytes()==before
   dest=root/'native.dest';run([cli,'import',neutral,dest,'--apply-settings']);d=sqlite3.connect(dest)
   assert d.execute("SELECT value FROM settings WHERE key='t09.history_count'").fetchone()==('50',)
-  assert d.execute("SELECT value FROM settings WHERE key='t09.hotkey:main'").fetchone()==('Ctrl+Shift+B',)
+  actual=d.execute("SELECT value FROM settings WHERE key='t09.hotkey:main'").fetchone();assert actual==('Ctrl+Shift+B',),actual
   assert d.execute("SELECT value FROM settings WHERE key='t09.hotkey:history'").fetchone()==('',)
   assert d.execute("SELECT value FROM settings WHERE key='t09.excluded'").fetchone()==('org.example.Secret',)
   assert d.execute("SELECT data FROM migration_originals WHERE category='settings' AND id='source.preferences'").fetchone()==(prefs.read_bytes(),)

@@ -43,6 +43,23 @@ try:
  # Unknown neutral versions, malformed DBs and wrong source cannot mutate target.
  bad=root/'invalid';bad.write_bytes(b'not sqlite');run('import',bad,dest,ok=False)
  n2=root/'bad-version';n2.write_bytes(n.read_bytes());d=sqlite3.connect(n2);d.execute('UPDATE cliptiq_interchange SET format_version=2');d.commit();d.close();run('import',n2,dest,ok=False)
+ # Malformed UTF-8, typed flags and empty IDs must never reach native UI.
+ for field,value in [('title',sqlite3.Binary(b'\xff')),('isEnabled',1.5)]:
+  bad=root/('typed-'+field);bad.write_bytes(n.read_bytes());d=sqlite3.connect(bad)
+  if field=='title':d.execute("UPDATE snippets SET title=CAST(? AS TEXT)",(value,))
+  else:d.execute('UPDATE snippets SET isEnabled=?',(value,))
+  d.commit();d.close();run('import',bad,root/('typed-'+field+'.dest'),ok=False)
+ # Settings are inert by default; nil disables, conflicts reject atomically.
+ settings=root/'settings.neutral';settings.write_bytes(n.read_bytes());d=sqlite3.connect(settings)
+ d.executemany('INSERT INTO migration_settings VALUES(?,?,?)',[('history_count',b'raw-count','50'),('hotkey:main',b'raw-nil',''),('excluded',b'raw-exclusions','org.example.Secret'),('type_html',b'raw-type','0')]);d.commit();d.close()
+ dest2=root/'settings.dest';run('import',settings,dest2,'--apply-settings');d=sqlite3.connect(dest2)
+ assert d.execute("SELECT value FROM settings WHERE key='t09.hotkey:main'").fetchone()==('',)
+ assert d.execute("SELECT value FROM settings WHERE key='t09.history_count'").fetchone()==('50',);d.close()
+ conflict=root/'shortcut-conflict.neutral';conflict.write_bytes(settings.read_bytes());d=sqlite3.connect(conflict)
+ d.executemany('INSERT OR REPLACE INTO migration_settings VALUES(?,?,?)',[('hotkey:main',b'main','Ctrl+Shift+Q'),('hotkey:history',b'history','Ctrl+Shift+Q')]);d.commit();d.close()
+ empty=root/'empty-settings.dest';run('import',conflict,empty,'--apply-settings',ok=False);d=sqlite3.connect(empty);assert d.execute('SELECT count(*) FROM history').fetchone()==(0,);d.close()
+ # Unicode paths must work on Windows as well as POSIX.
+ unicode=root/'данные-clipboard';unicode.write_bytes(n.read_bytes());run('import',unicode,root/'история.dest')
  # WAL source remains byte-for-byte unchanged, including sidecars.
  p=root/'wal.sqlite3';fixture(p,4);d=sqlite3.connect(p);d.execute('PRAGMA journal_mode=WAL');d.execute("UPDATE snippets SET content='In WAL'");d.commit();before=snapshot(p);run('export',p,root/'wal.neutral');assert snapshot(p)==before;d.close()
  print('PASS Clipy SQLite v1-v4, duplicate preservation, states/order/times/assets, idempotence, atomic failures, WAL/source hashes')

@@ -9,8 +9,10 @@
 #include <set>
 #ifdef _WIN32
 #define NOMINMAX
-#include <sddl.h>
+// clang-format off
 #include <windows.h>
+#include <sddl.h>
+// clang-format on
 #else
 #include <sys/stat.h>
 #endif
@@ -36,6 +38,36 @@ std::string text(Statement &q, int i, std::size_t limit = 1024 * 1024) {
   auto s = q.text(i);
   require(s.size() <= limit && s.find('\0') == std::string::npos,
           "Invalid or oversized migration text");
+  for (std::size_t pos = 0; pos < s.size();) {
+    auto c = static_cast<unsigned char>(s[pos++]);
+    unsigned count = 0, minimum = 0;
+    unsigned code = c;
+    if (c < 128)
+      continue;
+    if (c >= 0xc2 && c <= 0xdf) {
+      count = 1;
+      code = c & 31;
+      minimum = 128;
+    } else if (c >= 0xe0 && c <= 0xef) {
+      count = 2;
+      code = c & 15;
+      minimum = 2048;
+    } else if (c >= 0xf0 && c <= 0xf4) {
+      count = 3;
+      code = c & 7;
+      minimum = 65536;
+    } else
+      require(false, "Invalid migration UTF-8");
+    require(pos + count <= s.size(), "Incomplete migration UTF-8");
+    while (count--) {
+      auto next = static_cast<unsigned char>(s[pos++]);
+      require((next & 192) == 128, "Invalid migration UTF-8");
+      code = (code << 6) | (next & 63);
+    }
+    require(code >= minimum && code <= 0x10ffff &&
+                !(code >= 0xd800 && code <= 0xdfff),
+            "Invalid migration Unicode scalar");
+  }
   return s;
 }
 struct Scratch {
@@ -193,6 +225,27 @@ Data read(sqlite3 *d, bool neutral) {
   auto cols = columns(d, "pasteboardHistories");
   bool v3 = cols.count("createdAt"), v4 = cols.count("ocrText");
   require(!v4 || v3, "Invalid Clipy schema progression");
+  for (auto item :
+       {std::pair<const char *, const char *>{
+            "pasteboardHistories",
+            "typeof(id)!='text' OR typeof(title)!='text' OR "
+            "typeof(pasteboardTypes)!='text' OR typeof(updateAt)!='integer'"},
+        {"pasteboardHistoryAssets",
+         "typeof(id)!='text' OR typeof(pasteboardHistoryID)!='text' OR "
+         "typeof(\"index\")!='integer' OR typeof(pasteboardType)!='text' OR "
+         "typeof(data)!='blob'"},
+        {"snippetFolders",
+         "typeof(id)!='text' OR typeof(title)!='text' OR "
+         "typeof(\"index\")!='integer' OR typeof(isEnabled)!='integer'"},
+        {"snippets",
+         "typeof(id)!='text' OR typeof(folderID)!='text' OR "
+         "typeof(title)!='text' OR typeof(content)!='text' OR "
+         "typeof(\"index\")!='integer' OR typeof(isEnabled)!='integer'"}}) {
+    std::string sql = "SELECT 1 FROM " + std::string(item.first) + " WHERE " +
+                      item.second + " LIMIT 1";
+    Statement typed(d, sql.c_str());
+    require(!typed.row(), "Invalid migration SQLite value type");
+  }
   if (neutral) {
     require(table(d, "cliptiq_interchange") && table(d, "migration_settings"),
             "Not a neutral Cliptiq interchange");
