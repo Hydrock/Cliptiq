@@ -145,5 +145,7 @@ report['menu'] = {'baseline': menu_baseline, 'model': menu_model, 'native': menu
 report['source_files_sha256']['platform/MenuHost.cpp'] = hashlib.sha256((root / 'platform/MenuHost.cpp').read_bytes()).hexdigest()
 paste_native = menu_variant('paste_native_probe')
 report['paste'] = {'baseline': menu_native, 'with_paste': paste_native, 'added_bytes': paste_native['executable_bytes']-menu_native['executable_bytes'], 'added_zip_bytes': paste_native['zip_bytes']-menu_native['zip_bytes'], 'scope': 'paired same native menu/capture-capable host without and with selection pipeline, modifier mapping and native paste; smoke never reads/writes clipboard or sends input; system libraries not bundled; not full product'}
+settings_native = menu_variant('settings_native_probe')
+report['settings'] = {'baseline': paste_native, 'with_settings': settings_native, 'added_bytes': settings_native['executable_bytes']-paste_native['executable_bytes'], 'added_zip_bytes': settings_native['zip_bytes']-paste_native['zip_bytes'], 'scope': 'same native history/menu/paste review host without and with settings UI/global shortcut services; no global registration or clipboard IO in smoke; system libraries not bundled; not complete product'}
 (root / 'out' / 't02-size.json').write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
 print(json.dumps(report, indent=2))

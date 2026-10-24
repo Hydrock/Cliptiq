@@ -163,7 +163,8 @@ Result<MenuModel> build_menu(Store &store, MenuKind kind,
                              const MenuSettings &s) {
   return detail::guarded<MenuModel>([&]() -> Result<MenuModel> {
     if (static_cast<unsigned>(kind) > 2 || s.inline_count > 100 ||
-        !s.folder_count || s.folder_count > 100 || !s.title_characters ||
+        !s.history_limit || s.history_limit > 1000 || !s.folder_count ||
+        s.folder_count > 100 || !s.title_characters ||
         s.title_characters > 1000 || !s.tooltip_characters ||
         s.tooltip_characters > 10000 || !s.preview_width ||
         s.preview_width > 512 || !s.preview_height || s.preview_height > 512 ||
@@ -192,7 +193,7 @@ Result<MenuModel> build_menu(Store &store, MenuKind kind,
       any_history = exists.number(0) != 0;
     }
     if (kind != MenuKind::Snippets) {
-      auto rows = list_history(store, s.sort_order, 1000);
+      auto rows = list_history(store, s.sort_order, s.history_limit);
       if (!rows)
         return rows.error();
       size_t index = 0;
@@ -273,6 +274,7 @@ Result<MenuModel> build_menu(Store &store, MenuKind kind,
         if (snippets.size() >= 1000)
           return Error{ErrorCode::TooLarge, "Too many snippet folders"};
         MenuItem folder;
+        folder.id = folders.text(0);
         auto title = menu_text(folders.text(1), s.title_characters);
         if (!title)
           return title.error();
@@ -342,6 +344,27 @@ Result<MenuModel> build_menu(Store &store, MenuKind kind,
     tx.commit();
     return m;
   });
+}
+Result<MenuModel> build_folder_menu(Store &store, const FolderId &id,
+                                    const MenuSettings &settings) {
+  auto model = build_menu(store, MenuKind::Snippets, settings);
+  if (!model)
+    return model.error();
+  for (auto &folder : model.value().items)
+    if (folder.id == id) {
+      MenuModel result;
+      result.kind = MenuKind::Snippets;
+      result.revision = model.value().revision;
+      result.items = std::move(folder.children);
+      if (result.items.empty()) {
+        MenuItem empty;
+        empty.label = "Empty folder";
+        empty.enabled = false;
+        result.items.push_back(std::move(empty));
+      }
+      return result;
+    }
+  return Error{ErrorCode::NotFound, "Snippet folder no longer exists"};
 }
 Result<void> validate_menu_command(Store &store, const MenuCommand &c) {
   return detail::guarded<void>([&]() -> Result<void> {

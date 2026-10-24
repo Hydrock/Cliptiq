@@ -245,5 +245,14 @@ int main() {
     m.items[0].tooltip = std::string("a\0b", 3);
     CHECK(!validate_menu_model(m));
   });
+  test("settings_history_limit_applies_without_erasing_store", [] {
+    auto store = take(open_store(":memory:"));
+    fill(store, 20);
+    MenuSettings settings;
+    settings.history_limit = 3;
+    auto menu = take(build_menu(store, MenuKind::History, settings));
+    CHECK(leaves(menu, MenuAction::SelectHistory).size() == 3);
+    CHECK(take(list_history(store, SortOrder::LastUsed, 1000)).size() == 20);
+  });
   return failed ? 1 : 0;
 }

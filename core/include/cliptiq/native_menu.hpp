@@ -36,6 +36,7 @@ public:
   Result<void> update(MenuModel);
   Result<void> show(const InvocationContext & = {});
   Result<void> set_tray_style(TrayStyle);
+  Result<void> set_options(NativeMenuOptions);
   Result<void> process_events(unsigned wait_ms = 0);
   NativeMenuStatus status() const;
   NativeMenuHandles native_handles() const;

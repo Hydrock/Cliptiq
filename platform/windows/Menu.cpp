@@ -452,6 +452,18 @@ Result<void> NativeMenu::show(const InvocationContext &c) {
   s->popup(c);
   return {};
 }
+Result<void> NativeMenu::set_options(NativeMenuOptions options) {
+  auto s = state_;
+  if (!s->thread() || !s->window || unsigned(options.tray_style) > 2 ||
+      !options.preview_width || !options.preview_height ||
+      options.preview_width > 512 || options.preview_height > 512)
+    return Error{ErrorCode::InvalidArgument, "Invalid live menu options"};
+  s->options = std::move(options);
+  auto result = update(s->model);
+  if (!result)
+    return result;
+  return set_tray_style(s->options.tray_style);
+}
 Result<void> NativeMenu::set_tray_style(TrayStyle t) {
   auto s = state_;
   if (!s->thread() || static_cast<unsigned>(t) > 2)

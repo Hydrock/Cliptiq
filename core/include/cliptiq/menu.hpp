@@ -34,6 +34,7 @@ struct MenuModel {
   MenuKind kind = MenuKind::Main;
 };
 struct MenuSettings {
+  std::size_t history_limit = 1000;
   std::size_t inline_count = 0, folder_count = 10, title_characters = 20,
               tooltip_characters = 200;
   bool snippets_above = false, numbered = true, zero_start = false,
@@ -56,6 +57,8 @@ struct MenuCommand {
 };
 Result<void> validate_menu_model(const MenuModel &);
 Result<MenuModel> build_menu(Store &, MenuKind, const MenuSettings & = {});
+Result<MenuModel> build_folder_menu(Store &, const FolderId &,
+                                    const MenuSettings & = {});
 Result<void> execute_menu_clear(Store &, const MenuCommand &);
 Result<void> validate_menu_command(Store &, const MenuCommand &);
 Result<std::string> menu_text(const std::string &, std::size_t,
