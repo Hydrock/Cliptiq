@@ -1,0 +1,20 @@
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+    Start 49: import
+1/1 Test #49: import ...........................***Failed    2.51 sec
+Traceback (most recent call last):
+  File "/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/tests/integration/import_fixtures.py", line 67, in <module>
+    d.execute("UPDATE snippets SET content=?",('X'*16000,));before=snapshot(p);run('export',p,root/'journal.neutral');assert snapshot(p)==before
+                                                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/tests/integration/import_fixtures.py", line 6, in run
+    assert (r.returncode==0)==ok,(args,r.stdout,r.stderr)
+           ^^^^^^^^^^^^^^^^^^^^^
+AssertionError: (('export', PosixPath('/tmp/cliptiq-import-test-3in2ng54/journal.sqlite3'), PosixPath('/tmp/cliptiq-import-test-3in2ng54/journal.neutral')), '', 'Source integrity check failed\n')
+
+
+0% tests passed, 1 tests failed out of 1
+
+Total Test time (real) =   2.54 sec
+
+The following tests FAILED:
+	 49 - import (Failed)
+Errors while running CTest

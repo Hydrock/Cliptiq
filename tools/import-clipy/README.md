@@ -1,6 +1,6 @@
 # Optional offline Clipy migration
 
-T14 work in progress; automated validation/evidence tracked in docs/support/t14-results.md when complete. This tool is not linked into Cliptiq.app/Cliptiq.exe/cliptiq.
+T14 automated validation and full size evidence: [results](../../docs/support/t14-results.md). Manual historical-backup/clean-system acceptance remains OPEN. This tool is not linked into Cliptiq.app/Cliptiq.exe/cliptiq.
 
 Quit Clipy and Cliptiq before export/import. Keep your original backup. The converter never opens the original with SQLite/Realm: it reads private copies and rejects changing DB/WAL/rollback-journal bytes. Never delete Realm lock/management files from the source. Only the private Realm copy may be upgraded by the separate helper.
 
@@ -26,4 +26,6 @@ Asset files are resolved by basename inside the explicit asset directory; symlin
 
 Neutral SQLite format_version1 preserves original IDs, order, enabled flags, times, native representations, title/device/type/OCR/thumbnail provenance and original settings. macOS RTFD/file-list bytes remain native payloads, not cross-platform conversion claims. XML snippets-only fallback is the T11 editor import/export: XML loses IDs, enabled flags and shortcuts. T15 is excluded. Manual T04–T13 remain OPEN.
 
-The CI size helper stages only the executable and required dylib, strips debug symbols, adjusts loader paths and ad-hoc signs both, then verifies local dylib loading. This is not a notarized user release. The separate Realm helper may exceed the main app size target; both sizes and their sum are reported explicitly.
+The CI size helper stages the complete optional migration tools, required dylib and notices, preserves release loader metadata, excludes dSYM, then verifies relocation with the build-tree dylib unavailable. This is not a notarized user release. The separate Realm helper may exceed the main app size target; both sizes and their sum are reported explicitly.
+
+Exact bytes/ownership/limits and native-format portability are documented in [core/MIGRATION.md](../../core/MIGRATION.md). Preference plist limit16MiB is separate from legacy clipboard archive64MiB; image metadata is checked before pixel expansion.

@@ -60,3 +60,5 @@ sizes. Archives contain unlinked code and are not installed-product sizes.
 T09: [persistent settings, native panels and global shortcut contract](SETTINGS.md).
 
 T13: [desktop lifecycle, autostart, locale and accessibility boundaries](LIFECYCLE.md).
+
+T14: [optional offline migration and source-preservation contract](MIGRATION.md).

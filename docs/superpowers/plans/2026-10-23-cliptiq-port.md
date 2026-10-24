@@ -10,7 +10,7 @@
 
 **Spec:** [дизайн](../specs/2026-10-23-cliptiq-design.md). **Coverage:** [аудит с ID функций](../../research/2026-10-23-clipy-audit.md). **Naming:** [проверка имён](../../research/2026-10-23-naming.md).
 
-Статус: полный план охвата исследуемой ревизии; пользователь разрешил T01, [прототипы и первые измерения выполнены](../../support/architecture-decision.md). T01 закрыт в согласованных границах ([итог](../../support/t01-results.md)); T02 завершён ([результаты](../../support/t02-results.md)); T03 завершён ([результаты](../../support/t03-results.md)); T04 реализуется с native CI; ручная macOS-приёмка остаётся открыта ([результаты](../../support/t04-results.md)). T05 реализован с native CI; ручная Windows-приёмка открыта ([результаты](../../support/t05-results.md)). T06 автоматическая часть реализована ([результаты](../../support/t06-results.md)); Linux desktop manual gate открыт. T07 автоматическая часть реализована ([результаты](../../support/t07-results.md)); интерактивная приёмка OPEN. T08 автоматическая часть реализована ([результаты](../../support/t08-results.md)); app-to-app manual OPEN. T09–T17 не начаты. Release binaries не созданы.
+Статус: полный план охвата исследуемой ревизии; пользователь разрешил T01, [прототипы и первые измерения выполнены](../../support/architecture-decision.md). T01 закрыт в согласованных границах ([итог](../../support/t01-results.md)); T02 завершён ([результаты](../../support/t02-results.md)); T03 завершён ([результаты](../../support/t03-results.md)); T04 реализуется с native CI; ручная macOS-приёмка остаётся открыта ([результаты](../../support/t04-results.md)). T05 реализован с native CI; ручная Windows-приёмка открыта ([результаты](../../support/t05-results.md)). T06 автоматическая часть реализована ([результаты](../../support/t06-results.md)); Linux desktop manual gate открыт. T07 автоматическая часть реализована ([результаты](../../support/t07-results.md)); интерактивная приёмка OPEN. T08 автоматическая часть реализована ([результаты](../../support/t08-results.md)); app-to-app manual OPEN. T09–T14 автоматическая часть отражена ниже; ручные gates остаются OPEN. T15–T17 не начаты. Release binaries не созданы.
 
 ## Global Constraints
 
@@ -255,7 +255,7 @@ Capture contract: сохранять все разрешённые representatio
 - [ ] Logout/login, hidden icon/no tray/no shortcut, uninstall autostart cleanup, DPI/accessibility focus, one app per session. Приложение работает без сети.
 - [x] Commit `feat: add desktop lifecycle integration and localized settings`.
 
-Автоматическая часть: runtime `45d2349441ae51a36d78c68d94e7d789db687c0a`, [CI40083243041](https://github.com/Hydrock/Cliptiq/actions/runs/40083243041) 7/7; [результаты](../../support/t13-results.md). Ручная T04–T12 и T13 OPEN. Minor --background отложен. T14 не начат.
+Автоматическая часть: runtime `45d2349441ae51a36d78c68d94e7d789db687c0a`, [CI40083243041](https://github.com/Hydrock/Cliptiq/actions/runs/40083243041) 7/7; [результаты](../../support/t13-results.md). Ручная T04–T12 и T13 OPEN. Minor --background отложен. T14 описан ниже.
 
 ### T14. Миграция данных Clipy без тяжёлого runtime
 
@@ -263,11 +263,13 @@ Capture contract: сохранять все разрешённые representatio
 
 **Interfaces:** utility создаёт versioned neutral SQLite interchange (`format_version=1`, original ids/order/flags/times/native representations/settings); `import_clipy(Store&, path, ImportOptions)->Result<ImportSummary>` — read-only source, transactional destination. Native format labels не объявляют переносимость RTFD на Windows.
 
-- [ ] Failing tests: current SQLite v1–v4, legacy Realm/schema7 + archives, settings archived shortcuts/types/exclusions, disabled nil shortcuts, duplicate content, missing asset, repeated import, invalid DB/schema.
-- [ ] `ctest --preset test -R import --output-on-failure`; utility native test на Mac с Realm отдельно. Не открывать чужой NSKeyedArchive общей небезопасной десериализацией внутри основного runtime.
-- [ ] Сделать backup/export source после согласованного user action в будущей утилите; source никогда не обновлять и не удалять. Прямой SQLite importer использует consistent snapshot, legacy stage read-only насколько допускает Realm; если Realm требует sidecars — работать с копией источника.
-- [ ] Перенести XML fallback для пользователей, которым нужна только коллекция snippets; объяснить loss enable/UUID/shortcuts в XML. Проверить neutral import на Windows/Linux.
-- [ ] Commit `feat: add optional read-only Clipy migration tool`.
+- [x] Failing tests: current SQLite v1–v4, legacy Realm/schema7 + archives, settings archived shortcuts/types/exclusions, disabled nil shortcuts, duplicate content, missing asset, repeated import, invalid DB/schema.
+- [x] `ctest --preset test -R import --output-on-failure`; utility native test на Mac с Realm отдельно. Не открывать чужой NSKeyedArchive общей небезопасной десериализацией внутри основного runtime.
+- [x] Сделать backup/export source после согласованного user action в будущей утилите; source никогда не обновлять и не удалять. Прямой SQLite importer использует consistent snapshot, legacy stage read-only насколько допускает Realm; если Realm требует sidecars — работать с копией источника.
+- [x] Перенести XML fallback для пользователей, которым нужна только коллекция snippets; объяснить loss enable/UUID/shortcuts в XML. Проверить neutral import на Windows/Linux.
+- [x] Commit `feat: add optional read-only Clipy migration tool`.
+
+Автоматическая часть: runtime `c965d5c7251fbd1d715498502162b15c4818a7c4`, [CI40090941139](https://github.com/Hydrock/Cliptiq/actions/runs/40090941139)9/9; [результаты](../../support/t14-results.md). Ручная T04–T13 и T14 historical/clean-system acceptance OPEN. T15 не начат.
 
 ### T15. Обновления и решение по диагностике
 
