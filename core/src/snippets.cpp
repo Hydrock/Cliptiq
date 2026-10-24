@@ -401,6 +401,14 @@ Result<void> reorder_folders(Store &store, const std::vector<FolderId> &order,
     auto db = store.connection();
     Transaction tx(db);
     if (expected) {
+      if (expected->data_revision) {
+        auto current_revision = data_revision(store);
+        if (!current_revision)
+          return current_revision.error();
+        if (current_revision.value() != *expected->data_revision)
+          return Error{ErrorCode::Busy,
+                       "Data changed during folder reorder; retry"};
+      }
       if (expected->item.kind != SnippetItemKind::Folder)
         invalid("Folder reorder guard kind");
       check_version(db, true, expected->item.value, expected->revision);

@@ -11,6 +11,7 @@ struct SnippetItemId {
 struct SnippetItemVersion {
   SnippetItemId item;
   std::uint64_t revision;
+  std::optional<std::uint64_t> data_revision;
 };
 struct Folder {
   FolderId id;

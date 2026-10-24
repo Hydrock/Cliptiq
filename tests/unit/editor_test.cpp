@@ -177,5 +177,45 @@ int main() {
     }
     std::filesystem::remove(path);
   });
+  test("folder_drop_does_not_overwrite_concurrent_other_folder_reorder", [] {
+    auto path = std::filesystem::temp_directory_path() /
+                ("cliptiq-folder-drag-" +
+                 std::to_string(std::chrono::high_resolution_clock::now()
+                                    .time_since_epoch()
+                                    .count()) +
+                 ".db");
+    {
+      auto db = take(open_store(path.u8string()));
+      auto peer = take(open_store(path.u8string()));
+      SnippetEditorSession e(db);
+      CHECK(e.reload());
+      auto a = take(e.add_folder()), b = take(e.add_folder()),
+           c = take(e.add_folder());
+      auto token = take(e.begin_drag({SnippetItemKind::Folder, c}));
+      struct Hook {
+        Store *peer;
+        std::vector<FolderId> order;
+        bool fired = false, ok = false;
+      } hook{&peer, {b, a, c}};
+      sqlite3_trace_v2(
+          db.connection(), SQLITE_TRACE_STMT,
+          +[](unsigned, void *data, void *, void *sql) -> int {
+            auto h = static_cast<Hook *>(data);
+            if (!h->fired && std::string(static_cast<const char *>(sql)) ==
+                                 "BEGIN IMMEDIATE") {
+              h->fired = true;
+              h->ok = bool(reorder_folders(*h->peer, h->order));
+            }
+            return 0;
+          },
+          &hook);
+      auto result = e.finish_drag(token, "", 0, true);
+      sqlite3_trace_v2(db.connection(), 0, nullptr, nullptr);
+      CHECK(hook.fired && hook.ok);
+      CHECK(!result && result.error().code == ErrorCode::Busy);
+      CHECK(take(list_folders(db))[0].id == b);
+    }
+    std::filesystem::remove(path);
+  });
   return failed ? 1 : 0;
 }

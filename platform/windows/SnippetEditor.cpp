@@ -599,6 +599,18 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
         }
       }
       if (w == s->tree) {
+        if (key == VK_SPACE) {
+          auto selected = TreeView_GetSelection(s->tree);
+          if (selected) {
+            s->updating = true;
+            TreeView_SetCheckState(s->tree, selected,
+                                   !TreeView_GetCheckState(s->tree, selected));
+            s->updating = false;
+            SendMessageW(s->window, WM_APP + 1, 0,
+                         reinterpret_cast<LPARAM>(selected));
+          }
+          return 0;
+        }
         if (key == VK_DELETE) {
           s->perform(509);
           return 0;
@@ -613,6 +625,9 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
         }
       }
     }
+    if (w == s->body && msg == WM_CHAR && (GetKeyState(VK_CONTROL) & 0x8000) &&
+        (key == 26 || key == 25))
+      return 0;
     if (w == s->shortcut &&
         (msg == WM_SYSCHAR ||
          (msg == WM_CHAR && (GetKeyState(VK_CONTROL) & 0x8000))))

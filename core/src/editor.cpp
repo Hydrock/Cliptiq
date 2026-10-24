@@ -40,9 +40,9 @@ struct SnippetEditorSession::State {
   bool dirty() const { return dirty_title || dirty_content; }
   void require_saved() const {
     if (dirty())
-      throw detail::Failure{
-          {ErrorCode::Busy, "Draft not saved: correct it or Reload to discard "
-                            "before navigating"}};
+      throw detail::Failure{{ErrorCode::Busy,
+                             "Draft not saved: correct it or Reload to discard "
+                             "before navigating"}};
   }
   struct Drag {
     std::uint64_t token;
@@ -359,6 +359,7 @@ Result<void> SnippetEditorSession::finish_drag(std::uint64_t token,
     if (drag.item.kind == SnippetItemKind::Folder) {
       if (!target.empty())
         detail::invalid("Folders cannot be nested");
+      auto catalog_revision = need(data_revision(s.store));
       auto folders = need(list_folders(s.store));
       std::vector<FolderId> order;
       for (auto &f : folders)
@@ -369,8 +370,9 @@ Result<void> SnippetEditorSession::finish_drag(std::uint64_t token,
       if (index > order.size())
         detail::invalid("Folder drop index out of range");
       order.insert(order.begin() + std::ptrdiff_t(index), drag.item.value);
-      need(reorder_folders(s.store, order,
-                           SnippetItemVersion{drag.item, drag.revision}));
+      need(reorder_folders(
+          s.store, order,
+          SnippetItemVersion{drag.item, drag.revision, catalog_revision}));
     } else
       need(
           move_snippet(s.store, drag.item.value, target, index, drag.revision));
