@@ -283,7 +283,7 @@ Capture contract: сохранять все разрешённые representatio
 - [x] По предлагаемому решению убрать Firebase и предложить локальный export диагностики с redaction. Если нужна исходная аналитика/crash reporting, сохранить эту строку как pending, выделить opt-in telemetry компонент, новый endpoint/privacy и measured dependency closure. Clipboard/snippets ни в одной lane не отправляются.
 - [x] Commit `feat: add signed platform update routes and diagnostics policy`.
 
-Автоматическая реализация: runtime `3ac983131e1a167908f4c11ab43db3a62bbc20e7`, [CI40094637399](https://github.com/Hydrock/Cliptiq/actions/runs/40094637399)11/11; [результаты](../../support/t15-results.md). Локальная диагностика вместо Firebase принята пользователем. Native delivery contracts реализованы, но собственные production feed/keys/installers/repositories и фактическая release-приёмка OPEN. Manual T04–T14 OPEN; T16 не начат.
+Автоматическая реализация: runtime `3ac983131e1a167908f4c11ab43db3a62bbc20e7`, [CI40094637399](https://github.com/Hydrock/Cliptiq/actions/runs/40094637399)11/11; [результаты](../../support/t15-results.md). Локальная диагностика вместо Firebase принята пользователем. Native delivery contracts реализованы, но собственные production feed/keys/installers/repositories и фактическая release-приёмка OPEN. Manual T04–T14 OPEN; T16 см. ниже.
 
 ### T16. OCR и FTS backend, отдельно от нового UI
 
@@ -291,11 +291,13 @@ Capture contract: сохранять все разрешённые representatio
 
 **Interfaces:** `recognize(EntryId,generation,ImageInput,OcrBackend&)->Result<void>`; `OcrBackend::languages()->Result<vector<string>>`, `recognize_text(ImageInput)->Result<string>`; persist только если id/generation существует. `OcrState` Pending/Done/Unavailable/Failed, empty Done допустимо. Feature `ocr_index` включает SQLite FTS5 только для disposable `index/search.db`; main DB во всех сборках имеет одинаковые обычные OCR columns и не содержит FTS tables/triggers. `rebuild_index(Store&, index_path, data_revision)->Result<void>` читает main snapshot, индексатор подтверждает revision после обновления. `invalidate_index(index_path)->Result<void>` удаляет только известные index files/sidecars в принадлежащем приложению namespace. Base никогда не открывает FTS DB: инвалидирует её при старте/clear/import, indexed rebuilds. Single-instance lock общий для вариантов.
 
-- [ ] Failing tests: truncate Unicode до 10 000 chars, empty result done, deleted-during-OCR, unavailable language, huge image, cancelled job, migration OCR retention, companion FTS insert/update/delete/integrity, `indexed_base_indexed_preserves_history`, `base_clear_invalidates_index`, `crash_after_main_commit_rebuilds_index`. Main DB обычные writes должны работать без FTS module после перехода с indexed build.
-- [ ] `ctest --preset test -R 'ocr|fts' --output-on-failure`, затем async queue/native engines. Mac Vision; Windows.Media.Ocr только verified packaged identity lane; portable Windows/Linux pinned Tesseract/Leptonica + явно выбранные модели, как optional pack.
-- [ ] В T01 зафиксировать начальные языки EN/RU и их actual engine availability; language detection и correction у разных engines не считать идентичными. Дополнительные языки — отдельный размер. Offline install closure содержит pack, нельзя назвать его нулевым.
-- [ ] Проверить B01/B02 parity lane в каждой ОС. **Не создавать search field/OCR copy actions в этом task:** текущий Clipy их не предоставляет; если пользователь захочет, новый scoped task и дизайн.
-- [ ] Commit `feat: add optional native and offline OCR indexing backends`.
+- [x] Failing tests: truncate Unicode до 10 000 chars, empty result done, deleted-during-OCR, unavailable language, huge image, cancelled job, migration OCR retention, companion FTS insert/update/delete/integrity, `indexed_base_indexed_preserves_history`, `base_clear_invalidates_index`, `crash_after_main_commit_rebuilds_index`. Main DB обычные writes должны работать без FTS module после перехода с indexed build.
+- [x] `ctest --preset test -R 'ocr|fts' --output-on-failure`, затем async queue/native engines. Mac Vision; Windows.Media.Ocr только verified packaged identity lane; portable Windows/Linux pinned Tesseract/Leptonica + явно выбранные модели, как optional pack.
+- [x] В T01 зафиксировать начальные языки EN/RU и их actual engine availability; language detection и correction у разных engines не считать идентичными. Дополнительные языки — отдельный размер. Offline install closure содержит pack, нельзя назвать его нулевым.
+- [x] Проверить B01/B02 parity lane в каждой ОС. **Не создавать search field/OCR copy actions в этом task:** текущий Clipy их не предоставляет; если пользователь захочет, новый scoped task и дизайн.
+- [x] Commit `feat: add optional native and offline OCR indexing backends`.
+
+Автоматическая часть T16: runtime `a4deefee84bc14aacae88e63c2d94c59dbb502d8`, [CI40101383632](https://github.com/Hydrock/Cliptiq/actions/runs/40101383632)16/16; [результаты](../../support/t16-results.md). Vision ARM/Intel и Tesseract Linux/Windows EN/RU проверены; положительная MSIX identity и desktop acceptance OPEN. Manual T04–T15 OPEN; T16 manual OPEN; T17 не начат.
 
 ### T17. CI, упаковка, размер и закрытие всех ID
 

@@ -49,3 +49,12 @@ Native Win32 static CRT build uses CMP0091 NEW (Leptonica older CMake policy).
     manual retest of earlier platform behavior.
 11. New search/OCR-copy UI: excluded by approved T16. Cost: no new user search
     interface; this task supplies backend only.
+
+Final parity comparison additionally restores explicit Vision automatic language
+detection (pinned Clipy flag); final CI and source fingerprints are recorded
+in t16-results.md / t16-measurements/.
+
+Executor final evidence: CI40101383632 on a4deefe,16/16;1306 source
+digests matched181 Git blobs,9reports. Native Mac ARM/Intel EN/RU tests
+passed with automatic language detection enabled. All remaining declined
+behaviors keep the limitations listed above.

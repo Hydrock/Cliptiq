@@ -1,0 +1,18 @@
+[1/4] Building CXX object CMakeFiles/ocr_queue_test.dir/tests/unit/ocr_queue_test.cpp.o
+[2/4] Building CXX object CMakeFiles/cliptiq_ocr_queue.dir/platform/Ocr.cpp.o
+[3/4] Linking CXX static library libcliptiq_ocr_queue.a
+[4/4] Linking CXX executable ocr_queue_test
+Internal ctest changing into directory: /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/ocr-Linux-tesseract
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/ocr-Linux-tesseract
+    Start 57: ocr_queue
+1/1 Test #57: ocr_queue ........................***Failed    0.50 sec
+take(load_ocr(store,retained)).state==OcrState::Done
+
+
+0% tests passed, 1 tests failed out of 1
+
+Total Test time (real) =   0.55 sec
+
+The following tests FAILED:
+	 57 - ocr_queue (Failed)
+Errors while running CTest

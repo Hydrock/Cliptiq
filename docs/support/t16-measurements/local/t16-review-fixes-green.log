@@ -1,0 +1,83 @@
+[0/1] Re-running CMake...
+-- Configuring done (3.1s)
+-- Generating done (0.8s)
+-- Build files have been written to: /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/ocr-Linux-tesseract
+[1/32] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/storage.cpp.o
+[2/32] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/paste.cpp.o
+[3/32] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/menu.cpp.o
+[4/32] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/history.cpp.o
+[5/32] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/settings.cpp.o
+[6/32] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/media.cpp.o
+[7/32] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/snippets.cpp.o
+[8/32] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/editor.cpp.o
+[9/32] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/update.cpp.o
+[10/32] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/ocr.cpp.o
+[11/32] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/index_invalidation.cpp.o
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/src/index_invalidation.cpp: In constructor ‘cliptiq::detail::IndexGate::IndexGate(const std::string&, const std::string&, bool, bool)’:
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/src/index_invalidation.cpp:119:52: warning: suggest parentheses around ‘&&’ within ‘||’ [-Wparentheses]
+  119 |   if (fs::is_symlink(status) || fs::exists(status) && !fs::is_directory(status))
+      |                                 ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/src/index_invalidation.cpp: In member function ‘void cliptiq::detail::IndexGate::clear()’:
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/src/index_invalidation.cpp:161:24: warning: suggest parentheses around ‘&&’ within ‘||’ [-Wparentheses]
+  161 |     if (fs::exists(st) && !regular(p) || fs::is_symlink(st))
+      |         ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~
+[12/32] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/fts.cpp.o
+[13/32] Building CXX object CMakeFiles/cliptiq_lifecycle.dir/platform/Lifecycle.cpp.o
+[14/32] Linking CXX static library libcliptiq_core.a
+[15/32] Linking CXX static library libcliptiq_lifecycle.a
+[16/32] Building CXX object CMakeFiles/cliptiq_xml.dir/core/src/xml.cpp.o
+[17/32] Building CXX object CMakeFiles/cliptiq_xml.dir/core/src/xml_file.cpp.o
+[18/32] Linking CXX static library libcliptiq_xml.a
+[19/32] Building CXX object CMakeFiles/ocr_queue_test.dir/tests/unit/ocr_queue_test.cpp.o
+[20/32] Building CXX object CMakeFiles/cliptiq_menu_host.dir/platform/MenuHost.cpp.o
+[21/32] Building CXX object CMakeFiles/cliptiq_ocr_queue.dir/platform/Ocr.cpp.o
+[22/32] Linking CXX static library libcliptiq_ocr_queue.a
+[23/32] Building CXX object CMakeFiles/native_ocr_test.dir/tests/integration/native_ocr_test.cpp.o
+[24/32] Linking CXX executable ocr_queue_test
+[25/32] Building CXX object CMakeFiles/cliptiq_index_service.dir/platform/Index.cpp.o
+[26/32] Linking CXX static library libcliptiq_index_service.a
+[27/32] Building CXX object CMakeFiles/cliptiq_ocr_native.dir/platform/OcrTesseract.cpp.o
+[28/32] Linking CXX static library libcliptiq_ocr_native.a
+[29/32] Building CXX object CMakeFiles/fts_transaction_race.dir/tests/integration/fts_transaction_race.cpp.o
+[30/32] Linking CXX executable fts_transaction_race
+[31/32] Linking CXX executable native_ocr_test
+[32/32] Linking CXX executable cliptiq_menu_host
+Internal ctest changing into directory: /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/ocr-Linux-tesseract
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/ocr-Linux-tesseract
+    Start 55: ocr
+1/5 Test #55: ocr ..............................   Passed    0.02 sec
+    Start 56: fts
+2/5 Test #56: fts ..............................   Passed    0.13 sec
+    Start 57: ocr_queue
+3/5 Test #57: ocr_queue ........................   Passed    0.48 sec
+    Start 58: native_ocr
+4/5 Test #58: native_ocr .......................   Passed    0.61 sec
+    Start 59: fts_transaction_race
+5/5 Test #59: fts_transaction_race .............   Passed    1.07 sec
+
+100% tests passed, 0 tests failed out of 5
+
+Total Test time (real) =   2.38 sec
+-- Install configuration: "MinSizeRel"
+-- Installing: /tmp/cliptiq-ocr-install-4k9888e4/bin/cliptiq
+-- Installing: /tmp/cliptiq-ocr-install-4k9888e4/share/applications/io.github.hydrock.cliptiq.desktop
+-- Installing: /tmp/cliptiq-ocr-install-4k9888e4/share/cliptiq/THIRD_PARTY_NOTICES.md
+-- Installing: /tmp/cliptiq-ocr-install-4k9888e4/bin/tessdata/eng.traineddata
+-- Installing: /tmp/cliptiq-ocr-install-4k9888e4/bin/tessdata/rus.traineddata
+Error in pixReadMemTiff: function not present
+Error in pixReadMem: tiff: no pix returned
+Error in pixaGenerateFontFromString: pix not made
+Error in bmfCreate: font pixa not made
+Warning in changeFormatForMissingLib: png library missing; output bmp format
+eng: fixture result: Cliptig clipboard 123
+
+Error in pixReadMemTiff: function not present
+Error in pixReadMem: tiff: no pix returned
+Error in pixaGenerateFontFromString: pix not made
+Error in bmfCreate: font pixa not made
+Warning in changeFormatForMissingLib: png library missing; output bmp format
+eng: recognized
+rus: fixture result: Привет мир 123
+
+rus: recognized
+installed binary finds pinned EN/RU models offline: pass

@@ -1,0 +1,35 @@
+[1/15] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/storage.cpp.o
+[2/15] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/paste.cpp.o
+[3/15] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/menu.cpp.o
+[4/15] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/history.cpp.o
+[5/15] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/media.cpp.o
+[6/15] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/settings.cpp.o
+[7/15] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/snippets.cpp.o
+[8/15] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/editor.cpp.o
+[9/15] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/update.cpp.o
+[10/15] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/ocr.cpp.o
+[11/15] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/index_invalidation.cpp.o
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/src/index_invalidation.cpp: In constructor ‘cliptiq::detail::IndexGate::IndexGate(const std::string&, const std::string&, bool, bool)’:
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/src/index_invalidation.cpp:119:52: warning: suggest parentheses around ‘&&’ within ‘||’ [-Wparentheses]
+  119 |   if (fs::is_symlink(status) || fs::exists(status) && !fs::is_directory(status))
+      |                                 ~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/src/index_invalidation.cpp: In member function ‘void cliptiq::detail::IndexGate::clear()’:
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/src/index_invalidation.cpp:161:24: warning: suggest parentheses around ‘&&’ within ‘||’ [-Wparentheses]
+  161 |     if (fs::exists(st) && !regular(p) || fs::is_symlink(st))
+      |         ~~~~~~~~~~~~~~~^~~~~~~~~~~~~~
+[12/15] Building CXX object CMakeFiles/history_test.dir/tests/unit/history_test.cpp.o
+[13/15] Linking CXX static library libcliptiq_core.a
+[14/15] Linking CXX executable history_test
+[15/15] Linking CXX executable editor_test
+Internal ctest changing into directory: /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+    Start  9: editor
+1/3 Test  #9: editor ...........................   Passed    0.18 sec
+    Start 47: history
+2/3 Test #47: history ..........................   Passed    0.23 sec
+    Start 48: history_crash
+3/3 Test #48: history_crash ....................   Passed    0.49 sec
+
+100% tests passed, 0 tests failed out of 3
+
+Total Test time (real) =   0.95 sec
