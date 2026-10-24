@@ -79,7 +79,8 @@ const std::vector<Spec> &specs() {
       {SettingsGroup::Beta, "paste_delete_modifier", "Paste-delete modifier",
        "0", 0, 8},
       {SettingsGroup::Beta, "screenshots", "Observe screenshot files", "0", 0,
-       1, "T12: screenshot watcher not installed"},
+       1},
+      {SettingsGroup::Beta, "screenshot_directory", "Screenshot directory (absolute path)", "", -1, -1},
       {SettingsGroup::Donate, "support", "Project support",
        "https://github.com/Hydrock/Cliptiq", -1, -1,
        "T13: project support links; no Clipy donation destination"}};

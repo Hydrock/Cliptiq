@@ -156,6 +156,10 @@ if system == 'Windows':
 (root / 'out' / 't02-size.json').write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
 
 snippet_xml = menu_variant('snippet_xml_probe')
+media = menu_variant('media_native_probe')
+report['media'] = {'baseline': snippet_xml, 'with_media': media, 'added_bytes': media['executable_bytes']-snippet_xml['executable_bytes'], 'added_zip_bytes': media['zip_bytes']-snippet_xml['zip_bytes'], 'scope': 'paired XML host with/without native media codecs, bounded worker, cache and screenshot file monitor; no watcher/clipboard/input in smoke; not installer'}
+for name in ['platform/Media.cpp', 'platform/Media.hpp']:
+    report['source_files_sha256'][name] = hashlib.sha256((root/name).read_bytes()).hexdigest()
 report['xml'] = {'baseline': snippet_editor, 'with_xml': snippet_xml, 'added_bytes': snippet_xml['executable_bytes']-snippet_editor['executable_bytes'], 'added_zip_bytes': snippet_xml['zip_bytes']-snippet_editor['zip_bytes'], 'scope': 'paired same native snippet editor host with XML disabled/enabled; pinned static TinyXML2 + bounded codec, atomic append/file IO, native file pickers and worker; no clipboard/input/global grabs in smoke; not installer/full product'}
 report['source_files_sha256'].update({p.relative_to(root).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted((root/'third_party/tinyxml2').rglob('*')) if p.is_file()})
 report['source_files_sha256']['platform/SnippetXml.hpp']=hashlib.sha256((root/'platform/SnippetXml.hpp').read_bytes()).hexdigest()

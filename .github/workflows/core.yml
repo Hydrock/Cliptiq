@@ -1,4 +1,4 @@
-name: Portable core and native clipboards (T02-T11)
+name: Portable core and native clipboards (T02-T12)
 on:
   workflow_dispatch:
   push:
@@ -7,6 +7,9 @@ on:
       - 'third_party/libgrapheme/**'
       - 'third_party/tinyxml2/**'
       - 'platform/SnippetXml.hpp'
+      - 'platform/Media*'
+      - 'tests/integration/native_media_test.cpp'
+      - 'tests/fixtures/media/**'
       - 'platform/MenuHost.cpp'
       - 'platform/macos/**'
       - 'platform/windows/**'

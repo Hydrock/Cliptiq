@@ -1,5 +1,8 @@
 #include "Application.hpp"
 #include "cliptiq/menu.hpp"
+#ifdef CLIPTIQ_WITH_MEDIA
+#include "Media.hpp"
+#endif
 #ifdef CLIPTIQ_WITH_SETTINGS
 #include "cliptiq/settings.hpp"
 #ifdef CLIPTIQ_WITH_EDITOR
@@ -335,6 +338,17 @@ int host(int argc, char **argv) {
         return InvocationContext{paste.capture_target()};
       };
 #endif
+#ifdef CLIPTIQ_WITH_MEDIA
+#ifdef _WIN32
+    MediaService media(store,CapturePlatform::Windows);
+#elif defined(__APPLE__)
+    MediaService media(store,CapturePlatform::MacOS);
+#else
+    MediaService media(store,std::getenv("WAYLAND_DISPLAY")?CapturePlatform::Wayland:CapturePlatform::X11);
+#endif
+    auto configure_media=[&]{auto result=media.configure(preferences,smoke);if(!result)std::cerr<<result.error().message<<'\n';};
+    configure_media();
+#endif
     NativeMenu ui(options, [&](MenuCommand command) {
       auto valid = validate_menu_command(store, command);
       if (!valid) {
@@ -380,7 +394,11 @@ int host(int argc, char **argv) {
         std::cout << "Selected " << command.id << '\n';
 #endif
       }
-    });
+    }
+#ifdef CLIPTIQ_WITH_MEDIA
+    ,[&](const PreviewRef&r){return media.preview(r);}
+#endif
+    );
     ok(ui.initialize());
     for (auto &i : model.items)
       if (
@@ -433,12 +451,23 @@ int host(int argc, char **argv) {
           [&](Settings draft) -> Result<void> {
             if (session)
               session->stop();
+#ifdef CLIPTIQ_WITH_MEDIA
+            media.stop();
+            auto media_applied=media.configure(draft,smoke);
+            if(!media_applied){configure_media();restart_capture();return media_applied;}
+#endif
             auto applied = apply_settings(store, registry, draft);
             if (!applied) {
               restart_capture();
+#ifdef CLIPTIQ_WITH_MEDIA
+              configure_media();
+#endif
               return applied;
             }
             preferences = take(load_settings(store));
+#ifdef CLIPTIQ_WITH_MEDIA
+            configure_media();
+#endif
             settings = settings_menu(preferences);
             auto_paste = preferences.values.at("auto_paste") == "1";
             bindings = settings_modifiers(preferences);
@@ -674,6 +703,11 @@ int host(int argc, char **argv) {
 #endif
 #endif
       auto now = std::chrono::steady_clock::now();
+#ifdef CLIPTIQ_WITH_MEDIA
+      auto media_result=media.poll();
+      if(!media_result)std::cerr<<media_result.error().message<<'\n';
+      else if(media_result.value())refresh=true;
+#endif
       if (refresh || now - checked > std::chrono::milliseconds(250)) {
         auto revision = take(data_revision(store));
         if (refresh || last != revision) {
@@ -701,6 +735,9 @@ int host(int argc, char **argv) {
 #endif
     if (session)
       session->stop();
+#ifdef CLIPTIQ_WITH_MEDIA
+    media.stop();
+#endif
 #ifdef CLIPTIQ_WITH_SETTINGS
     if (!smoke && preferences.values.at("clear_quit") == "1")
       ok(erase_history(store));
