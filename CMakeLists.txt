@@ -245,6 +245,8 @@ if(BUILD_TESTING)
     target_compile_options(xml_test PRIVATE /utf-8)
   endif()
   add_test(NAME xml COMMAND xml_test)
+  add_test(NAME xml_bounded_scan COMMAND ${Python3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/tests/integration/xml_bounded_scan.py $<TARGET_FILE:xml_test>)
+  set_tests_properties(xml_bounded_scan PROPERTIES TIMEOUT 45)
   add_test(NAME xml_interop COMMAND ${Python3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/tests/integration/xml_interop.py $<TARGET_FILE:xml_test> ${CMAKE_SOURCE_DIR}/tests/fixtures/xml/clipy-layout.xml)
 
   find_package(Python3 REQUIRED COMPONENTS Interpreter)

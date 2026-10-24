@@ -20,6 +20,7 @@ on:
       - 'tests/integration/native_editor_test.cpp'
       - 'tests/integration/native_xml_test.cpp'
       - 'tests/integration/xml_interop.py'
+      - 'tests/integration/xml_bounded_scan.py'
       - 'tests/fixtures/xml/**'
       - 'tests/integration/snippet_integration_test.cpp'
       - 'tests/integration/native_hotkeys_test.cpp'

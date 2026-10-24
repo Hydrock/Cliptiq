@@ -10,6 +10,8 @@
 #include "../fixtures/windows/IsolatedClipboard.hpp"
 #elif defined(__APPLE__)
 #import <AppKit/AppKit.h>
+#else
+#include <gtk/gtk.h>
 #endif
 using namespace cliptiq;
 #define CHECK(x)                                                               \
@@ -23,6 +25,32 @@ template <class T> T take(Result<T> r) {
   return std::move(r.value());
 }
 Bytes bytes(const std::string &s) { return {s.begin(), s.end()}; }
+#ifdef __APPLE__
+NSView *find_xml(NSView *view, NSString *name) {
+  if ([view.identifier isEqualToString:name])
+    return view;
+  for (NSView *child in view.subviews) {
+    auto found = find_xml(child, name);
+    if (found)
+      return found;
+  }
+  return nil;
+}
+#elif !defined(_WIN32)
+GtkWidget *find_xml(GtkWidget *view, const char *name) {
+  if (std::string(gtk_widget_get_name(view)) == name)
+    return view;
+  if (GTK_IS_CONTAINER(view)) {
+    auto children = gtk_container_get_children(GTK_CONTAINER(view));
+    GtkWidget *found = nullptr;
+    for (auto c = children; c && !found; c = c->next)
+      found = find_xml(GTK_WIDGET(c->data), name);
+    g_list_free(children);
+    return found;
+  }
+  return nullptr;
+}
+#endif
 int run() {
   try {
 #ifdef _WIN32
@@ -48,6 +76,11 @@ int run() {
     auto model = std::make_shared<SnippetEditorSession>(db, callbacks);
     CHECK(model->reload());
     CHECK(model->select(SnippetItemId{SnippetItemKind::Folder, f}));
+    take(model->add_snippet());
+    CHECK(model->edit_content("first"));
+    CHECK(model->edit_content("second"));
+    CHECK(model->can_undo());
+    changes = 0;
     NativeSnippetEditor ui;
     CHECK(ui.show(model));
     auto input = (temp.path / u8"импорт.xml").u8string(),
@@ -66,6 +99,40 @@ int run() {
     };
     CHECK(ui.import_xml_path(input));
     CHECK(ui.xml_transfer_busy());
+    // Let the worker commit, but deliberately do not poll the editor: the
+    // transfer lock is still held until UI completion is processed.
+    for (unsigned i = 0; i < 1000 && take(list_folders(db)).size() != 2; ++i)
+      std::this_thread::sleep_for(std::chrono::milliseconds(5));
+    CHECK(take(list_folders(db)).size() == 2 && ui.xml_transfer_busy());
+#ifdef _WIN32
+    auto window = reinterpret_cast<HWND>(ui.native_handle());
+    SendMessageW(window, WM_COMMAND, 510, 0);
+    CHECK(!IsWindowEnabled(window));
+#elif defined(__APPLE__)
+    auto window = (__bridge NSWindow *)(void *)ui.native_handle();
+    auto body = (NSTextView *)find_xml(window.contentView, @"editor-content");
+    CHECK(body);
+    auto event = [NSEvent keyEventWithType:NSEventTypeKeyDown
+                                  location:NSZeroPoint
+                             modifierFlags:NSEventModifierFlagCommand
+                                 timestamp:0
+                              windowNumber:window.windowNumber
+                                   context:nil
+                                characters:@"z"
+               charactersIgnoringModifiers:@"z"
+                                 isARepeat:NO
+                                   keyCode:6];
+    [body performKeyEquivalent:event];
+    CHECK(!body.editable);
+#else
+    auto window = reinterpret_cast<GtkWidget *>(ui.native_handle());
+    auto undo = find_xml(window, "editor-undo");
+    CHECK(undo);
+    g_signal_emit_by_name(undo, "clicked");
+    CHECK(!gtk_widget_get_sensitive(window));
+#endif
+    CHECK(model->content() == "second" && changes == 0);
+
     CHECK(!ui.export_xml_path(output));
     CHECK(!take(ui.request_close()));
     wait();
