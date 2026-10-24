@@ -15,7 +15,7 @@ def _string(data,offset,end=None):
 def inspect_binary(path):
  path=pathlib.Path(path)
  with path.open('rb') as stream:magic=stream.read(4)
- if magic[:2]!=b'MZ' and magic not in [b'\x7fELF',b'\xcf\xfa\xed\xfe',b'\xca\xfe\xba\xbe',b'\xbe\xba\xfe\xca']:return None
+ if magic[:2]!=b'MZ' and magic not in [b'\x7fELF',b'\xcf\xfa\xed\xfe',b'\xca\xfe\xba\xbe',b'\xbe\xba\xfe\xca',b'\xce\xfa\xed\xfe',b'\xfe\xed\xfa\xce',b'\xfe\xed\xfa\xcf',b'\xca\xfe\xba\xbf',b'\xbf\xba\xfe\xca']:return None
  if path.stat().st_size>128*1024*1024:raise ValueError('binary exceeds inspection bound')
  data=path.read_bytes();imports=[];rpaths=[]
  if magic[:2]==b'MZ':
@@ -117,15 +117,17 @@ def validate_distribution(root,manifest,*,inspector=inspect_binary):
  if not binaries:errors.append('no native binary in package')
  by_name={p.name.lower():p for p in binaries}
  for path,binary in binaries.items():
+  if target=='linux' and any(not re.match(r'^(?:\$ORIGIN|\$\{ORIGIN\})(?:/|$)',r) for r in binary['rpaths']):errors.append('non-relocatable ELF search path: '+path.name)
+  if target=='macos' and any(not r.startswith(('@loader_path/','@executable_path/')) and r not in ['@loader_path','@executable_path'] for r in binary['rpaths']):errors.append('non-relocatable Mach-O search path: '+path.name)
   for name in binary['imports']:
    if system_import(target,name):continue
    if target=='windows':found=any(p.name.lower()==name.lower() and p.parent in [path.parent,root] for p in binaries)
    elif target=='linux':
-    candidates=[pathlib.Path(r.replace('${ORIGIN}',str(path.parent)).replace('$ORIGIN',str(path.parent)))/name for r in binary['rpaths'] if r]
+    candidates=[pathlib.Path(r.replace('${ORIGIN}',str(path.parent)).replace('$ORIGIN',str(path.parent)))/name for r in binary['rpaths'] if re.match(r'^(?:\$ORIGIN|\$\{ORIGIN\})(?:/|$)',r) and '/' not in name and '\\' not in name]
     found=any(p.resolve() in binaries and p.resolve().is_relative_to(root) for p in candidates)
    else:
     expand=lambda text:pathlib.Path(text.replace('@loader_path',str(path.parent)).replace('@executable_path',str(next((p.parent for p in binaries if p.name=='Cliptiq'),path.parent))))
-    candidates=[expand(name)] if not name.startswith('@rpath/') else [expand(r)/name[len('@rpath/'):] for r in binary['rpaths']]
+    candidates=([expand(name)] if name.startswith(('@loader_path/','@executable_path/')) else []) if not name.startswith('@rpath/') else [expand(r)/name[len('@rpath/'):] for r in binary['rpaths'] if r.startswith(('@loader_path/','@executable_path/')) or r in ['@loader_path','@executable_path']]
     found=any(p.resolve().is_relative_to(root) and p.resolve() in binaries for p in candidates)
    if not found:errors.append(f'missing dependency for {path.name}: {name}')
  return errors

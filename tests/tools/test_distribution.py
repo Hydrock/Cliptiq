@@ -39,6 +39,29 @@ class DistributionTests(unittest.TestCase):
    except OSError:self.skipTest('symlink privilege unavailable')
    inspect=lambda p:dict(format='pe',arch='x86_64',imports=[],rpaths=[])
    self.assertTrue(m.validate_distribution(root,manifest,inspector=inspect))
+ def test_absolute_and_cwd_dependent_loader_routes_are_rejected(self):
+  m=module()
+  with tempfile.TemporaryDirectory() as folder:
+   root=pathlib.Path(folder);manifest=self.fixture(root);manifest['target']='linux'
+   private=root/'libprivate.so';private.write_bytes(b'private');manifest['files'].append({'path':private.name,'bytes':7,'sha256':hashlib.sha256(b'private').hexdigest()})
+   for route in [str(root),'.','relative']:
+    inspect=lambda p:dict(format='elf',arch='x86_64',imports=['libprivate.so'] if p.name=='Cliptiq.exe' else [],rpaths=[route])
+    self.assertTrue(m.validate_distribution(root,manifest,inspector=inspect),route)
+   inspect=lambda p:dict(format='elf',arch='x86_64',imports=['libprivate.so'] if p.name=='Cliptiq.exe' else [],rpaths=['$ORIGIN'])
+   self.assertEqual(m.validate_distribution(root,manifest,inspector=inspect),[])
+   manifest['target']='macos'
+   for route in [str(root),'.']:
+    inspect=lambda p:dict(format='macho',arch='x86_64',imports=['@rpath/libprivate.so'] if p.name=='Cliptiq.exe' else [],rpaths=[route])
+    self.assertTrue(m.validate_distribution(root,manifest,inspector=inspect),route)
+   inspect=lambda p:dict(format='macho',arch='x86_64',imports=[str(private)] if p.name=='Cliptiq.exe' else [],rpaths=[])
+   self.assertTrue(m.validate_distribution(root,manifest,inspector=inspect))
+ def test_unsupported_native_magic_cannot_hide_as_data(self):
+  m=module()
+  with tempfile.TemporaryDirectory() as folder:
+   path=pathlib.Path(folder)/'helper'
+   for magic in [b'\xce\xfa\xed\xfe',b'\xfe\xed\xfa\xce',b'\xfe\xed\xfa\xcf',b'\xca\xfe\xba\xbf',b'\xbf\xba\xfe\xca']:
+    path.write_bytes(magic+b'\0'*128)
+    with self.assertRaises(ValueError,msg=magic.hex()):m.inspect_binary(path)
  def test_unsigned_wrong_signer_and_size_excess_fail(self):
   m=module();self.assertTrue(m.signature_errors({'trusted':False,'signer_sha256':None},'1'*64));self.assertTrue(m.signature_errors({'trusted':True,'signer_sha256':'2'*64},'1'*64));self.assertEqual(m.signature_errors({'trusted':True,'signer_sha256':'1'*64},'1'*64),[])
 if __name__=='__main__':unittest.main()
