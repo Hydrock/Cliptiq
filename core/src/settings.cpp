@@ -223,11 +223,11 @@ Result<std::map<FolderId, bool>> settings_folders(Store &store) {
     std::map<FolderId, bool> result;
     detail::Statement q(
         store.connection(),
-        "SELECT id,length(CAST(id AS BLOB)) FROM snippet_folders LIMIT 1001");
+        "SELECT id,length(CAST(id AS BLOB)),coalesce((SELECT enabled FROM snippet_folder_states WHERE id=snippet_folders.id),1) FROM snippet_folders LIMIT 1001");
     while (q.row()) {
       if (q.number(1) > 1024 || result.size() >= 1000)
         return Error{ErrorCode::TooLarge, "Folder shortcut catalog too large"};
-      result[q.text(0)] = true;
+      result[q.text(0)] = q.number(2) != 0;
     }
     return result;
   });

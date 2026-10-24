@@ -17,8 +17,8 @@ Result<Store> open_store(const std::string& path,Limits limits){return detail::g
  detail::exec(raw,"PRAGMA foreign_keys=ON; PRAGMA trusted_schema=OFF");
  detail::Statement version(raw,"PRAGMA user_version");version.row();auto v=version.number(0);
  detail::Statement app(raw,"PRAGMA application_id");app.row();auto aid=app.number(0);
- if(v!=0&&v!=1)return Error{ErrorCode::Unsupported,"unsupported database schema version"};
- if(v==1&&aid!=0x43544951)return Error{ErrorCode::Corrupt,"database application identity mismatch"};
+ if(v!=0&&v!=1&&v!=2)return Error{ErrorCode::Unsupported,"unsupported database schema version"};
+ if(v!=0&&aid!=0x43544951)return Error{ErrorCode::Corrupt,"database application identity mismatch"};
  if(v==0){
   detail::Statement tables(raw,"SELECT count(*) FROM sqlite_schema WHERE name NOT LIKE 'sqlite_%'");tables.row();
   if(tables.number(0)!=0)return Error{ErrorCode::Unsupported,"refusing to initialize a nonempty foreign database"};
@@ -39,6 +39,11 @@ PRAGMA application_id=1129597265;
 PRAGMA user_version=1;
 )SQL");tx.commit();
  }
+ if(v<2){detail::Transaction migration(raw);detail::exec(raw,R"SQL(
+CREATE TABLE snippet_folder_states(id TEXT PRIMARY KEY REFERENCES snippet_folders(id) ON DELETE CASCADE,enabled INTEGER NOT NULL CHECK(enabled IN(0,1)),revision INTEGER NOT NULL CHECK(revision>=0));
+CREATE TABLE snippet_states(id TEXT PRIMARY KEY REFERENCES snippets(id) ON DELETE CASCADE,enabled INTEGER NOT NULL CHECK(enabled IN(0,1)),revision INTEGER NOT NULL CHECK(revision>=0));
+PRAGMA user_version=2;
+)SQL");migration.commit();}
  detail::Statement integrity(raw,"PRAGMA quick_check");if(!integrity.row()||integrity.text(0)!="ok")return Error{ErrorCode::Corrupt,"database integrity check failed"};
  detail::Statement state(raw,"SELECT data_revision,cleanup_interval,cleanup_last FROM store_state WHERE id=1");if(!state.row())return Error{ErrorCode::Corrupt,"missing store state"};
  sqlite3_db_config(raw,SQLITE_DBCONFIG_DEFENSIVE,1,nullptr);

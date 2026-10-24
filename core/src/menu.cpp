@@ -267,7 +267,7 @@ Result<MenuModel> build_menu(Store &store, MenuKind kind,
     if (kind != MenuKind::History) {
       detail::Statement folders(
           store.connection(),
-          "SELECT id,substr(title,1,65536) FROM snippet_folders ORDER BY "
+          "SELECT id,substr(title,1,65536) FROM snippet_folders WHERE coalesce((SELECT enabled FROM snippet_folder_states WHERE id=snippet_folders.id),1)=1 ORDER BY "
           "position,rowid LIMIT 1001");
       size_t total = 0;
       while (folders.row()) {
@@ -284,7 +284,7 @@ Result<MenuModel> build_menu(Store &store, MenuKind kind,
         detail::Statement items(
             store.connection(),
             "SELECT id,substr(title,1,65536),substr(content,1,65536) FROM "
-            "snippets WHERE folder_id=? ORDER BY position,rowid LIMIT 10001");
+            "snippets WHERE folder_id=? AND coalesce((SELECT enabled FROM snippet_states WHERE id=snippets.id),1)=1 ORDER BY position,rowid LIMIT 10001");
         items.bind(1, folders.text(0));
         while (items.row()) {
           if (++total > 10000)
@@ -380,7 +380,7 @@ Result<void> validate_menu_command(Store &store, const MenuCommand &c) {
     if (c.action == MenuAction::SelectHistory)
       sql = "SELECT 1 FROM history WHERE id=?";
     else if (c.action == MenuAction::SelectSnippet)
-      sql = "SELECT 1 FROM snippets WHERE id=?";
+      sql = "SELECT 1 FROM snippets s LEFT JOIN snippet_states v ON v.id=s.id LEFT JOIN snippet_folder_states f ON f.id=s.folder_id WHERE s.id=? AND coalesce(v.enabled,1)=1 AND coalesce(f.enabled,1)=1";
     else if (c.action == MenuAction::ClearHistory)
       sql = "SELECT 1 FROM history LIMIT 1";
     else if (c.action == MenuAction::OpenEditor ||

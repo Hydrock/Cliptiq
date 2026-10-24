@@ -192,7 +192,7 @@ Result<SelectionOutcome> execute_selection(Store &store,
       } else {
         detail::Statement q(store.connection(),
                             "SELECT length(CAST(content AS BLOB)),content FROM "
-                            "snippets WHERE id=?");
+                            "snippets s LEFT JOIN snippet_states v ON v.id=s.id LEFT JOIN snippet_folder_states f ON f.id=s.folder_id WHERE s.id=? AND coalesce(v.enabled,1)=1 AND coalesce(f.enabled,1)=1");
         q.bind(1, intent.command.id);
         if (!q.row())
           return Error{ErrorCode::NotFound, "Snippet disappeared"};
