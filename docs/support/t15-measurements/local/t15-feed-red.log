@@ -1,0 +1,14 @@
+[1/4] Building CXX object CMakeFiles/update_test.dir/tests/unit/update_test.cpp.o
+[2/4] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/update.cpp.o
+[3/4] Linking CXX static library libcliptiq_core.a
+[4/4] Linking CXX executable update_test
+FAILED: update_test 
+: && /usr/bin/c++ -g -Wl,--gc-sections CMakeFiles/update_test.dir/tests/unit/update_test.cpp.o -o update_test  libcliptiq_core.a  libcliptiq_sqlite.a  -ldl  -lm  libcliptiq_grapheme.a && :
+/usr/bin/ld: CMakeFiles/update_test.dir/tests/unit/update_test.cpp.o: in function `main':
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/tests/unit/update_test.cpp:56:(.text+0x24ea): undefined reference to `cliptiq::release_hint(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)'
+/usr/bin/ld: /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/tests/unit/update_test.cpp:57:(.text+0x2636): undefined reference to `cliptiq::release_hint(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)'
+/usr/bin/ld: /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/tests/unit/update_test.cpp:58:(.text+0x2767): undefined reference to `cliptiq::release_hint(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)'
+/usr/bin/ld: /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/tests/unit/update_test.cpp:59:(.text+0x2898): undefined reference to `cliptiq::release_hint(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)'
+/usr/bin/ld: /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/tests/unit/update_test.cpp:60:(.text+0x29c9): undefined reference to `cliptiq::release_hint(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)'
+collect2: error: ld returned 1 exit status
+ninja: build stopped: subcommand failed.

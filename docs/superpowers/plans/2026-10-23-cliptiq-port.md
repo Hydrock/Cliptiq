@@ -10,7 +10,7 @@
 
 **Spec:** [дизайн](../specs/2026-10-23-cliptiq-design.md). **Coverage:** [аудит с ID функций](../../research/2026-10-23-clipy-audit.md). **Naming:** [проверка имён](../../research/2026-10-23-naming.md).
 
-Статус: полный план охвата исследуемой ревизии; пользователь разрешил T01, [прототипы и первые измерения выполнены](../../support/architecture-decision.md). T01 закрыт в согласованных границах ([итог](../../support/t01-results.md)); T02 завершён ([результаты](../../support/t02-results.md)); T03 завершён ([результаты](../../support/t03-results.md)); T04 реализуется с native CI; ручная macOS-приёмка остаётся открыта ([результаты](../../support/t04-results.md)). T05 реализован с native CI; ручная Windows-приёмка открыта ([результаты](../../support/t05-results.md)). T06 автоматическая часть реализована ([результаты](../../support/t06-results.md)); Linux desktop manual gate открыт. T07 автоматическая часть реализована ([результаты](../../support/t07-results.md)); интерактивная приёмка OPEN. T08 автоматическая часть реализована ([результаты](../../support/t08-results.md)); app-to-app manual OPEN. T09–T14 автоматическая часть отражена ниже; ручные gates остаются OPEN. T15–T17 не начаты. Release binaries не созданы.
+Статус: полный план охвата исследуемой ревизии; пользователь разрешил T01, [прототипы и первые измерения выполнены](../../support/architecture-decision.md). T01 закрыт в согласованных границах ([итог](../../support/t01-results.md)); T02 завершён ([результаты](../../support/t02-results.md)); T03 завершён ([результаты](../../support/t03-results.md)); T04 реализуется с native CI; ручная macOS-приёмка остаётся открыта ([результаты](../../support/t04-results.md)). T05 реализован с native CI; ручная Windows-приёмка открыта ([результаты](../../support/t05-results.md)). T06 автоматическая часть реализована ([результаты](../../support/t06-results.md)); Linux desktop manual gate открыт. T07 автоматическая часть реализована ([результаты](../../support/t07-results.md)); интерактивная приёмка OPEN. T08 автоматическая часть реализована ([результаты](../../support/t08-results.md)); app-to-app manual OPEN. T09–T14 автоматическая часть отражена ниже; ручные gates остаются OPEN. T15 автоматическая часть отражена ниже; T16–T17 не начаты. Release binaries не созданы.
 
 ## Global Constraints
 
@@ -269,7 +269,7 @@ Capture contract: сохранять все разрешённые representatio
 - [x] Перенести XML fallback для пользователей, которым нужна только коллекция snippets; объяснить loss enable/UUID/shortcuts в XML. Проверить neutral import на Windows/Linux.
 - [x] Commit `feat: add optional read-only Clipy migration tool`.
 
-Автоматическая часть: runtime `c965d5c7251fbd1d715498502162b15c4818a7c4`, [CI40090941139](https://github.com/Hydrock/Cliptiq/actions/runs/40090941139)9/9; [результаты](../../support/t14-results.md). Ручная T04–T13 и T14 historical/clean-system acceptance OPEN. T15 не начат.
+Автоматическая часть: runtime `c965d5c7251fbd1d715498502162b15c4818a7c4`, [CI40090941139](https://github.com/Hydrock/Cliptiq/actions/runs/40090941139)9/9; [результаты](../../support/t14-results.md). Ручная T04–T13 и T14 historical/clean-system acceptance OPEN. Реализация T15 отражена ниже.
 
 ### T15. Обновления и решение по диагностике
 
@@ -277,11 +277,13 @@ Capture contract: сохранять все разрешённые representatio
 
 **Interfaces:** `check_update(UpdateChannel, Version)->Result<UpdateInfo>`; `UpdateInfo` содержит version/platform/arch/package_url/signing metadata; `apply_update(UpdateInfo)->Result<UpdateOutcome>` делегирует platform route. User schedule 86400/604800/2592000 sec + last-check хранится settings; actual manual/auto preferences поставщика учитываются.
 
-- [ ] Failing tests: offline, timeout, invalid/missing signature, wrong target, downgrade, size ceiling, malformed version, install cancelled, package-managed binary never overwritten.
-- [ ] `ctest --preset test -R update --output-on-failure`; реализовать native secure route. Mac измеренный Sparkle lane со своим feed/keys; Windows signed installer/MSIX manager, portable helper только с подписью/rollback plan; Linux package manager для deb/rpm, tar check + явная download/install route. HTTPS alone не выдавать за проверку подлинности release.
-- [ ] Сохранить check now/auto schedule/last-check/version. Отдельно решить, требует ли full parity автоустановку в portable lane: если да — signed helper является обязательной частью размера, не скрытым скачиванием после установки.
-- [ ] По предлагаемому решению убрать Firebase и предложить локальный export диагностики с redaction. Если нужна исходная аналитика/crash reporting, сохранить эту строку как pending, выделить opt-in telemetry компонент, новый endpoint/privacy и measured dependency closure. Clipboard/snippets ни в одной lane не отправляются.
-- [ ] Commit `feat: add signed platform update routes and diagnostics policy`.
+- [x] Failing tests: offline, timeout, invalid/missing signature, wrong target, downgrade, size ceiling, malformed version, install cancelled, package-managed binary never overwritten.
+- [x] `ctest --preset test -R update --output-on-failure`; реализовать native secure route. Mac измеренный Sparkle lane со своим feed/keys; Windows signed installer/MSIX manager, portable helper только с подписью/rollback plan; Linux package manager для deb/rpm, tar check + явная download/install route. HTTPS alone не выдавать за проверку подлинности release.
+- [x] Сохранить check now/auto schedule/last-check/version. Отдельно решить, требует ли full parity автоустановку в portable lane: если да — signed helper является обязательной частью размера, не скрытым скачиванием после установки.
+- [x] По предлагаемому решению убрать Firebase и предложить локальный export диагностики с redaction. Если нужна исходная аналитика/crash reporting, сохранить эту строку как pending, выделить opt-in telemetry компонент, новый endpoint/privacy и measured dependency closure. Clipboard/snippets ни в одной lane не отправляются.
+- [x] Commit `feat: add signed platform update routes and diagnostics policy`.
+
+Автоматическая реализация: runtime `3ac983131e1a167908f4c11ab43db3a62bbc20e7`, [CI40094637399](https://github.com/Hydrock/Cliptiq/actions/runs/40094637399)11/11; [результаты](../../support/t15-results.md). Локальная диагностика вместо Firebase принята пользователем. Native delivery contracts реализованы, но собственные production feed/keys/installers/repositories и фактическая release-приёмка OPEN. Manual T04–T14 OPEN; T16 не начат.
 
 ### T16. OCR и FTS backend, отдельно от нового UI
 

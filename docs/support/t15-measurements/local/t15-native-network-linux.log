@@ -1,0 +1,3 @@
+[1/2] Building CXX object CMakeFiles/update_native_test.dir/tests/integration/update_native_test.cpp.o
+[2/2] Linking CXX executable update_native_test
+No newer stable release; use signed package repository (deb/rpm) or explicit portable download/install. No automatic installation.

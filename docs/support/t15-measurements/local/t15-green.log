@@ -1,0 +1,10 @@
+[1/3] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/menu.cpp.o
+[2/3] Linking CXX static library libcliptiq_core.a
+[3/3] Linking CXX executable update_test
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+    Start 53: update
+1/1 Test #53: update ...........................   Passed    0.02 sec
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.04 sec

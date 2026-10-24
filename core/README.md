@@ -62,3 +62,5 @@ T09: [persistent settings, native panels and global shortcut contract](SETTINGS.
 T13: [desktop lifecycle, autostart, locale and accessibility boundaries](LIFECYCLE.md).
 
 T14: [optional offline migration and source-preservation contract](MIGRATION.md).
+
+T15: [native update routes, bounded optional Sparkle and local diagnostics](UPDATES.md).

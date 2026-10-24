@@ -92,3 +92,5 @@ Release flags: MSVC `/O1 /GL /LTCG /OPT:REF /OPT:ICF`, Clang/GCC `-Os`/изме�
 ## Принято после T01
 
 Пользователь 23 октября 2026 подтвердил C++ с нативными оболочками и разрешил T02 по плану. Предварительные size ceilings сохраняются целями полного продукта; измеренный prototype/core probe не доказывает их достижение.
+
+T15 decision (2026-10-24): пользователь явно принял замену Firebase Analytics/Crashlytics локальным экспортом диагностики без отправки данных. S11 больше не pending по этому scope-решению; это согласованное отличие от исходного служебного telemetry/crash-reporting, а не буквальная parity. [Privacy](../../support/privacy.md), [T15 results](../../support/t15-results.md). Ручные gates и T16 остаются OPEN/не начат соответственно.

@@ -1,0 +1,78 @@
+Preset CMake variables:
+
+  BUILD_TESTING="ON"
+  CMAKE_BUILD_TYPE="Debug"
+
+-- Configuring done (2.3s)
+-- Generating done (0.7s)
+-- Build files have been written to: /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+[1/55] Building CXX object CMakeFiles/update_native_test.dir/tests/integration/update_native_test.cpp.o
+[2/55] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/locale.cpp.o
+[3/55] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/sha256.cpp.o
+[4/55] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/locale_catalogue.cpp.o
+[5/55] Building CXX object CMakeFiles/cliptiq_updates_native.dir/platform/Updates.cpp.o
+[6/55] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/policy.cpp.o
+[7/55] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/storage.cpp.o
+[8/55] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/menu_preview.cpp.o
+[9/55] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/update.cpp.o
+[10/55] Building CXX object CMakeFiles/cliptiq_updates_native.dir/platform/linux/Updates.cpp.o
+[11/55] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/paste.cpp.o
+[12/55] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/media.cpp.o
+[13/55] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/menu.cpp.o
+[14/55] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/hotkeys.cpp.o
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/src/hotkeys.cpp: In function ‘cliptiq::Result<cliptiq::KeyChord> cliptiq::parse_chord(const std::string&)’:
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/src/hotkeys.cpp:67:39: warning: enumerated and non-enumerated type in conditional expression [-Wextra]
+   67 |                    : token == "Super" ? Super
+      |                      ~~~~~~~~~~~~~~~~~^~~~~~~
+   68 |                                       : 0;
+      |                                       ~~~
+[15/55] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/history.cpp.o
+[16/55] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/snippets.cpp.o
+[17/55] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/settings.cpp.o
+[18/55] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/editor.cpp.o
+[19/55] Building CXX object CMakeFiles/cliptiq_menu_host.dir/platform/MenuHost.cpp.o
+[20/55] Linking CXX static library libcliptiq_core.a
+[21/55] Linking CXX static library libcliptiq_updates_native.a
+[22/55] Linking CXX executable menu_preview_test
+[23/55] Linking CXX executable update_native_test
+[24/55] Linking CXX executable history_test
+[25/55] Linking CXX executable native_hotkeys_test
+[26/55] Linking CXX executable menu_regression_test
+[27/55] Linking CXX executable policy_test
+[28/55] Linking CXX executable native_menu_test
+[29/55] Linking CXX executable media_test
+[30/55] Linking CXX executable menu_test
+[31/55] Linking CXX executable hotkeys_test
+[32/55] Linking CXX executable xml_test
+[33/55] Linking CXX executable paste_test
+[34/55] Linking CXX executable linux_clipboard_test
+[35/55] Linking CXX executable linux_hotkey_portal_test
+[36/55] Linking CXX executable menu_paste_bridge_test
+[37/55] Linking CXX executable lifecycle_test
+[38/55] Linking CXX executable settings_test
+[39/55] Linking CXX executable editor_test
+[40/55] Linking CXX executable update_test
+[41/55] Linking CXX executable tools/import-clipy/cliptiq-import
+[42/55] Linking CXX executable import_test
+[43/55] Linking CXX executable native_settings_test
+[44/55] Linking CXX executable snippets_test
+[45/55] Linking CXX executable native_paste_test
+[46/55] Linking CXX executable snippet_integration_test
+[47/55] Linking CXX executable media_review_test
+[48/55] Linking CXX executable native_media_test
+[49/55] Linking CXX executable linux_x11_wire_test
+[50/55] Linking CXX executable linux_wayland_wire_test
+[51/55] Linking CXX executable linux_native_clipboard_test
+[52/55] Linking CXX executable native_xml_test
+[53/55] Linking CXX executable import_native_test
+[54/55] Linking CXX executable native_editor_test
+[55/55] Linking CXX executable cliptiq_menu_host
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+    Start 53: update
+1/2 Test #53: update ...........................   Passed    0.02 sec
+    Start 54: update_native
+2/2 Test #54: update_native ....................   Passed    0.02 sec
+
+100% tests passed, 0 tests failed out of 2
+
+Total Test time (real) =   0.09 sec

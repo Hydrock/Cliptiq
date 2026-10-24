@@ -1,0 +1,30 @@
+[1/11] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/menu_preview.cpp.o
+[2/11] Building CXX object CMakeFiles/update_test.dir/tests/unit/update_test.cpp.o
+[3/11] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/update.cpp.o
+[4/11] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/paste.cpp.o
+[5/11] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/media.cpp.o
+[6/11] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/menu.cpp.o
+[7/11] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/hotkeys.cpp.o
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/src/hotkeys.cpp: In function ‘cliptiq::Result<cliptiq::KeyChord> cliptiq::parse_chord(const std::string&)’:
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/src/hotkeys.cpp:67:39: warning: enumerated and non-enumerated type in conditional expression [-Wextra]
+   67 |                    : token == "Super" ? Super
+      |                      ~~~~~~~~~~~~~~~~~^~~~~~~
+   68 |                                       : 0;
+      |                                       ~~~
+[8/11] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/settings.cpp.o
+[9/11] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/editor.cpp.o
+[10/11] Linking CXX static library libcliptiq_core.a
+[11/11] Linking CXX executable update_test
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+    Start 53: update
+1/1 Test #53: update ...........................***Failed    0.02 sec
+release_hint("<feed><entry><id>tag:github.com,2008:Repository/1/v0.2.0</id><link rel='alternate' href='https://github.com/Hydrock/Cliptiq/releases/tag/v0.2.0'/></entry></feed>","0.1.0")
+
+
+0% tests passed, 1 tests failed out of 1
+
+Total Test time (real) =   0.05 sec
+
+The following tests FAILED:
+	 53 - update (Failed)
+Errors while running CTest

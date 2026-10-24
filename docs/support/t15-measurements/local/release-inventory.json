@@ -1,0 +1,5 @@
+{
+  "checked_endpoint": "https://api.github.com/repos/Hydrock/Cliptiq/releases?per_page=1",
+  "published_release_count_returned": 0,
+  "note": "No signing identity/private key inferred from repository metadata."
+}
