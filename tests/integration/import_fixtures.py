@@ -66,6 +66,8 @@ try:
  conflict=root/'shortcut-conflict.neutral';conflict.write_bytes(settings.read_bytes());d=sqlite3.connect(conflict)
  d.executemany('INSERT OR REPLACE INTO migration_settings VALUES(?,?,?)',[('hotkey:main',b'main','Ctrl+Shift+Q'),('hotkey:history',b'history','Ctrl+Shift+Q')]);d.commit();d.close()
  empty=root/'empty-settings.dest';run('import',conflict,empty,'--apply-settings',ok=False);d=sqlite3.connect(empty);assert d.execute('SELECT count(*) FROM history').fetchone()==(0,);d.close()
+ # A legacy clip archive is entry-owned payload, not a16MiB preferences plist.
+ archived=root/'large-archive.neutral';archived.write_bytes(n.read_bytes());d=sqlite3.connect(archived);d.execute('INSERT INTO migration_settings VALUES(?,?,NULL)',('legacy.archive.h0',b'A'*(17*1024*1024)));d.commit();d.close();run('import',archived,root/'large-archive.dest')
  # Unicode paths must work on Windows as well as POSIX.
  unicode=root/'данные-clipboard';unicode.write_bytes(n.read_bytes());run('import',unicode,root/'история.dest')
  # WAL source remains byte-for-byte unchanged, including sidecars.

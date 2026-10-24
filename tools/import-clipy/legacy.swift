@@ -156,7 +156,7 @@ func stage(_ source:URL,_ assets:URL,_ output:URL)throws{
  var total=0
  for clip in realm.objects(CPYClip.self){
   let name=URL(fileURLWithPath:clip.dataPath).lastPathComponent;try check(!name.isEmpty&&name != "."&&name != "..","Invalid asset name")
-  let raw=try read(assets.appendingPathComponent(name));let decoded=try archive(raw);let parts=try representations(decoded)
+  let raw=try read(assets.appendingPathComponent(name),limit:64*1024*1024);let decoded=try archive(raw);let parts=try representations(decoded)
   total+=raw.count+parts.reduce(0){$0+$1.1.count};try check(total<=256*1024*1024,"Legacy payload exceeds256MiB")
   let types=try JSONSerialization.data(withJSONObject:parts.map{$0.0});try sql.insert("INSERT INTO pasteboardHistories VALUES(?,?,?,NULL,?)",[clip.dataHash,clip.title,String(decoding:types,as:UTF8.self),clip.updateTime])
   for(i,p)in parts.enumerated(){try sql.insert("INSERT INTO pasteboardHistoryAssets VALUES(?,?,?,?,?)",[clip.dataHash+"-"+String(i),clip.dataHash,i,p.0,p.1])}

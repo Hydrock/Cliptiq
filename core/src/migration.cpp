@@ -378,7 +378,10 @@ Data read(sqlite3 *d, bool neutral) {
     while (s.row()) {
       require(out.settings.size() < 2048, "Too many migration settings");
       S x{text(s, 0, 1100), s.bytes(1), {}};
-      require(x.raw.size() <= 16 * 1024 * 1024, "Settings archive too large");
+      require(x.raw.size() <=
+                  (x.key.rfind("legacy.archive.", 0) == 0 ? 64u : 16u) * 1024 *
+                      1024,
+              "Settings/archive payload too large");
       if (!s.is_null(2))
         x.apply = text(s, 2, 65536);
       budget(x.raw.size());
@@ -547,7 +550,10 @@ export_clipy_sqlite(const std::string &source, const std::string &target,
     auto data = read(input.db.get(), false);
     require(settings.size() <= 2048, "Too many exported settings");
     for (auto &s : settings) {
-      require(s.key.size() <= 1100 && s.raw.size() <= 16 * 1024 * 1024 &&
+      require(s.key.size() <= 1100 &&
+                  s.raw.size() <=
+                      (s.key.rfind("legacy.archive.", 0) == 0 ? 64u : 16u) *
+                          1024 * 1024 &&
                   (!s.apply_value || s.apply_value->size() <= 65536),
               "Export setting exceeds limit");
       data.settings.push_back({s.key, s.raw, s.apply_value});
