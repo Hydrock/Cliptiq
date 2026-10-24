@@ -241,7 +241,7 @@ Capture contract: сохранять все разрешённые representatio
 - [ ] Проверить off по умолчанию, permission denied, rename/partial write, exclude policy, watcher stop/restart. Документировать различие от «захватить экран».
 - [x] Commit `feat: add bounded previews and screenshot folder observation`.
 
-Автоматическая часть: runtime `132adc53f3bf6ddd9cc009dc97151de84d888269`, [CI40077744955](https://github.com/Hydrock/Cliptiq/actions/runs/40077744955) 7/7; [результаты](../../support/t12-results.md). Ручная T04–T11 и T12 desktop acceptance OPEN. T13 не начат. Deferred Minor: preview-off resource savings.
+Автоматическая часть: runtime `132adc53f3bf6ddd9cc009dc97151de84d888269`, [CI40077744955](https://github.com/Hydrock/Cliptiq/actions/runs/40077744955) 7/7; [результаты](../../support/t12-results.md). Ручная T04–T11 и T12 desktop acceptance OPEN. T13 описан ниже. Deferred Minor: preview-off resource savings.
 
 ### T13. Автозапуск, локализация и доступность приложения
 
@@ -249,11 +249,13 @@ Capture contract: сохранять все разрешённые representatio
 
 **Interfaces:** `set_autostart(bool)->Result<AutostartStatus>`; `show_main/history/snippets/settings` CLI routes к единственному user-session instance; schema locale keys генерируется одинаковая для всех оболочек.
 
-- [ ] Failing contract tests: second-instance forwards action, cannot lose settings access, autostart failed registration remains visible as failure; missing locale → EN. Создать source locale inventory из xcstrings/lproj.
-- [ ] Нативный test и `ctest --preset test -R lifecycle --output-on-failure`; затем SMAppService/HKCU Run или packaged StartupTask/XDG autostart. IPC per-user, не принимать произвольный executable/path command.
-- [ ] Перенести доступные переводы с attribution, RU/EN обязательный quality smoke; missing translations явно fallback. About/version/support links только своего проекта. Donation URL не выдумывать до предоставления.
+- [x] Failing contract tests: second-instance forwards action, cannot lose settings access, autostart failed registration remains visible as failure; missing locale → EN. Создать source locale inventory из xcstrings/lproj.
+- [x] Нативный test и `ctest --preset test -R lifecycle --output-on-failure`; затем SMAppService/HKCU Run или packaged StartupTask/XDG autostart. IPC per-user, не принимать произвольный executable/path command.
+- [x] Перенести доступные переводы с attribution, RU/EN обязательный quality smoke; missing translations явно fallback. About/version/support links только своего проекта. Donation URL не выдумывать до предоставления.
 - [ ] Logout/login, hidden icon/no tray/no shortcut, uninstall autostart cleanup, DPI/accessibility focus, one app per session. Приложение работает без сети.
-- [ ] Commit `feat: add desktop lifecycle integration and localized settings`.
+- [x] Commit `feat: add desktop lifecycle integration and localized settings`.
+
+Автоматическая часть: runtime `45d2349441ae51a36d78c68d94e7d789db687c0a`, [CI40083243041](https://github.com/Hydrock/Cliptiq/actions/runs/40083243041) 7/7; [результаты](../../support/t13-results.md). Ручная T04–T12 и T13 OPEN. Minor --background отложен. T14 не начат.
 
 ### T14. Миграция данных Clipy без тяжёлого runtime
 

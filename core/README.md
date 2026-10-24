@@ -58,3 +58,5 @@ and Windows can share a checkout. `sanitize` enables ASan/UBSan on GCC/Clang.
 sizes. Archives contain unlinked code and are not installed-product sizes.
 
 T09: [persistent settings, native panels and global shortcut contract](SETTINGS.md).
+
+T13: [desktop lifecycle, autostart, locale and accessibility boundaries](LIFECYCLE.md).

@@ -1,0 +1,13 @@
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+    Start 28: lifecycle
+1/1 Test #28: lifecycle ........................***Failed    0.01 sec
+T13 not implemented
+
+
+0% tests passed, 1 tests failed out of 1
+
+Total Test time (real) =   0.05 sec
+
+The following tests FAILED:
+	 28 - lifecycle (Failed)
+Errors while running CTest

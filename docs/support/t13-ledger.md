@@ -1,51 +1,25 @@
-# T13 implementation ledger
+# T13 execution ledger
 
-Base: `1b3357a95193315d69f33ebeddcec5cfab7a2c96`.
-Approved T13 covers S08–09,12–13. T14 is excluded. Manual T04–T12 remain OPEN.
-Dedicated clean feature checkout codex/portability-plan is reused, as in T02–T12.
-Linux baseline:43/43 CTest groups.
+Base1b3357a95193315d69f33ebeddcec5cfab7a2c96 → initiale017a5f → fixed runtime45d2349441ae51a36d78c68d94e7d789db687c0a. Existing approved T13 plan executed inline; no separate design approval needed. Existing isolated branch reused. One fresh gpt-6-astra read-only reviewer; no recursive review/subagents.
 
-Pre-flight: settings login/support placeholders consume new native lifecycle APIs;
-CLI show routes exist but currently launch independent hosts. Menu launcher remains
-the recovery surface when tray/hotkeys are unavailable. Localization must translate
-application chrome only, never clipboard history or user snippet text.
+Review: With fixes;0Critical,2Important fixed in one pass,1Minor deferred. Complete findings/rulings/costs are in t13-results. All declined-to-judge items received an explicit decision; manual T04–T12 unchanged OPEN, T13 manual OPEN, T14 excluded.
 
-Ruling: use an OS file lock and a bounded SQLite mailbox in a private per-user/session
-directory — SQLite is already bundled and accepts only five fixed open actions;
-cost: GUI polling, rather than immediate OS message delivery, uses a100ms poll interval (plus bounded SQLite busy wait).
+RED evidence: initial route/API/registration/foreign DB/empty restart/fallback/GUI target; review initialization gate, symlink ancestor, stale preference rollback. GREEN: local full suites and exact runtime CI7/7. Initial Mac CI40082421053 failed lifecycle open via /var symlink; subsequent CI40083243041 supersedes that result. No clean-VM, logout/login, signing, screen-reader or DPI acceptance claimed. Partial translations retained honestly; no new heavy runtime.
 
-Ruling: macOS login registration requires a proper app bundle — SMAppService status
-must distinguish approval from enabled; cost: unbundled probes cannot establish login.
+Ruling: OS locks + existing SQLite mailbox — reuses dependency and keeps IPC bounded — cost:100ms polling, bounded busy waits, no exactly-once crash delivery.
+Ruling: macOS login uses proper own bundle — SMAppService requirement — cost: unbundled probes cannot prove login or exact prior approval restoration.
+Final: Ruling: owner-change capture — unchanged transport accepted with retained automated suite — cost: real owner-change/manual T04–T06 remain OPEN.
+Final: Ruling: delete/OCR/thumbnail — retained cancellation/generation tests, no T16 work — cost: manual media acceptance OPEN, OCR absent.
+Final: Ruling: denied/lost-target paste — retained boundary tests/manual fallback — cost: real app-to-app T08 remains OPEN.
+Final: Ruling: INCR/image/XML bounds — retained bounded suites plus new IPC checks — cost: hostile live producer manual acceptance remains OPEN.
+Final: Ruling: real desktop/login/signing/GUI/DPI/readers — explicit manual gates, CI not substituted — cost: no desktop/assistive-tech/clean-install acceptance claim.
+Final: Ruling: final size/exact-code CI — four hashed reports and exact runtime7/7 CI verified — cost: review host measured, not installer/update/full distribution.
+Final: Ruling: T14 migration — excluded by user — cost: migration absent, T14 not started.
+Final: minor (deferred): T13 --background still opens launcher.
+Final: minor (deferred, carried): T11 generic Saved during locked XML worker.
+Final: minor (deferred, carried): T12 preview-off still decodes/caches.
+Final: fixed restart request loss — lifecycle initialization-gate regression RED→GREEN, full suite48/48.
+Final: fixed stale-preference rollback — isolated autostart regression RED→GREEN, full suite48/48.
+Final: fixed macOS symlink ancestor open — Linux symlink-parent regression RED→GREEN, full suite48/48 and hosted macOS35/35.
 
-Progress: core lifecycle RED on missing routes, then GREEN; startup apply RED on
-missing transaction, then GREEN with native rollback; foreign mailbox RED on
-incorrect overwrite, then GREEN with app-ID/version/size guards. Real subprocess
-forwarding and kill/restart tests pass on Linux and Windows. Linux48/48 CTest
-and Windows19/19 selected safe groups passed before final accessibility layout changes.
-Local Windows native GUI tests cannot create an isolated Window Station (error5);
-those tests stay in hosted CI/manual acceptance rather than being weakened.
-
-Localization: shared generated132-key EN/RU schema, seven partial upstream locales,
-42 extra matching XIB/lproj strings, pinned source inventory/hashes and MIT/BSD
-attribution. RU native Settings smoke on isolated X11 and Wayland passes. User
-clipboard text equal to a chrome key remains byte-identical and untranslated.
-New windows apply the selected language at next launch; technical diagnostics
-without a resource entry explicitly retain English fallback.
-
-Packaging: native Mac app bundle identity for SMAppService, Linux desktop actions,
-Windows Common Controls/asInvoker manifest, staging install rules. No real user
-login registration is invoked by smoke/CI; isolated native API tests cover registry
-and desktop-file creation/removal. Mac login registration/approval/signing remains
-manual. Existing preview-off and XML picker deferred minors are unchanged.
-
-Ready verification: Linux48/48, Windows19/19 safe groups and production GUI PE
-subsystem check GREEN. Empty initialization mailbox recovery RED→GREEN; foreign
-SQLite databases remain rejected. Partial-locale fallback now resolves the English
-catalogue value, not merely the key (RED→GREEN). Legacy local-only clear/folder CLI
-routes remain usable by the primary, but cannot be forwarded as IPC actions.
-
-GUI layout: GTK labels wrap and name controls through ATK, AppKit uses wrapping
-labels/accessibility names, Win32 measures label heights using the actual font.
-Real DPI/screen-reader and logout/login behavior remain manual. No broad sanitizer
-suppressions or new bundled runtime have been added. Source generators are checked
-against committed EN/RU schema; all source snapshots and size probes are pending CI.
+Implementation and proof commits published on codex/portability-plan, existing draft PR1 updated; no merge/release. Owned SDD test log copied into evidence before cleanup. Initial native wiring was not uniformly test-first. Runtime remains review-stage software.
