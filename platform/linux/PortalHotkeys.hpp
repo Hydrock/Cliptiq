@@ -8,6 +8,7 @@ class PortalHotkeys {
 public:
   explicit PortalHotkeys(std::function<void(ActionId, InvocationContext)>);
   ~PortalHotkeys();
+  void reconcile_folders(const std::map<FolderId, bool> &);
   Result<void> configure(const HotkeyMap &);
   std::map<ActionId, BindingStatus> statuses() const;
 };

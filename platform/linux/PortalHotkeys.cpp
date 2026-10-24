@@ -32,6 +32,7 @@ struct PortalHotkeys::State : std::enable_shared_from_this<State> {
   unsigned serial = 0, stage = 0;
   ~State() {
     if (bus) {
+      close_request();
       close(pending_session);
       close(current);
       for (auto id : {response, activated, closed, changed, owner_watch})
@@ -50,7 +51,15 @@ struct PortalHotkeys::State : std::enable_shared_from_this<State> {
                            nullptr, G_DBUS_CALL_FLAGS_NONE, 1000, nullptr,
                            nullptr, nullptr);
   }
+  void close_request() {
+    if (bus && !request.empty())
+      g_dbus_connection_call(bus, service, request.c_str(),
+                             "org.freedesktop.portal.Request", "Close", nullptr,
+                             nullptr, G_DBUS_CALL_FLAGS_NONE, 1000, nullptr,
+                             nullptr, nullptr);
+  }
   void failed(const std::string &reason) {
+    close_request();
     close(pending_session);
     pending_session.clear();
     request.clear();
@@ -334,6 +343,34 @@ PortalHotkeys::PortalHotkeys(
   state_->initialize();
 }
 PortalHotkeys::~PortalHotkeys() = default;
+void PortalHotkeys::reconcile_folders(const std::map<FolderId, bool> &catalog) {
+  auto &s = *state_;
+  auto invalid = [&](const ActionId &action) {
+    if (action.rfind("folder:", 0) != 0)
+      return false;
+    auto found = catalog.find(action.substr(7));
+    return found == catalog.end() || !found->second;
+  };
+  bool cancel_pending = false, close_current = false;
+  if (s.stage)
+    for (const auto &p : s.candidate)
+      if (p.second && invalid(p.first))
+        cancel_pending = true;
+  for (const auto &p : s.bound)
+    if (p.second.registered && invalid(p.first))
+      close_current = true;
+  if (cancel_pending)
+    s.failed("Folder changed; retry portal authorization");
+  if (close_current) {
+    s.close(s.current);
+    s.current.clear();
+    for (auto &p : s.bound)
+      p.second = {false,
+                  "Folder disabled/deleted: portal session closed; reauthorize "
+                  "remaining shortcuts in Settings",
+                  {}};
+  }
+}
 Result<void> PortalHotkeys::configure(const HotkeyMap &keys) {
   auto &s = *state_;
   auto valid = validate_hotkeys(keys);

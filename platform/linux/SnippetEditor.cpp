@@ -22,7 +22,8 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
   }
   void status(Result<void> r) {
     gtk_label_set_text(GTK_LABEL(message),
-                       r ? "Saved locally." : r.error().message.c_str());
+                       r ? ("Saved locally. " + model->binding_status()).c_str()
+                         : r.error().message.c_str());
   }
   void history() {
     gtk_widget_set_sensitive(undo, model->can_undo());
@@ -292,6 +293,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
   button(
       "Reload", "editor-reload", +[](GtkButton *, gpointer p) {
         auto s = static_cast<State *>(p);
+        auto keep = s->shared_from_this();
         auto r = s->model->reload();
         s->status(r);
         if (r)
@@ -355,6 +357,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
   g_signal_connect(gtk_tree_view_get_selection(GTK_TREE_VIEW(s->tree)),
                    "changed", G_CALLBACK(+[](GtkTreeSelection *, gpointer p) {
                      auto s = static_cast<State *>(p);
+                     auto keep = s->shared_from_this();
                      if (s->updating)
                        return;
                      auto r = s->model->select(s->selected_row());
@@ -367,6 +370,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
       cell, "toggled",
       G_CALLBACK(+[](GtkCellRendererToggle *, gchar *path, gpointer p) {
         auto s = static_cast<State *>(p);
+        auto keep = s->shared_from_this();
         GtkTreeIter iter;
         if (!gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(s->rows), &iter,
                                                  path))
@@ -385,6 +389,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
   g_signal_connect(
       s->title, "changed", G_CALLBACK(+[](GtkEditable *, gpointer p) {
         auto s = static_cast<State *>(p);
+        auto keep = s->shared_from_this();
         if (s->updating)
           return;
         auto r = s->model->edit_title(gtk_entry_get_text(GTK_ENTRY(s->title)));
@@ -396,6 +401,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
   g_signal_connect(s->enabled, "toggled",
                    G_CALLBACK(+[](GtkToggleButton *b, gpointer p) {
                      auto s = static_cast<State *>(p);
+                     auto keep = s->shared_from_this();
                      if (s->updating)
                        return;
                      auto r = s->model->enable(gtk_toggle_button_get_active(b));
@@ -407,6 +413,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
   g_signal_connect(gtk_text_view_get_buffer(GTK_TEXT_VIEW(s->body)), "changed",
                    G_CALLBACK(+[](GtkTextBuffer *b, gpointer p) {
                      auto s = static_cast<State *>(p);
+                     auto keep = s->shared_from_this();
                      if (s->updating)
                        return;
                      GtkTextIter start;
@@ -437,6 +444,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
       s->tree, "key-press-event",
       G_CALLBACK(+[](GtkWidget *, GdkEventKey *e, gpointer p) -> gboolean {
         auto s = static_cast<State *>(p);
+        auto keep = s->shared_from_this();
         if (e->keyval == GDK_KEY_Delete) {
           s->remove();
           return TRUE;
@@ -481,6 +489,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
   g_signal_connect(s->tree, "drag-begin",
                    G_CALLBACK(+[](GtkWidget *, GdkDragContext *, gpointer p) {
                      auto s = static_cast<State *>(p);
+                     auto keep = s->shared_from_this();
                      s->dragged = s->selected_row();
                      if (s->dragged) {
                        auto r = s->model->begin_drag(*s->dragged);
@@ -496,6 +505,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
       G_CALLBACK(+[](GtkWidget *, GdkDragContext *, GtkSelectionData *d, guint,
                      guint, gpointer p) {
         auto s = static_cast<State *>(p);
+        auto keep = s->shared_from_this();
         auto token = std::to_string(s->drag);
         gtk_selection_data_set(d, gtk_selection_data_get_target(d), 8,
                                reinterpret_cast<const guchar *>(token.data()),
@@ -507,6 +517,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
       G_CALLBACK(+[](GtkWidget *, GdkDragContext *ctx, gint x, gint y,
                      GtkSelectionData *d, guint, guint time, gpointer p) {
         auto s = static_cast<State *>(p);
+        auto keep = s->shared_from_this();
         auto expected = std::to_string(s->drag);
         int length = gtk_selection_data_get_length(d);
         bool valid = s->drag && gtk_drag_get_source_widget(ctx) == s->tree &&
@@ -520,6 +531,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
   g_signal_connect(s->tree, "drag-end",
                    G_CALLBACK(+[](GtkWidget *, GdkDragContext *, gpointer p) {
                      auto s = static_cast<State *>(p);
+                     auto keep = s->shared_from_this();
                      if (s->drag)
                        s->model->finish_drag(s->drag, "", 0, false);
                      s->drag = 0;

@@ -9,6 +9,7 @@ struct SnippetEditorCallbacks {
   std::function<Result<void>(const FolderId &, std::optional<KeyChord>)>
       bind_folder;
   std::function<std::optional<KeyChord>(const FolderId &)> folder_chord;
+  std::function<std::string(const FolderId &)> binding_status;
 };
 class SnippetEditorSession {
   struct State;
@@ -40,6 +41,7 @@ public:
                            std::size_t index, bool committed);
   Result<void> bind_folder(std::optional<KeyChord>);
   std::optional<KeyChord> folder_chord() const;
+  std::string binding_status() const;
 };
 class NativeSnippetEditor {
   struct State;

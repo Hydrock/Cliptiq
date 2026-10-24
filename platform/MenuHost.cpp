@@ -2,6 +2,9 @@
 #include "cliptiq/menu.hpp"
 #ifdef CLIPTIQ_WITH_SETTINGS
 #include "cliptiq/settings.hpp"
+#ifdef CLIPTIQ_WITH_EDITOR
+#include "cliptiq/editor.hpp"
+#endif
 #include <filesystem>
 #endif
 #ifdef CLIPTIQ_WITH_PASTE
@@ -272,17 +275,28 @@ int host(int argc, char **argv) {
 #endif
 #ifdef CLIPTIQ_WITH_SETTINGS
     NativeSettings settings_window;
+#ifdef CLIPTIQ_WITH_EDITOR
+    NativeSnippetEditor editor_window;
+    std::shared_ptr<SnippetEditorSession> editor_session;
+    std::function<void()> show_editor;
+#endif
     std::optional<std::pair<ActionId, InvocationContext>> pending_action;
     NativeHotkeys hotkeys([&](ActionId action, InvocationContext ctx) {
       auto binding = preferences.hotkeys.find(action);
+#ifdef CLIPTIQ_WITH_EDITOR
+      if (binding != preferences.hotkeys.end() && binding->second &&
+          editor_window.record_chord(*binding->second))
+        return;
+#endif
       if (binding != preferences.hotkeys.end() && binding->second &&
           settings_window.record_chord(*binding->second))
         return;
       pending_action = std::make_pair(std::move(action), std::move(ctx));
     });
     HotkeyRegistry registry(hotkeys);
+    auto startup_keys = take(available_hotkeys(store, preferences.hotkeys));
     if (!smoke)
-      for (auto &p : preferences.hotkeys) {
+      for (auto &p : startup_keys) {
         auto bound = registry.bind_hotkey(p.first, p.second);
         if (!bound)
           std::cerr << p.first << ": " << bound.error().message << '\n';
@@ -295,8 +309,10 @@ int host(int argc, char **argv) {
     std::string active_folder;
     auto filter_model = [&](MenuModel &m) {
       for (auto it = m.items.begin(); it != m.items.end();) {
+#ifndef CLIPTIQ_WITH_EDITOR
         if (it->action == MenuAction::OpenEditor)
           it->enabled = false;
+#endif
         if (it->action == MenuAction::ClearHistory &&
             preferences.values.at("show_clear") == "0")
           it = m.items.erase(it);
@@ -328,6 +344,12 @@ int host(int argc, char **argv) {
       if (command.action == MenuAction::Quit)
         quit = true;
 #ifdef CLIPTIQ_WITH_SETTINGS
+#ifdef CLIPTIQ_WITH_EDITOR
+      else if (command.action == MenuAction::OpenEditor) {
+        if (show_editor)
+          show_editor();
+      }
+#endif
       else if (command.action == MenuAction::OpenSettings) {
         if (show_settings)
           show_settings();
@@ -355,11 +377,14 @@ int host(int argc, char **argv) {
     });
     ok(ui.initialize());
     for (auto &i : model.items)
-      if (i.action == MenuAction::OpenEditor
-#ifndef CLIPTIQ_WITH_SETTINGS
-          || i.action == MenuAction::OpenSettings
+      if (
+#ifndef CLIPTIQ_WITH_EDITOR
+          i.action == MenuAction::OpenEditor ||
 #endif
-      )
+#ifndef CLIPTIQ_WITH_SETTINGS
+          i.action == MenuAction::OpenSettings ||
+#endif
+          false)
         i.enabled = false;
     ok(ui.update(model));
 #ifdef CLIPTIQ_WITH_SETTINGS
@@ -434,14 +459,89 @@ int host(int argc, char **argv) {
             return {};
           },
           [&](const HotkeyMap &keys) {
-            return hotkeys.configure_portal(keys);
+            auto available = available_hotkeys(store, keys);
+            if (!available)
+              return Result<void>{available.error()};
+            return hotkeys.configure_portal(available.value());
           });
       if (!opened)
         std::cerr << opened.error().message << '\n';
     };
-    if (smoke)
+#ifdef CLIPTIQ_WITH_EDITOR
+    show_editor = [&] {
+      if (!editor_session) {
+        SnippetEditorCallbacks callbacks;
+        callbacks.changed = [&] {
+          refresh = true;
+          auto synced = synchronize_folder_hotkeys(store, registry);
+          if (!synced)
+            std::cerr << synced.error().message << '\n';
+          auto latest = load_settings(store);
+          if (latest)
+            preferences = std::move(latest.value());
+          else
+            std::cerr << latest.error().message << '\n';
+        };
+        callbacks.bind_folder =
+            [&](const FolderId &id,
+                std::optional<KeyChord> chord) -> Result<void> {
+          auto latest = load_settings(store);
+          if (!latest)
+            return latest.error();
+          latest.value().hotkeys["folder:" + id] = std::move(chord);
+          auto applied = apply_settings(store, registry, latest.value());
+          if (!applied)
+            return applied;
+          preferences = take(load_settings(store));
+          refresh = true;
+          return {};
+        };
+        callbacks.folder_chord =
+            [&](const FolderId &id) -> std::optional<KeyChord> {
+          auto latest = load_settings(store);
+          if (!latest)
+            return {};
+          auto found = latest.value().hotkeys.find("folder:" + id);
+          return found == latest.value().hotkeys.end()
+                     ? std::optional<KeyChord>{}
+                     : found->second;
+        };
+        callbacks.binding_status = [&](const FolderId &id) {
+          auto catalog = settings_folders(store);
+          if (!catalog || !catalog.value().count(id) || !catalog.value().at(id))
+            return std::string("Folder disabled: shortcut preference retained "
+                               "without registration.");
+          auto action = "folder:" + id;
+          auto portal = hotkeys.portal_statuses();
+          if (portal.count(action))
+            return portal.at(action).registered ? portal.at(action).trigger
+                                                : portal.at(action).reason;
+          if (registry.registered(action))
+            return std::string("Folder shortcut registered.");
+          return std::string("Shortcut not registered: ") +
+                 hotkeys.capability().reason +
+                 "; use Settings to inspect/authorize.";
+        };
+        editor_session =
+            std::make_shared<SnippetEditorSession>(store, std::move(callbacks));
+        auto loaded = editor_session->reload();
+        if (!loaded) {
+          std::cerr << loaded.error().message << '\n';
+          editor_session.reset();
+          return;
+        }
+      }
+      auto opened = editor_window.show(editor_session);
+      if (!opened)
+        std::cerr << opened.error().message << '\n';
+    };
+#endif
+    if (smoke) {
       show_settings();
-    else if (!launch_action.empty())
+#ifdef CLIPTIQ_WITH_EDITOR
+      show_editor();
+#endif
+    } else if (!launch_action.empty())
       pending_action = std::make_pair(launch_action, InvocationContext{});
     auto cleanup_checked = std::chrono::steady_clock::now();
     std::string portal_status;
@@ -451,6 +551,9 @@ int host(int argc, char **argv) {
     unsigned iterations = 0;
     while (!quit) {
 #ifdef CLIPTIQ_WITH_SETTINGS
+#ifdef CLIPTIQ_WITH_EDITOR
+      ok(editor_window.process_events());
+#endif
       ok(settings_window.process_events());
 #endif
       ok(ui.process_events(smoke ? 1 : 5));
@@ -470,7 +573,12 @@ int host(int argc, char **argv) {
       if (pending_action) {
         auto action = std::move(*pending_action);
         pending_action.reset();
-        if (action.first == "settings" || action.first == "editor") {
+#ifdef CLIPTIQ_WITH_EDITOR
+        if (action.first == "editor") {
+          show_editor();
+        } else
+#endif
+            if (action.first == "settings" || action.first == "editor") {
           show_settings();
           if (action.first == "editor")
             settings_window.status("Snippet editor unavailable until T10");
@@ -509,7 +617,9 @@ int host(int argc, char **argv) {
       }
       auto cleanup_now = std::chrono::steady_clock::now();
       if (cleanup_now - cleanup_checked > std::chrono::seconds(1)) {
-        registry.reconcile_folders(take(settings_folders(store)));
+        auto synced = synchronize_folder_hotkeys(store, registry);
+        if (!synced)
+          std::cerr << synced.error().message << '\n';
         if (preferences.values.at("periodic") == "1")
           ok(tick_cleanup(
               store,

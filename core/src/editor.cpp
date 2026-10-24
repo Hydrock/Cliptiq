@@ -359,4 +359,10 @@ std::optional<KeyChord> SnippetEditorSession::folder_chord() const {
              ? s.callbacks.folder_chord(s.folder->id)
              : std::optional<KeyChord>{};
 }
+std::string SnippetEditorSession::binding_status() const {
+  auto &s = *state_;
+  return s.folder && s.callbacks.binding_status
+             ? s.callbacks.binding_status(s.folder->id)
+             : "";
+}
 } // namespace cliptiq

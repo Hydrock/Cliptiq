@@ -36,6 +36,8 @@ MenuSettings settings_menu(const Settings &);
 CapturePolicy settings_capture(const Settings &);
 ModifierBindings settings_modifiers(const Settings &);
 Result<std::map<FolderId, bool>> settings_folders(Store &);
+Result<HotkeyMap> available_hotkeys(Store &, const HotkeyMap &);
+Result<void> synchronize_folder_hotkeys(Store &, HotkeyRegistry &);
 class NativeSettings {
   struct State;
   std::shared_ptr<State> state_;

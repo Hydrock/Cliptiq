@@ -299,8 +299,9 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
   }
   void status(Result<void> r) {
     if (message)
-      SetWindowTextW(message,
-                     r ? L"Saved locally." : wide(r.error().message).c_str());
+      SetWindowTextW(
+          message, r ? wide("Saved locally. " + model->binding_status()).c_str()
+                     : wide(r.error().message).c_str());
   }
   void history() {
     EnableWindow(undo, model->can_undo());

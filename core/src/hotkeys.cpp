@@ -211,6 +211,7 @@ Result<void> HotkeyRegistry::replace(const HotkeyMap &keys,
 
 void HotkeyRegistry::reconcile_folders(
     const std::map<FolderId, bool> &catalog) {
+  backend_.reconcile_folders(catalog);
   for (auto it = bound_.begin(); it != bound_.end();) {
     if (it->first.rfind("folder:", 0) == 0) {
       auto found = catalog.find(it->first.substr(7));

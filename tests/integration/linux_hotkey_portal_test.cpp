@@ -12,7 +12,7 @@ using namespace cliptiq;
   } while (false)
 struct Peer {
   std::atomic<bool> ready{false}, stop{false}, deny{false}, emit{false},
-      wrong{false}, close_session{false}, changed{false};
+      wrong{false}, close_session{false}, changed{false}, grant_folder{false};
   std::atomic<unsigned> binds{0};
   std::thread thread;
   std::string error;
@@ -76,7 +76,10 @@ struct Peer {
     g_variant_builder_init(&dict, G_VARIANT_TYPE_VARDICT);
     GVariantBuilder shortcuts;
     g_variant_builder_init(&shortcuts, G_VARIANT_TYPE("a(sa{sv})"));
-    for (auto id : {"main", "settings"}) {
+    std::vector<const char *> granted_ids{"main", "settings"};
+    if (p->grant_folder)
+      granted_ids.push_back("folder:fixture");
+    for (auto id : granted_ids) {
       GVariantBuilder props;
       g_variant_builder_init(&props, G_VARIANT_TYPE_VARDICT);
       g_variant_builder_add(
@@ -246,6 +249,17 @@ int main() {
     pump([&] {
       return native.portal_statuses().at("main").trigger == "Ctrl+F8";
     });
+    peer.deny = false;
+    peer.grant_folder = true;
+    keys["folder:fixture"] = parse_chord("Ctrl+Alt+Q").value();
+    CHECK(native.configure_portal(keys));
+    pump([&] {
+      return native.portal_statuses().count("folder:fixture") &&
+             native.portal_statuses().at("folder:fixture").registered;
+    });
+    native.reconcile_folders({{"fixture", false}});
+    CHECK(!native.portal_statuses().at("folder:fixture").registered);
+    CHECK(!native.portal_statuses().at("main").registered);
     peer.close_session = true;
     pump([&] { return !native.portal_statuses().at("main").registered; });
     std::cout << "PASS "

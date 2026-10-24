@@ -26,6 +26,7 @@ public:
   virtual void release(unsigned) = 0;
   virtual Result<void> dispatch() = 0;
   virtual Capability capability() const = 0;
+  virtual void reconcile_folders(const std::map<FolderId, bool> &) {}
 };
 class HotkeyRegistry {
   HotkeyBackend &backend_;
@@ -55,6 +56,7 @@ public:
   void release(unsigned) override;
   Result<void> dispatch() override;
   Capability capability() const override;
+  void reconcile_folders(const std::map<FolderId, bool> &) override;
   Result<void> configure_portal(const HotkeyMap &);
   std::map<ActionId, BindingStatus> portal_statuses() const;
 };

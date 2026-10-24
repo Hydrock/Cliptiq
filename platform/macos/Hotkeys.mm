@@ -137,6 +137,7 @@ Result<void> NativeHotkeys::dispatch() {
     return Error{ErrorCode::InvalidArgument, "Hotkeys require main thread"};
   return {};
 }
+void NativeHotkeys::reconcile_folders(const std::map<FolderId, bool> &) {}
 Result<void> NativeHotkeys::configure_portal(const HotkeyMap &) {
   return Error{ErrorCode::Unsupported, "Portal integration not implemented"};
 }

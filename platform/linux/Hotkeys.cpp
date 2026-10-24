@@ -223,6 +223,10 @@ Result<void> NativeHotkeys::dispatch() {
   }
   return {};
 }
+void NativeHotkeys::reconcile_folders(const std::map<FolderId, bool> &catalog) {
+  if (state_->portal)
+    state_->portal->reconcile_folders(catalog);
+}
 Result<void> NativeHotkeys::configure_portal(const HotkeyMap &keys) {
   if (!state_->portal)
     return Error{ErrorCode::Unsupported, "Portal mode is only used on Wayland"};

@@ -218,19 +218,22 @@ Result<void> validate_settings(const Settings &s) {
   });
 }
 Result<std::map<FolderId, bool>> settings_folders(Store &store) {
-  return detail::guarded<
-      std::map<FolderId, bool>>([&]() -> Result<std::map<FolderId, bool>> {
-    std::map<FolderId, bool> result;
-    detail::Statement q(
-        store.connection(),
-        "SELECT id,length(CAST(id AS BLOB)),coalesce((SELECT enabled FROM snippet_folder_states WHERE id=snippet_folders.id),1) FROM snippet_folders LIMIT 1001");
-    while (q.row()) {
-      if (q.number(1) > 1024 || result.size() >= 1000)
-        return Error{ErrorCode::TooLarge, "Folder shortcut catalog too large"};
-      result[q.text(0)] = q.number(2) != 0;
-    }
-    return result;
-  });
+  return detail::guarded<std::map<FolderId, bool>>(
+      [&]() -> Result<std::map<FolderId, bool>> {
+        std::map<FolderId, bool> result;
+        detail::Statement q(
+            store.connection(),
+            "SELECT id,length(CAST(id AS BLOB)),coalesce((SELECT enabled FROM "
+            "snippet_folder_states WHERE id=snippet_folders.id),1) FROM "
+            "snippet_folders LIMIT 1001");
+        while (q.row()) {
+          if (q.number(1) > 1024 || result.size() >= 1000)
+            return Error{ErrorCode::TooLarge,
+                         "Folder shortcut catalog too large"};
+          result[q.text(0)] = q.number(2) != 0;
+        }
+        return result;
+      });
 }
 Result<Settings> load_settings(Store &store, CapturePlatform platform) {
   return detail::guarded<Settings>([&]() -> Result<Settings> {
@@ -368,6 +371,42 @@ Result<void> save_settings(Store &store, const Settings &s) {
     return {};
   });
 }
+Result<HotkeyMap> available_hotkeys(Store &store, const HotkeyMap &requested) {
+  auto catalog = settings_folders(store);
+  if (!catalog)
+    return catalog.error();
+  auto keys = requested;
+  for (auto &p : keys)
+    if (p.first.rfind("folder:", 0) == 0) {
+      auto found = catalog.value().find(p.first.substr(7));
+      if (found == catalog.value().end() || !found->second)
+        p.second.reset();
+    }
+  return keys;
+}
+Result<void> synchronize_folder_hotkeys(Store &store,
+                                        HotkeyRegistry &registry) {
+  auto catalog = settings_folders(store);
+  if (!catalog)
+    return catalog.error();
+  registry.reconcile_folders(catalog.value());
+  auto settings = load_settings(store);
+  if (!settings)
+    return settings.error();
+  auto keys = available_hotkeys(store, settings.value().hotkeys);
+  if (!keys)
+    return keys.error();
+  std::optional<Error> failure;
+  for (const auto &p : keys.value())
+    if (p.first.rfind("folder:", 0) == 0 && p.second) {
+      auto r = registry.bind_hotkey(p.first, p.second);
+      if (!r && r.error().code != ErrorCode::Unsupported && !failure)
+        failure = r.error();
+    }
+  if (failure)
+    return *failure;
+  return {};
+}
 Result<void> apply_settings(Store &store, HotkeyRegistry &registry,
                             const Settings &s) {
   auto valid = validate_settings(s);
@@ -389,7 +428,17 @@ Result<void> apply_settings(Store &store, HotkeyRegistry &registry,
     }
   if (same)
     return save_settings(store, s);
-  return registry.replace(s.hotkeys, [&] { return save_settings(store, s); });
+  auto available = available_hotkeys(store, s.hotkeys);
+  if (!available)
+    return available.error();
+  auto applied = registry.replace(available.value(),
+                                  [&] { return save_settings(store, s); });
+  if (applied) {
+    auto folders = settings_folders(store);
+    if (folders)
+      registry.reconcile_folders(folders.value());
+  }
+  return applied;
 }
 Result<Settings>
 edit_settings(Settings draft,
