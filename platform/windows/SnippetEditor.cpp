@@ -441,6 +441,9 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
                         BST_CHECKED);
       if (r)
         selected_label();
+      else
+        SendMessageW(enabled, BM_SETCHECK,
+                     model->enabled() ? BST_CHECKED : BST_UNCHECKED, 0);
     } else if (command == 506) {
       auto value = text(shortcut);
       std::optional<KeyChord> chord;
@@ -712,6 +715,21 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
               TreeView_SelectItem(s->tree, node);
               s->updating = false;
               s->detail();
+            } else {
+              bool active = false;
+              auto item = found->second;
+              if (item.kind == SnippetItemKind::Folder) {
+                for (auto &f : s->model->folders())
+                  if (f.id == item.value)
+                    active = f.enabled;
+              } else {
+                for (auto &h : s->model->snippets())
+                  if (h.id == item.value)
+                    active = h.enabled;
+              }
+              s->updating = true;
+              TreeView_SetCheckState(s->tree, node, active);
+              s->updating = false;
             }
           }
           return 0;

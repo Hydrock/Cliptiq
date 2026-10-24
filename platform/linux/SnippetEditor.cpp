@@ -461,6 +461,11 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
                      s->status(r);
                      if (r)
                        s->selected_label();
+                     else {
+                       s->updating = true;
+                       gtk_toggle_button_set_active(b, s->model->enabled());
+                       s->updating = false;
+                     }
                    }),
                    s.get());
   g_signal_connect(gtk_text_view_get_buffer(GTK_TEXT_VIEW(s->body)), "changed",
@@ -563,6 +568,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
         gtk_selection_data_set(d, gtk_selection_data_get_target(d), 8,
                                reinterpret_cast<const guchar *>(token.data()),
                                int(token.size()));
+        g_signal_stop_emission_by_name(s->tree, "drag-data-get");
       }),
       s.get());
   g_signal_connect(

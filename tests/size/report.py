@@ -149,5 +149,9 @@ settings_native = menu_variant('settings_native_probe')
 report['settings'] = {'baseline': paste_native, 'with_settings': settings_native, 'added_bytes': settings_native['executable_bytes']-paste_native['executable_bytes'], 'added_zip_bytes': settings_native['zip_bytes']-paste_native['zip_bytes'], 'scope': 'same native history/menu/paste review host without and with settings UI/global shortcut services; no global registration or clipboard IO in smoke; system libraries not bundled; not complete product'}
 snippet_editor = menu_variant('snippet_editor_probe')
 report['snippets'] = {'baseline': settings_native, 'with_editor': snippet_editor, 'added_bytes': snippet_editor['executable_bytes']-settings_native['executable_bytes'], 'added_zip_bytes': snippet_editor['zip_bytes']-settings_native['zip_bytes'], 'scope': 'same native settings/menu/history/paste host without/with bounded snippet repository/session and native plain-text editor; smoke no clipboard/global grabs/input; system GUI libraries not bundled; not complete product'}
+if system == 'Windows':
+    import os
+    rich = pathlib.Path(os.environ['WINDIR']) / 'System32' / 'Msftedit.dll'
+    report['snippets']['dynamic_system_component'] = {'name': 'Msftedit.dll', 'bytes': rich.stat().st_size, 'sha256': hashlib.sha256(rich.read_bytes()).hexdigest(), 'scope': 'existing OS RichEdit component loaded from System32, not bundled; not full system dependency closure'}
 (root / 'out' / 't02-size.json').write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
 print(json.dumps(report, indent=2))

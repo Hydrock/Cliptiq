@@ -112,12 +112,12 @@ int run() {
     SendMessageW(window, WM_COMMAND, MAKEWPARAM(504, EN_CHANGE),
                  reinterpret_cast<LPARAM>(body));
     CHECK(session->content() == u8"  Привет\nline2 😀  ");
-    click(510);
+    BYTE saved_keys[256], pressed[256]{};CHECK(GetKeyboardState(saved_keys));pressed[VK_CONTROL]=0x80;CHECK(SetKeyboardState(pressed));
+    SendMessageW(body,WM_KEYDOWN,'Z',0);SendMessageW(body,WM_CHAR,26,0);CHECK(SetKeyboardState(saved_keys));
     CHECK(session->content().empty());
     click(511);
     CHECK(session->content() == u8"  Привет\nline2 😀  ");
-    SendMessageW(GetDlgItem(window, 503), BM_SETCHECK, BST_UNCHECKED, 0);
-    click(503);
+    auto outline=GetDlgItem(window,501);SendMessageW(outline,WM_KEYDOWN,VK_SPACE,0);CHECK(ui.process_events());
 #elif defined(__APPLE__)
     auto window = (__bridge NSWindow *)(void *)ui.native_handle();
     auto click = [&](NSString *name) {
@@ -137,7 +137,8 @@ int run() {
                           notificationWithName:NSTextDidChangeNotification
                                         object:body]];
     CHECK(session->content() == u8"  Привет\nline2 😀  ");
-    click(@"editor-undo");
+    auto undo_event=[NSEvent keyEventWithType:NSEventTypeKeyDown location:NSZeroPoint modifierFlags:NSEventModifierFlagCommand timestamp:0 windowNumber:window.windowNumber context:nil characters:@"z" charactersIgnoringModifiers:@"z" isARepeat:NO keyCode:6];
+    CHECK([body performKeyEquivalent:undo_event]);
     CHECK(session->content().empty());
     click(@"editor-redo");
     auto enabled = (NSButton *)find(window.contentView, @"editor-enabled");
@@ -159,7 +160,8 @@ int run() {
     gtk_text_buffer_set_text(gtk_text_view_get_buffer(GTK_TEXT_VIEW(body)),
                              u8"  Привет\nline2 😀  ", -1);
     CHECK(session->content() == u8"  Привет\nline2 😀  ");
-    click("editor-undo");
+    GdkEventKey undo_event{};undo_event.type=GDK_KEY_PRESS;undo_event.keyval=GDK_KEY_z;undo_event.state=GDK_CONTROL_MASK;gboolean handled=FALSE;
+    g_signal_emit_by_name(body,"key-press-event",&undo_event,&handled);CHECK(handled);
     CHECK(session->content().empty());
     click("editor-redo");
     auto enabled = find(window, "editor-enabled");
@@ -234,6 +236,21 @@ int run() {
 #endif
     CHECK(session->has_unsaved());
 #ifdef _WIN32
+    SendMessageW(GetDlgItem(window, 503), BM_SETCHECK, BST_CHECKED, 0);
+    SendMessageW(window, WM_COMMAND, 503, 0);
+    CHECK(SendMessageW(GetDlgItem(window, 503), BM_GETCHECK, 0, 0) ==
+          BST_UNCHECKED);
+#elif defined(__APPLE__)
+    enabled = (NSButton *)find(window.contentView, @"editor-enabled");
+    enabled.state = NSControlStateValueOn;
+    [NSApp sendAction:enabled.action to:enabled.target from:enabled];
+    CHECK(enabled.state == NSControlStateValueOff);
+#else
+    enabled = find(window, "editor-enabled");
+    gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(enabled), TRUE);
+    CHECK(!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(enabled)));
+#endif
+#ifdef _WIN32
     auto tree = GetDlgItem(window, 501);
     auto previous = TreeView_GetSelection(tree);
     TreeView_SelectItem(tree, TreeView_GetRoot(tree));
@@ -274,6 +291,19 @@ int run() {
     CHECK(ui.native_handle() == handle &&
           take(get_snippet(store, id)).content == "external");
     CHECK(session->reload());
+#if !defined(_WIN32) && !defined(__APPLE__)
+    auto transient = std::make_unique<NativeSnippetEditor>();
+    SnippetEditorCallbacks lifetime_callbacks;
+    lifetime_callbacks.changed = [&] { transient.reset(); };
+    auto lifetime_session = std::make_shared<SnippetEditorSession>(store,lifetime_callbacks);
+    CHECK(lifetime_session->reload());CHECK(lifetime_session->select(SnippetItemId{SnippetItemKind::Folder,f}));
+    CHECK(transient->show(lifetime_session));
+    auto retained_button=find(reinterpret_cast<GtkWidget*>(transient->native_handle()),"editor-add-snippet");
+    CHECK(retained_button);g_object_ref(retained_button);
+    gtk_button_clicked(GTK_BUTTON(retained_button));CHECK(!transient);
+    gtk_button_clicked(GTK_BUTTON(retained_button));
+    g_object_unref(retained_button);
+#endif
     std::cout << "PASS "
                  "native_editor_autosave_unicode_undo_enabled_menu_folder_"
                  "binding_conflict_and_drag_contract\n";

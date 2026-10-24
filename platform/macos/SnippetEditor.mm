@@ -432,6 +432,9 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
       r = model->enable(enabled.state == NSControlStateValueOn);
       if (r)
         selected_label();
+      else
+        enabled.state =
+            model->enabled() ? NSControlStateValueOn : NSControlStateValueOff;
     } else if (command == 506) {
       auto value = utf8(shortcut.stringValue);
       std::optional<KeyChord> chord;
