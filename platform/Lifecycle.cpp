@@ -56,7 +56,28 @@ SessionInstance::start(InstanceOptions options,
     auto secure = secure_instance_directory(options.directory);
     if (!secure)
       return secure.error();
-    auto prefix = std::filesystem::u8path(options.directory) / options.scope;
+    // macOS temp roots commonly pass through /var -> /private/var. Resolve
+    // verified ancestors before SQLite NOFOLLOW; final directory/files remain
+    // subject to ownership, permissions and symlink checks.
+    auto directory =
+        std::filesystem::canonical(std::filesystem::u8path(options.directory));
+    secure = secure_instance_directory(directory.u8string());
+    if (!secure)
+      return secure.error();
+    auto prefix = directory / options.scope;
+    // Serialize election + initialization and forwarding. The retained SQLite
+    // application_id identifies our schema, not readiness of the current owner.
+    std::shared_ptr<void> initialization;
+    for (unsigned n = 0; n < 20 && !initialization; ++n) {
+      auto gate = lock_instance(prefix.u8string() + ".init.lock");
+      if (!gate)
+        return gate.error();
+      initialization = std::move(gate.value());
+      if (!initialization)
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    }
+    if (!initialization)
+      return Error{ErrorCode::Busy, "Instance initialization is busy; retry"};
     auto locked = lock_instance(prefix.u8string() + ".lock");
     if (!locked)
       return locked.error();
@@ -101,9 +122,13 @@ SessionInstance::start(InstanceOptions options,
       app.row();
       detail::Statement version(db, "PRAGMA user_version");
       version.row();
-      bool fresh=false;
-      if(app.number(0)==0&&version.number(0)==0){detail::Statement objects(db,"SELECT count(*) FROM sqlite_schema");objects.row();fresh=objects.number(0)==0;}
-      if (!fresh&&(app.number(0) != 1129597266 || version.number(0) != 1))
+      bool fresh = false;
+      if (app.number(0) == 0 && version.number(0) == 0) {
+        detail::Statement objects(db, "SELECT count(*) FROM sqlite_schema");
+        objects.row();
+        fresh = objects.number(0) == 0;
+      }
+      if (!fresh && (app.number(0) != 1129597266 || version.number(0) != 1))
         return Error{ErrorCode::Corrupt,
                      "Unknown instance mailbox format; not overwritten"};
     }
@@ -175,14 +200,20 @@ Result<void> Autostart::apply(bool requested, bool previous,
                               const std::function<Result<void>()> &commit) {
   if (!commit)
     return Error{ErrorCode::InvalidArgument, "Missing settings commit"};
+  bool restore_enabled = false;
   if (requested != previous) {
+    auto actual = inspect();
+    if (!actual)
+      return actual.error();
+    restore_enabled =
+        actual.value().enabled || actual.value().requires_approval;
     auto changed = set_autostart(requested);
     if (!changed)
       return changed.error();
   }
   auto saved = commit();
   if (!saved && requested != previous) {
-    auto restored = set_autostart(previous);
+    auto restored = set_autostart(restore_enabled);
     if (!restored) {
       status_.reason = "Settings save and autostart rollback failed: " +
                        restored.error().message;

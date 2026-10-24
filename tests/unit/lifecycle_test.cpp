@@ -1,3 +1,4 @@
+#include "../../platform/LifecycleNative.hpp"
 #include "cliptiq/lifecycle.hpp"
 #include "cliptiq/locale.hpp"
 #include "cliptiq/menu.hpp"
@@ -5,6 +6,7 @@
 #include <chrono>
 #include <filesystem>
 #include <fstream>
+#include <future>
 #include <iostream>
 #include <thread>
 using namespace cliptiq;
@@ -56,7 +58,9 @@ int main(int argc, char **argv) {
     CHECK(activate_locale("ru_RU.UTF-8") == "ru");
     CHECK(tr("Settings") == u8"Настройки");
     CHECK(tr("unknown.key") == "unknown.key");
-    CHECK(activate_locale("de")=="de");CHECK(tr("main")=="Main menu");activate_locale("ru");
+    CHECK(activate_locale("de") == "de");
+    CHECK(tr("main") == "Main menu");
+    activate_locale("ru");
     {
       auto store = take(open_store(":memory:"));
       ClipboardSnapshot snapshot;
@@ -121,6 +125,34 @@ int main(int argc, char **argv) {
       CHECK(take(restarted.receive()).empty());
     }
     {
+      // A restarting owner holds the initialization gate before its owner lock.
+      // A retained application_id must not let a follower bypass that gate.
+      auto gate =
+          take(lock_instance((root / "private/fixture.init.lock").u8string()));
+      CHECK(gate);
+      auto owner =
+          take(lock_instance((root / "private/fixture.lock").u8string()));
+      CHECK(owner);
+      auto forwarding = std::async(std::launch::async, [&]() {
+        SessionInstance follower;
+        return follower.start(options, LaunchAction::Settings);
+      });
+      auto waiting = forwarding.wait_for(std::chrono::milliseconds(150));
+      gate.reset();
+      auto result = forwarding.get();
+      CHECK(waiting == std::future_status::timeout);
+      CHECK(take(std::move(result)) == InstanceRole::Forwarded);
+    }
+#ifndef _WIN32
+    {
+      std::filesystem::create_directory_symlink(root, root / "alias");
+      SessionInstance aliased;
+      CHECK(take(aliased.start({(root / "alias/private").u8string(), "alias"},
+                               LaunchAction::Settings)) ==
+            InstanceRole::Primary);
+    }
+#endif
+    {
       auto foreign =
           take(open_store((root / "private/foreign.sqlite3").u8string()));
     }
@@ -129,7 +161,13 @@ int main(int argc, char **argv) {
       CHECK(!foreign.start({(root / "private").u8string(), "foreign"},
                            LaunchAction::Settings));
     }
-    {std::ofstream(root/"private/empty.sqlite3",std::ios::binary);SessionInstance recovering;CHECK(take(recovering.start({(root/"private").u8string(),"empty"},LaunchAction::Settings))==InstanceRole::Primary);}
+    {
+      std::ofstream(root / "private/empty.sqlite3", std::ios::binary);
+      SessionInstance recovering;
+      CHECK(take(recovering.start({(root / "private").u8string(), "empty"},
+                                  LaunchAction::Settings)) ==
+            InstanceRole::Primary);
+    }
     Autostart startup({"relative.exe", root.u8string(), true});
     CHECK(!startup.set_autostart(true));
     CHECK(!startup.status().enabled && !startup.status().reason.empty());
@@ -152,6 +190,18 @@ int main(int argc, char **argv) {
       return Error{ErrorCode::Full, "fixture full"};
     }));
     CHECK(!take(native.inspect()).enabled);
+    CHECK(!native.apply(false, true, []() -> Result<void> {
+      return Error{ErrorCode::Full,
+                   "fixture full with stale enabled preference"};
+    }));
+    CHECK(!take(native.inspect()).enabled);
+    CHECK(native.set_autostart(true));
+    CHECK(!native.apply(false, false, []() -> Result<void> {
+      return Error{ErrorCode::Full,
+                   "fixture full with stale disabled preference"};
+    }));
+    CHECK(take(native.inspect()).enabled);
+    CHECK(native.set_autostart(false));
 #endif
     std::filesystem::remove_all(root);
     std::cout << "PASS fixed routes, second-instance forwarding, settings "
