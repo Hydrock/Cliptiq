@@ -1,8 +1,8 @@
 #include "cliptiq/editor.hpp"
-#include <iostream>
 #include "sqlite3.h"
-#include <filesystem>
 #include <chrono>
+#include <filesystem>
+#include <iostream>
 #include <stdexcept>
 using namespace cliptiq;
 #define CHECK(x)                                                               \
@@ -115,36 +115,65 @@ int main() {
     CHECK(e.reload());
     CHECK(!e.can_undo() && e.content() == "external");
   });
-  test("failed_autosave_blocks_navigation_until_corrected_or_explicit_reload", [] {
-    auto db = take(open_store(":memory:")); SnippetEditorSession e(db);
-    CHECK(e.reload()); auto folder = take(e.add_folder()); auto id = take(e.add_snippet());
-    CHECK(e.edit_content("safe"));
-    auto external = take(get_snippet(db, id)); external.content = "external";
-    CHECK(save_snippet(db, external)); CHECK(!e.edit_content("unsaved draft"));
-    CHECK(e.has_unsaved()); CHECK(!e.select(SnippetItemId{SnippetItemKind::Folder, folder}));
-    CHECK(!e.add_folder()); CHECK(!e.undo());
-    CHECK(e.selected()->value == id && take(get_snippet(db,id)).content == "external");
-    CHECK(e.reload()); CHECK(!e.has_unsaved() && e.content() == "external");
-  });
+  test("failed_autosave_blocks_navigation_until_corrected_or_explicit_reload",
+       [] {
+         auto db = take(open_store(":memory:"));
+         SnippetEditorSession e(db);
+         CHECK(e.reload());
+         auto folder = take(e.add_folder());
+         auto id = take(e.add_snippet());
+         CHECK(e.edit_content("safe"));
+         auto external = take(get_snippet(db, id));
+         external.content = "external";
+         CHECK(save_snippet(db, external));
+         CHECK(!e.edit_content("unsaved draft"));
+         CHECK(e.has_unsaved());
+         CHECK(!e.select(SnippetItemId{SnippetItemKind::Folder, folder}));
+         CHECK(!e.add_folder());
+         CHECK(!e.undo());
+         CHECK(e.selected()->value == id &&
+               take(get_snippet(db, id)).content == "external");
+         CHECK(e.reload());
+         CHECK(!e.has_unsaved() && e.content() == "external");
+       });
   test("drag_revision_is_checked_inside_write_transaction", [] {
-    auto path = std::filesystem::temp_directory_path() / ("cliptiq-drag-" + std::to_string(std::chrono::high_resolution_clock::now().time_since_epoch().count()) + ".db");
+    auto path = std::filesystem::temp_directory_path() /
+                ("cliptiq-drag-" +
+                 std::to_string(std::chrono::high_resolution_clock::now()
+                                    .time_since_epoch()
+                                    .count()) +
+                 ".db");
     {
-      auto db = take(open_store(path.u8string())); auto peer = take(open_store(path.u8string()));
-      SnippetEditorSession e(db); CHECK(e.reload()); auto a = take(e.add_folder());
-      auto id = take(e.add_snippet()); auto b = take(e.add_folder());
-      auto token = take(e.begin_drag({SnippetItemKind::Snippet,id}));
-      struct Hook {Store* peer; SnippetItemId item; bool fired=false,ok=false;} hook{&peer,{SnippetItemKind::Snippet,id}};
-      sqlite3_trace_v2(db.connection(), SQLITE_TRACE_STMT, +[](unsigned,void*data,void*,void*sql)->int {
-        auto h = static_cast<Hook*>(data);
-        if (!h->fired && std::string(static_cast<const char*>(sql)) == "BEGIN IMMEDIATE") {
-          h->fired=true; h->ok=bool(set_enabled(*h->peer,h->item,false));
-        }
-        return 0;
-      }, &hook);
-      auto dropped = e.finish_drag(token,b,0,true);
-      sqlite3_trace_v2(db.connection(),0,nullptr,nullptr);
-      CHECK(hook.fired && hook.ok); CHECK(!dropped && dropped.error().code==ErrorCode::Busy);
-      CHECK(take(get_snippet(db,id)).folder_id==a);
+      auto db = take(open_store(path.u8string()));
+      auto peer = take(open_store(path.u8string()));
+      SnippetEditorSession e(db);
+      CHECK(e.reload());
+      auto a = take(e.add_folder());
+      auto id = take(e.add_snippet());
+      auto b = take(e.add_folder());
+      auto token = take(e.begin_drag({SnippetItemKind::Snippet, id}));
+      struct Hook {
+        Store *peer;
+        SnippetItemId item;
+        bool fired = false, ok = false;
+      } hook{&peer, {SnippetItemKind::Snippet, id}};
+      sqlite3_trace_v2(
+          db.connection(), SQLITE_TRACE_STMT,
+          +[](unsigned, void *data, void *, void *sql) -> int {
+            auto h = static_cast<Hook *>(data);
+            if (!h->fired && std::string(static_cast<const char *>(sql)) ==
+                                 "BEGIN IMMEDIATE") {
+              h->fired = true;
+              h->ok = bool(set_enabled(*h->peer, h->item, false));
+            }
+            return 0;
+          },
+          &hook);
+      auto dropped = e.finish_drag(token, b, 0, true);
+      sqlite3_trace_v2(db.connection(), 0, nullptr, nullptr);
+      CHECK(hook.fired && hook.ok);
+      CHECK(!dropped && dropped.error().code == ErrorCode::Busy);
+      CHECK(take(get_snippet(db, id)).folder_id == a);
     }
     std::filesystem::remove(path);
   });

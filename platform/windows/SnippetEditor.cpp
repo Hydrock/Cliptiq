@@ -11,6 +11,7 @@
 // clang-format on
 #include <algorithm>
 #include <atomic>
+#include <stdexcept>
 namespace cliptiq {
 namespace {
 std::wstring wide(const std::string &s) {
@@ -28,6 +29,8 @@ std::string text(HWND w, bool multiline = false) {
   GetWindowTextW(w, raw.data(), n + 1);
   int count = WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, raw.data(), n,
                                   nullptr, 0, nullptr, nullptr);
+  if (n && !count)
+    throw std::runtime_error("Invalid Unicode in editor input");
   std::string out(count, 0);
   if (count)
     WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, raw.data(), n,
@@ -306,6 +309,19 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
   void history() {
     EnableWindow(undo, model->can_undo());
     EnableWindow(redo, model->can_redo());
+  }
+  bool confirm_close() {
+    if (!model || !model->has_unsaved())
+      return true;
+    if (MessageBoxW(
+            window, L"Discard the unsaved draft? Choose No to keep editing.",
+            L"Cliptiq", MB_YESNO | MB_ICONWARNING | MB_DEFBUTTON2) != IDYES)
+      return false;
+    auto loaded = model->reload();
+    status(loaded);
+    if (loaded)
+      rebuild();
+    return bool(loaded);
   }
   void detail() {
     updating = true;
@@ -620,7 +636,8 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
         return 0;
       }
       if (msg == WM_CLOSE) {
-        ShowWindow(w, SW_HIDE);
+        if (s->confirm_close())
+          ShowWindow(w, SW_HIDE);
         return 0;
       }
       if (msg == WM_COMMAND || msg == WM_NOTIFY || msg == WM_APP + 1) {
@@ -648,6 +665,12 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
         if (msg == WM_NOTIFY) {
           auto header = reinterpret_cast<NMHDR *>(lp);
           if (header->hwndFrom == s->tree) {
+            if (header->code == TVN_SELCHANGINGW && s->model->has_unsaved()) {
+              s->status(Error{
+                  ErrorCode::Busy,
+                  "Unsaved draft: correct it or Reload before navigating"});
+              return TRUE;
+            }
             if (header->code == TVN_SELCHANGEDW) {
               auto info = reinterpret_cast<NMTREEVIEWW *>(lp);
               auto found = s->nodes.find(info->itemNew.hItem);
@@ -695,6 +718,12 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
         }
       }
     } catch (const std::exception &) {
+      if (msg == WM_COMMAND && HIWORD(wp) == EN_CHANGE) {
+        if (LOWORD(wp) == 502)
+          s->model->edit_title(std::string("\xc0\x80", 2));
+        if (LOWORD(wp) == 504)
+          s->model->edit_content(std::string("\xc0\x80", 2));
+      }
       s->status(Error{ErrorCode::Internal,
                       "Editor operation failed; reload to recover"});
       return 0;
@@ -712,6 +741,8 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
     return Error{ErrorCode::InvalidArgument, "Editor requires owner thread"};
   if (!model)
     return Error{ErrorCode::InvalidArgument, "No editor session"};
+  if (s->window && s->model && s->model->has_unsaved())
+    return Error{ErrorCode::Busy, "Unsaved draft retained in existing editor"};
   s->close();
   s->model = std::move(model);
   if (!s->rich)
@@ -764,7 +795,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
                         TVS_SHOWSELALWAYS | TVS_CHECKBOXES,
                     WS_EX_CLIENTEDGE);
   s->title = control(L"EDIT", L"", 502, ES_AUTOHSCROLL, WS_EX_CLIENTEDGE);
-  SendMessageW(s->title, EM_SETLIMITTEXT, 1024, 0);
+  SendMessageW(s->title, EM_SETLIMITTEXT, 4096, 0);
   s->enabled = control(L"BUTTON", L"Enabled in menu", 503, BS_AUTOCHECKBOX);
   s->shortcut = control(L"EDIT", L"", 505, ES_AUTOHSCROLL, WS_EX_CLIENTEDGE);
   SendMessageW(s->shortcut, EM_SETLIMITTEXT, 128, 0);
@@ -776,7 +807,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
     return Error{ErrorCode::Io, "Cannot create editor controls"};
   SendMessageW(s->body, EM_SETTEXTMODE, TM_PLAINTEXT, 0);
   SendMessageW(s->body, EM_SETUNDOLIMIT, 0, 0);
-  SendMessageW(s->body, EM_EXLIMITTEXT, 0, 1024 * 1024);
+  SendMessageW(s->body, EM_EXLIMITTEXT, 0, 16 * 1024 * 1024);
   SendMessageW(s->body, EM_SETEVENTMASK, 0, ENM_CHANGE);
   s->message = control(L"STATIC",
                        L"Changes save locally. Undo history resets when you "
@@ -818,6 +849,15 @@ Result<void> NativeSnippetEditor::process_events() {
     }
   }
   return {};
+}
+Result<bool> NativeSnippetEditor::request_close() {
+  auto s = state_;
+  if (!s->window)
+    return true;
+  if (!s->confirm_close())
+    return false;
+  ShowWindow(s->window, SW_HIDE);
+  return true;
 }
 std::uintptr_t NativeSnippetEditor::native_handle() const {
   return reinterpret_cast<std::uintptr_t>(state_->window);

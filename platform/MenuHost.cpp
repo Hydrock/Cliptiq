@@ -341,8 +341,14 @@ int host(int argc, char **argv) {
         refresh = true;
         return;
       }
-      if (command.action == MenuAction::Quit)
+      if (command.action == MenuAction::Quit) {
+#ifdef CLIPTIQ_WITH_EDITOR
+        auto closed = editor_window.request_close();
+        if (!closed || !closed.value())
+          return;
+#endif
         quit = true;
+      }
 #ifdef CLIPTIQ_WITH_SETTINGS
 #ifdef CLIPTIQ_WITH_EDITOR
       else if (command.action == MenuAction::OpenEditor) {

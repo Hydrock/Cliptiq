@@ -29,6 +29,54 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
     gtk_widget_set_sensitive(undo, model->can_undo());
     gtk_widget_set_sensitive(redo, model->can_redo());
   }
+  void restore_selection() {
+    auto selected = model->selected();
+    if (!selected)
+      return;
+    struct Find {
+      State *state;
+      SnippetItemId id;
+      GtkTreePath *path = nullptr;
+    } find{this, *selected};
+    gtk_tree_model_foreach(
+        GTK_TREE_MODEL(rows),
+        +[](GtkTreeModel *, GtkTreePath *path, GtkTreeIter *iter,
+            gpointer data) -> gboolean {
+          auto f = static_cast<Find *>(data);
+          auto item = f->state->row(*iter);
+          if (item && item->kind == f->id.kind && item->value == f->id.value) {
+            f->path = gtk_tree_path_copy(path);
+            return TRUE;
+          }
+          return FALSE;
+        },
+        &find);
+    if (find.path) {
+      updating = true;
+      gtk_tree_selection_select_path(
+          gtk_tree_view_get_selection(GTK_TREE_VIEW(tree)), find.path);
+      updating = false;
+      gtk_tree_path_free(find.path);
+    }
+  }
+  bool confirm_close() {
+    if (!model->has_unsaved())
+      return true;
+    auto dialog = gtk_message_dialog_new(
+        GTK_WINDOW(window), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING,
+        GTK_BUTTONS_YES_NO,
+        "Discard the unsaved draft? Choose No to keep editing.");
+    gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_NO);
+    bool discard = gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_YES;
+    gtk_widget_destroy(dialog);
+    if (!discard)
+      return false;
+    auto loaded = model->reload();
+    status(loaded);
+    if (loaded)
+      rebuild();
+    return bool(loaded);
+  }
   void detail() {
     updating = true;
     auto selected = model->selected();
@@ -248,6 +296,9 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
     return Error{ErrorCode::InvalidArgument, "No editor session"};
   if (!gtk_init_check(nullptr, nullptr))
     return Error{ErrorCode::Unsupported, "No GTK display"};
+  if (s->window && s->model && s->model->has_unsaved())
+    return Error{ErrorCode::Busy, "Unsaved draft retained in the existing "
+                                  "editor; correct it or Reload to discard"};
   if (s->window) {
     gtk_widget_destroy(s->window);
     s->window = nullptr;
@@ -320,7 +371,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
   gtk_paned_pack2(GTK_PANED(split), right, TRUE, FALSE);
   s->title = gtk_entry_new();
   gtk_widget_set_name(s->title, "editor-title");
-  gtk_entry_set_max_length(GTK_ENTRY(s->title), 1024);
+  gtk_entry_set_max_length(GTK_ENTRY(s->title), 4096);
   auto label = gtk_label_new_with_mnemonic("_Title");
   gtk_label_set_mnemonic_widget(GTK_LABEL(label), s->title);
   gtk_box_pack_start(GTK_BOX(right), label, FALSE, FALSE, 0);
@@ -364,6 +415,8 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
                      s->status(r);
                      if (r)
                        s->detail();
+                     else if (s->model->has_unsaved())
+                       s->restore_selection();
                    }),
                    s.get());
   g_signal_connect(
@@ -525,6 +578,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
                      std::equal(expected.begin(), expected.end(),
                                 gtk_selection_data_get_data(d));
         bool done = valid && s->drop(x, y);
+        g_signal_stop_emission_by_name(s->tree, "drag-data-received");
         gtk_drag_finish(ctx, done, FALSE, time);
       }),
       s.get());
@@ -540,11 +594,14 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
                    s.get());
   g_signal_connect(
       s->window, "delete-event",
-      G_CALLBACK(+[](GtkWidget *w, GdkEvent *, gpointer) -> gboolean {
-        gtk_widget_hide(w);
+      G_CALLBACK(+[](GtkWidget *w, GdkEvent *, gpointer data) -> gboolean {
+        auto s = static_cast<State *>(data);
+        auto keep = s->shared_from_this();
+        if (s->confirm_close())
+          gtk_widget_hide(w);
         return TRUE;
       }),
-      nullptr);
+      s.get());
   s->rebuild();
   gtk_widget_show_all(s->window);
   return {};
@@ -555,6 +612,15 @@ Result<void> NativeSnippetEditor::process_events() {
   for (unsigned n = 0; n < 64 && gtk_events_pending(); ++n)
     gtk_main_iteration_do(FALSE);
   return {};
+}
+Result<bool> NativeSnippetEditor::request_close() {
+  auto s = state_;
+  if (!s->window)
+    return true;
+  if (!s->confirm_close())
+    return false;
+  gtk_widget_hide(s->window);
+  return true;
 }
 std::uintptr_t NativeSnippetEditor::native_handle() const {
   return reinterpret_cast<std::uintptr_t>(state_->window);

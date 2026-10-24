@@ -209,27 +209,70 @@ int run() {
     CHECK(take(get_snippet(store, id)).folder_id == other);
     CHECK(changes >= 5);
     CHECK(ui.show(session));
-    auto external = take(get_snippet(store, id)); external.content = "external";
+    auto external = take(get_snippet(store, id));
+    external.content = "external";
     CHECK(save_snippet(store, external));
 #ifdef _WIN32
     window = reinterpret_cast<HWND>(ui.native_handle());
     body = GetDlgItem(window, 504);
     CHECK(SetWindowTextW(body, L"unsaved draft"));
-    SendMessageW(window, WM_COMMAND, MAKEWPARAM(504, EN_CHANGE), reinterpret_cast<LPARAM>(body));
+    SendMessageW(window, WM_COMMAND, MAKEWPARAM(504, EN_CHANGE),
+                 reinterpret_cast<LPARAM>(body));
 #elif defined(__APPLE__)
     window = (__bridge NSWindow *)(void *)ui.native_handle();
     body = (NSTextView *)find(window.contentView, @"editor-content");
     body.string = @"unsaved draft";
-    [body.delegate textDidChange:[NSNotification notificationWithName:NSTextDidChangeNotification object:body]];
+    [body.delegate
+        textDidChange:[NSNotification
+                          notificationWithName:NSTextDidChangeNotification
+                                        object:body]];
 #else
     window = reinterpret_cast<GtkWidget *>(ui.native_handle());
     body = find(window, "editor-content");
-    gtk_text_buffer_set_text(gtk_text_view_get_buffer(GTK_TEXT_VIEW(body)), "unsaved draft", -1);
+    gtk_text_buffer_set_text(gtk_text_view_get_buffer(GTK_TEXT_VIEW(body)),
+                             "unsaved draft", -1);
 #endif
     CHECK(session->has_unsaved());
+#ifdef _WIN32
+    auto tree = GetDlgItem(window, 501);
+    auto previous = TreeView_GetSelection(tree);
+    TreeView_SelectItem(tree, TreeView_GetRoot(tree));
+    CHECK(TreeView_GetSelection(tree) == previous);
+    wchar_t retained[64]{};
+    GetWindowTextW(body, retained, 64);
+    CHECK(std::wstring(retained) == L"unsaved draft");
+#elif defined(__APPLE__)
+    auto tree = (NSOutlineView *)find(window.contentView, @"editor-tree");
+    auto previous = tree.selectedRow;
+    [tree selectRowIndexes:[NSIndexSet indexSetWithIndex:0]
+        byExtendingSelection:NO];
+    CHECK(tree.selectedRow == previous &&
+          [body.string isEqualToString:@"unsaved draft"]);
+#else
+    auto tree = find(window, "editor-tree");
+    auto selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tree));
+    auto path = gtk_tree_path_new_from_string("0");
+    gtk_tree_selection_select_path(selection, path);
+    gtk_tree_path_free(path);
+    GtkTreeIter chosen;
+    CHECK(gtk_tree_selection_get_selected(selection, nullptr, &chosen));
+    gchar *chosen_id = nullptr;
+    gtk_tree_model_get(gtk_tree_view_get_model(GTK_TREE_VIEW(tree)), &chosen, 1,
+                       &chosen_id, -1);
+    CHECK(chosen_id && id == chosen_id);
+    g_free(chosen_id);
+    GtkTextIter first, last;
+    auto buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(body));
+    gtk_text_buffer_get_bounds(buffer, &first, &last);
+    auto retained = gtk_text_buffer_get_text(buffer, &first, &last, FALSE);
+    CHECK(std::string(retained) == "unsaved draft");
+    g_free(retained);
+#endif
+    CHECK(session->selected()->value == id);
     auto handle = ui.native_handle();
     CHECK(!ui.show(session));
-    CHECK(ui.native_handle() == handle && take(get_snippet(store,id)).content == "external");
+    CHECK(ui.native_handle() == handle &&
+          take(get_snippet(store, id)).content == "external");
     CHECK(session->reload());
     std::cout << "PASS "
                  "native_editor_autosave_unicode_undo_enabled_menu_folder_"

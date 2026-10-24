@@ -39,7 +39,10 @@ struct SnippetEditorSession::State {
   bool dirty_title = false, dirty_content = false;
   bool dirty() const { return dirty_title || dirty_content; }
   void require_saved() const {
-    if (dirty()) throw detail::Failure{{ErrorCode::Busy,"Draft not saved: correct it or Reload to discard before navigating"}};
+    if (dirty())
+      throw detail::Failure{
+          {ErrorCode::Busy, "Draft not saved: correct it or Reload to discard "
+                            "before navigating"}};
   }
   struct Drag {
     std::uint64_t token;
@@ -133,12 +136,18 @@ SnippetEditorSession::SnippetEditorSession(Store &s, SnippetEditorCallbacks cb)
 SnippetEditorSession::~SnippetEditorSession() = default;
 Result<void> SnippetEditorSession::reload() {
   return detail::guarded<void>([&]() -> Result<void> {
-    auto &s = *state_; auto selected = s.selected;
+    auto &s = *state_;
+    auto selected = s.selected;
     s.catalog();
     if (selected) {
-      auto loaded = detail::guarded<void>([&]() -> Result<void> {s.select(selected,true);return {};});
-      if (!loaded && loaded.error().code == ErrorCode::NotFound) s.clear();
-      else if (!loaded) return loaded;
+      auto loaded = detail::guarded<void>([&]() -> Result<void> {
+        s.select(selected, true);
+        return {};
+      });
+      if (!loaded && loaded.error().code == ErrorCode::NotFound)
+        s.clear();
+      else if (!loaded)
+        return loaded;
     }
     s.dirty_title = s.dirty_content = false;
     return {};
@@ -207,13 +216,13 @@ Result<void> SnippetEditorSession::edit_title(const std::string &text) {
     auto &s = *state_;
     if (s.doc) {
       auto next = *s.doc;
-      if (next.title == text)
+      if (next.title == text && !s.dirty_title)
         return {};
       next.title = text;
       s.persist(std::move(next));
     } else if (s.folder) {
       auto next = *s.folder;
-      if (next.title == text)
+      if (next.title == text && !s.dirty_title)
         return {};
       next.title = text;
       s.persist(std::move(next));
@@ -221,7 +230,8 @@ Result<void> SnippetEditorSession::edit_title(const std::string &text) {
       return Error{ErrorCode::InvalidArgument, "Select an item first"};
     return {};
   });
-  if (state_->selected) state_->dirty_title = !result;
+  if (state_->selected)
+    state_->dirty_title = !result;
   return result;
 }
 Result<void> SnippetEditorSession::edit_content(const std::string &text) {
@@ -229,7 +239,7 @@ Result<void> SnippetEditorSession::edit_content(const std::string &text) {
     auto &s = *state_;
     if (!s.doc)
       return Error{ErrorCode::InvalidArgument, "Only snippets have text"};
-    if (text == s.doc->content)
+    if (text == s.doc->content && !s.dirty_content)
       return {};
     auto history = s.undo;
     history.push_back(s.doc->content);
@@ -241,7 +251,8 @@ Result<void> SnippetEditorSession::edit_content(const std::string &text) {
     s.redo.clear();
     return {};
   });
-  if (state_->selected) state_->dirty_content = !result;
+  if (state_->doc)
+    state_->dirty_content = !result;
   return result;
 }
 Result<void> SnippetEditorSession::enable(bool enabled) {
@@ -276,8 +287,12 @@ Result<void> SnippetEditorSession::erase_selected(bool confirmed) {
   });
 }
 bool SnippetEditorSession::has_unsaved() const { return state_->dirty(); }
-bool SnippetEditorSession::can_undo() const { return !state_->dirty() && !state_->undo.empty(); }
-bool SnippetEditorSession::can_redo() const { return !state_->dirty() && !state_->redo.empty(); }
+bool SnippetEditorSession::can_undo() const {
+  return !state_->dirty() && !state_->undo.empty();
+}
+bool SnippetEditorSession::can_redo() const {
+  return !state_->dirty() && !state_->redo.empty();
+}
 Result<void> SnippetEditorSession::undo() {
   return detail::guarded<void>([&]() -> Result<void> {
     auto &s = *state_;
@@ -354,9 +369,11 @@ Result<void> SnippetEditorSession::finish_drag(std::uint64_t token,
       if (index > order.size())
         detail::invalid("Folder drop index out of range");
       order.insert(order.begin() + std::ptrdiff_t(index), drag.item.value);
-      need(reorder_folders(s.store, order, SnippetItemVersion{drag.item, drag.revision}));
+      need(reorder_folders(s.store, order,
+                           SnippetItemVersion{drag.item, drag.revision}));
     } else
-      need(move_snippet(s.store, drag.item.value, target, index, drag.revision));
+      need(
+          move_snippet(s.store, drag.item.value, target, index, drag.revision));
     s.catalog();
     s.select(drag.item, true);
     s.changed();

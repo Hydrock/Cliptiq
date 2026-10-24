@@ -21,6 +21,7 @@ using namespace cliptiq;
   std::function<NSPasteboardItem *(CliptiqSnippetNode *)> drag;
   std::function<NSDragOperation(id<NSDraggingInfo>, id, NSInteger, BOOL)> drop;
   std::function<void()> cancel;
+  std::function<bool()> can_close;
   NSTextView *shortcutEditor;
 }
 - (void)addFolder:(id)sender;
@@ -174,6 +175,8 @@ using namespace cliptiq;
     action(506);
 }
 - (BOOL)windowShouldClose:(NSWindow *)window {
+  if (can_close && !can_close())
+    return NO;
   [window orderOut:nil];
   return NO;
 }
@@ -261,6 +264,7 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
       bridge->drag = {};
       bridge->drop = {};
       bridge->cancel = {};
+      bridge->can_close = {};
     }
     [window close];
   }
@@ -271,6 +275,36 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
   void history() {
     undo.enabled = model->can_undo();
     redo.enabled = model->can_redo();
+  }
+  void restore_selection() {
+    auto selected = model->selected();
+    if (!selected)
+      return;
+    auto item = node(*selected);
+    auto row = [tree rowForItem:item];
+    if (row >= 0) {
+      updating = true;
+      [tree selectRowIndexes:[NSIndexSet indexSetWithIndex:NSUInteger(row)]
+          byExtendingSelection:NO];
+      updating = false;
+    }
+  }
+  bool confirm_close() {
+    if (!model || !model->has_unsaved())
+      return true;
+    auto alert = [NSAlert new];
+    alert.messageText = @"Discard unsaved draft?";
+    alert.informativeText =
+        @"Keep editing to correct the error, or discard the local draft.";
+    [alert addButtonWithTitle:@"Keep Editing"];
+    [alert addButtonWithTitle:@"Discard Draft"];
+    if ([alert runModal] != NSAlertSecondButtonReturn)
+      return false;
+    auto loaded = model->reload();
+    status(loaded);
+    if (loaded)
+      rebuild();
+    return bool(loaded);
   }
   void detail() {
     updating = true;
@@ -424,6 +458,8 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
     return Error{ErrorCode::InvalidArgument, "Editor requires main thread"};
   if (!model)
     return Error{ErrorCode::InvalidArgument, "No editor session"};
+  if (s->window && s->model && s->model->has_unsaved())
+    return Error{ErrorCode::Busy, "Unsaved draft retained in existing editor"};
   [NSApplication sharedApplication];
   if (s->bridge) {
     s->bridge->action = {};
@@ -432,6 +468,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
     s->bridge->drag = {};
     s->bridge->drop = {};
     s->bridge->cancel = {};
+    s->bridge->can_close = {};
   }
   [s->window close];
   s->model = std::move(model);
@@ -544,6 +581,10 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
   s->message.autoresizingMask = NSViewWidthSizable;
   [root addSubview:s->message];
   std::weak_ptr<State> weak = s;
+  s->bridge->can_close = [weak] {
+    auto s = weak.lock();
+    return !s || s->confirm_close();
+  };
   s->bridge->action = [weak](int command) {
     if (auto s = weak.lock())
       s->perform(command);
@@ -561,6 +602,8 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
       s->status(r);
       if (r)
         s->detail();
+      else if (s->model->has_unsaved())
+        s->restore_selection();
     }
   };
   s->bridge->edit = [weak](int field, NSString *value) {
@@ -661,6 +704,15 @@ Result<void> NativeSnippetEditor::process_events() {
   if (state_->owner != std::this_thread::get_id())
     return Error{ErrorCode::InvalidArgument, "Editor requires main thread"};
   return {};
+}
+Result<bool> NativeSnippetEditor::request_close() {
+  auto s = state_;
+  if (!s->window)
+    return true;
+  if (!s->confirm_close())
+    return false;
+  [s->window orderOut:nil];
+  return true;
 }
 std::uintptr_t NativeSnippetEditor::native_handle() const {
   return reinterpret_cast<std::uintptr_t>((__bridge void *)state_->window);

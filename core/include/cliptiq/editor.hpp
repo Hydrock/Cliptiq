@@ -53,6 +53,7 @@ public:
   ~NativeSnippetEditor();
   Result<void> show(std::shared_ptr<SnippetEditorSession>);
   Result<void> process_events();
+  Result<bool> request_close();
   std::uintptr_t native_handle() const;
   bool record_chord(const KeyChord &);
 };
