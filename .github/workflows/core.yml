@@ -1,4 +1,4 @@
-name: Portable core and native clipboards (T02-T13)
+name: Portable core and native clipboards (T02-T14)
 on:
   workflow_dispatch:
   push:
@@ -13,6 +13,9 @@ on:
       - 'platform/posix/**'
       - 'resources/**'
       - 'tools/generate-locales.py'
+      - 'tools/import-clipy/**'
+      - 'tests/integration/import*'
+      - 'tests/fixtures/migration/**'
       - 'tests/integration/lifecycle*'
       - 'tests/integration/native_media_test.cpp'
       - 'tests/fixtures/media/**'
@@ -150,3 +153,24 @@ jobs:
         with:
           name: windows-backend-asan
           path: out/core-Windows-asan/Testing/Temporary/LastTest.log
+  legacy_migration:
+    runs-on: macos-15
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 tools/fetch-footprint-deps.py
+      - run: cmake --preset release -DCLIPTIQ_BUILD_SIZE_PROBE=ON
+      - run: cmake --build --preset release --target cliptiq_import cliptiq_import_macos
+      - name: Build optional isolated Realm helper
+        run: swift build --package-path tools/import-clipy --scratch-path out/legacy-build -c release --jobs 3 --disable-sandbox
+      - name: Real Realm file and archive migration/source preservation
+        run: python3 tests/integration/import_macos.py out/core-Darwin-release/tools/import-clipy/cliptiq-import out/core-Darwin-release/tools/import-clipy/cliptiq-import-macos out/legacy-build/release/cliptiq-legacy
+      - name: Measure separate helper closure
+        run: python3 tests/size/migration_legacy.py out/legacy-build/release
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: legacy-migration
+          path: |
+            out/t14-legacy-size.json
+            tools/import-clipy/Package.resolved

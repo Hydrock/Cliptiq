@@ -153,6 +153,14 @@ if system == 'Windows':
     import os
     rich = pathlib.Path(os.environ['WINDIR']) / 'System32' / 'Msftedit.dll'
     report['snippets']['dynamic_system_component'] = {'name': 'Msftedit.dll', 'bytes': rich.stat().st_size, 'sha256': hashlib.sha256(rich.read_bytes()).hexdigest(), 'scope': 'existing OS RichEdit component loaded from System32, not bundled; not full system dependency closure'}
+# Offline converter is a separate delivery, never part of the app executable.
+migration_binary=folder/'tools'/'import-clipy'/('cliptiq-import.exe' if system=='Windows' else 'cliptiq-import')
+b=migration_binary.read_bytes();archive=io.BytesIO()
+with zipfile.ZipFile(archive,'w',compression=zipfile.ZIP_DEFLATED,compresslevel=9) as z:
+ item=zipfile.ZipInfo(migration_binary.name,date_time=(2026,1,1,0,0,0));item.compress_type=zipfile.ZIP_DEFLATED;z.writestr(item,b)
+report['migration']={'optional_converter_bytes':len(b),'optional_converter_zip_bytes':len(archive.getvalue()),'sha256':hashlib.sha256(b).hexdigest(),'app_linked_migration_bytes':0,'scope':'separate C++ offline converter; Realm helper measured separately, no app linkage'}
+for p in sorted((root/'tools/import-clipy').rglob('*')):
+ if p.is_file() and '.build' not in p.parts and p.name!='Package.resolved':report['source_files_sha256'][p.relative_to(root).as_posix()]=hashlib.sha256(p.read_bytes()).hexdigest()
 (root / 'out' / 't02-size.json').write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
 
 snippet_xml = menu_variant('snippet_xml_probe')
