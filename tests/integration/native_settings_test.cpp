@@ -144,9 +144,13 @@ int run() {
     auto shortcut = (NSTextField *)find(window.contentView, @"hotkey:main");
     CHECK(shortcut);
     [window makeFirstResponder:shortcut];
+    [window becomeKeyWindow];
+    CHECK(window.isKeyWindow);
+    CHECK(ui.record_chord(take(parse_chord("Ctrl+Alt+Q"))));
     [window resignKeyWindow];
+    CHECK(!window.isKeyWindow);
     CHECK(!ui.record_chord(take(parse_chord("Ctrl+Alt+W"))));
-    [window makeKeyWindow];
+    [window becomeKeyWindow];
     CHECK(ui.record_chord(take(parse_chord("Ctrl+Alt+Q"))));
     [(NSButton *)find(window.contentView, @"apply") performClick:nil];
 #else
