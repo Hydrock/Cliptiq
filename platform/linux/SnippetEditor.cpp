@@ -26,6 +26,13 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
     if (rows)
       g_object_unref(rows);
   }
+  bool transfer_locked() const {
+#ifdef CLIPTIQ_EDITOR_XML
+    return xml.busy();
+#else
+    return false;
+#endif
+  }
   void status(Result<void> r) {
     gtk_label_set_text(GTK_LABEL(message),
                        r ? ((model->saving() ? std::string("Saving locally...") : "Saved locally. " + model->binding_status())).c_str()
@@ -171,6 +178,8 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
     return bool(loaded);
   }
   void detail() {
+    if (transfer_locked())
+      return;
     updating = true;
     auto selected = model->selected();
     bool folder = selected && selected->kind == SnippetItemKind::Folder;
@@ -267,6 +276,10 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
     detail();
   }
   void add(bool folder) {
+    if (transfer_locked()) {
+      status(Error{ErrorCode::Busy, "XML transfer pending"});
+      return;
+    }
     auto keep = shared_from_this();
     auto r = folder ? model->add_folder() : model->add_snippet();
     status(r ? Result<void>{} : Result<void>{r.error()});
@@ -276,6 +289,10 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
     }
   }
   void remove() {
+    if (transfer_locked()) {
+      status(Error{ErrorCode::Busy, "XML transfer pending"});
+      return;
+    }
     auto keep = shared_from_this();
     if (!model->selected())
       return;
@@ -292,6 +309,10 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
       rebuild();
   }
   void undo_action(bool forward) {
+    if (transfer_locked()) {
+      status(Error{ErrorCode::Busy, "XML transfer pending"});
+      return;
+    }
     auto keep = shared_from_this();
     auto r = forward ? model->redo() : model->undo();
     status(r);
@@ -299,6 +320,10 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
       detail();
   }
   void bind_action() {
+    if (transfer_locked()) {
+      status(Error{ErrorCode::Busy, "XML transfer pending"});
+      return;
+    }
     auto text = std::string(gtk_entry_get_text(GTK_ENTRY(shortcut)));
     std::optional<KeyChord> chord;
     if (!text.empty()) {
@@ -312,6 +337,8 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
     status(model->bind_folder(chord));
   }
   bool drop(int x, int y) {
+    if (transfer_locked())
+      return false;
     if (!drag || !dragged)
       return false;
     GtkTreePath *path = nullptr;
@@ -517,8 +544,12 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
                    "changed", G_CALLBACK(+[](GtkTreeSelection *, gpointer p) {
                      auto s = static_cast<State *>(p);
                      auto keep = s->shared_from_this();
-                     if (s->updating)
+                     if (s->updating || s->transfer_locked())
                        return;
+                     if (s->transfer_locked()) {
+                       s->restore_selection();
+                       return;
+                     }
                      auto r = s->model->select(s->selected_row());
                      s->status(r);
                      if (r)
@@ -532,6 +563,8 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
       G_CALLBACK(+[](GtkCellRendererToggle *, gchar *path, gpointer p) {
         auto s = static_cast<State *>(p);
         auto keep = s->shared_from_this();
+        if (s->transfer_locked())
+          return;
         GtkTreeIter iter;
         if (!gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(s->rows), &iter,
                                                  path))
@@ -551,7 +584,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
       s->title, "changed", G_CALLBACK(+[](GtkEditable *, gpointer p) {
         auto s = static_cast<State *>(p);
         auto keep = s->shared_from_this();
-        if (s->updating)
+        if (s->updating || s->transfer_locked())
           return;
         auto r = s->model->queue_title(gtk_entry_get_text(GTK_ENTRY(s->title)));
         s->status(r);
@@ -563,7 +596,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
                    G_CALLBACK(+[](GtkToggleButton *b, gpointer p) {
                      auto s = static_cast<State *>(p);
                      auto keep = s->shared_from_this();
-                     if (s->updating)
+                     if (s->updating || s->transfer_locked())
                        return;
                      auto r = s->model->enable(gtk_toggle_button_get_active(b));
                      s->status(r);
@@ -580,7 +613,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
                    G_CALLBACK(+[](GtkTextBuffer *b, gpointer p) {
                      auto s = static_cast<State *>(p);
                      auto keep = s->shared_from_this();
-                     if (s->updating)
+                     if (s->updating || s->transfer_locked())
                        return;
                      GtkTextIter start;
                      GtkTextIter end;
@@ -656,6 +689,8 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
                    G_CALLBACK(+[](GtkWidget *, GdkDragContext *, gpointer p) {
                      auto s = static_cast<State *>(p);
                      auto keep = s->shared_from_this();
+                     if (s->transfer_locked())
+                       return;
                      s->dragged = s->selected_row();
                      if (s->dragged) {
                        auto r = s->model->begin_drag(*s->dragged);
@@ -742,6 +777,8 @@ std::uintptr_t NativeSnippetEditor::native_handle() const {
 }
 bool NativeSnippetEditor::record_chord(const KeyChord &chord) {
   auto s = state_;
+  if (s->transfer_locked())
+    return false;
   if (!s->window || !gtk_widget_get_visible(s->window) ||
       !gtk_window_is_active(GTK_WINDOW(s->window)) ||
       gtk_window_get_focus(GTK_WINDOW(s->window)) != s->shortcut)

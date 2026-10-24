@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <cstring>
 #include <set>
+#include <string_view>
 namespace cliptiq {
 namespace {
 using namespace detail;
@@ -147,7 +148,8 @@ void preflight(const std::string &s) {
       auto end = s.find('<', i);
       if (end == std::string::npos)
         end = s.size();
-      if (s.find("]]>", i) < end)
+      if (std::string_view(s.data() + i, end - i).find("]]>") !=
+          std::string_view::npos)
         invalid("CDATA terminator in plain text");
       entities(s, i, end);
       i = end;

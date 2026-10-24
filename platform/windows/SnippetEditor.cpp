@@ -309,6 +309,13 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
     if (SUCCEEDED(ole))
       OleUninitialize();
   }
+  bool transfer_locked() const {
+#ifdef CLIPTIQ_EDITOR_XML
+    return xml.busy();
+#else
+    return false;
+#endif
+  }
   void status(Result<void> r) {
     if (message)
       SetWindowTextW(
@@ -424,6 +431,8 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
     return bool(loaded);
   }
   void detail() {
+    if (transfer_locked())
+      return;
     updating = true;
     auto selected = model->selected();
     bool folder = selected && selected->kind == SnippetItemKind::Folder;
@@ -515,6 +524,10 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
     updating=true;TreeView_SelectItem(tree,item);updating=false;
   }
   void perform(int command) {
+    if (transfer_locked()) {
+      status(Error{ErrorCode::Busy, "XML transfer pending"});
+      return;
+    }
     auto keep = shared_from_this();
 #ifdef CLIPTIQ_EDITOR_XML
     if (command == 513 || command == 514) {
@@ -588,6 +601,8 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
     MoveWindow(message, 12, height - 54, width - 24, 44, TRUE);
   }
   std::optional<std::pair<FolderId, std::size_t>> location(POINTL point) {
+    if (transfer_locked())
+      return {};
     if (!drag || !dragged)
       return {};
     POINT p{point.x, point.y};
@@ -653,6 +668,8 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
     return std::make_pair(folder, index);
   }
   void begin(HTREEITEM node) {
+    if (transfer_locked())
+      return;
     auto keep = shared_from_this();
     auto item = nodes.find(node);
     if (!target || item == nodes.end() || item->second.value.empty())
@@ -776,6 +793,12 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
           return DefWindowProcW(w, msg, wp, lp);
         if (s->updating)
           return 0;
+        if (s->transfer_locked()) {
+          if (msg == WM_NOTIFY &&
+              reinterpret_cast<NMHDR *>(lp)->code == TVN_SELCHANGINGW)
+            return TRUE;
+          return 0;
+        }
         if (msg == WM_COMMAND) {
           int id = LOWORD(wp);
           if ((id == 502 || id == 504) && HIWORD(wp) == EN_CHANGE) {
@@ -1026,6 +1049,8 @@ std::uintptr_t NativeSnippetEditor::native_handle() const {
 }
 bool NativeSnippetEditor::record_chord(const KeyChord &chord) {
   auto s = state_;
+  if (s->transfer_locked())
+    return false;
   if (!s->window || !IsWindowVisible(s->window) ||
       GetForegroundWindow() != s->window || GetFocus() != s->shortcut ||
       !IsWindowEnabled(s->shortcut))

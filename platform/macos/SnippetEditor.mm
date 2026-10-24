@@ -290,6 +290,13 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
     }
     [window close];
   }
+  bool transfer_locked() const {
+#ifdef CLIPTIQ_EDITOR_XML
+    return xml.busy();
+#else
+    return false;
+#endif
+  }
   void status(Result<void> r) {
     message.stringValue = r ? str((model->saving() ? std::string("Saving locally...") : "Saved locally. " + model->binding_status()))
                             : str(r.error().message);
@@ -413,6 +420,8 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
     return bool(loaded);
   }
   void detail() {
+    if (transfer_locked())
+      return;
     updating = true;
     auto selected = model->selected();
     bool folder = selected && selected->kind == SnippetItemKind::Folder;
@@ -505,6 +514,10 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
     detail();
   }
   void perform(int command) {
+    if (transfer_locked()) {
+      status(Error{ErrorCode::Busy, "XML transfer pending"});
+      return;
+    }
     auto keep = shared_from_this();
 #ifdef CLIPTIQ_EDITOR_XML
     if (command == 513 || command == 514) {
@@ -717,6 +730,10 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
     if (auto s = weak.lock()) {
       if (s->updating)
         return;
+      if (s->transfer_locked()) {
+        s->restore_selection();
+        return;
+      }
       std::optional<SnippetItemId> item;
       if (n && n.itemID.length)
         item = SnippetItemId{n.folder ? SnippetItemKind::Folder
@@ -732,7 +749,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
   };
   s->bridge->edit = [weak](int field, NSString *value) {
     if (auto s = weak.lock()) {
-      if (s->updating)
+      if (s->updating || s->transfer_locked())
         return;
       auto r = field ? s->model->queue_content(utf8(value))
                      : s->model->queue_title(utf8(value));
@@ -745,7 +762,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
   [s->tree setDraggingSourceOperationMask:NSDragOperationMove forLocal:YES];
   s->bridge->drag = [weak](CliptiqSnippetNode *n) -> NSPasteboardItem * {
     auto s = weak.lock();
-    if (!s || !n.itemID.length)
+    if (!s || s->transfer_locked() || !n.itemID.length)
       return nil;
     s->dragged = SnippetItemId{n.folder ? SnippetItemKind::Folder
                                         : SnippetItemKind::Snippet,
@@ -764,7 +781,8 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
   s->bridge->drop = [weak](id<NSDraggingInfo> info, id target,
                            NSInteger proposed, BOOL commit) -> NSDragOperation {
     auto s = weak.lock();
-    if (!s || !s->drag || !s->dragged || info.draggingSource != s->tree)
+    if (!s || s->transfer_locked() || !s->drag || !s->dragged ||
+        info.draggingSource != s->tree)
       return NSDragOperationNone;
     auto value =
         [info.draggingPasteboard stringForType:@"app.cliptiq.snippet-move"];
@@ -844,6 +862,8 @@ std::uintptr_t NativeSnippetEditor::native_handle() const {
 }
 bool NativeSnippetEditor::record_chord(const KeyChord &chord) {
   auto s = state_;
+  if (s->transfer_locked())
+    return false;
   if (!s->window.isVisible || !s->window.isKeyWindow)
     return false;
   auto responder = s->window.firstResponder;
