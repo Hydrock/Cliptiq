@@ -2,6 +2,10 @@
 #include "cliptiq/menu.hpp"
 #include "cliptiq/settings.hpp"
 #include <iostream>
+#include "sqlite3.h"
+#include <filesystem>
+#include <chrono>
+#include <thread>
 #include <stdexcept>
 #ifdef _WIN32
 #include "../fixtures/windows/IsolatedClipboard.hpp"
@@ -74,7 +78,8 @@ int run() {
 #ifdef _WIN32
     IsolatedClipboard station;
 #endif
-    auto store = take(open_store(":memory:"));
+    struct Temp {std::filesystem::path path=std::filesystem::temp_directory_path()/("cliptiq-native-editor-"+std::to_string(std::chrono::steady_clock::now().time_since_epoch().count())+".db");~Temp(){std::error_code ec;std::filesystem::remove(path,ec);}} temp;
+    auto store = take(open_store(temp.path.u8string()));
     Backend backend;
     HotkeyRegistry registry(backend);
     auto f = take(create_folder(store, "Folder A"));
@@ -96,6 +101,18 @@ int run() {
     NativeSnippetEditor ui;
     CHECK(ui.show(session));
     CHECK(ui.native_handle());
+    auto settle=[&] {
+      for(unsigned i=0;i<400 && session->saving();++i) {CHECK(ui.process_events());std::this_thread::sleep_for(std::chrono::milliseconds(5));}
+      CHECK(!session->saving());
+    };
+    auto peer=take(open_store(temp.path.u8string()));
+    std::chrono::steady_clock::time_point input_start;
+    auto lock_input=[&] {CHECK(sqlite3_exec(peer.connection(),"BEGIN IMMEDIATE",nullptr,nullptr,nullptr)==SQLITE_OK);input_start=std::chrono::steady_clock::now();};
+    auto release_input=[&] {
+      auto elapsed=std::chrono::steady_clock::now()-input_start;
+      CHECK(sqlite3_exec(peer.connection(),"ROLLBACK",nullptr,nullptr,nullptr)==SQLITE_OK);
+      CHECK(elapsed<std::chrono::milliseconds(150));
+    };
 #ifdef _WIN32
     auto window = reinterpret_cast<HWND>(ui.native_handle());
     auto click = [&](int id) {
@@ -108,14 +125,17 @@ int run() {
     auto id = selected->value;
     auto body = GetDlgItem(window, 504);
     CHECK(body);
+    lock_input();
     CHECK(SetWindowTextW(body, L"  Привет\r\nline2 😀  "));
     SendMessageW(window, WM_COMMAND, MAKEWPARAM(504, EN_CHANGE),
                  reinterpret_cast<LPARAM>(body));
+    release_input();settle();
     CHECK(session->content() == u8"  Привет\nline2 😀  ");
     BYTE saved_keys[256], pressed[256]{};CHECK(GetKeyboardState(saved_keys));pressed[VK_CONTROL]=0x80;CHECK(SetKeyboardState(pressed));
     SendMessageW(body,WM_KEYDOWN,'Z',0);SendMessageW(body,WM_CHAR,26,0);CHECK(SetKeyboardState(saved_keys));
     CHECK(session->content().empty());
     click(511);
+    settle();
     CHECK(session->content() == u8"  Привет\nline2 😀  ");
     auto outline=GetDlgItem(window,501);SendMessageW(outline,WM_KEYDOWN,VK_SPACE,0);CHECK(ui.process_events());
 #elif defined(__APPLE__)
@@ -131,11 +151,13 @@ int run() {
     auto id = selected->value;
     auto body = (NSTextView *)find(window.contentView, @"editor-content");
     CHECK(body);
+    lock_input();
     body.string = @"  Привет\nline2 😀  ";
     [body.delegate
         textDidChange:[NSNotification
                           notificationWithName:NSTextDidChangeNotification
                                         object:body]];
+    release_input();settle();
     CHECK(session->content() == u8"  Привет\nline2 😀  ");
     auto undo_event=[NSEvent keyEventWithType:NSEventTypeKeyDown location:NSZeroPoint modifierFlags:NSEventModifierFlagCommand timestamp:0 windowNumber:window.windowNumber context:nil characters:@"z" charactersIgnoringModifiers:@"z" isARepeat:NO keyCode:6];
     CHECK([body performKeyEquivalent:undo_event]);
@@ -157,8 +179,10 @@ int run() {
     auto id = selected->value;
     auto body = find(window, "editor-content");
     CHECK(GTK_IS_TEXT_VIEW(body));
+    lock_input();
     gtk_text_buffer_set_text(gtk_text_view_get_buffer(GTK_TEXT_VIEW(body)),
                              u8"  Привет\nline2 😀  ", -1);
+    release_input();settle();
     CHECK(session->content() == u8"  Привет\nline2 😀  ");
     GdkEventKey undo_event{};undo_event.type=GDK_KEY_PRESS;undo_event.keyval=GDK_KEY_z;undo_event.state=GDK_CONTROL_MASK;gboolean handled=FALSE;
     g_signal_emit_by_name(body,"key-press-event",&undo_event,&handled);CHECK(handled);
@@ -234,6 +258,7 @@ int run() {
     gtk_text_buffer_set_text(gtk_text_view_get_buffer(GTK_TEXT_VIEW(body)),
                              "unsaved draft", -1);
 #endif
+    settle();
     CHECK(session->has_unsaved());
 #ifdef _WIN32
     SendMessageW(GetDlgItem(window, 503), BM_SETCHECK, BST_CHECKED, 0);
@@ -291,6 +316,39 @@ int run() {
     CHECK(ui.native_handle() == handle &&
           take(get_snippet(store, id)).content == "external");
     CHECK(session->reload());
+    // A failed load must restore the highlighted item, otherwise Delete/edit
+    // acts on a different document from the one the tree advertises.
+    Snippet large;large.folder_id=other;large.title="Oversized";
+    auto large_id=take(save_snippet(store,large));
+    sqlite3_stmt* oversized=nullptr;
+    CHECK(sqlite3_prepare_v2(store.connection(),"UPDATE snippets SET content=zeroblob(1048577) WHERE id=?",-1,&oversized,nullptr)==SQLITE_OK);
+    sqlite3_bind_text(oversized,1,large_id.c_str(),-1,SQLITE_TRANSIENT);
+    CHECK(sqlite3_step(oversized)==SQLITE_DONE);sqlite3_finalize(oversized);CHECK(session->reload());
+    CHECK(ui.show(session));
+#ifdef _WIN32
+    window=reinterpret_cast<HWND>(ui.native_handle());
+    tree=GetDlgItem(window,501);previous=TreeView_GetSelection(tree);
+    auto target=TreeView_GetNextSibling(tree,previous);CHECK(target);
+    TreeView_SelectItem(tree,target);CHECK(TreeView_GetSelection(tree)==previous);
+#elif defined(__APPLE__)
+    window=(__bridge NSWindow*)(void*)ui.native_handle();
+    tree=(NSOutlineView*)find(window.contentView,@"editor-tree");previous=tree.selectedRow;
+    CHECK(previous+1<tree.numberOfRows);
+    [tree selectRowIndexes:[NSIndexSet indexSetWithIndex:previous+1] byExtendingSelection:NO];
+    CHECK(tree.selectedRow==previous);
+#else
+    window=reinterpret_cast<GtkWidget*>(ui.native_handle());
+    tree=find(window,"editor-tree");selection=gtk_tree_view_get_selection(GTK_TREE_VIEW(tree));
+    CHECK(gtk_tree_selection_get_selected(selection,nullptr,&chosen));
+    auto target=gtk_tree_model_get_path(gtk_tree_view_get_model(GTK_TREE_VIEW(tree)),&chosen);
+    gtk_tree_path_next(target);gtk_tree_selection_select_path(selection,target);gtk_tree_path_free(target);
+    CHECK(gtk_tree_selection_get_selected(selection,nullptr,&chosen));chosen_id=nullptr;
+    gtk_tree_model_get(gtk_tree_view_get_model(GTK_TREE_VIEW(tree)),&chosen,1,&chosen_id,-1);
+    CHECK(chosen_id && id==chosen_id);g_free(chosen_id);
+#endif
+    CHECK(session->selected()->value==id);
+    CHECK(session->edit_title("Still targets highlighted A"));
+    CHECK(take(get_snippet(store,id)).title=="Still targets highlighted A");
 #if !defined(_WIN32) && !defined(__APPLE__)
     auto transient = std::make_unique<NativeSnippetEditor>();
     SnippetEditorCallbacks lifetime_callbacks;

@@ -16,6 +16,7 @@ on:
       - 'tests/integration/native_paste_test.cpp'
       - 'tests/integration/native_settings_test.cpp'
       - 'tests/integration/native_editor_test.cpp'
+      - 'tests/integration/snippet_integration_test.cpp'
       - 'tests/integration/native_hotkeys_test.cpp'
       - 'tests/integration/linux_hotkey_portal_test.cpp'
       - 'tests/integration/windows_paste_boundary_test.cpp'

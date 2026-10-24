@@ -22,8 +22,15 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
   }
   void status(Result<void> r) {
     gtk_label_set_text(GTK_LABEL(message),
-                       r ? ("Saved locally. " + model->binding_status()).c_str()
+                       r ? ((model->saving() ? std::string("Saving locally...") : "Saved locally. " + model->binding_status())).c_str()
                          : r.error().message.c_str());
+  }
+  void poll() {
+    if(!model || !window) return;
+    auto result=model->poll_saves();
+    if(!result) status(result.error());
+    else if(result.value()) {status({});selected_label();}
+    history();
   }
   void history() {
     gtk_widget_set_sensitive(undo, model->can_undo());
@@ -31,8 +38,9 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
   }
   void restore_selection() {
     auto selected = model->selected();
-    if (!selected)
-      return;
+    if (!selected) {
+      updating=true;gtk_tree_selection_unselect_all(gtk_tree_view_get_selection(GTK_TREE_VIEW(tree)));updating=false;return;
+    }
     struct Find {
       State *state;
       SnippetItemId id;
@@ -60,6 +68,8 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
     }
   }
   bool confirm_close() {
+    if(model && model->saving()) {status(Error{ErrorCode::Busy,"Save pending; wait before closing"});return false;}
+
     if (!model->has_unsaved())
       return true;
     auto dialog = gtk_message_dialog_new(
@@ -308,6 +318,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
     s->rows = nullptr;
   }
   s->model = std::move(model);
+  auto background=s->model->background_saves();if(!background) return background;
   s->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
   gtk_window_set_title(GTK_WINDOW(s->window), "Cliptiq Snippets");
   gtk_window_set_default_size(GTK_WINDOW(s->window), 900, 650);
@@ -415,7 +426,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
                      s->status(r);
                      if (r)
                        s->detail();
-                     else if (s->model->has_unsaved())
+                     else
                        s->restore_selection();
                    }),
                    s.get());
@@ -445,7 +456,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
         auto keep = s->shared_from_this();
         if (s->updating)
           return;
-        auto r = s->model->edit_title(gtk_entry_get_text(GTK_ENTRY(s->title)));
+        auto r = s->model->queue_title(gtk_entry_get_text(GTK_ENTRY(s->title)));
         s->status(r);
         if (r)
           s->selected_label();
@@ -479,7 +490,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
                      gtk_text_buffer_get_bounds(b, &start, &end);
                      auto text =
                          gtk_text_buffer_get_text(b, &start, &end, FALSE);
-                     auto r = s->model->edit_content(text);
+                     auto r = s->model->queue_content(text);
                      g_free(text);
                      s->status(r);
                      s->history();
@@ -617,6 +628,7 @@ Result<void> NativeSnippetEditor::process_events() {
     return Error{ErrorCode::InvalidArgument, "Editor requires GUI thread"};
   for (unsigned n = 0; n < 64 && gtk_events_pending(); ++n)
     gtk_main_iteration_do(FALSE);
+  auto keep=state_;keep->poll();
   return {};
 }
 Result<bool> NativeSnippetEditor::request_close() {

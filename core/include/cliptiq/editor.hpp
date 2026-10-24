@@ -28,6 +28,11 @@ public:
   Result<void> select(std::optional<SnippetItemId>);
   Result<FolderId> add_folder();
   Result<SnippetId> add_snippet();
+  Result<void> background_saves();
+  Result<void> queue_title(const std::string &);
+  Result<void> queue_content(const std::string &);
+  Result<bool> poll_saves();
+  bool saving() const;
   Result<void> edit_title(const std::string &);
   Result<void> edit_content(const std::string &);
   Result<void> enable(bool);

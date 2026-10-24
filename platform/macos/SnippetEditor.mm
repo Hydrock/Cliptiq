@@ -269,8 +269,15 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
     [window close];
   }
   void status(Result<void> r) {
-    message.stringValue = r ? str("Saved locally. " + model->binding_status())
+    message.stringValue = r ? str((model->saving() ? std::string("Saving locally...") : "Saved locally. " + model->binding_status()))
                             : str(r.error().message);
+  }
+  void poll() {
+    if(!model || !window) return;
+    auto result=model->poll_saves();
+    if(!result) status(result.error());
+    else if(result.value()) {status({});selected_label();}
+    history();
   }
   void history() {
     undo.enabled = model->can_undo();
@@ -278,8 +285,9 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
   }
   void restore_selection() {
     auto selected = model->selected();
-    if (!selected)
-      return;
+    if (!selected) {
+      updating=true;[tree deselectAll:nil];updating=false;return;
+    }
     auto item = node(*selected);
     auto row = [tree rowForItem:item];
     if (row >= 0) {
@@ -290,6 +298,8 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
     }
   }
   bool confirm_close() {
+    if(model && model->saving()) {status(Error{ErrorCode::Busy,"Save pending; wait before closing"});return false;}
+
     if (!model || !model->has_unsaved())
       return true;
     auto alert = [NSAlert new];
@@ -475,6 +485,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
   }
   [s->window close];
   s->model = std::move(model);
+  auto background=s->model->background_saves();if(!background) return background;
   s->window = [[NSWindow alloc]
       initWithContentRect:NSMakeRect(100, 100, 900, 650)
                 styleMask:NSWindowStyleMaskTitled | NSWindowStyleMaskClosable |
@@ -605,7 +616,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
       s->status(r);
       if (r)
         s->detail();
-      else if (s->model->has_unsaved())
+      else
         s->restore_selection();
     }
   };
@@ -613,8 +624,8 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
     if (auto s = weak.lock()) {
       if (s->updating)
         return;
-      auto r = field ? s->model->edit_content(utf8(value))
-                     : s->model->edit_title(utf8(value));
+      auto r = field ? s->model->queue_content(utf8(value))
+                     : s->model->queue_title(utf8(value));
       s->status(r);
       if (r)
         s->selected_label();
@@ -706,6 +717,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
 Result<void> NativeSnippetEditor::process_events() {
   if (state_->owner != std::this_thread::get_id())
     return Error{ErrorCode::InvalidArgument, "Editor requires main thread"};
+  auto keep=state_;keep->poll();
   return {};
 }
 Result<bool> NativeSnippetEditor::request_close() {

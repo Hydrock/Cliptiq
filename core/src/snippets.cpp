@@ -101,6 +101,13 @@ void state(sqlite3 *db, bool folder, const std::string &id, bool enabled) {
   q.bind(2, std::int64_t(enabled));
   q.done();
 }
+bool normalized(sqlite3 *db, const FolderId *folder = nullptr) {
+  Statement q(db, folder ? "SELECT count(*),min(position),max(position),count(DISTINCT position) FROM snippets WHERE folder_id=?"
+                         : "SELECT count(*),min(position),max(position),count(DISTINCT position) FROM snippet_folders");
+  if(folder) q.bind(1,*folder);
+  q.row();auto n=q.number(0);
+  return n==0 || (q.number(1)==0 && q.number(2)==n-1 && q.number(3)==n);
+}
 void reindex(sqlite3 *db, bool folder, const std::vector<std::string> &order) {
   for (std::size_t i = 0; i < order.size(); ++i) {
     Statement q(
@@ -283,20 +290,23 @@ Result<FolderId> create_folder(Store &store, const std::string &title) {
     return id;
   });
 }
-Result<void> save_folder(Store &store, const Folder &folder) {
-  return detail::guarded<void>([&]() -> Result<void> {
+Result<Folder> save_folder_committed(Store &store, const Folder &folder) {
+  return detail::guarded<Folder>([&]() -> Result<Folder> {
     id_valid(folder.id);
     utf8(folder.title, 1024);
     auto db = store.connection();
     Transaction tx(db);
     check_version(db, true, folder.id, folder.revision);
-    auto order = ids(db);
     Statement previous_position(
         db, "SELECT position FROM snippet_folders WHERE id=?");
     previous_position.bind(1, folder.id);
     previous_position.row();
-    if (folder.index != std::size_t(previous_position.number(0)))
-      place(order, folder.id, folder.index);
+    bool reorder = folder.index != std::size_t(previous_position.number(0));
+    std::vector<std::string> order;
+    if(reorder || !normalized(db)) {
+      order=ids(db);
+      if(reorder) place(order,folder.id,folder.index);
+    }
     Statement q(db, "UPDATE snippet_folders SET title=? WHERE id=?");
     q.bind(1, folder.title);
     q.bind(2, folder.id);
@@ -304,12 +314,17 @@ Result<void> save_folder(Store &store, const Folder &folder) {
     state(db, true, folder.id, folder.enabled);
     reindex(db, true, order);
     revision(db);
+    auto folders=list_folders(store);
+    if(!folders) return folders.error();
+    auto found=std::find_if(folders.value().begin(),folders.value().end(),[&](const Folder& f){return f.id==folder.id;});
+    if(found==folders.value().end()) return Error{ErrorCode::NotFound,"Folder disappeared"};
+    Folder committed=*found;
     tx.commit();
-    return {};
+    return committed;
   });
 }
-Result<SnippetId> save_snippet(Store &store, const Snippet &s) {
-  return detail::guarded<SnippetId>([&]() -> Result<SnippetId> {
+Result<Snippet> save_snippet_committed(Store &store, const Snippet &s) {
+  return detail::guarded<Snippet>([&]() -> Result<Snippet> {
     utf8(s.title, 1024);
     utf8(s.content, std::size_t(std::min(text_limit,
                                          store.limits().representation_bytes)));
@@ -328,7 +343,7 @@ Result<SnippetId> save_snippet(Store &store, const Snippet &s) {
                    "Snippet collection exceeds count/text budget"};
     if (!s.id.empty())
       check_version(db, false, id, s.revision);
-    auto destination = ids(db, &s.folder_id);
+    std::vector<std::string> destination;
     FolderId previous;
     bool unchanged_position = false;
     if (!s.id.empty()) {
@@ -339,8 +354,11 @@ Result<SnippetId> save_snippet(Store &store, const Snippet &s) {
       unchanged_position =
           previous == s.folder_id && s.index == std::size_t(old.number(1));
     }
-    if (!unchanged_position)
-      place(destination, id, s.index);
+    bool fast=unchanged_position && normalized(db,&s.folder_id);
+    if(!fast) {
+      destination=ids(db,&s.folder_id);
+      if (!unchanged_position) place(destination,id,s.index);
+    }
     Statement q(
         db, s.id.empty()
                 ? "INSERT INTO snippets(id,folder_id,title,content,position) "
@@ -357,7 +375,7 @@ Result<SnippetId> save_snippet(Store &store, const Snippet &s) {
       q.bind(1, s.folder_id);
       q.bind(2, s.title);
       q.bind(3, s.content);
-      q.bind(4, std::int64_t(destination.size() - 1));
+      q.bind(4, fast ? std::int64_t(s.index) : std::int64_t(destination.size() - 1));
       q.bind(5, id);
     }
     q.done();
@@ -366,9 +384,21 @@ Result<SnippetId> save_snippet(Store &store, const Snippet &s) {
     if (!previous.empty() && previous != s.folder_id)
       reindex(db, false, ids(db, &previous));
     revision(db);
+    auto committed=get_snippet(store,id);
+    if(!committed) return committed.error();
     tx.commit();
-    return id;
+    return committed;
   });
+}
+Result<void> save_folder(Store &store,const Folder &folder) {
+  auto result=save_folder_committed(store,folder);
+  if(!result) return result.error();
+  return {};
+}
+Result<SnippetId> save_snippet(Store &store,const Snippet &snippet) {
+  auto result=save_snippet_committed(store,snippet);
+  if(!result) return result.error();
+  return result.value().id;
 }
 Result<void> move_snippet(Store &store, const SnippetId &id,
                           const FolderId &folder, std::size_t index,

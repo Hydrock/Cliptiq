@@ -36,6 +36,8 @@ Result<std::vector<SnippetInfo>> list_snippet_headers(Store &);
 Result<std::vector<Snippet>> list_snippets(Store &, const FolderId &);
 Result<Snippet> get_snippet(Store &, const SnippetId &);
 Result<FolderId> create_folder(Store &, const std::string &title);
+Result<Folder> save_folder_committed(Store &, const Folder &);
+Result<Snippet> save_snippet_committed(Store &, const Snippet &);
 Result<void> save_folder(Store &, const Folder &);
 Result<SnippetId> save_snippet(Store &, const Snippet &);
 Result<void> move_snippet(Store &, const SnippetId &, const FolderId &,

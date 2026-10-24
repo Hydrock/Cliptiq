@@ -477,17 +477,9 @@ int host(int argc, char **argv) {
     show_editor = [&] {
       if (!editor_session) {
         SnippetEditorCallbacks callbacks;
-        callbacks.changed = [&] {
-          refresh = true;
-          auto synced = synchronize_folder_hotkeys(store, registry);
-          if (!synced)
-            std::cerr << synced.error().message << '\n';
-          auto latest = load_settings(store);
-          if (latest)
-            preferences = std::move(latest.value());
-          else
-            std::cerr << latest.error().message << '\n';
-        };
+        // Text autosave completion only invalidates the menu. Folder routing
+        // is reconciled by the existing periodic host pass, not per keystroke.
+        callbacks.changed = [&] { refresh = true; };
         callbacks.bind_folder =
             [&](const FolderId &id,
                 std::optional<KeyChord> chord) -> Result<void> {

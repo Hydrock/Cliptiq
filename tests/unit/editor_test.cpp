@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <iostream>
 #include <stdexcept>
+#include <thread>
 using namespace cliptiq;
 #define CHECK(x)                                                               \
   do {                                                                         \
@@ -214,6 +215,49 @@ int main() {
       CHECK(hook.fired && hook.ok);
       CHECK(!result && result.error().code == ErrorCode::Busy);
       CHECK(take(list_folders(db))[0].id == b);
+    }
+    std::filesystem::remove(path);
+  });
+  test("committed_snapshot_does_not_adopt_peer_revision", [] {
+    auto path = (std::filesystem::temp_directory_path() / "cliptiq-editor-commit-race.db").string();
+    std::filesystem::remove(path);
+    {
+      auto db=take(open_store(path)); auto peer=take(open_store(path));
+      SnippetEditorSession e(db);CHECK(e.reload());take(e.add_folder());auto id=take(e.add_snippet());
+      struct Hook { Store* peer; std::string id; bool armed=false,fired=false,ok=false; } hook{&peer,id};
+      sqlite3_trace_v2(db.connection(),SQLITE_TRACE_STMT,+[](unsigned,void* data,void* stmt,void*)->int {
+        auto h=static_cast<Hook*>(data);
+        auto sql=std::string(sqlite3_sql(static_cast<sqlite3_stmt*>(stmt)));
+        if(sql=="COMMIT") h->armed=true;
+        if(h->armed && !h->fired && sql.rfind("SELECT",0)==0) {
+          h->fired=true; auto item=get_snippet(*h->peer,h->id);
+          if(item) {item.value().content="peer"; h->ok=bool(save_snippet(*h->peer,item.value()));}
+        } return 0;
+      },&hook);
+      CHECK(e.edit_content("mine"));take(data_revision(db));sqlite3_trace_v2(db.connection(),0,nullptr,nullptr);
+      CHECK(hook.fired && hook.ok);CHECK(e.content()=="mine");
+      auto next=e.edit_content("mine next");CHECK(!next && next.error().code==ErrorCode::Busy);
+      CHECK(take(get_snippet(peer,id)).content=="peer");
+    }
+    std::filesystem::remove(path);
+  });
+  test("background_autosave_keeps_event_loop_responsive_under_write_contention", [] {
+    auto path=(std::filesystem::temp_directory_path()/"cliptiq-editor-worker.db").string();std::filesystem::remove(path);
+    {
+      auto db=take(open_store(path));auto peer=take(open_store(path));SnippetEditorSession e(db);
+      CHECK(e.reload());take(e.add_folder());auto id=take(e.add_snippet());CHECK(e.background_saves());
+      CHECK(sqlite3_exec(peer.connection(),"BEGIN IMMEDIATE",nullptr,nullptr,nullptr)==SQLITE_OK);
+      auto start=std::chrono::steady_clock::now();CHECK(e.queue_content("first"));CHECK(e.queue_content("latest"));
+      CHECK(std::chrono::steady_clock::now()-start<std::chrono::milliseconds(150));
+      CHECK(e.has_unsaved() && e.saving());CHECK(!e.select(std::nullopt));CHECK(!e.reload());
+      CHECK(sqlite3_exec(peer.connection(),"ROLLBACK",nullptr,nullptr,nullptr)==SQLITE_OK);
+      for(unsigned i=0;i<300 && e.saving();++i) {CHECK(e.poll_saves());std::this_thread::sleep_for(std::chrono::milliseconds(5));}
+      CHECK(!e.saving() && !e.has_unsaved());CHECK(e.content()=="latest");CHECK(take(get_snippet(db,id)).content=="latest");
+      CHECK(e.can_undo());
+      auto external=take(get_snippet(peer,id));external.content="peer";CHECK(save_snippet(peer,external));
+      CHECK(e.queue_content("stale visible draft"));bool conflict=false;
+      for(unsigned i=0;i<300 && e.saving();++i) {auto r=e.poll_saves();if(!r) {CHECK(r.error().code==ErrorCode::Busy);conflict=true;}std::this_thread::sleep_for(std::chrono::milliseconds(5));}
+      CHECK(conflict && e.has_unsaved());CHECK(take(get_snippet(db,id)).content=="peer");CHECK(e.reload());
     }
     std::filesystem::remove(path);
   });

@@ -303,14 +303,23 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
   void status(Result<void> r) {
     if (message)
       SetWindowTextW(
-          message, r ? wide("Saved locally. " + model->binding_status()).c_str()
+          message, r ? wide((model->saving() ? std::string("Saving locally...") : "Saved locally. " + model->binding_status())).c_str()
                      : wide(r.error().message).c_str());
+  }
+  void poll() {
+    if(!model || !window) return;
+    auto result=model->poll_saves();
+    if(!result) status(result.error());
+    else if(result.value()) {status({});selected_label();}
+    history();
   }
   void history() {
     EnableWindow(undo, model->can_undo());
     EnableWindow(redo, model->can_redo());
   }
   bool confirm_close() {
+    if(model && model->saving()) {status(Error{ErrorCode::Busy,"Save pending; wait before closing"});return false;}
+
     if (!model || !model->has_unsaved())
       return true;
     if (MessageBoxW(
@@ -407,6 +416,12 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
       updating = false;
     }
     history();
+  }
+  void restore_selection() {
+    auto selected=model->selected();HTREEITEM item=nullptr;
+    if(selected) for(auto& pair:nodes)
+      if(pair.second.kind==selected->kind && pair.second.value==selected->value) {item=pair.first;break;}
+    updating=true;TreeView_SelectItem(tree,item);updating=false;
   }
   void perform(int command) {
     auto keep = shared_from_this();
@@ -667,8 +682,8 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
         if (msg == WM_COMMAND) {
           int id = LOWORD(wp);
           if ((id == 502 || id == 504) && HIWORD(wp) == EN_CHANGE) {
-            auto r = id == 502 ? s->model->edit_title(text(s->title))
-                               : s->model->edit_content(text(s->body, true));
+            auto r = id == 502 ? s->model->queue_title(text(s->title))
+                               : s->model->queue_content(text(s->body, true));
             s->status(r);
             if (r)
               s->selected_label();
@@ -699,6 +714,7 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
               s->status(r);
               if (r)
                 s->detail();
+              else s->restore_selection();
               return 0;
             }
             if (header->code == TVN_BEGINDRAGW) {
@@ -753,9 +769,9 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
     } catch (const std::exception &) {
       if (msg == WM_COMMAND && HIWORD(wp) == EN_CHANGE) {
         if (LOWORD(wp) == 502)
-          s->model->edit_title(std::string("\xc0\x80", 2));
+          s->model->queue_title(std::string("\xc0\x80", 2));
         if (LOWORD(wp) == 504)
-          s->model->edit_content(std::string("\xc0\x80", 2));
+          s->model->queue_content(std::string("\xc0\x80", 2));
       }
       s->status(Error{ErrorCode::Internal,
                       "Editor operation failed; reload to recover"});
@@ -778,6 +794,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
     return Error{ErrorCode::Busy, "Unsaved draft retained in existing editor"};
   s->close();
   s->model = std::move(model);
+  auto background=s->model->background_saves();if(!background) return background;
   if (!s->rich)
     s->rich =
         LoadLibraryExW(L"Msftedit.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
@@ -881,6 +898,7 @@ Result<void> NativeSnippetEditor::process_events() {
       DispatchMessageW(&msg);
     }
   }
+  s->poll();
   return {};
 }
 Result<bool> NativeSnippetEditor::request_close() {
