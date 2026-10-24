@@ -51,6 +51,7 @@ public:
       VNRecognizeTextRequest *request = [VNRecognizeTextRequest new];
       request.recognitionLevel = VNRequestTextRecognitionLevelAccurate;
       request.usesLanguageCorrection = YES;
+      request.automaticallyDetectsLanguage = YES;
       NSMutableArray<NSString *> *languages = [NSMutableArray new];
       for (auto &language : input.languages) {
         if (language == "eng")
