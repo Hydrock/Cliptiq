@@ -56,6 +56,7 @@ Result<MenuImage> decode_native_image(const Representation &r) {
   return out;
 }
 struct ScreenshotWatcher::Impl {
+  std::string root;
   GFileMonitor *monitor = nullptr;
   std::function<void(std::string)> callback;
 };
@@ -86,9 +87,26 @@ Result<void> ScreenshotWatcher::start(const std::string &root,
     return Error{ErrorCode::Io, reason};
   }
   impl_->callback = std::move(cb);
+  impl_->root = root;
   g_signal_connect(impl_->monitor, "changed",
                    G_CALLBACK(+[](GFileMonitor *, GFile *file, GFile *other,
                                   GFileMonitorEvent event, gpointer data) {
+                     auto state = static_cast<Impl *>(data);
+                     if (event == G_FILE_MONITOR_EVENT_UNMOUNTED ||
+                         event == G_FILE_MONITOR_EVENT_PRE_UNMOUNT) {
+                       if (state->callback)
+                         state->callback("");
+                       return;
+                     }
+                     if (event == G_FILE_MONITOR_EVENT_DELETED ||
+                         event == G_FILE_MONITOR_EVENT_MOVED_OUT) {
+                       auto path = g_file_get_path(file);
+                       bool root_lost = path && state->root == path;
+                       g_free(path);
+                       if (root_lost && state->callback)
+                         state->callback("");
+                       return;
+                     }
                      if (event != G_FILE_MONITOR_EVENT_CREATED &&
                          event != G_FILE_MONITOR_EVENT_CHANGED &&
                          event != G_FILE_MONITOR_EVENT_CHANGES_DONE_HINT &&

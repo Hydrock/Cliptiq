@@ -36,6 +36,8 @@ public:
  void commit(){exec(db_,"COMMIT");committed_=true;}
 };
 inline void revision(sqlite3* db){exec(db,"UPDATE store_state SET data_revision=data_revision+1 WHERE id=1");}
+inline std::uint64_t erase_generation(sqlite3*db){Statement q(db,"SELECT value,typeof(value) FROM settings WHERE key='t12.erase_generation'");if(!q.row())return 0;if(q.text(1)!="integer"||q.number(0)<0||q.number(0)==INT64_MAX)throw Failure{{ErrorCode::Corrupt,"Invalid erase generation"}};return std::uint64_t(q.number(0));}
+inline void erased(sqlite3*db){auto generation=erase_generation(db);Statement q(db,"INSERT OR REPLACE INTO settings(key,value) VALUES('t12.erase_generation',?)");q.bind(1,std::int64_t(generation+1));q.done();}
 template<class T,class F> Result<T> guarded(F f){try{return f();}catch(const Failure& e){return e.error;}catch(const std::bad_alloc&){return Error{ErrorCode::TooLarge,"allocation failed"};}catch(const std::exception& e){return Error{ErrorCode::Internal,e.what()};}}
 inline void invalid(const char* msg){throw Failure{{ErrorCode::InvalidArgument,msg}};}
 }

@@ -348,6 +348,7 @@ int host(int argc, char **argv) {
 #endif
     auto configure_media=[&]{auto result=media.configure(preferences,smoke);if(!result)std::cerr<<result.error().message<<'\n';};
     configure_media();
+    auto decorate_media=[&](MenuModel& menu){auto status=media.observation_status();if(status.status==CapabilityStatus::Unavailable){MenuItem item;item.label="Screenshots: "+status.reason;item.enabled=false;menu.items.push_back(std::move(item));}};
 #endif
     NativeMenu ui(options, [&](MenuCommand command) {
       auto valid = validate_menu_command(store, command);
@@ -410,6 +411,9 @@ int host(int argc, char **argv) {
 #endif
           false)
         i.enabled = false;
+#ifdef CLIPTIQ_WITH_MEDIA
+    decorate_media(model);
+#endif
     ok(ui.update(model));
 #ifdef CLIPTIQ_WITH_SETTINGS
     auto rebuild = [&]() -> Result<void> {
@@ -426,6 +430,9 @@ int host(int argc, char **argv) {
         return next.error();
       model = std::move(next.value());
       filter_model(model);
+#ifdef CLIPTIQ_WITH_MEDIA
+      decorate_media(model);
+#endif
       return ui.update(model);
     };
     auto restart_capture = [&] {
@@ -501,6 +508,9 @@ int host(int argc, char **argv) {
           });
       if (!opened)
         std::cerr << opened.error().message << '\n';
+#ifdef CLIPTIQ_WITH_MEDIA
+      else settings_window.status(media.observation_status().reason);
+#endif
     };
 #ifdef CLIPTIQ_WITH_EDITOR
     show_editor = [&] {
@@ -705,7 +715,7 @@ int host(int argc, char **argv) {
       auto now = std::chrono::steady_clock::now();
 #ifdef CLIPTIQ_WITH_MEDIA
       auto media_result=media.poll();
-      if(!media_result)std::cerr<<media_result.error().message<<'\n';
+      if(!media_result){std::cerr<<media_result.error().message<<'\n';settings_window.status(media.observation_status().reason);refresh=true;}
       else if(media_result.value())refresh=true;
 #endif
       if (refresh || now - checked > std::chrono::milliseconds(250)) {

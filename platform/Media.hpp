@@ -30,6 +30,7 @@ public:
   // worker.
   Result<bool> poll();
   std::optional<MenuImage> preview(const PreviewRef &) const;
+  Capability observation_status() const;
   Result<void> on_screenshot_file(const std::string &basename);
 };
 } // namespace cliptiq

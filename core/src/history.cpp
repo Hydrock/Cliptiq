@@ -53,10 +53,10 @@ void prune(sqlite3* db,const Limits& l,HistoryPolicy p){
  while(rows.size()>p.max_count||total>l.history_bytes){total-=rows.back().second;erase(db,rows.back().first);rows.pop_back();}
 }
 }
-Result<std::optional<EntryId>> ingest(Store& s,ClipboardSnapshot v,HistoryPolicy p,std::int64_t now){return detail::guarded<std::optional<EntryId>>([&]()->Result<std::optional<EntryId>>{
+Result<std::optional<EntryId>> ingest(Store& s,ClipboardSnapshot v,HistoryPolicy p,std::int64_t now,std::optional<std::uint64_t> expected_erase_generation){return detail::guarded<std::optional<EntryId>>([&]()->Result<std::optional<EntryId>>{
  if(!p.max_count||p.max_count>1000||now<0||static_cast<unsigned>(p.sort_order)>1)detail::invalid("invalid history policy or clock");
  auto bytes=validate(v,s.limits());if(blank_primary(v))return std::optional<EntryId>{};
- auto db=s.connection();detail::Transaction tx(db);auto hash=digest(v);std::optional<EntryId> existing;
+ auto db=s.connection();detail::Transaction tx(db);if(expected_erase_generation&&*expected_erase_generation!=detail::erase_generation(db)){tx.commit();return std::optional<EntryId>{};}auto hash=digest(v);std::optional<EntryId> existing;
  {detail::Statement q(db,"SELECT id FROM history WHERE digest=? ORDER BY used_ms DESC,rowid DESC");q.bind(1,hash);while(q.row()){auto id=q.text(0);if(equal(v,load(db,id,s.limits()))){existing=id;break;}}}
  if(existing&&!p.allow_duplicates){tx.commit();return std::optional<EntryId>{};}
  EntryId id=existing&&p.replace_duplicate?*existing:uuid();
@@ -77,9 +77,10 @@ Result<std::vector<HistoryEntry>> list_history(Store& s,SortOrder order,std::siz
 });}
 Result<ClipboardSnapshot> load_snapshot(Store& s,const EntryId& id){return detail::guarded<ClipboardSnapshot>([&]()->Result<ClipboardSnapshot>{auto v=load(s.connection(),id,s.limits());validate(v,s.limits());return v;});}
 Result<void> touch_history(Store& s,const EntryId& id,std::int64_t now){return detail::guarded<void>([&]()->Result<void>{if(now<0)detail::invalid("negative clock");auto db=s.connection();detail::Transaction tx(db);detail::Statement q(db,"UPDATE history SET used_ms=? WHERE id=?");q.bind(1,now);q.bind(2,id);q.done();if(!sqlite3_changes(db))return Error{ErrorCode::NotFound,"history entry not found"};detail::revision(db);tx.commit();return {};});}
-Result<void> erase_history(Store& s,std::optional<EntryId> id){return detail::guarded<void>([&]()->Result<void>{auto db=s.connection();detail::Transaction tx(db);if(id)erase(db,*id);else detail::exec(db,"DELETE FROM history");if(sqlite3_changes(db))detail::revision(db);tx.commit();return {};});}
+Result<std::uint64_t> history_erase_generation(Store&s){return detail::guarded<std::uint64_t>([&]()->Result<std::uint64_t>{return detail::erase_generation(s.connection());});}
+Result<void> erase_history(Store& s,std::optional<EntryId> id){return detail::guarded<void>([&]()->Result<void>{auto db=s.connection();detail::Transaction tx(db);detail::erased(db);if(id)erase(db,*id);else detail::exec(db,"DELETE FROM history");if(sqlite3_changes(db))detail::revision(db);tx.commit();return {};});}
 Result<void> tick_cleanup(Store& s,CleanupPolicy p,std::int64_t now){return detail::guarded<void>([&]()->Result<void>{if(p.interval_ms<0||now<0)detail::invalid("invalid cleanup policy or clock");auto db=s.connection();detail::Transaction tx(db);detail::Statement q(db,"SELECT cleanup_interval,cleanup_last FROM store_state WHERE id=1");if(!q.row())return Error{ErrorCode::Corrupt,"missing cleanup state"};auto old=q.number(0),last=q.number(1);bool init=q.is_null(1)||old!=p.interval_ms||now<last;
- if(p.interval_ms&& !init && now-last>=p.interval_ms){detail::exec(db,"DELETE FROM history");if(sqlite3_changes(db))detail::revision(db);init=true;}
+ if(p.interval_ms&& !init && now-last>=p.interval_ms){detail::erased(db);detail::exec(db,"DELETE FROM history");if(sqlite3_changes(db))detail::revision(db);init=true;}
  if(init||!p.interval_ms){detail::Statement update(db,"UPDATE store_state SET cleanup_interval=?,cleanup_last=? WHERE id=1");update.bind(1,p.interval_ms);if(p.interval_ms)update.bind(2,now);else update.null(2);update.done();}tx.commit();return {};
 });}
 }

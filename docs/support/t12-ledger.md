@@ -51,3 +51,47 @@ coverage for every native helper and is recorded without claiming otherwise.
 Tool compatibility: task-start expects headings `Task 12`; the approved plan uses
 `T12`. Its exact T12 text was read directly; task-done does not depend on heading
 syntax. The task base remains the SHA above.
+
+Final review: one fresh read-only gpt-6-astra review of 89bbc9e..ade6bb6.
+No Critical; four Important accepted, one Minor deferred. No re-review.
+
+Final: fixed pending screenshot resurrection after clear/deletion — media_review_clear
+RED→GREEN; a persistent `t12.erase_generation` internal settings key is advanced
+transactionally by erase_history and periodic cleanup, including an empty clear.
+Screenshot ingest checks the expected generation inside its own immediate transaction.
+
+Final: fixed directory replacement escape — media_review_root RED→GREEN; pinned
+directory handle/openat on POSIX, pinned handle plus final parent identity on Windows.
+
+Final: fixed watcher failure race — observe is atomic, monitor failure is injected
+from another thread in media_review_error; the former status test was RED, now GREEN.
+This verifies observable failure behavior, not a TSan proof (TSan was not run).
+
+Final: fixed invisible observation failure — media_review_error RED→GREEN; persistent
+capability status, disabled menu notice, Settings status on reopen and runtime failure;
+Linux pre-unmount/unmount/root-deletion events report monitor loss. Normal stop resets
+the status. Three regressions GREEN, full Linux43/43, local Windows16/16 safe groups.
+
+Final: minor (deferred): disabling image_previews hides menu images but does not
+avoid worker decoding/cache generation; resource-saving behavior needs a follow-up.
+
+Final: Ruling: fresh T04–T06 clipboard owner/INCR audit stays outside this review —
+their unchanged regression suites run; cost: native interactive defects may remain.
+Final: Ruling: fresh T08 lost-target/permission audit stays outside this review —
+unchanged paste suites run; cost: real desktop paste restrictions remain manual.
+Final: Ruling: full T11 XML re-audit stays outside this review — unchanged XML suites
+run; cost: manual editor/transfer behavior is still unaccepted.
+Final: Ruling: T16 OCR races are not implemented here — only preview completion is
+guarded; cost: future OCR must adopt an equivalent completion contract.
+Final: Ruling: interactive Spotlight/desktop permissions remain manual — query
+startup is not proof of indexing/delivery; cost: real Mac screenshots may need fixes.
+Final: Ruling: final size/CI acceptance waits for exact fixed runtime measurements —
+initial green CI is insufficient; cost: publication waits for a new seven-job run.
+Final: Ruling: T13 stays untouched as requested — cost: lifecycle/localization is pending.
+Final: Ruling: no non-PNG import or automatic folder discovery — follows the scope
+rulings above; cost: users explicitly choose a PNG screenshot directory.
+Final: Ruling: existing T04–T11 manual gates stay OPEN — cost: no general release claim.
+
+Ruling: internal erasure metadata uses its own t12 settings namespace, with no schema
+version increase — existing T09 readers select only t09 keys; cost: older binaries do
+not advance this new generation, so simultaneous older/newer writers are unsupported.

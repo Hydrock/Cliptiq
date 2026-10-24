@@ -19,10 +19,54 @@
 namespace cliptiq {
 namespace {
 using Clock = std::chrono::steady_clock;
-Result<Bytes> read_file(const std::string &root, const std::string &name) {
+struct Directory {
+#ifdef _WIN32
+  HANDLE handle = INVALID_HANDLE_VALUE;
+  ~Directory() {
+    if (handle != INVALID_HANDLE_VALUE)
+      CloseHandle(handle);
+  }
+#else
+  int handle = -1;
+  ~Directory() {
+    if (handle >= 0)
+      close(handle);
+  }
+#endif
+};
+Result<std::shared_ptr<Directory>> open_directory(const std::string &path) {
+  auto dir = std::make_shared<Directory>();
+#ifdef _WIN32
+  dir->handle = CreateFileW(
+      std::filesystem::u8path(path).c_str(),
+      FILE_READ_ATTRIBUTES | FILE_LIST_DIRECTORY,
+      FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, nullptr,
+      OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OPEN_REPARSE_POINT,
+      nullptr);
+  BY_HANDLE_FILE_INFORMATION info{};
+  if (dir->handle == INVALID_HANDLE_VALUE ||
+      !GetFileInformationByHandle(dir->handle, &info) ||
+      (info.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT))
+    return Error{ErrorCode::Io, "Cannot pin screenshot directory"};
+#else
+  dir->handle =
+      open(path.c_str(), O_RDONLY | O_DIRECTORY | O_NOFOLLOW | O_CLOEXEC);
+  if (dir->handle < 0)
+    return Error{ErrorCode::Io, "Cannot read screenshot directory"};
+#endif
+  return dir;
+}
+Result<Bytes> read_file(const std::shared_ptr<Directory> &root,
+                        const std::string &name) {
   Bytes bytes;
 #ifdef _WIN32
-  auto path = std::filesystem::u8path(root) / std::filesystem::u8path(name);
+  wchar_t root_path[32768];
+  DWORD count = GetFinalPathNameByHandleW(root->handle, root_path, 32768,
+                                          FILE_NAME_NORMALIZED);
+  if (!count || count >= 32768)
+    return Error{ErrorCode::Io, "Pinned screenshot directory unavailable"};
+  auto path = std::filesystem::path(std::wstring(root_path, count)) /
+              std::filesystem::u8path(name);
   HANDLE file = CreateFileW(
       path.c_str(), GENERIC_READ,
       FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, nullptr,
@@ -30,7 +74,26 @@ Result<Bytes> read_file(const std::string &root, const std::string &name) {
   if (file == INVALID_HANDLE_VALUE)
     return Error{ErrorCode::Busy, "Screenshot not ready"};
   BY_HANDLE_FILE_INFORMATION a{}, b{};
-  bool success = GetFileInformationByHandle(file, &a) &&
+  bool parent_matches = false;
+  wchar_t file_path[32768];
+  count =
+      GetFinalPathNameByHandleW(file, file_path, 32768, FILE_NAME_NORMALIZED);
+  if (count && count < 32768) {
+    auto parent =
+        open_directory(std::filesystem::path(std::wstring(file_path, count))
+                           .parent_path()
+                           .u8string());
+    if (parent) {
+      BY_HANDLE_FILE_INFORMATION expected{}, actual{};
+      parent_matches =
+          GetFileInformationByHandle(root->handle, &expected) &&
+          GetFileInformationByHandle(parent.value()->handle, &actual) &&
+          expected.dwVolumeSerialNumber == actual.dwVolumeSerialNumber &&
+          expected.nFileIndexHigh == actual.nFileIndexHigh &&
+          expected.nFileIndexLow == actual.nFileIndexLow;
+    }
+  }
+  bool success = GetFileInformationByHandle(file, &a) && parent_matches &&
                  !(a.dwFileAttributes &
                    (FILE_ATTRIBUTE_REPARSE_POINT | FILE_ATTRIBUTE_DIRECTORY)) &&
                  !a.nFileSizeHigh && a.nFileSizeLow &&
@@ -47,12 +110,8 @@ Result<Bytes> read_file(const std::string &root, const std::string &name) {
   }
   CloseHandle(file);
 #else
-  int dir = open(root.c_str(), O_RDONLY | O_DIRECTORY | O_NOFOLLOW | O_CLOEXEC);
-  if (dir < 0)
-    return Error{ErrorCode::Io, "Screenshot directory unavailable"};
-  int file =
-      openat(dir, name.c_str(), O_RDONLY | O_NOFOLLOW | O_NONBLOCK | O_CLOEXEC);
-  close(dir);
+  int file = openat(root->handle, name.c_str(),
+                    O_RDONLY | O_NOFOLLOW | O_NONBLOCK | O_CLOEXEC);
   if (file < 0)
     return Error{ErrorCode::Busy, "Screenshot not ready"};
   struct stat a {
@@ -100,7 +159,9 @@ struct MediaService::Impl {
     std::uint64_t epoch;
     PreviewTicket ticket;
     Representation rep;
-    std::string file, root;
+    std::string file;
+    std::shared_ptr<Directory> directory;
+    std::uint64_t erased = 0;
   };
   struct Done {
     std::uint64_t epoch;
@@ -108,6 +169,7 @@ struct MediaService::Impl {
     std::optional<MenuImage> image;
     std::string fingerprint, file;
     Bytes bytes;
+    std::uint64_t erased = 0;
   };
   std::mutex mutex;
   std::condition_variable wake;
@@ -120,7 +182,11 @@ struct MediaService::Impl {
   CapturePolicy policy;
   HistoryPolicy history;
   PreviewSize size;
-  bool previews = true, observe = false, isolated = true;
+  bool previews = true, isolated = true;
+  std::atomic<bool> observe{false};
+  std::atomic<std::uint64_t> erased{0};
+  std::shared_ptr<Directory> directory;
+  bool error_reported = false;
   std::string root, watch_error;
   Clock::time_point scanned{};
   std::map<EntryId, MenuImage> ready;
@@ -146,11 +212,12 @@ struct MediaService::Impl {
       result.epoch = job.epoch;
       result.ticket = job.ticket;
       result.file = job.file;
+      result.erased = job.erased;
       if (!job.file.empty()) {
         auto deadline = Clock::now() + std::chrono::seconds(10);
         Bytes previous;
         while (Clock::now() < deadline) {
-          auto bytes = read_file(job.root, job.file);
+          auto bytes = read_file(job.directory, job.file);
           if (bytes && bytes.value() == previous &&
               validate_screenshot_png(bytes.value())) {
             auto snapshot =
@@ -197,6 +264,16 @@ struct MediaService::Impl {
     }
   }
 };
+Capability MediaService::observation_status() const {
+  auto &s = *impl_;
+  std::lock_guard<std::mutex> lock(s.mutex);
+  if (!s.watch_error.empty())
+    return {CapabilityStatus::Unavailable, s.watch_error};
+  return {s.observe ? CapabilityStatus::Available : CapabilityStatus::Limited,
+          s.observe ? "Screenshot directory observation active; source "
+                      "application unknown"
+                    : "Screenshot observation disabled"};
+}
 MediaService::MediaService(Store &s, CapturePlatform p)
     : impl_(new Impl(s, p)) {}
 MediaService::~MediaService() {
@@ -218,6 +295,7 @@ void MediaService::stop() {
   {
     std::lock_guard<std::mutex> lock(s.mutex);
     s.watch_error.clear();
+    s.error_reported = false;
     ++s.epoch;
     s.jobs.clear();
     s.done.clear();
@@ -230,10 +308,23 @@ void MediaService::stop() {
   s.attempted.clear();
   s.last_bytes.clear();
   s.last_file.clear();
+  s.directory.reset();
 }
 Result<void> MediaService::configure(const Settings &settings, bool isolated) {
   stop();
   auto &s = *impl_;
+  auto generation = history_erase_generation(s.store);
+  if (!generation)
+    return generation.error();
+  s.erased = generation.value();
+  auto failure = [&](Error error) -> Result<void> {
+    std::lock_guard<std::mutex> lock(s.mutex);
+    s.watch_error = error.message;
+    return error;
+  };
+  auto validated = validate_settings(settings);
+  if (!validated)
+    return failure(validated.error());
   s.policy = settings_capture(settings);
   s.history = settings_history(settings);
   s.size = {unsigned(std::stoul(settings.values.at("preview_width"))),
@@ -248,11 +339,18 @@ Result<void> MediaService::configure(const Settings &settings, bool isolated) {
   if (root.empty() || root.size() > 4096 || !path.is_absolute() ||
       std::filesystem::is_symlink(path, ec) ||
       !std::filesystem::is_directory(path, ec))
-    return Error{ErrorCode::InvalidArgument,
-                 "Select an accessible absolute screenshot directory"};
+    return failure(Error{ErrorCode::InvalidArgument,
+                         "Select an accessible absolute screenshot directory"});
   s.root = std::filesystem::canonical(path, ec).u8string();
   if (ec)
-    return Error{ErrorCode::Io, "Cannot resolve screenshot directory"};
+    return failure(Error{ErrorCode::Io, "Cannot resolve screenshot directory"});
+  auto directory = open_directory(s.root);
+  if (!directory) {
+    std::lock_guard<std::mutex> lock(s.mutex);
+    s.watch_error = directory.error().message;
+    return directory.error();
+  }
+  s.directory = directory.value();
   {
     std::lock_guard<std::mutex> lock(s.mutex);
     s.observe = true;
@@ -261,6 +359,10 @@ Result<void> MediaService::configure(const Settings &settings, bool isolated) {
       s.root, [this](std::string name) { on_screenshot_file(name); });
   if (!watched) {
     stop();
+    {
+      std::lock_guard<std::mutex> lock(s.mutex);
+      s.watch_error = watched.error().message;
+    }
     return watched;
   }
   return {};
@@ -293,20 +395,24 @@ Result<void> MediaService::on_screenshot_file(const std::string &name) {
   s.pending_files.insert(name);
   PreviewTicket file_ticket;
   file_ticket.size = s.size;
-  s.jobs.push_back({s.epoch, file_ticket, {}, name, s.root});
+  s.jobs.push_back(
+      {s.epoch, file_ticket, {}, name, s.directory, s.erased.load()});
   s.wake.notify_all();
   return {};
 }
 Result<bool> MediaService::poll() {
   auto &s = *impl_;
+  auto generation = history_erase_generation(s.store);
+  if (!generation)
+    return generation.error();
+  s.erased = generation.value();
   bool changed = false;
   std::optional<Impl::Done> result;
   {
     std::lock_guard<std::mutex> lock(s.mutex);
-    if (!s.watch_error.empty()) {
-      auto error = std::move(s.watch_error);
-      s.watch_error.clear();
-      return Error{ErrorCode::Io, error};
+    if (!s.watch_error.empty() && !s.error_reported) {
+      s.error_reported = true;
+      return Error{ErrorCode::Io, s.watch_error};
     }
     if (!s.done.empty()) {
       result = std::move(s.done.front());
@@ -324,11 +430,13 @@ Result<bool> MediaService::poll() {
     }
     if (r.epoch == epoch) {
       if (!r.file.empty() && !r.bytes.empty() && s.observe &&
+          r.erased == s.erased.load() &&
           !(s.last_file == r.file && s.last_bytes == r.bytes)) {
         struct Sink : CaptureSink {
           Impl &s;
           std::optional<EntryId> retained;
-          explicit Sink(Impl &v) : s(v) {}
+          std::uint64_t erased;
+          explicit Sink(Impl &v, std::uint64_t e) : s(v), erased(e) {}
           Result<std::optional<EntryId>>
           store(const ClipboardSnapshot &snapshot) override {
             auto policy = s.history;
@@ -337,14 +445,15 @@ Result<bool> MediaService::poll() {
                 ingest(s.store, snapshot, policy,
                        std::chrono::duration_cast<std::chrono::milliseconds>(
                            std::chrono::system_clock::now().time_since_epoch())
-                           .count());
+                           .count(),
+                       erased);
             if (result)
               retained = result.value();
             return result;
           }
           void thumbnail(const EntryId &, const ClipboardSnapshot &) override {}
           void ocr(const EntryId &, const ClipboardSnapshot &) override {}
-        } sink(s);
+        } sink(s, r.erased);
         auto snapshot = screenshot_snapshot(s.platform, r.bytes,
                                             r.file + ":" + version(r.bytes));
         auto accepted = dispatch_capture(
