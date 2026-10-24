@@ -25,10 +25,13 @@ int main(int argc, char **argv) {
     if (argc >= 4 && (std::string(argv[1]) == "--serve" ||
                       std::string(argv[1]) == "--forward")) {
       SessionInstance instance;
-      auto role = take(instance.start({argv[2], "process"},
-                                      std::string(argv[1]) == "--forward"
-                                          ? take(parse_launch_action(argv[3]))
-                                          : LaunchAction::Main));
+      auto started = instance.start({argv[2], "process"},
+                                    std::string(argv[1]) == "--forward"
+                                        ? take(parse_launch_action(argv[3]))
+                                        : LaunchAction::Main);
+      if (!started && started.error().code == ErrorCode::Busy)
+        return 75;
+      auto role = take(std::move(started));
       if (std::string(argv[1]) == "--forward") {
         CHECK(role == InstanceRole::Forwarded);
         return 0;
@@ -37,7 +40,14 @@ int main(int argc, char **argv) {
       std::ofstream(argv[3]) << "ready";
       unsigned count = 0;
       for (unsigned n = 0; n < 200 && count < 4; ++n) {
-        auto events = take(instance.receive());
+        auto received = instance.receive();
+        // Match the production UI loop: a bounded mailbox Busy is transient,
+        // not a reason to terminate the primary during another process' write.
+        if (!received && received.error().code == ErrorCode::Busy) {
+          std::this_thread::sleep_for(std::chrono::milliseconds(25));
+          continue;
+        }
+        auto events = take(std::move(received));
         for (auto action : events) {
           std::ofstream(std::filesystem::u8path(argv[2]) / "events",
                         std::ios::app)
