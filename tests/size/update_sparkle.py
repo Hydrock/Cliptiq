@@ -1,6 +1,6 @@
 """Measure the actual application + complete optional pinned Sparkle closure."""
 from pathlib import Path
-import subprocess,urllib.request,hashlib,tarfile,shutil,json,platform
+import subprocess,urllib.request,hashlib,tarfile,shutil,json,platform,base64
 root=Path(__file__).resolve().parents[2];out=root/'out';out.mkdir(exist_ok=True)
 log=(out/'t15-sparkle-test.log').open('w')
 def run(args):
@@ -16,6 +16,22 @@ sdk=out/'t15-sparkle-sdk';sdk.mkdir(exist_ok=True)
 # unverified user archive using this policy.
 with tarfile.open(archive) as t:t.extractall(sdk,filter='fully_trusted')
 framework=next(sdk.rglob('Sparkle.framework'));build=out/'core-Darwin-sparkle'
+# Public RFC8032 fixture keys, never production identities, no Keychain access.
+key=out/'t15-fixture-key';wrong=out/'t15-fixture-wrong-key';payload=out/'t15-fixture-payload.bin'
+key.write_bytes(base64.b64encode(bytes.fromhex('9d61b19deffd5a60ba844af492ec2cc44449c5697b326919703bac031cae7f60d75a980182b10ab7d54bfed3c964073a0ee172f3daa62325af021a68f707511a')))
+wrong.write_bytes(base64.b64encode(bytes.fromhex('4ccd089b28ff96da9db6c346ec114e0f5b8a319f35aba624da8cf6ed4fb8a6fb3d4017c3e843895a92b70aa74d1b7ebc9c982ccf2ec4968cc0cd55f12af4660c')))
+key.chmod(0o600);wrong.chmod(0o600);payload.write_bytes(b'Cliptiq synthetic update payload')
+sign=sdk/'bin/sign_update'
+signature=run([sign,'--ed-key-file',key,'-p',payload]).strip()
+run([sign,'--ed-key-file',key,'--verify',payload,signature])
+for identity,sig in [(wrong,signature),(key,'invalid'),(key,'')]:
+ r=subprocess.run([str(sign),'--ed-key-file',str(identity),'--verify',str(payload),sig],capture_output=True,text=True)
+ assert r.returncode!=0,'SDK accepted invalid/missing signature or wrong signing identity'
+payload.write_bytes(b'tampered')
+r=subprocess.run([str(sign),'--ed-key-file',str(key),'--verify',str(payload),signature],capture_output=True,text=True)
+assert r.returncode!=0,'SDK accepted tampered bytes'
+log.write('Sparkle real Ed25519 verifier: correct/wrong identity, missing/malformed signature, tampered payload passed\n');log.flush()
+key.unlink();wrong.unlink();payload.unlink()
 run(['cmake','-S',root,'-B',build,'-G','Ninja','-DCMAKE_BUILD_TYPE=MinSizeRel','-DBUILD_TESTING=ON',f'-DCLIPTIQ_SPARKLE_FRAMEWORK={framework}'])
 run(['cmake','--build',build,'--target','cliptiq_app','update_test','update_native_test','--parallel','3'])
 run(['ctest','--test-dir',build,'-R','^update','--output-on-failure'])

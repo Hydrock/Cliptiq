@@ -20,7 +20,7 @@ static bool configured(){
   auto bundle=NSBundle.mainBundle;
   auto feed=[bundle objectForInfoDictionaryKey:@"SUFeedURL"];
   auto key=[bundle objectForInfoDictionaryKey:@"SUPublicEDKey"];
-  return [feed isKindOfClass:NSString.class]&&[feed hasPrefix:@"https://github.com/Hydrock/Cliptiq/"]&&[key isKindOfClass:NSString.class]&&key.length==44;
+  return [feed isKindOfClass:NSString.class]&&[feed hasPrefix:@"https://github.com/Hydrock/Cliptiq/"]&&[key isKindOfClass:NSString.class]&&[(NSString*)key length]==44;
 }
 static SPUStandardUpdaterController* updater(){
   if(!configured())return nil;
