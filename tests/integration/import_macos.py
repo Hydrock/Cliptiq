@@ -26,7 +26,7 @@ try:
   def png(width,height):
    def chunk(kind,data):return struct.pack('>I',len(data))+kind+data+struct.pack('>I',zlib.crc32(kind+data)&0xffffffff)
    return b'\x89PNG\r\n\x1a\n'+chunk(b'IHDR',struct.pack('>IIBBBBB',width,height,8,6,0,0,0))+chunk(b'IDAT',zlib.compress(b'\0'+b'\xff\0\0\xff'*2+b'\0'+b'\0\xff\0\xff'*2))+chunk(b'IEND',b'')
-  small=root/'small.png';small.write_bytes(png(2,2));image_source=root/'image-source';run([legacy,'--image-fixture',image_source,small,'real']);image_before=snapshot(image_source);run([legacy,'export',image_source/'default.realm',image_source,prefs,root/'image.neutral',native]);assert snapshot(image_source)==image_before
+  small=root/'small.png';small.write_bytes(png(2,2));image_source=root/'image-source';run([legacy,'--image-fixture',image_source,small,'real']);image_before=snapshot(image_source);print('Synthetic NSImage archive shape:',[(sorted(x.keys()),x.get('$classname')) for x in plistlib.loads((image_source/'clip.data').read_bytes())['$objects'] if isinstance(x,dict)]);run([legacy,'export',image_source/'default.realm',image_source,prefs,root/'image.neutral',native]);assert snapshot(image_source)==image_before
   huge=root/'huge.png';huge.write_bytes(png(16000,16000));huge_source=root/'huge-source';run([legacy,'--image-fixture',huge_source,huge,'encoded']);image_before=snapshot(huge_source);run([legacy,'export',huge_source/'default.realm',huge_source,prefs,root/'huge.neutral',native],False);assert snapshot(huge_source)==image_before and not (root/'huge.neutral').exists()
   (source/'clip.data').unlink();run([legacy,'export',source/'default.realm',source,prefs,root/'missing.neutral',native],False);assert not (root/'missing.neutral').exists()
  else:

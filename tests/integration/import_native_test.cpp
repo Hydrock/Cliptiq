@@ -49,7 +49,7 @@ int run() {
  CREATE TABLE pasteboardHistoryThumbnailAssets(pasteboardHistoryID TEXT PRIMARY KEY,kind TEXT,data BLOB);
  CREATE TABLE snippetFolders(id TEXT PRIMARY KEY,title TEXT,"index" INTEGER,isEnabled INTEGER);
  CREATE TABLE snippets(id TEXT PRIMARY KEY,folderID TEXT,title TEXT,content TEXT,"index" INTEGER,isEnabled INTEGER);
- INSERT INTO pasteboardHistories VALUES('unicode','Unicode','[]',NULL,1);INSERT INTO pasteboardHistories VALUES('files','Files','[]',NULL,1);
+ INSERT INTO pasteboardHistories VALUES('unicode','Unicode','[]',NULL,1);INSERT INTO pasteboardHistories VALUES('files','Files','[]',NULL,1);INSERT INTO pasteboardHistories VALUES('legacyfiles','Legacy files','[]',NULL,1);
  CREATE TABLE migration_settings(key TEXT PRIMARY KEY,value BLOB,apply_value TEXT);
  INSERT INTO migration_settings VALUES('legacy.archive.unicode',X'736563726574',NULL);
  )SQL");
@@ -71,7 +71,7 @@ int run() {
     part("f2", "files", 1, "public.file-url", "file:///tmp/b");
     part("t1", "files", 2, "public.utf8-plain-text", "a");
     part("t2", "files", 3, "public.utf8-plain-text", "b");
-    part("root", "files", 4, "NSFilenamesPboardType",
+    part("root", "legacyfiles", 0, "NSFilenamesPboardType",
          "<?xml version=\"1.0\"?><plist "
          "version=\"1.0\"><array><string>/tmp/a</string><string>/tmp/b</"
          "string></array></plist>");
@@ -90,13 +90,16 @@ int run() {
     if (result.status != SelectionStatus::Copied)
       throw std::runtime_error("Imported Unicode not copied");
     auto files = take(load_snapshot(store, "files"));
-    if (files.representations.size() != 5 ||
+    if (files.representations.size() != 4 ||
         files.representations[0].item_index != 0 ||
         files.representations[1].item_index != 1 ||
         files.representations[2].item_index != 0 ||
-        files.representations[3].item_index != 1 ||
-        files.representations[4].item_index != RootPasteboardItem)
+        files.representations[3].item_index != 1)
       throw std::runtime_error("Clipy type occurrence grouping lost");
+    auto legacy = take(load_snapshot(store, "legacyfiles"));
+    if (legacy.representations.size() != 1 ||
+        legacy.representations[0].item_index != RootPasteboardItem)
+      throw std::runtime_error("Legacy root item lost");
     auto read = take(backend.read_snapshot());
     if (read.representations.empty())
       throw std::runtime_error(
@@ -107,6 +110,14 @@ int run() {
     take(execute_selection(store, intent, backend, paste));
     if (board.pasteboardItems.count != 2)
       throw std::runtime_error("Multi-file item boundaries lost");
+    intent.command = {MenuAction::SelectHistory,
+                      "legacyfiles",
+                      take(data_revision(store)),
+                      {}};
+    take(execute_selection(store, intent, backend, paste));
+    if ([(NSArray *)[board propertyListForType:@"NSFilenamesPboardType"]
+            count] != 2)
+      throw std::runtime_error("Legacy root file list lost");
 #endif
     // Exercise the actual paste-delete path and foreign-key provenance cleanup.
     intent.command = {MenuAction::SelectHistory,

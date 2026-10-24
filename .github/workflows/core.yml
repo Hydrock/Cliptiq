@@ -176,7 +176,7 @@ jobs:
       - name: Stage and measure separate helper closure
         run: python3 tests/size/migration_legacy.py out/legacy-build/release
       - name: Real Realm file and archive migration/source preservation
-        run: python3 tests/integration/import_macos.py out/core-Darwin-release/tools/import-clipy/cliptiq-import out/core-Darwin-release/tools/import-clipy/cliptiq-import-macos out/t14-legacy-package/cliptiq-legacy
+        run: python3 tests/integration/import_macos.py out/t14-legacy-package/cliptiq-import out/t14-legacy-package/cliptiq-import-macos out/t14-legacy-package/cliptiq-legacy
       - uses: actions/upload-artifact@v4
         if: always()
         with:

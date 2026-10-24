@@ -159,6 +159,14 @@ b=migration_binary.read_bytes();archive=io.BytesIO()
 with zipfile.ZipFile(archive,'w',compression=zipfile.ZIP_DEFLATED,compresslevel=9) as z:
  item=zipfile.ZipInfo(migration_binary.name,date_time=(2026,1,1,0,0,0));item.compress_type=zipfile.ZIP_DEFLATED;z.writestr(item,b)
 report['migration']={'optional_converter_bytes':len(b),'optional_converter_zip_bytes':len(archive.getvalue()),'sha256':hashlib.sha256(b).hexdigest(),'app_linked_migration_bytes':0,'scope':'separate C++ offline converter; Realm helper measured separately, no app linkage'}
+production=(folder/'Cliptiq.app/Contents/MacOS/Cliptiq' if system=='Darwin' else folder/('Cliptiq.exe' if system=='Windows' else 'cliptiq_menu_host'))
+production_bytes=production.read_bytes();production_zip=io.BytesIO()
+with zipfile.ZipFile(production_zip,'w',compression=zipfile.ZIP_DEFLATED,compresslevel=9) as z:
+ item=zipfile.ZipInfo(production.name,date_time=(2026,1,1,0,0,0));item.compress_type=zipfile.ZIP_DEFLATED;z.writestr(item,production_bytes)
+report['migration']['production_executable']={'bytes':len(production_bytes),'zip_bytes':len(production_zip.getvalue()),'sha256':hashlib.sha256(production_bytes).hexdigest(),'scope':'production entry executable only, not bundle/resources/installer/system closure'}
+if system=='Darwin':
+ preferences_binary=folder/'tools/import-clipy/cliptiq-import-macos'
+ report['migration']['macos_preferences_executable_bytes']=preferences_binary.stat().st_size
 for p in sorted((root/'tools/import-clipy').rglob('*')):
  if p.is_file() and '.build' not in p.parts:report['source_files_sha256'][p.relative_to(root).as_posix()]=hashlib.sha256(p.read_bytes()).hexdigest()
 (root / 'out' / 't02-size.json').write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')

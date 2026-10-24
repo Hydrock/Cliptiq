@@ -8,6 +8,7 @@ def read(path):
 swift=read('tools/import-clipy/legacy.swift');prefs=read('tools/import-clipy/main.mm')
 assert 'tiffRepresentation' not in swift,'Legacy import must not expand an NSImage to TIFF before limits'
 assert 'decodeObject(of:NSImage.self' not in swift,'Legacy NSImage must be mapped to inert archive reader'
+assert 'Data(contentsOf:' not in swift,'Legacy file reads must remain bounded if the source grows'
 assert 'dataWithContentsOfURL' not in prefs,'Preferences must use bounded regular-file reader'
 assert '40000000/height' in swift and 'CGImageSourceCreateWithData' in swift
 print('PASS no unbounded image expansion/whole-file preferences reader in migration')

@@ -29,7 +29,7 @@ func read(_ path: URL, limit: Int=32*1024*1024) throws -> Data {
  let a=try FileManager.default.attributesOfItem(atPath:path.path)
  try check(a[.type] as? FileAttributeType == .typeRegular,"Nonregular/symlink asset rejected")
  try check(((a[.size] as? NSNumber)?.intValue ?? Int.max) <= limit,"Asset exceeds limit")
- let b=try Data(contentsOf:path);try check(b.count<=limit,"Asset grew beyond limit");return b
+ let handle=try FileHandle(forReadingFrom:path);defer{try?handle.close()};var b=Data();while let chunk=try handle.read(upToCount:65536), !chunk.isEmpty {try check(chunk.count<=limit-b.count,"Asset grew beyond limit");b.append(chunk)};return b
 }
 // Image archive objects are mapped to inert readers: NSImage is never
 // instantiated while decoding an import. Only bounded PNG/TIFF encodings are
