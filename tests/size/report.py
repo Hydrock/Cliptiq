@@ -188,3 +188,14 @@ report['source_files_sha256'].update({p.relative_to(root).as_posix():hashlib.sha
 report['source_files_sha256']['platform/SnippetXml.hpp']=hashlib.sha256((root/'platform/SnippetXml.hpp').read_bytes()).hexdigest()
 (root / 'out' / 't02-size.json').write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
 print(json.dumps(report, indent=2))
+
+report['updates']={'production_executable':report['migration']['production_executable'],'base_network_runtime':'OS WinHTTP/GIO; Sparkle optional; no OpenSSL/Firebase/new bundled runtime','portable_auto_install':False}
+if system=='Windows':
+ helper=folder/'cliptiq_verify_update.exe'
+ report['updates']['optional_authenticode_verifier_bytes']=helper.stat().st_size
+for name in ('platform/Updates.cpp','platform/Updates.hpp'):
+ report['source_files_sha256'][name]=hashlib.sha256((root/name).read_bytes()).hexdigest()
+for directory in ('tools/verify-update','packaging'):
+ for p in sorted((root/directory).rglob('*')):
+  if p.is_file():report['source_files_sha256'][p.relative_to(root).as_posix()]=hashlib.sha256(p.read_bytes()).hexdigest()
+(root/'out/t02-size.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')

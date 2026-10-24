@@ -130,5 +130,9 @@
   "Empty folder": "Empty folder",
   "[Files]": "[Files]",
   "[Image]": "[Image]",
-  "[Clipboard]": "[Clipboard]"
+  "[Clipboard]": "[Clipboard]",
+  "Check for Updates": "Check for Updates",
+  "Download / Installation Instructions": "Download / Installation Instructions",
+  "Export Local Diagnostics": "Export Local Diagnostics",
+  "Update interval seconds": "Update interval seconds"
 }

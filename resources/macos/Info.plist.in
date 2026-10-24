@@ -11,4 +11,11 @@
 <key>LSMinimumSystemVersion</key><string>13.0</string>
 <key>LSUIElement</key><true/>
 <key>NSHighResolutionCapable</key><true/>
+<key>SUFeedURL</key><string>@CLIPTIQ_UPDATE_FEED@</string>
+<key>SUPublicEDKey</key><string>@CLIPTIQ_UPDATE_PUBLIC_KEY@</string>
+<key>SUEnableAutomaticChecks</key><false/>
+<key>SUEnableSystemProfiling</key><false/>
+<key>SUAllowsAutomaticUpdates</key><false/>
+<key>SUAutomaticallyUpdate</key><false/>
+<key>SUVerifyUpdateBeforeExtraction</key><true/>
 </dict></plist>

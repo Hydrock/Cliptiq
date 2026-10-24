@@ -213,8 +213,9 @@ int run() {
     CHECK(!ui.record_chord(take(parse_chord("Ctrl+Alt+W"))));
     gtk_widget_destroy(other);
     gtk_button_clicked(GTK_BUTTON(apply));
-    auto future = find(window, "updates_auto");
+    auto future = find(window, "diagnostics");
     CHECK(future && !gtk_widget_get_sensitive(future));
+    CHECK(gtk_widget_get_sensitive(find(window,"updates_auto")));
     CHECK(gtk_widget_get_sensitive(find(window, "login")));
 #endif
     CHECK(ui.process_events());

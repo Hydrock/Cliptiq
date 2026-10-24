@@ -332,6 +332,9 @@ Result<MenuModel> build_menu(Store &store, MenuKind kind,
     if (kind == MenuKind::Main) {
       for (auto pair : {std::pair{lc("Edit Snippets"), MenuAction::OpenEditor},
                         std::pair{lc("Settings"), MenuAction::OpenSettings},
+                        std::pair{lc("Check for Updates"), MenuAction::CheckUpdates},
+                        std::pair{lc("Download / Installation Instructions"), MenuAction::DownloadUpdates},
+                        std::pair{lc("Export Local Diagnostics"), MenuAction::ExportDiagnostics},
                         std::pair{lc("Quit"), MenuAction::Quit}}) {
         MenuItem i;
         i.label = pair.first;
@@ -369,7 +372,7 @@ Result<MenuModel> build_folder_menu(Store &store, const FolderId &id,
 }
 Result<void> validate_menu_command(Store &store, const MenuCommand &c) {
   return detail::guarded<void>([&]() -> Result<void> {
-    if (c.action == MenuAction::Quit || c.action == MenuAction::OpenSettings ||
+    if (c.action == MenuAction::DownloadUpdates || c.action == MenuAction::CheckUpdates || c.action == MenuAction::ExportDiagnostics || c.action == MenuAction::Quit || c.action == MenuAction::OpenSettings ||
         c.action == MenuAction::OpenEditor)
       return {};
     auto r = data_revision(store);
@@ -386,7 +389,7 @@ Result<void> validate_menu_command(Store &store, const MenuCommand &c) {
       sql = "SELECT 1 FROM history LIMIT 1";
     else if (c.action == MenuAction::OpenEditor ||
              c.action == MenuAction::OpenSettings ||
-             c.action == MenuAction::Quit)
+             c.action == MenuAction::DownloadUpdates || c.action == MenuAction::CheckUpdates || c.action == MenuAction::ExportDiagnostics || c.action == MenuAction::Quit)
       return {};
     else
       return Error{ErrorCode::InvalidArgument, "Not a menu command"};
@@ -437,7 +440,7 @@ Result<void> validate_menu_model(const MenuModel &m) {
             if (!valid_text(i.label) || !valid_text(i.tooltip) ||
                 !valid_text(i.id) || ++count > 12000 ||
                 i.label.size() > 262144 || i.tooltip.size() > 262144 ||
-                i.id.size() > 1024 || static_cast<unsigned>(i.action) > 6)
+                i.id.size() > 1024 || static_cast<unsigned>(i.action) > static_cast<unsigned>(MenuAction::DownloadUpdates))
               return false;
             bytes += i.label.size() + i.tooltip.size() + i.id.size();
             if (bytes > 8 * 1024 * 1024 || !visit(i.children, depth + 1))

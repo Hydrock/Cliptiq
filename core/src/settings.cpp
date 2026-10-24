@@ -72,9 +72,10 @@ const std::vector<Spec> &specs() {
        2},
       {SettingsGroup::Updates, "updates_auto",
        "Check for updates automatically", "0", 0, 1,
-       "T15: updater not installed; use repository releases"},
+       ""},
+      {SettingsGroup::Updates, "updates_interval", "Update interval seconds", "604800", 86400, 2592000},
       {SettingsGroup::Updates, "diagnostics", "Send diagnostics", "0", 0, 1,
-       "T15: no telemetry service or SDK"},
+       "Local export only; network diagnostics disabled"},
       {SettingsGroup::Beta, "plain_modifier",
        "Plain modifier: 0 off / 1 Ctrl / 2 Shift / 4 Alt / 8 Super", "1", 0, 8},
       {SettingsGroup::Beta, "delete_modifier", "Delete modifier", "0", 0, 8},
@@ -208,6 +209,8 @@ Result<void> validate_settings(const Settings &s) {
       if (*spec.future && it->second != spec.value)
         return Error{ErrorCode::Unsupported, spec.future};
     }
+    auto interval = n(s, "updates_interval");
+    if(interval!=86400 && interval!=604800 && interval!=2592000) detail::invalid("Unsupported update interval");
     auto seconds = n(s, "cleanup_seconds");
     const auto &language = s.values.at("locale");
     if (language.empty() || language.size() > 64 ||

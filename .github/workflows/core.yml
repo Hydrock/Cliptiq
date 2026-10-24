@@ -1,4 +1,4 @@
-name: Portable core and native clipboards (T02-T14)
+name: Portable core and native clipboards (T02-T15)
 on:
   workflow_dispatch:
   push:
@@ -9,6 +9,11 @@ on:
       - 'platform/SnippetXml.hpp'
       - 'platform/Media*'
       - 'platform/Lifecycle*'
+      - 'platform/Updates*'
+      - 'packaging/**'
+      - 'tools/verify-update/**'
+      - 'tests/integration/update*'
+      - 'tests/size/update*'
       - 'platform/LocaleNative.hpp'
       - 'platform/posix/**'
       - 'resources/**'
@@ -188,3 +193,23 @@ jobs:
           path: |
             out/t14-legacy-size.json
             tools/import-clipy/Package.resolved
+
+  sparkle_update:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-15, macos-15-intel]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - run: command -v ninja || brew install ninja
+      - run: python3 tools/fetch-footprint-deps.py
+      - run: python3 tests/size/update_sparkle.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sparkle-update-${{ matrix.os }}
+          path: |
+            out/t15-sparkle-report.json
+            out/t15-sparkle-test.log

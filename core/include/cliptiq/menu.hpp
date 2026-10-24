@@ -10,7 +10,10 @@ enum class MenuAction {
   ClearHistory,
   OpenEditor,
   OpenSettings,
-  Quit
+  Quit,
+  CheckUpdates,
+  ExportDiagnostics,
+  DownloadUpdates
 };
 enum class TrayStyle { Standard, Reversed, Hidden };
 struct PreviewRef {

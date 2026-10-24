@@ -1,3 +1,6 @@
+#ifdef CLIPTIQ_WITH_UPDATES
+#include "Updates.hpp"
+#endif
 #include "Application.hpp"
 #include "cliptiq/menu.hpp"
 #include "cliptiq/locale.hpp"
@@ -51,6 +54,9 @@ void ok(Result<void> r) {
 int host(int argc, char **argv) {
   try {
     bool smoke = false, capture = false, demo = false;
+#ifdef CLIPTIQ_WITH_UPDATES
+    NativeUpdates updates;
+#endif
 #ifdef CLIPTIQ_WITH_LIFECYCLE
     bool background = false, remove_autostart = false;
     std::string requested_locale;
@@ -262,6 +268,10 @@ int host(int argc, char **argv) {
                          inspected.value().requires_approval);
     }
 #endif
+#ifdef CLIPTIQ_WITH_UPDATES
+    if(!smoke)ok(updates.initialize());
+    auto update_polled=std::chrono::steady_clock::now()-std::chrono::minutes(1);
+#endif
     auto loaded_bindings = settings_modifiers(preferences);
     if (!auto_override)
       auto_paste = preferences.values.at("auto_paste") == "1";
@@ -425,6 +435,12 @@ int host(int argc, char **argv) {
 #endif
 #ifdef CLIPTIQ_WITH_LIFECYCLE
     auto decorate_lifecycle = [&](MenuModel &menu) {
+#ifdef CLIPTIQ_WITH_UPDATES
+      MenuItem update_status;update_status.enabled=false;
+      auto last=last_update_attempt(store);
+      update_status.label=updates.status()+"; last attempt="+(last?std::to_string(last.value()):"unavailable");
+      menu.items.push_back(std::move(update_status));
+#endif
       if (startup_problem) {
         MenuItem item;
         item.label = tr(startup.status().reason);
@@ -452,6 +468,21 @@ int host(int argc, char **argv) {
       else if (command.action == MenuAction::OpenEditor) {
         if (show_editor)
           show_editor();
+      }
+#endif
+#ifdef CLIPTIQ_WITH_UPDATES
+      else if(command.action==MenuAction::DownloadUpdates){if(!smoke){auto r=updates.open_download();if(!r)std::cerr<<r.error().message<<'\n';}}
+      else if(command.action==MenuAction::CheckUpdates){
+        if(!smoke){
+          auto stamp=std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+          ok(save_update_attempt(store,stamp));
+          auto r=updates.check_now();
+          if(!r)std::cerr<<r.error().message<<'\n';
+          if(show_settings)show_settings();
+          settings_window.status(updates.status()+"; last attempt="+std::to_string(stamp));
+        }
+      }else if(command.action==MenuAction::ExportDiagnostics){
+        if(!smoke){auto r=updates.export_diagnostics();if(!r)std::cerr<<r.error().message<<'\n';}
       }
 #endif
       else if (command.action == MenuAction::OpenSettings) {
@@ -491,6 +522,9 @@ int host(int argc, char **argv) {
 #endif
 #ifndef CLIPTIQ_WITH_SETTINGS
           i.action == MenuAction::OpenSettings ||
+#endif
+#ifndef CLIPTIQ_WITH_UPDATES
+          i.action==MenuAction::CheckUpdates || i.action==MenuAction::ExportDiagnostics || i.action==MenuAction::DownloadUpdates ||
 #endif
           false)
         i.enabled = false;
@@ -582,6 +616,9 @@ int host(int argc, char **argv) {
               return applied;
             }
             preferences = take(load_settings(store));
+#ifdef CLIPTIQ_WITH_UPDATES
+            if(!smoke)updates.preferences(preferences.values.at("updates_auto")=="1",std::stoll(preferences.values.at("updates_interval")));
+#endif
 #ifdef CLIPTIQ_WITH_MEDIA
             configure_media();
 #endif
@@ -857,6 +894,19 @@ int host(int argc, char **argv) {
 #endif
 #endif
       auto now = std::chrono::steady_clock::now();
+#ifdef CLIPTIQ_WITH_UPDATES
+      if(!smoke&&updates.poll()){settings_window.status(updates.status());refresh=true;}
+      if(!smoke&&now-update_polled>=std::chrono::minutes(1)){
+        update_polled=now;
+        auto stamp=std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+        auto last_check=last_update_attempt(store);
+        auto provider_check=updates.last_check();
+        if(last_check&&provider_check>last_check.value()){ok(save_update_attempt(store,provider_check));last_check=provider_check;refresh=true;}
+        if(last_check&&!updates.manages_schedule()&&updates.automatic_available()&&update_due(preferences.values.at("updates_auto")=="1",std::stoll(preferences.values.at("updates_interval")),last_check.value(),stamp)){
+          ok(save_update_attempt(store,stamp));auto result=updates.check_now(true);if(!result)std::cerr<<result.error().message<<'\n';
+        }
+      }
+#endif
 #ifdef CLIPTIQ_WITH_MEDIA
       auto media_result=media.poll();
       if(!media_result){std::cerr<<media_result.error().message<<'\n';settings_window.status(tr(media.observation_status().reason));refresh=true;}

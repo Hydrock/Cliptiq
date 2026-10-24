@@ -130,5 +130,9 @@
   "Empty folder": "Папка пуста",
   "[Files]": "[Файлы]",
   "[Image]": "[Изображение]",
-  "[Clipboard]": "[Буфер обмена]"
+  "[Clipboard]": "[Буфер обмена]",
+  "Check for Updates": "Проверить обновления",
+  "Download / Installation Instructions": "Загрузка и установка",
+  "Export Local Diagnostics": "Экспорт локальной диагностики",
+  "Update interval seconds": "Интервал проверки, секунды"
 }
