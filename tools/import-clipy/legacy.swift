@@ -19,6 +19,7 @@ final class CPYFolder: Object {
 final class CPYSnippet: Object {
  @objc dynamic var index=0; @objc dynamic var enable=true; @objc dynamic var title=""
  @objc dynamic var content=""; @objc dynamic var identifier=""
+ let folders=LinkingObjects(fromType:CPYFolder.self,property:"snippets")
  override static func primaryKey()->String? { "identifier" }
 }
 enum MigrationError: Error { case invalid(String) }
@@ -127,7 +128,9 @@ func stage(_ source:URL,_ assets:URL,_ output:URL)throws{
   try sql.insert("INSERT INTO migration_settings VALUES(?,?,NULL)",["legacy.archive."+clip.dataHash,raw])
   if !clip.thumbnailPath.isEmpty {let name=URL(fileURLWithPath:clip.thumbnailPath).lastPathComponent;let bytes=try read(assets.appendingPathComponent(name));try sql.insert("INSERT INTO pasteboardHistoryThumbnailAssets VALUES(?,?,?)",[clip.dataHash,clip.isColorCode ? "colorCode":"image",bytes])}
  }
- for f in realm.objects(CPYFolder.self){try sql.insert("INSERT INTO snippetFolders VALUES(?,?,?,?)",[f.identifier,f.title,f.index,f.enable ? 1:0]);for n in f.snippets {try sql.insert("INSERT INTO snippets VALUES(?,?,?,?,?,?)",[n.identifier,f.identifier,n.title,n.content,n.index,n.enable ? 1:0])}}
+ var linked=Set<String>()
+ for f in realm.objects(CPYFolder.self){try sql.insert("INSERT INTO snippetFolders VALUES(?,?,?,?)",[f.identifier,f.title,f.index,f.enable ? 1:0]);for n in f.snippets {try check(linked.insert(n.identifier).inserted,"Snippet linked to multiple folders");try sql.insert("INSERT INTO snippets VALUES(?,?,?,?,?,?)",[n.identifier,f.identifier,n.title,n.content,n.index,n.enable ? 1:0])}}
+ try check(linked.count==realm.objects(CPYSnippet.self).count,"Orphan Realm snippets")
  try sql.exec("COMMIT")
 }
 do {

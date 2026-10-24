@@ -161,12 +161,16 @@ jobs:
       - run: python3 tools/fetch-footprint-deps.py
       - run: cmake --preset release -DCLIPTIQ_BUILD_SIZE_PROBE=ON
       - run: cmake --build --preset release --target cliptiq_import cliptiq_import_macos
+      - uses: actions/cache@v4
+        with:
+          path: out/legacy-build
+          key: realm10546-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('tools/import-clipy/Package.swift') }}
       - name: Build optional isolated Realm helper
         run: swift build --package-path tools/import-clipy --scratch-path out/legacy-build -c release --jobs 3 --disable-sandbox
-      - name: Real Realm file and archive migration/source preservation
-        run: python3 tests/integration/import_macos.py out/core-Darwin-release/tools/import-clipy/cliptiq-import out/core-Darwin-release/tools/import-clipy/cliptiq-import-macos out/legacy-build/release/cliptiq-legacy
-      - name: Measure separate helper closure
+      - name: Stage and measure separate helper closure
         run: python3 tests/size/migration_legacy.py out/legacy-build/release
+      - name: Real Realm file and archive migration/source preservation
+        run: python3 tests/integration/import_macos.py out/core-Darwin-release/tools/import-clipy/cliptiq-import out/core-Darwin-release/tools/import-clipy/cliptiq-import-macos out/t14-legacy-package/cliptiq-legacy
       - uses: actions/upload-artifact@v4
         if: always()
         with:

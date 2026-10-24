@@ -62,6 +62,10 @@ try:
  unicode=root/'данные-clipboard';unicode.write_bytes(n.read_bytes());run('import',unicode,root/'история.dest')
  # WAL source remains byte-for-byte unchanged, including sidecars.
  p=root/'wal.sqlite3';fixture(p,4);d=sqlite3.connect(p);d.execute('PRAGMA journal_mode=WAL');d.execute("UPDATE snippets SET content='In WAL'");d.commit();before=snapshot(p);run('export',p,root/'wal.neutral');assert snapshot(p)==before;d.close()
+ # A hot rollback journal belongs to the snapshot; never import uncommitted rows.
+ p=root/'journal.sqlite3';fixture(p,4);d=sqlite3.connect(p);d.executemany('INSERT INTO snippets VALUES(?,?,?,?,?,?)',[(f'j{i}','f','Title','Original'*2000,i+5,1) for i in range(32)]);d.commit();d.execute('PRAGMA cache_size=1');d.execute('BEGIN IMMEDIATE')
+ d.execute("UPDATE snippets SET content=?",('X'*16000,));before=snapshot(p);run('export',p,root/'journal.neutral');assert snapshot(p)==before
+ saved=sqlite3.connect(root/'journal.neutral');assert saved.execute("SELECT count(*) FROM snippets WHERE content LIKE 'X%'").fetchone()==(0,);saved.close();d.rollback();d.close()
  print('PASS Clipy SQLite v1-v4, duplicate preservation, states/order/times/assets, idempotence, atomic failures, WAL/source hashes')
 finally:
  import shutil;shutil.rmtree(root)

@@ -151,7 +151,7 @@ struct Source {
     // SHM. Verify the copied DB+WAL against a second full read; a changing
     // source is rejected.
     std::vector<std::pair<fs::path, std::string>> signatures;
-    for (auto suffix : {"", "-wal"}) {
+    for (auto suffix : {"", "-wal", "-journal"}) {
       auto source = fs::u8path(path + suffix);
       if (!fs::exists(source)) {
         signatures.push_back({source, "absent"});
@@ -166,7 +166,8 @@ struct Source {
                   ? !fs::exists(v.first)
                   : fs::exists(v.first) && hash(file(v.first)) == v.second,
               "Source changed; close Clipy and retry");
-    db = open(fs::canonical(scratch.dir) / "source.sqlite3");
+    db = open(fs::canonical(scratch.dir) / "source.sqlite3", true);
+    exec(db.get(), "PRAGMA query_only=ON");
     exec(db.get(), "BEGIN");
     Statement q(db.get(), "PRAGMA quick_check");
     require(q.row() && q.text(0) == "ok", "Source integrity check failed");
@@ -535,6 +536,7 @@ export_clipy_sqlite(const std::string &source, const std::string &target,
     {
       auto db = open(temp, true);
       write(db.get(), data);
+      (void)read(db.get(), true); // Validate complete output before publishing.
     }
     fs::permissions(temp, fs::perms::owner_read | fs::perms::owner_write);
     fs::create_hard_link(temp, output);

@@ -39,7 +39,24 @@ int run_import(int argc, char **argv) {
 #ifdef _WIN32
 #define NOMINMAX
 #include <windows.h>
-int wmain(int argc,wchar_t**argv){std::vector<std::string> args;for(int i=0;i<argc;++i){int n=WideCharToMultiByte(CP_UTF8,WC_ERR_INVALID_CHARS,argv[i],-1,nullptr,0,nullptr,nullptr);if(!n)return 2;std::string s(n,'\0');WideCharToMultiByte(CP_UTF8,WC_ERR_INVALID_CHARS,argv[i],-1,s.data(),n,nullptr,nullptr);s.pop_back();args.push_back(std::move(s));}std::vector<char*> ptrs;for(auto&s:args)ptrs.push_back(s.data());return run_import(argc,ptrs.data());}
+int wmain(int argc, wchar_t **argv) {
+  std::vector<std::string> args;
+  for (int i = 0; i < argc; ++i) {
+    int n = WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, argv[i], -1,
+                                nullptr, 0, nullptr, nullptr);
+    if (!n)
+      return 2;
+    std::string s(n, '\0');
+    WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, argv[i], -1, s.data(), n,
+                        nullptr, nullptr);
+    s.pop_back();
+    args.push_back(std::move(s));
+  }
+  std::vector<char *> ptrs;
+  for (auto &s : args)
+    ptrs.push_back(s.data());
+  return run_import(argc, ptrs.data());
+}
 #else
-int main(int argc,char**argv){return run_import(argc,argv);}
+int main(int argc, char **argv) { return run_import(argc, argv); }
 #endif

@@ -2,7 +2,7 @@
 
 T14 work in progress; automated validation/evidence tracked in docs/support/t14-results.md when complete. This tool is not linked into Cliptiq.app/Cliptiq.exe/cliptiq.
 
-Quit Clipy and Cliptiq before export/import. Keep your original backup. The converter never opens the original with SQLite/Realm: it reads private copies and rejects changing DB/WAL bytes. Never delete Realm lock/management files from the source. Only the private Realm copy may be upgraded by the separate helper.
+Quit Clipy and Cliptiq before export/import. Keep your original backup. The converter never opens the original with SQLite/Realm: it reads private copies and rejects changing DB/WAL/rollback-journal bytes. Never delete Realm lock/management files from the source. Only the private Realm copy may be upgraded by the separate helper.
 
 Build normal CMake targets cliptiq_import and, on macOS, cliptiq_import_macos. Export current Clipy SQLite v1–v4:
 
@@ -25,3 +25,5 @@ out/legacy-build/release/cliptiq-legacy export SOURCE.realm ASSET_DIRECTORY PREF
 Asset files are resolved by basename inside the explicit asset directory; symlinks/nonregular/missing assets reject the export. Duplicate basenames must be reconciled by the user before exporting. Unknown archived clipboard types reject export instead of silently dropping them. Exact legacy archives are retained as inert settings provenance. NSKeyed decoding is restricted to a small explicit allowed-class set in the optional helper; the main app never unarchives these objects.
 
 Neutral SQLite format_version1 preserves original IDs, order, enabled flags, times, native representations, title/device/type/OCR/thumbnail provenance and original settings. macOS RTFD/file-list bytes remain native payloads, not cross-platform conversion claims. XML snippets-only fallback is the T11 editor import/export: XML loses IDs, enabled flags and shortcuts. T15 is excluded. Manual T04–T13 remain OPEN.
+
+The CI size helper stages only the executable and required dylib, strips debug symbols, adjusts loader paths and ad-hoc signs both, then verifies local dylib loading. This is not a notarized user release. The separate Realm helper may exceed the main app size target; both sizes and their sum are reported explicitly.
