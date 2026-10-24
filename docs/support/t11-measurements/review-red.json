@@ -1,0 +1,25 @@
+{
+  "120814239324": {
+    "url": "https://github.com/Hydrock/Cliptiq/actions/runs/40074289793/job/120814239324",
+    "failure_lines": [
+      "2026-10-24T07:29:45.5440620Z  1/25 Test  #1: xml_native .......................***Failed    0.61 sec",
+      "2026-10-24T07:29:45.5515750Z FAIL native_xml: !body.editable",
+      "2026-10-24T07:30:06.3697580Z  3/25 Test  #3: xml_bounded_scan .................***Failed   20.75 sec",
+      "2026-10-24T07:30:06.3701180Z     except subprocess.TimeoutExpired:raise AssertionError('below-limit XML repeated whole-suffix scan exceeded20s') from None",
+      "2026-10-24T07:30:06.3702790Z AssertionError: below-limit XML repeated whole-suffix scan exceeded20s",
+      "2026-10-24T07:30:21.2686000Z 92% tests passed, 2 tests failed out of 25"
+    ]
+  },
+  "120814239433": {
+    "url": "https://github.com/Hydrock/Cliptiq/actions/runs/40074289793/job/120814239433",
+    "failure_lines": [
+      "2026-10-24T07:29:33.1748675Z -- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Failed",
+      "2026-10-24T07:30:11.7670216Z  1/28 Test  #1: xml_native .......................***Failed    0.79 sec",
+      "2026-10-24T07:30:11.7670615Z FAIL native_xml: model->content() == \"second\" && changes == 0",
+      "2026-10-24T07:30:33.2974222Z  3/28 Test  #3: xml_bounded_scan .................***Failed   21.46 sec",
+      "2026-10-24T07:30:33.2975438Z     except subprocess.TimeoutExpired:raise AssertionError('below-limit XML repeated whole-suffix scan exceeded20s') from None",
+      "2026-10-24T07:30:33.2976241Z AssertionError: below-limit XML repeated whole-suffix scan exceeded20s",
+      "2026-10-24T07:30:40.3067721Z 93% tests passed, 2 tests failed out of 28"
+    ]
+  }
+}

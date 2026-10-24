@@ -1,0 +1,92 @@
+Preset CMake variables:
+
+  BUILD_TESTING="ON"
+  CMAKE_BUILD_TYPE="Debug"
+
+-- Configuring done (2.2s)
+-- Generating done (0.5s)
+-- Build files have been written to: /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+[1/7] Building CXX object CMakeFiles/cliptiq_editor_native.dir/platform/linux/SnippetEditor.cpp.o
+[2/7] Linking CXX static library libcliptiq_editor_native.a
+[3/7] Building CXX object CMakeFiles/cliptiq_editor_xml_native.dir/platform/linux/SnippetEditor.cpp.o
+[4/7] Linking CXX static library libcliptiq_editor_xml_native.a
+[5/7] Linking CXX executable native_xml_test
+[6/7] Linking CXX executable native_editor_test
+[7/7] Linking CXX executable cliptiq_menu_host
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+      Start  1: xml_native_x11
+ 1/36 Test  #1: xml_native_x11 .....................   Passed    0.64 sec
+      Start  2: xml_native_wayland
+ 2/36 Test  #2: xml_native_wayland .................   Passed    0.67 sec
+      Start  3: xml
+ 3/36 Test  #3: xml ................................   Passed    0.03 sec
+      Start  4: editor_native_x11
+ 4/36 Test  #4: editor_native_x11 ..................   Passed    0.56 sec
+      Start  5: editor_native_wayland
+ 5/36 Test  #5: editor_native_wayland ..............   Passed    0.36 sec
+      Start  6: snippets_menu_hotkeys
+ 6/36 Test  #6: snippets_menu_hotkeys ..............   Passed    0.02 sec
+      Start  7: editor
+ 7/36 Test  #7: editor .............................   Passed    0.29 sec
+      Start  8: snippets
+ 8/36 Test  #8: snippets ...........................   Passed    0.21 sec
+      Start  9: settings_native_x11
+ 9/36 Test  #9: settings_native_x11 ................   Passed    0.45 sec
+      Start 10: hotkeys_native_x11
+10/36 Test #10: hotkeys_native_x11 .................   Passed    0.55 sec
+      Start 11: settings_native_wayland
+11/36 Test #11: settings_native_wayland ............   Passed    0.50 sec
+      Start 12: hotkeys_native_wayland
+12/36 Test #12: hotkeys_native_wayland .............   Passed    0.16 sec
+      Start 13: settings
+13/36 Test #13: settings ...........................   Passed    0.02 sec
+      Start 14: hotkeys
+14/36 Test #14: hotkeys ............................   Passed    0.00 sec
+      Start 15: paste_native_x11
+15/36 Test #15: paste_native_x11 ...................   Passed    0.40 sec
+      Start 16: paste_native_wayland
+16/36 Test #16: paste_native_wayland ...............   Passed    0.15 sec
+      Start 17: hotkeys_portal_protocol
+17/36 Test #17: hotkeys_portal_protocol ............   Passed    0.37 sec
+      Start 18: paste_menu_bridge
+18/36 Test #18: paste_menu_bridge ..................   Passed    0.24 sec
+      Start 19: paste
+19/36 Test #19: paste ..............................   Passed    0.03 sec
+      Start 20: menu_unicode_conformance
+20/36 Test #20: menu_unicode_conformance ...........   Passed    0.01 sec
+      Start 21: menu_regression_context_x11
+21/36 Test #21: menu_regression_context_x11 ........   Passed    0.24 sec
+      Start 22: menu_regression_context_wayland
+22/36 Test #22: menu_regression_context_wayland ....   Passed    0.20 sec
+      Start 23: menu_regression_coordinates
+23/36 Test #23: menu_regression_coordinates ........   Passed    0.26 sec
+      Start 24: menu_native_x11
+24/36 Test #24: menu_native_x11 ....................   Passed    0.30 sec
+      Start 25: menu_native_wayland
+25/36 Test #25: menu_native_wayland ................   Passed    0.29 sec
+      Start 26: menu_preview
+26/36 Test #26: menu_preview .......................   Passed    0.00 sec
+      Start 27: menu
+27/36 Test #27: menu ...............................   Passed    0.27 sec
+      Start 28: linux_clipboard_protocol
+28/36 Test #28: linux_clipboard_protocol ...........   Passed    0.03 sec
+      Start 29: linux_clipboard_wayland_wire
+29/36 Test #29: linux_clipboard_wayland_wire .......   Passed    1.47 sec
+      Start 30: linux_clipboard_x11_wire
+30/36 Test #30: linux_clipboard_x11_wire ...........   Passed    0.41 sec
+      Start 31: linux_clipboard_external_clients
+31/36 Test #31: linux_clipboard_external_clients ...   Passed    2.37 sec
+      Start 32: linux_clipboard_x11
+32/36 Test #32: linux_clipboard_x11 ................   Passed    0.70 sec
+      Start 33: linux_clipboard_wayland
+33/36 Test #33: linux_clipboard_wayland ............   Passed    0.43 sec
+      Start 34: policy
+34/36 Test #34: policy .............................   Passed    0.03 sec
+      Start 35: history
+35/36 Test #35: history ............................   Passed    0.36 sec
+      Start 36: history_crash
+36/36 Test #36: history_crash ......................   Passed    0.48 sec
+
+100% tests passed, 0 tests failed out of 36
+
+Total Test time (real) =  13.73 sec

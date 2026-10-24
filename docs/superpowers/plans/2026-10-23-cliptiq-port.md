@@ -213,7 +213,7 @@ Capture contract: сохранять все разрешённые representatio
 
 Автоматическая часть: source `879cc511c3b6f51baeb31c71d5e629634ce1ff7d`, [CI40061508988](https://github.com/Hydrock/Cliptiq/actions/runs/40061508988) —7/7. [Результаты](../../support/t10-results.md).
 
-- [ ] T10 physical native drag, desktop focus/activation/permissions/portal consent, keyboard/accessibility/DPI/clean-VM manual acceptance. T04–T09 manual OPEN. Background title/body autosave; discrete commands synchronous/no-wait, not filesystem-I/O-free. T11 не начат.
+- [ ] T10 physical native drag, desktop focus/activation/permissions/portal consent, keyboard/accessibility/DPI/clean-VM manual acceptance. T04–T09 manual OPEN. Background title/body autosave; discrete commands synchronous/no-wait, not filesystem-I/O-free. T11 см. ниже.
 
 ### T11. XML совместимость Clipy
 
@@ -221,11 +221,13 @@ Capture contract: сохранять все разрешённые representatio
 
 **Interfaces:** `decode_clipy_xml(Bytes, ImportLimits)->Result<vector<ImportedFolder>>`; `append_import(Store&, vector<ImportedFolder>)->Result<ImportSummary>`; `encode_clipy_xml(Store&)->Result<Bytes>`. ImportedFolder title + ordered pairs title/content; XML не переносит flags/IDs/hotkeys, отдельный format migration T14.
 
-- [ ] Failing tests: `roundtrip_whitespace_unicode`, `append_not_replace`, `fallback_titles`, `all_disabled_are_exported`, `entity_escape`, `malformed_is_atomic`, `external_entity_rejected`, size/count ceilings.
-- [ ] `ctest --preset test -R xml --output-on-failure` meaningful fail; затем pinned parser, DTD/external entities запрещены, UTF-8, atomic destination write.
-- [ ] Export default `snippets.xml`, native file pickers, readable error вместо молчаливого beep. XML layout `folders/folder/title/snippets/snippet/{title,content}` согласно audit.
+- [x] Failing tests: `roundtrip_whitespace_unicode`, `append_not_replace`, `fallback_titles`, `all_disabled_are_exported`, `entity_escape`, `malformed_is_atomic`, `external_entity_rejected`, size/count ceilings.
+- [x] `ctest --preset test -R xml --output-on-failure` meaningful fail; затем pinned parser, DTD/external entities запрещены, UTF-8, atomic destination write.
+- [x] Export default `snippets.xml`, native file pickers, readable error вместо молчаливого beep. XML layout `folders/folder/title/snippets/snippet/{title,content}` согласно audit.
 - [ ] На Mac import/export в настоящий Clipy соответствующей baseline; fixtures не заменяют совместимость с живым приложением.
-- [ ] Commit `feat: support Clipy-compatible snippet XML`.
+- [x] Commit `feat: support Clipy-compatible snippet XML`.
+
+Автоматическая часть: source `98b3950634c650ce9b0333dba73989e37efcd2bf`, [CI40074549461](https://github.com/Hydrock/Cliptiq/actions/runs/40074549461) —7/7. [Результаты](../../support/t11-results.md). TinyXML2 pinned static вместо предложенного pugixml; actual wire cap64MiB вместо раннего8MiB, причины/цена в ledger/API. Native dialog/live Clipy/desktop/manual gates OPEN, T04–T10 manual OPEN, T12 не начат. Deferred Minor: premature picker progress label.
 
 ### T12. Preview и screenshot file observation
 

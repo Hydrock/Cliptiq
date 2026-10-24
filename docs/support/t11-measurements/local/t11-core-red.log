@@ -1,0 +1,32 @@
+Preset CMake variables:
+
+  BUILD_TESTING="ON"
+  CMAKE_BUILD_TYPE="Debug"
+
+-- Configuring done (2.1s)
+-- Generating done (0.4s)
+-- Build files have been written to: /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+[1/6] Building CXX object CMakeFiles/cliptiq_xml.dir/core/src/xml.cpp.o
+[2/6] Linking CXX static library libcliptiq_xml.a
+[3/6] Building CXX object CMakeFiles/xml_test.dir/tests/unit/xml_test.cpp.o
+[4/6] Linking CXX executable xml_test
+[5/6] Building CXX object CMakeFiles/native_editor_test.dir/tests/integration/native_editor_test.cpp.o
+[6/6] Linking CXX executable native_editor_test
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+    Start 1: xml
+1/1 Test #1: xml ..............................***Failed    0.02 sec
+FAIL roundtrip_whitespace_unicode_disabled_entity_escape: T11 encoder pending
+FAIL fallback_titles_cdata_and_empty_folders: T11 decoder pending
+FAIL append_not_replace_and_atomic_rollback: T11 decoder pending
+PASS malformed_is_atomic_external_entity_rejected
+PASS size_count_utf8_and_store_limits
+FAIL atomic_destination_and_bounded_file_read: write_snippet_xml_atomic(path,bytes("old"))
+
+
+0% tests passed, 1 tests failed out of 1
+
+Total Test time (real) =   0.04 sec
+
+The following tests FAILED:
+	  1 - xml (Failed)
+Errors while running CTest
