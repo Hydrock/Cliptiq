@@ -2,6 +2,7 @@
 #include "cliptiq/migration.hpp"
 #import <Foundation/Foundation.h>
 #include <filesystem>
+#include <fstream>
 #include <iostream>
 // Only inert fields from explicitly mapped legacy classes are decoded. No
 // upstream NSCoding implementation or arbitrary class is instantiated.
@@ -120,9 +121,25 @@ static std::vector<cliptiq::MigrationSetting> preferences(NSString *path) {
   [u getResourceValue:&symlink forKey:NSURLIsSymbolicLinkKey error:nil];
   if (symlink.boolValue)
     throw std::runtime_error("Preferences symlink rejected");
-  NSData *b = [NSData dataWithContentsOfURL:u options:0 error:nil];
-  if (!b || b.length > 16 * 1024 * 1024)
-    throw std::runtime_error("Preferences unavailable or exceed16MiB");
+  auto file = std::filesystem::u8path(path.UTF8String);
+  if (!std::filesystem::is_regular_file(
+          std::filesystem::symlink_status(file)) ||
+      std::filesystem::file_size(file) > 16 * 1024 * 1024)
+    throw std::runtime_error(
+        "Preferences exceeds16MiB or is not a regular file (before read)");
+  std::ifstream input(file, std::ios::binary);
+  std::vector<char> bytes;
+  char buffer[65536];
+  while (input) {
+    input.read(buffer, sizeof(buffer));
+    auto n = input.gcount();
+    if (bytes.size() + std::size_t(n) > 16 * 1024 * 1024)
+      throw std::runtime_error("Preferences grew beyond16MiB");
+    bytes.insert(bytes.end(), buffer, buffer + n);
+  }
+  if (!input.eof())
+    throw std::runtime_error("Preferences read failed");
+  NSData *b = [NSData dataWithBytes:bytes.data() length:bytes.size()];
   NSDictionary *p =
       [NSPropertyListSerialization propertyListWithData:b
                                                 options:NSPropertyListImmutable

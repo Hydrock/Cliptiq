@@ -162,11 +162,17 @@ jobs:
       - run: cmake --preset release -DCLIPTIQ_BUILD_SIZE_PROBE=ON
       - run: cmake --build --preset release --target cliptiq_import cliptiq_import_macos
       - uses: actions/cache@v4
+        id: realm_cache
         with:
           path: out/legacy-build
           key: realm10546-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('tools/import-clipy/Package.swift') }}
       - name: Build optional isolated Realm helper
         run: swift build --package-path tools/import-clipy --scratch-path out/legacy-build -c release --jobs 3 --disable-sandbox
+      - uses: actions/cache/save@v4
+        if: steps.realm_cache.outputs.cache-hit != 'true'
+        with:
+          path: out/legacy-build
+          key: realm10546-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('tools/import-clipy/Package.swift') }}
       - name: Stage and measure separate helper closure
         run: python3 tests/size/migration_legacy.py out/legacy-build/release
       - name: Real Realm file and archive migration/source preservation

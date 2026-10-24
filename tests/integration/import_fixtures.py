@@ -49,6 +49,14 @@ try:
   if field=='title':d.execute("UPDATE snippets SET title=CAST(? AS TEXT)",(value,))
   else:d.execute('UPDATE snippets SET isEnabled=?',(value,))
   d.commit();d.close();run('import',bad,root/('typed-'+field+'.dest'),ok=False)
+ # v3/v4 timestamps and nullable metadata must not be coerced by SQLite.
+ for col,value in [('createdAt',None),('createdAt','invalid'),('createdAt',1.5),('deviceID',123),('ocrText',123)]:
+  malformed=root/('metadata-'+col+'-'+str(value));malformed.write_bytes(n.read_bytes());d=sqlite3.connect(malformed)
+  if value is None:
+   d.execute('PRAGMA writable_schema=ON');d.execute("UPDATE sqlite_schema SET sql=replace(sql,'createdAt INTEGER NOT NULL','createdAt') WHERE name='pasteboardHistories'");d.commit();d.close();d=sqlite3.connect(malformed)
+  if col in ('deviceID','ocrText'):d.execute('UPDATE pasteboardHistories SET '+col+'=?',(sqlite3.Binary(b'not text'),))
+  else:d.execute('UPDATE pasteboardHistories SET '+col+'=?',(value,))
+  d.commit();d.close();run('import',malformed,root/('meta-dest-'+col+'-'+str(value)),ok=False)
  # Settings are inert by default; nil disables, conflicts reject atomically.
  settings=root/'settings.neutral';settings.write_bytes(n.read_bytes());d=sqlite3.connect(settings)
  d.executemany('INSERT INTO migration_settings VALUES(?,?,?)',[('history_count',b'raw-count','50'),('hotkey:main',b'raw-nil',''),('excluded',b'raw-exclusions','org.example.Secret'),('type_html',b'raw-type','0')]);d.commit();d.close()

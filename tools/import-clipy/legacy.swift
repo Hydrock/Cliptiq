@@ -3,6 +3,7 @@ import AppKit
 import RealmSwift
 import SQLite3
 import CryptoKit
+import ImageIO
 
 // Schema7 field names mirror Clipy (MIT); no upstream migration callbacks run.
 final class CPYClip: Object {
@@ -30,12 +31,41 @@ func read(_ path: URL, limit: Int=32*1024*1024) throws -> Data {
  try check(((a[.size] as? NSNumber)?.intValue ?? Int.max) <= limit,"Asset exceeds limit")
  let b=try Data(contentsOf:path);try check(b.count<=limit,"Asset grew beyond limit");return b
 }
-// Secure, inert replacement for historical Clipy.CPYClipData. Unknown custom
-// classes are rejected. The main Cliptiq executable never unarchives this data.
+// Image archive objects are mapped to inert readers: NSImage is never
+// instantiated while decoding an import. Only bounded PNG/TIFF encodings are
+// inspected with ImageIO metadata (no pixel decode or TIFF expansion).
+final class ImageArchive: NSObject, NSSecureCoding {
+ static var supportsSecureCoding:Bool {true}
+ var blobs:[Data]=[]
+ required init?(coder:NSCoder){super.init();var visited=Set<ObjectIdentifier>()
+  func collect(_ value:Any?,_ depth:Int){guard depth<32,let value=value else{return}
+   if let b=value as? Data {blobs.append(b);return}
+   if let image=value as? ImageArchive {blobs+=image.blobs;return}
+   if let list=value as? NSArray {let id=ObjectIdentifier(list);if !visited.insert(id).inserted{return};for item in list.prefix(4096){collect(item,depth+1)}}
+  }
+  for key in ["NSReps","NS.data","NSImageData","NSTIFFRepresentation","NSBitmapImageRep","NSRepresentation","NSRep"] {
+   if coder.containsValue(forKey:key){collect(coder.decodeObject(of:[NSArray.self,NSData.self,NSString.self,ImageArchive.self],forKey:key),0)}
+  }
+ }
+ func encode(with coder:NSCoder){coder.encode(blobs,forKey:"NSReps")}
+ override init(){super.init()}
+ func encoded()throws->(String,Data){var candidates:[(String,Data)]=[]
+  for b in blobs {try check(b.count<=32*1024*1024,"Archived image bytes exceed32MiB")
+   guard let source=CGImageSourceCreateWithData(b as CFData,[kCGImageSourceShouldCache:false] as CFDictionary),let properties=CGImageSourceCopyPropertiesAtIndex(source,0,[kCGImageSourceShouldCache:false] as CFDictionary) as? [String:Any] else{continue}
+   let width=(properties[kCGImagePropertyPixelWidth as String] as? NSNumber)?.uint64Value ?? 0,height=(properties[kCGImagePropertyPixelHeight as String] as? NSNumber)?.uint64Value ?? 0
+   try check(width>0&&height>0&&width<=40000000/height,"Archived image exceeds40MP")
+   let type=CGImageSourceGetType(source) as String? ?? ""
+   try check(type=="public.png"||type=="public.tiff","Unsupported archived image encoding; original unchanged")
+   candidates.append((type,b))
+  }
+  try check(candidates.count==1,"Missing or ambiguous encoded image archive");return candidates[0]
+ }
+}
 final class ClipArchive: NSObject, NSSecureCoding {
  static var supportsSecureCoding: Bool { true }
- let types:[String], string:String, rtf:Data?, pdf:Data?, files:[String], urls:[String], image:NSImage?
- init(types:[String],string:String){self.types=types;self.string=string;rtf=nil;pdf=nil;files=[];urls=[];image=nil;super.init()}
+ let types:[String], string:String, rtf:Data?, pdf:Data?, files:[String], urls:[String]
+ var image:ImageArchive?;var fixtureImage:Any?
+ init(types:[String],string:String){self.types=types;self.string=string;rtf=nil;pdf=nil;files=[];urls=[];super.init()}
  required init?(coder:NSCoder){
   types=coder.decodeObject(of:[NSArray.self,NSString.self],forKey:"types") as? [String] ?? []
   string=coder.decodeObject(of:NSString.self,forKey:"stringValue") as String? ?? ""
@@ -43,13 +73,14 @@ final class ClipArchive: NSObject, NSSecureCoding {
   pdf=coder.decodeObject(of:NSData.self,forKey:"PDF") as Data?
   files=coder.decodeObject(of:[NSArray.self,NSString.self],forKey:"filenames") as? [String] ?? []
   urls=coder.decodeObject(of:[NSArray.self,NSString.self],forKey:"URL") as? [String] ?? []
-  image=coder.decodeObject(of:NSImage.self,forKey:"image");super.init()
+  image=coder.decodeObject(of:ImageArchive.self,forKey:"image");super.init()
  }
- func encode(with coder:NSCoder){coder.encode(types,forKey:"types");coder.encode(string,forKey:"stringValue");coder.encode(rtf,forKey:"RTFData");coder.encode(pdf,forKey:"PDF");coder.encode(files,forKey:"filenames");coder.encode(urls,forKey:"URL");coder.encode(image,forKey:"image")}
+ func encode(with coder:NSCoder){coder.encode(types,forKey:"types");coder.encode(string,forKey:"stringValue");coder.encode(rtf,forKey:"RTFData");coder.encode(pdf,forKey:"PDF");coder.encode(files,forKey:"filenames");coder.encode(urls,forKey:"URL");coder.encode(fixtureImage,forKey:"image")}
 }
 func archive(_ b:Data)throws->ClipArchive {
  let u=try NSKeyedUnarchiver(forReadingFrom:b);u.requiresSecureCoding=true;u.decodingFailurePolicy = .setErrorAndReturn
  for name in ["Clipy.CPYClipData","CPYClipData"] {u.setClass(ClipArchive.self,forClassName:name)}
+ for name in ["NSImage","NSBitmapImageRep","NSCachedImageRep"] {u.setClass(ImageArchive.self,forClassName:name)}
  guard let value=u.decodeObject(of:ClipArchive.self,forKey:NSKeyedArchiveRootObjectKey) else {throw MigrationError.invalid("Unsupported legacy clip archive")}
  u.finishDecoding();if let error=u.error {throw error};return value
 }
@@ -63,7 +94,7 @@ func representations(_ a:ClipArchive)throws->[(String,Data)] {
   case "NSPDFPboardType","com.adobe.pdf":guard let b=a.pdf else {throw MigrationError.invalid("Missing PDF")};parts.append(("com.adobe.pdf",b))
   case "NSFilenamesPboardType":parts.append((t,try PropertyListSerialization.data(fromPropertyList:a.files,format:.binary,options:0)))
   case "NSURLPboardType","public.url":for url in a.urls {guard let u=URL(string:url) else {throw MigrationError.invalid("Invalid URL")};parts.append(("public.url",u.dataRepresentation))}
-  case "NSTIFFPboardType","public.tiff":guard let b=a.image?.tiffRepresentation else {throw MigrationError.invalid("Missing image")};parts.append(("public.tiff",b))
+  case "NSTIFFPboardType","public.tiff":guard let image=a.image else {throw MigrationError.invalid("Missing image")};parts.append(try image.encoded())
   default:throw MigrationError.invalid("Unsupported legacy representation: \(t); source unchanged")
   }
  }
@@ -86,10 +117,12 @@ final class SQL {
  }
 }
 func configuration(_ url:URL)->Realm.Configuration {Realm.Configuration(fileURL:url,schemaVersion:7,objectTypes:[CPYClip.self,CPYFolder.self,CPYSnippet.self])}
-func fixture(_ root:URL)throws{
+func fixture(_ root:URL,image:URL?=nil,encoded:Bool=false)throws{
  try FileManager.default.createDirectory(at:root,withIntermediateDirectories:false,attributes:[.posixPermissions:0o700])
  NSKeyedArchiver.setClassName("Clipy.CPYClipData",for:ClipArchive.self)
- let blob=try NSKeyedArchiver.archivedData(withRootObject:ClipArchive(types:["NSStringPboardType"],string:"Legacy text"),requiringSecureCoding:false)
+ let clip=ClipArchive(types:image == nil ? ["NSStringPboardType"]:["NSTIFFPboardType"],string:"Legacy text")
+ if let image=image {let b=try read(image);if encoded {let object=ImageArchive();object.blobs=[b];clip.fixtureImage=object}else{clip.fixtureImage=NSImage(data:b);try check(clip.fixtureImage != nil,"Fixture image invalid")}}
+ let blob=try NSKeyedArchiver.archivedData(withRootObject:clip,requiringSecureCoding:false)
  try blob.write(to:root.appendingPathComponent("clip.data"),options:.withoutOverwriting)
  let realm=try Realm(configuration:configuration(root.appendingPathComponent("default.realm")))
  try realm.write{
@@ -136,6 +169,7 @@ func stage(_ source:URL,_ assets:URL,_ output:URL)throws{
 do {
  let args=CommandLine.arguments
  if args.count==3&&args[1]=="--fixture" {try fixture(URL(fileURLWithPath:args[2]))}
+ else if args.count==5&&args[1]=="--image-fixture" {try fixture(URL(fileURLWithPath:args[2]),image:URL(fileURLWithPath:args[3]),encoded:args[4]=="encoded")}
  else if args.count==7&&args[1]=="export" {
   let output=URL(fileURLWithPath:args[5]);try check(!FileManager.default.fileExists(atPath:output.path),"Output already exists")
   let work=FileManager.default.temporaryDirectory.appendingPathComponent("cliptiq-stage-"+UUID().uuidString);try FileManager.default.createDirectory(at:work,withIntermediateDirectories:false,attributes:[.posixPermissions:0o700]);defer{try?FileManager.default.removeItem(at:work)}

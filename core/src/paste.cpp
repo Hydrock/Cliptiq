@@ -124,6 +124,91 @@ ClipboardSnapshot snippet_snapshot(const std::string &text,
   result.representations.push_back(std::move(r));
   return result;
 }
+// Migration stores exact macOS bytes. Adapt only known portable formats at the
+// explicit copy boundary, leaving source data intact in history.
+ClipboardSnapshot imported_replay(const ClipboardSnapshot &source,
+                                  const Capabilities &caps,
+                                  const Limits &limits, bool &unavailable) {
+  if (source.sequence_token.rfind("clipy-import:", 0) != 0 ||
+      caps.platform == CapturePlatform::MacOS)
+    return source;
+  ClipboardSnapshot out = source;
+  out.representations.clear();
+  for (const auto &r : source.representations) {
+    if (r.platform != "macos")
+      throw detail::Failure{
+          {ErrorCode::Unsupported, "Mixed-platform imported clipboard entry"}};
+    if (r.item_index != 0) {
+      unavailable = true;
+      continue;
+    }
+    if (r.kind == CanonicalKind::Text &&
+        r.text_encoding == TextEncoding::Utf8) {
+      auto text = snippet_snapshot(std::string(r.data.begin(), r.data.end()),
+                                   caps.platform, limits);
+      out.representations.push_back(std::move(text.representations[0]));
+      continue;
+    }
+    auto supported = std::find_if(
+        caps.native_types.begin(), caps.native_types.end(),
+        [&](const NativeTypeSupport &t) {
+          if (t.kind != r.kind)
+            return false;
+          if (r.kind == CanonicalKind::Rtf || r.kind == CanonicalKind::Pdf ||
+              r.kind == CanonicalKind::Html)
+            return true;
+          if (r.native_type == "public.png")
+            return t.native_type == "PNG" || t.native_type == "image/png";
+          if (r.native_type == "public.tiff")
+            return t.native_type == "image/tiff";
+          return false;
+        });
+    if (supported == caps.native_types.end()) {
+      unavailable = true;
+      continue;
+    }
+    auto converted = r;
+    converted.platform = supported->platform;
+    converted.native_type = supported->native_type;
+    converted.text_encoding = supported->text_encoding;
+    if (converted.native_type == "HTML Format") {
+      const std::string header =
+          "Version:0.9\r\nStartHTML:0000000000\r\nEndHTML:"
+          "0000000000\r\nStartFragment:0000000000\r\nEndFragment:"
+          "0000000000\r\n";
+      const std::string begin = "<html><body><!--StartFragment-->",
+                        end = "<!--EndFragment--></body></html>";
+      auto payload =
+          header + begin + std::string(r.data.begin(), r.data.end()) + end;
+      auto offset = [&](const char *name, std::size_t value) {
+        auto pos = payload.find(name) + std::char_traits<char>::length(name);
+        auto number = std::to_string(value);
+        if (number.size() > 10)
+          throw detail::Failure{
+              {ErrorCode::TooLarge, "HTML migration offset too large"}};
+        payload.replace(pos, 10, std::string(10 - number.size(), '0') + number);
+      };
+      offset("StartHTML:", header.size());
+      offset("EndHTML:", payload.size());
+      offset("StartFragment:", header.size() + begin.size());
+      offset("EndFragment:", header.size() + begin.size() + r.data.size());
+      converted.data.assign(payload.begin(), payload.end());
+    }
+    out.representations.push_back(std::move(converted));
+  }
+  if (out.representations.empty())
+    throw detail::Failure{
+        {ErrorCode::Unsupported,
+         "No portable representation for this OS; original data retained. "
+         "RTFD, file references and multi-item data may require macOS."}};
+  // A single-item target must not silently copy only one of several items.
+  for (const auto &r : source.representations)
+    if (r.item_index != 0 && r.item_index != RootPasteboardItem)
+      throw detail::Failure{
+          {ErrorCode::Unsupported,
+           "Multi-item Clipy history requires macOS; original data retained"}};
+  return out;
+}
 Result<void> update_history(Store &store, const SelectionIntent &intent,
                             bool remove) {
   return detail::guarded<void>([&]() -> Result<void> {
@@ -190,9 +275,12 @@ Result<SelectionOutcome> execute_selection(Store &store,
           return loaded.error();
         snapshot = std::move(loaded.value());
       } else {
-        detail::Statement q(store.connection(),
-                            "SELECT length(CAST(content AS BLOB)),content FROM "
-                            "snippets s LEFT JOIN snippet_states v ON v.id=s.id LEFT JOIN snippet_folder_states f ON f.id=s.folder_id WHERE s.id=? AND coalesce(v.enabled,1)=1 AND coalesce(f.enabled,1)=1");
+        detail::Statement q(
+            store.connection(),
+            "SELECT length(CAST(content AS BLOB)),content FROM "
+            "snippets s LEFT JOIN snippet_states v ON v.id=s.id LEFT JOIN "
+            "snippet_folder_states f ON f.id=s.folder_id WHERE s.id=? AND "
+            "coalesce(v.enabled,1)=1 AND coalesce(f.enabled,1)=1");
         q.bind(1, intent.command.id);
         if (!q.row())
           return Error{ErrorCode::NotFound, "Snippet disappeared"};
@@ -219,6 +307,9 @@ Result<SelectionOutcome> execute_selection(Store &store,
         return outcome;
       }
     }
+    bool unavailable_formats = false;
+    snapshot = imported_replay(snapshot, clipboard.capabilities(),
+                               store.limits(), unavailable_formats);
     auto written = clipboard.write_snapshot(snapshot);
     if (!written)
       return written.error();
@@ -251,6 +342,9 @@ Result<SelectionOutcome> execute_selection(Store &store,
       else
         outcome.history_deleted = remove;
     }
+    if (unavailable_formats)
+      outcome.reason += "; some source-native formats unavailable on this OS; "
+                        "originals retained";
     return outcome;
   });
 }

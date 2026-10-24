@@ -226,6 +226,16 @@ Data read(sqlite3 *d, bool neutral) {
   auto cols = columns(d, "pasteboardHistories");
   bool v3 = cols.count("createdAt"), v4 = cols.count("ocrText");
   require(!v4 || v3, "Invalid Clipy schema progression");
+  std::string metadata_types = "SELECT 1 FROM pasteboardHistories WHERE "
+                               "typeof(deviceID) NOT IN('text','null')";
+  if (v3)
+    metadata_types += " OR typeof(createdAt)!='integer'";
+  if (v4)
+    metadata_types += " OR typeof(ocrText) NOT IN('text','null')";
+  metadata_types += " LIMIT 1";
+  Statement metadata_type(d, metadata_types.c_str());
+  require(!metadata_type.row(),
+          "Invalid history timestamp/nullable metadata type");
   for (auto item :
        {std::pair<const char *, const char *>{
             "pasteboardHistories",
@@ -428,7 +438,19 @@ Data read(sqlite3 *d, bool neutral) {
   out.digest = digest.finish();
   return out;
 }
-CanonicalKind kind(const std::string &t) {
+std::string replay_name(const std::string &t) {
+  static const std::map<std::string, std::string> aliases = {
+      {"NSStringPboardType", "public.utf8-plain-text"},
+      {"NSRTFPboardType", "public.rtf"},
+      {"NSRTFDPboardType", "com.apple.flat-rtfd"},
+      {"NSPDFPboardType", "com.adobe.pdf"},
+      {"NSURLPboardType", "public.url"},
+      {"NSTIFFPboardType", "public.tiff"}};
+  auto p = aliases.find(t);
+  return p == aliases.end() ? t : p->second;
+}
+CanonicalKind kind(const std::string &native) {
+  const auto t = replay_name(native);
   if (t == "public.utf8-plain-text")
     return CanonicalKind::Text;
   if (t == "public.rtf")
@@ -581,7 +603,10 @@ Result<ImportSummary> import_clipy(Store &store, const std::string &path,
             "KEY,settings_applied INTEGER NOT NULL); CREATE TABLE IF NOT "
             "EXISTS migration_originals(digest TEXT NOT NULL,category TEXT NOT "
             "NULL,id TEXT NOT NULL,field TEXT NOT NULL,data BLOB NOT "
-            "NULL,PRIMARY KEY(digest,category,id,field))");
+            "NULL,owner_history TEXT REFERENCES history(id) ON DELETE "
+            "CASCADE,owner_folder TEXT REFERENCES snippet_folders(id) ON "
+            "DELETE CASCADE,owner_snippet TEXT REFERENCES snippets(id) ON "
+            "DELETE CASCADE,PRIMARY KEY(digest,category,id,field))");
     {
       Statement q(
           d, "SELECT settings_applied FROM migration_receipts WHERE digest=?");
@@ -597,18 +622,36 @@ Result<ImportSummary> import_clipy(Store &store, const std::string &path,
       }
     }
     auto original = [&](const std::string &category, const std::string &id,
-                        const std::string &field, const Bytes &value) {
-      Statement q(d, "INSERT INTO migration_originals VALUES(?,?,?,?,?)");
+                        const std::string &field, const Bytes &value,
+                        const std::string &history = {},
+                        const std::string &folder = {},
+                        const std::string &snippet = {}) {
+      Statement q(d, "INSERT INTO migration_originals VALUES(?,?,?,?,?,?,?,?)");
       q.bind(1, data.digest);
       q.bind(2, category);
       q.bind(3, id);
       q.bind(4, field);
       q.bind(5, value);
+      if (history.empty())
+        q.null(6);
+      else
+        q.bind(6, history);
+      if (folder.empty())
+        q.null(7);
+      else
+        q.bind(7, folder);
+      if (snippet.empty())
+        q.null(8);
+      else
+        q.bind(8, snippet);
       q.done();
     };
     auto meta = [&](const std::string &c, const std::string &id,
-                    const std::string &f, const std::string &v) {
-      original(c, id, f, Bytes(v.begin(), v.end()));
+                    const std::string &f, const std::string &v,
+                    const std::string &history = {},
+                    const std::string &folder = {},
+                    const std::string &snippet = {}) {
+      original(c, id, f, Bytes(v.begin(), v.end()), history, folder, snippet);
     };
     std::uint64_t total = 0;
     {
@@ -623,12 +666,19 @@ Result<ImportSummary> import_clipy(Store &store, const std::string &path,
       digest.integer(1);
       digest.integer(h.parts.size());
       std::uint64_t size = 0;
+      std::vector<std::uint32_t> items;
+      std::map<std::string, std::uint32_t> occurrences;
+      for (auto &p : h.parts)
+        items.push_back(p.type == "NSFilenamesPboardType"
+                            ? RootPasteboardItem
+                            : occurrences[replay_name(p.type)]++);
+      std::size_t item_ordinal = 0;
       for (auto &p : h.parts) {
         size += p.bytes.size();
         require(p.bytes.size() <= store.limits().representation_bytes,
                 "Destination representation limit");
         std::string platform = "macos";
-        digest.integer(0);
+        digest.integer(items[item_ordinal++]);
         digest.field(platform.data(), platform.size());
         digest.field(p.type.data(), p.type.size());
         digest.integer(static_cast<unsigned>(kind(p.type)));
@@ -658,21 +708,21 @@ Result<ImportSummary> import_clipy(Store &store, const std::string &path,
       for (auto &p : h.parts) {
         Statement a(d, "INSERT INTO representations VALUES(?,?,?,?,?,?,?,0)");
         a.bind(1, h.id);
-        a.bind(2, ordinal++);
-        a.bind(3, std::int64_t(0));
+        a.bind(2, ordinal);
+        a.bind(3, std::int64_t(items[ordinal++]));
         a.bind(4, std::string("macos"));
         a.bind(5, p.type);
         a.bind(6, std::int64_t(kind(p.type)));
         a.bind(7, p.bytes);
         a.done();
-        meta("asset", p.id, "ordinal", std::to_string(p.index));
+        meta("asset", p.id, "ordinal", std::to_string(p.index), h.id);
       }
-      meta("history", h.id, "title", h.title);
-      meta("history", h.id, "pasteboardTypes", h.types);
+      meta("history", h.id, "title", h.title, h.id);
+      meta("history", h.id, "pasteboardTypes", h.types, h.id);
       if (!h.device_null)
-        meta("history", h.id, "deviceID", h.device);
+        meta("history", h.id, "deviceID", h.device, h.id);
       if (!h.thumbkind.empty())
-        original("history", h.id, "thumbnail:" + h.thumbkind, h.thumb);
+        original("history", h.id, "thumbnail:" + h.thumbkind, h.thumb, h.id);
     }
     std::int64_t offset = 0;
     {
@@ -694,7 +744,7 @@ Result<ImportSummary> import_clipy(Store &store, const std::string &path,
       s.bind(1, f.id);
       s.bind(2, f.enabled);
       s.done();
-      meta("folder", f.id, "index", std::to_string(f.index));
+      meta("folder", f.id, "index", std::to_string(f.index), {}, f.id);
     }
     {
       Statement q(d, "SELECT count(*) FROM snippets");
@@ -715,10 +765,18 @@ Result<ImportSummary> import_clipy(Store &store, const std::string &path,
       s.bind(1, n.id);
       s.bind(2, n.enabled);
       s.done();
-      meta("snippet", n.id, "index", std::to_string(n.index));
+      meta("snippet", n.id, "index", std::to_string(n.index), {}, {}, n.id);
     }
-    for (auto &s : data.settings)
-      original("settings", s.key, "raw", s.raw);
+    for (auto &s : data.settings) {
+      std::string owner;
+      if (s.key.rfind("legacy.archive.", 0) == 0) {
+        owner = s.key.substr(15);
+        require(std::any_of(data.history.begin(), data.history.end(),
+                            [&](const H &h) { return h.id == owner; }),
+                "Orphan legacy archive");
+      }
+      original("settings", s.key, "raw", s.raw, owner);
+    }
     if (options.apply_settings) {
       for (auto &p : settings.value().values) {
         Statement q(d, "INSERT OR REPLACE INTO settings VALUES(?,?)");
