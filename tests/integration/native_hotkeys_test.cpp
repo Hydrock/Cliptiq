@@ -36,6 +36,15 @@ int run() {
       ++events;
       selected = std::move(a);
     });
+#ifdef _WIN32
+    if (native.capability().status == CapabilityStatus::Unavailable) {
+      auto denied = native.acquire("main", take(parse_chord("Ctrl+Alt+Q")));
+      CHECK(!denied && denied.error().code == ErrorCode::Unsupported);
+      std::cout << "PASS noninteractive_station_denied; real Windows "
+                   "registration acceptance OPEN\n";
+      return 0;
+    }
+#endif
 #if !defined(_WIN32) && !defined(__APPLE__)
     if (getenv("WAYLAND_DISPLAY")) {
       auto result = native.acquire("main", take(parse_chord("Ctrl+Alt+Q")));

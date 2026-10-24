@@ -173,6 +173,25 @@ Result<void> NativeHotkeys::dispatch() {
   }
   if (!s.connection)
     return {};
+  // Refresh logical registrations proactively: an unchanged preference may
+  // resolve to a different native key after XKB remapping. Keep stable registry
+  // IDs.
+  std::vector<unsigned> changed;
+  for (const auto &p : s.entries)
+    if (p.second.chord.meaning == KeyMeaning::Logical &&
+        s.resolve(p.second.chord) != p.second.code)
+      changed.push_back(p.first);
+  for (auto id : changed) {
+    auto &old = s.entries.at(id);
+    auto replacement = acquire(old.action, old.chord);
+    if (!replacement)
+      return Error{replacement.error().code,
+                   "Keyboard remap could not be registered; choose a free "
+                   "shortcut in Settings: " +
+                       replacement.error().message};
+    std::swap(s.entries.at(id), s.entries.at(replacement.value()));
+    release(replacement.value());
+  }
   for (unsigned n = 0; n < 128; ++n) {
     auto event = xcb_poll_for_event(s.connection);
     if (!event)
@@ -189,8 +208,9 @@ Result<void> NativeHotkeys::dispatch() {
       if (e.code == key->detail && (key->state & ~ignored) == e.mods) {
         if (e.chord.meaning == KeyMeaning::Logical &&
             s.resolve(e.chord) != e.code)
-          return Error{ErrorCode::Busy, "Keyboard mapping changed; reopen "
-                                        "Settings and reapply shortcuts"};
+          return Error{
+              ErrorCode::Busy,
+              "Keyboard mapping changed during dispatch; retry action"};
         auto callback = s.callback;
         auto action = e.action;
         InvocationContext ctx;

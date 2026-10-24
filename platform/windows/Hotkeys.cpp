@@ -3,7 +3,38 @@
 #define NOMINMAX
 #include <atomic>
 #include <windows.h>
+#ifdef CLIPTIQ_HOTKEY_BOUNDARY_TEST
+#include "../../tests/fixtures/windows/HotkeyCalls.hpp"
+#endif
 namespace cliptiq {
+namespace {
+bool interactive_station() {
+#ifdef CLIPTIQ_HOTKEY_BOUNDARY_TEST
+  if (hotkey_test_calls.interactive)
+    return hotkey_test_calls.interactive();
+#endif
+  USEROBJECTFLAGS flags{};
+  DWORD needed = 0;
+  return GetUserObjectInformationW(GetProcessWindowStation(), UOI_FLAGS, &flags,
+                                   sizeof(flags), &needed) &&
+         (flags.dwFlags & WSF_VISIBLE);
+}
+BOOL register_key(HWND window, int id, UINT mods, UINT key) {
+#ifdef CLIPTIQ_HOTKEY_BOUNDARY_TEST
+  if (hotkey_test_calls.register_key)
+    return hotkey_test_calls.register_key(window, id, mods, key);
+#endif
+  return RegisterHotKey(window, id, mods, key);
+}
+BOOL unregister_key(HWND window, int id) {
+#ifdef CLIPTIQ_HOTKEY_BOUNDARY_TEST
+  if (hotkey_test_calls.unregister_key)
+    return hotkey_test_calls.unregister_key(window, id);
+#endif
+  return UnregisterHotKey(window, id);
+}
+} // namespace
+
 struct NativeHotkeys::State {
   DWORD owner = GetCurrentThreadId();
   HWND window = nullptr;
@@ -42,7 +73,7 @@ struct NativeHotkeys::State {
   }
   ~State() {
     for (auto &p : actions)
-      UnregisterHotKey(window, int(p.first));
+      unregister_key(window, int(p.first));
     if (window)
       DestroyWindow(window);
   }
@@ -52,18 +83,19 @@ NativeHotkeys::NativeHotkeys(
     : state_(std::make_unique<State>(std::move(cb))) {}
 NativeHotkeys::~NativeHotkeys() = default;
 Capability NativeHotkeys::capability() const {
-  return state_->window
+  return state_->window && interactive_station()
              ? Capability{CapabilityStatus::Limited,
                           "RegisterHotKey; conflicts retained, reserved OS "
                           "chords unavailable"}
              : Capability{CapabilityStatus::Unavailable,
-                          "Global hotkey dispatcher unavailable; use launcher"};
+                          "Global hotkeys require an interactive window "
+                          "station; use launcher"};
 }
 Result<unsigned> NativeHotkeys::acquire(const ActionId &a, const KeyChord &c) {
   auto &s = *state_;
   if (GetCurrentThreadId() != s.owner)
     return Error{ErrorCode::InvalidArgument, "Hotkeys require owner thread"};
-  if (!s.window)
+  if (!s.window || !interactive_station())
     return Error{ErrorCode::Unsupported, capability().reason};
   if (c.meaning != KeyMeaning::Logical)
     return Error{ErrorCode::Unsupported,
@@ -80,16 +112,18 @@ Result<unsigned> NativeHotkeys::acquire(const ActionId &a, const KeyChord &c) {
                   ((c.modifiers & Shift) ? MOD_SHIFT : 0) |
                   ((c.modifiers & Alt) ? MOD_ALT : 0) |
                   ((c.modifiers & Super) ? MOD_WIN : 0);
-  if (!RegisterHotKey(s.window, int(id), mods, key))
-    return Error{ErrorCode::Busy, "Windows shortcut is reserved or owned by "
-                                  "another app; previous binding retained (Win32 " + std::to_string(GetLastError()) + ")"};
+  if (!register_key(s.window, int(id), mods, key))
+    return Error{ErrorCode::Busy,
+                 "Windows shortcut is reserved or owned by "
+                 "another app; previous binding retained (Win32 " +
+                     std::to_string(GetLastError()) + ")"};
   s.actions[id] = a;
   return id;
 }
 void NativeHotkeys::release(unsigned id) {
   auto &s = *state_;
   if (s.actions.erase(id))
-    UnregisterHotKey(s.window, int(id));
+    unregister_key(s.window, int(id));
 }
 Result<void> NativeHotkeys::dispatch() {
   auto &s = *state_;

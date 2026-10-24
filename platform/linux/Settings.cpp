@@ -215,7 +215,8 @@ void NativeSettings::status(const std::string &value) {
 }
 bool NativeSettings::record_chord(const KeyChord &chord) {
   auto s = state_;
-  if (!s->window || !gtk_widget_get_visible(s->window))
+  if (!s->window || !gtk_widget_get_visible(s->window) ||
+      !gtk_window_is_active(GTK_WINDOW(s->window)))
     return false;
   auto focus = gtk_window_get_focus(GTK_WINDOW(s->window));
   for (auto &p : s->controls)

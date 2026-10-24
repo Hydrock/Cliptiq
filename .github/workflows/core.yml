@@ -18,6 +18,7 @@ on:
       - 'tests/integration/native_hotkeys_test.cpp'
       - 'tests/integration/linux_hotkey_portal_test.cpp'
       - 'tests/integration/windows_paste_boundary_test.cpp'
+      - 'tests/integration/windows_hotkey_boundary_test.cpp'
       - 'tests/integration/macos_paste_boundary_test.mm'
       - 'tests/integration/menu_paste_bridge_test.cpp'
       - 'tests/integration/menu_regression_test.cpp'

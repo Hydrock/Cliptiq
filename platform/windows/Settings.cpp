@@ -4,6 +4,7 @@
 // clang-format off
 #include <windows.h>
 #include <commctrl.h>
+#include <algorithm>
 // clang-format on
 namespace cliptiq {
 namespace {
@@ -41,14 +42,107 @@ struct NativeSettings::State : std::enable_shared_from_this<State> {
     bool boolean;
   };
   std::vector<Control> controls;
-  std::vector<HWND> pages[8];
+  struct Page {
+    HWND window = nullptr;
+    int height = 0, offset = 0;
+    void scroll(int position) {
+      RECT area{};
+      GetClientRect(window, &area);
+      int next =
+          std::clamp(position, 0, std::max(0, height - int(area.bottom)));
+      ScrollWindowEx(window, 0, offset - next, nullptr, nullptr, nullptr,
+                     nullptr, SW_SCROLLCHILDREN | SW_INVALIDATE | SW_ERASE);
+      offset = next;
+      SCROLLINFO info{sizeof(info), SIF_RANGE | SIF_PAGE | SIF_POS};
+      info.nMin = 0;
+      info.nMax = std::max(0, height - 1);
+      info.nPage = unsigned(area.bottom);
+      info.nPos = offset;
+      SetScrollInfo(window, SB_VERT, &info, TRUE);
+    }
+    static LRESULT CALLBACK proc(HWND w, UINT msg, WPARAM wp, LPARAM lp) {
+      auto p = reinterpret_cast<Page *>(GetWindowLongPtrW(w, GWLP_USERDATA));
+      if (msg == WM_NCCREATE) {
+        p = static_cast<Page *>(
+            reinterpret_cast<CREATESTRUCTW *>(lp)->lpCreateParams);
+        p->window = w;
+        SetWindowLongPtrW(w, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(p));
+      }
+      if (p) {
+        if (msg == WM_SIZE) {
+          p->scroll(p->offset);
+          return 0;
+        }
+        if (msg == WM_VSCROLL) {
+          SCROLLINFO info{sizeof(info), SIF_ALL};
+          GetScrollInfo(w, SB_VERT, &info);
+          int position = p->offset;
+          switch (LOWORD(wp)) {
+          case SB_TOP:
+            position = 0;
+            break;
+          case SB_BOTTOM:
+            position = p->height;
+            break;
+          case SB_LINEUP:
+            position -= 30;
+            break;
+          case SB_LINEDOWN:
+            position += 30;
+            break;
+          case SB_PAGEUP:
+            position -= int(info.nPage);
+            break;
+          case SB_PAGEDOWN:
+            position += int(info.nPage);
+            break;
+          case SB_THUMBTRACK:
+            position = info.nTrackPos;
+            break;
+          }
+          p->scroll(position);
+          return 0;
+        }
+        if (msg == WM_MOUSEWHEEL) {
+          p->scroll(p->offset - GET_WHEEL_DELTA_WPARAM(wp) * 90 / WHEEL_DELTA);
+          return 0;
+        }
+        if (msg == WM_COMMAND && HIWORD(wp) == EN_SETFOCUS && lp) {
+          RECT child{}, area{};
+          GetWindowRect(reinterpret_cast<HWND>(lp), &child);
+          MapWindowPoints(nullptr, w, reinterpret_cast<POINT *>(&child), 2);
+          GetClientRect(w, &area);
+          if (child.top < 0)
+            p->scroll(p->offset + child.top);
+          else if (child.bottom > area.bottom)
+            p->scroll(p->offset + child.bottom - area.bottom);
+        }
+      }
+      return DefWindowProcW(w, msg, wp, lp);
+    }
+  } pages[8];
+  HWND apply_button = nullptr;
+  void layout() {
+    RECT area{};
+    GetClientRect(window, &area);
+    int width = std::max(320, int(area.right)),
+        height = std::max(200, int(area.bottom));
+    MoveWindow(tabs, 8, 8, width - 16, height - 76, TRUE);
+    for (auto &p : pages)
+      if (p.window)
+        MoveWindow(p.window, 16, 38, width - 32, height - 114, TRUE);
+    if (message)
+      MoveWindow(message, 16, height - 60, width - 150, 48, TRUE);
+    if (apply_button)
+      MoveWindow(apply_button, width - 120, height - 52, 100, 30, TRUE);
+  }
   ~State() {
     if (window)
       DestroyWindow(window);
   }
   static LRESULT CALLBACK recorder(HWND w, UINT msg, WPARAM key, LPARAM lp,
                                    UINT_PTR, DWORD_PTR) {
-    if (msg == WM_KEYDOWN) {
+    if (msg == WM_KEYDOWN || msg == WM_SYSKEYDOWN) {
       unsigned mods =
           ((GetKeyState(VK_CONTROL) & 0x8000) ? 1u : 0u) |
           ((GetKeyState(VK_SHIFT) & 0x8000) ? 2u : 0u) |
@@ -73,7 +167,8 @@ struct NativeSettings::State : std::enable_shared_from_this<State> {
         }
       }
     }
-    if (msg == WM_CHAR && (GetKeyState(VK_CONTROL) & 0x8000))
+    if (msg == WM_SYSCHAR ||
+        (msg == WM_CHAR && (GetKeyState(VK_CONTROL) & 0x8000)))
       return 0;
     return DefSubclassProc(w, msg, key, lp);
   }
@@ -103,8 +198,7 @@ struct NativeSettings::State : std::enable_shared_from_this<State> {
   void page() {
     int selected = TabCtrl_GetCurSel(tabs);
     for (int p = 0; p < 8; ++p)
-      for (auto child : pages[p])
-        ShowWindow(child, p == selected ? SW_SHOW : SW_HIDE);
+      ShowWindow(pages[p].window, p == selected ? SW_SHOW : SW_HIDE);
   }
   static LRESULT CALLBACK proc(HWND w, UINT msg, WPARAM wp, LPARAM lp) {
     auto s = reinterpret_cast<State *>(GetWindowLongPtrW(w, GWLP_USERDATA));
@@ -114,6 +208,10 @@ struct NativeSettings::State : std::enable_shared_from_this<State> {
       SetWindowLongPtrW(w, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(s));
     }
     if (s) {
+      if (msg == WM_SIZE) {
+        s->layout();
+        return 0;
+      }
       if (msg == WM_COMMAND && LOWORD(wp) == 100) {
         s->save();
         return 0;
@@ -149,7 +247,7 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
   }
   s->controls.clear();
   for (auto &v : s->pages)
-    v.clear();
+    v = {};
   s->settings = std::move(settings);
   s->apply = std::move(callback);
   s->authorize = std::move(authorize);
@@ -162,6 +260,10 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
   wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
   wc.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1);
   RegisterClassW(&wc);
+  WNDCLASSW page_class = wc;
+  page_class.lpfnWndProc = State::Page::proc;
+  page_class.lpszClassName = L"Cliptiq.Settings.Page.v1";
+  RegisterClassW(&page_class);
   s->window =
       CreateWindowExW(0, wc.lpszClassName, L"Cliptiq Settings",
                       WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 920,
@@ -179,22 +281,28 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
     item.mask = TCIF_TEXT;
     item.pszText = const_cast<wchar_t *>(names[p]);
     TabCtrl_InsertItem(s->tabs, p, &item);
+    s->pages[p].window =
+        CreateWindowExW(WS_EX_CONTROLPARENT, page_class.lpszClassName, L"",
+                        WS_CHILD | WS_VSCROLL | WS_CLIPCHILDREN, 16, 38, 868,
+                        650, s->window, nullptr, wc.hInstance, &s->pages[p]);
+    if (!s->pages[p].window)
+      return Error{ErrorCode::Io, "Cannot create settings page"};
   }
   unsigned id = 1000;
   auto font = GetStockObject(DEFAULT_GUI_FONT);
   for (auto &f : settings_fields(s->settings, caps)) {
     unsigned p = unsigned(f.group);
-    int y = 44 + rows[p];
-    auto label =
-        CreateWindowExW(0, L"STATIC", wide(f.label).c_str(), WS_CHILD, 24, y,
-                        440, 23, s->window, nullptr, wc.hInstance, nullptr);
+    int y = 6 + rows[p];
+    auto label = CreateWindowExW(0, L"STATIC", wide(f.label).c_str(), WS_CHILD,
+                                 24, y, 440, 23, s->pages[p].window, nullptr,
+                                 wc.hInstance, nullptr);
     bool multi = f.key == "excluded";
     auto control = CreateWindowExW(
         f.boolean ? 0 : WS_EX_CLIENTEDGE, f.boolean ? L"BUTTON" : L"EDIT",
         f.boolean ? L"" : wide(f.value).c_str(),
         WS_CHILD | WS_TABSTOP | (f.boolean ? BS_AUTOCHECKBOX : ES_AUTOHSCROLL) |
             (multi ? (ES_MULTILINE | ES_AUTOVSCROLL | WS_VSCROLL) : 0),
-        470, y, 390, multi ? 76 : 25, s->window,
+        470, y, 390, multi ? 76 : 25, s->pages[p].window,
         reinterpret_cast<HMENU>(std::uintptr_t(id++)), wc.hInstance, nullptr);
     SendMessageW(label, WM_SETFONT, reinterpret_cast<WPARAM>(font), TRUE);
     SendMessageW(control, WM_SETFONT, reinterpret_cast<WPARAM>(font), TRUE);
@@ -203,34 +311,38 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
                    f.value == "1" ? BST_CHECKED : BST_UNCHECKED, 0);
     else
       SendMessageW(control, EM_SETLIMITTEXT, 65536, 0);
+    ShowWindow(label, SW_SHOW);
+    ShowWindow(control, SW_SHOW);
     EnableWindow(control, f.enabled);
     if (f.shortcut)
       SetWindowSubclass(control, State::recorder, 1, 0);
-    s->pages[p].push_back(label);
-    s->pages[p].push_back(control);
     s->controls.push_back({f.key, control, f.boolean});
     rows[p] += multi ? 84 : 30;
     if (!f.reason.empty()) {
-      auto reason = CreateWindowExW(0, L"STATIC", wide(f.reason).c_str(),
-                                    WS_CHILD, 24, 44 + rows[p], 840, 40,
-                                    s->window, nullptr, wc.hInstance, nullptr);
+      auto reason = CreateWindowExW(
+          0, L"STATIC", wide(f.reason).c_str(), WS_CHILD, 24, 6 + rows[p], 820,
+          40, s->pages[p].window, nullptr, wc.hInstance, nullptr);
       SendMessageW(reason, WM_SETFONT, reinterpret_cast<WPARAM>(font), TRUE);
-      s->pages[p].push_back(reason);
+
+      ShowWindow(reason, SW_SHOW);
       rows[p] += 42;
     }
   }
+  for (int p = 0; p < 8; ++p)
+    s->pages[p].height = rows[p] + 12;
   s->message =
       CreateWindowExW(0, L"STATIC",
                       L"Shortcut fields record chords; Backspace clears "
                       L"optional binding. Conflicts retain old settings.",
                       WS_CHILD | WS_VISIBLE, 16, 706, 730, 40, s->window,
                       nullptr, wc.hInstance, nullptr);
-  auto apply = CreateWindowExW(
+  auto apply = s->apply_button = CreateWindowExW(
       0, L"BUTTON", L"Apply",
       WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_DEFPUSHBUTTON, 780, 710, 100, 30,
       s->window, reinterpret_cast<HMENU>(100), wc.hInstance, nullptr);
   SendMessageW(apply, WM_SETFONT, reinterpret_cast<WPARAM>(font), TRUE);
   SendMessageW(s->message, WM_SETFONT, reinterpret_cast<WPARAM>(font), TRUE);
+  s->layout();
   s->page();
   ShowWindow(s->window, SW_SHOW);
   return {};

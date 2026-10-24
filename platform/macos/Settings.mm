@@ -270,7 +270,7 @@ void NativeSettings::status(const std::string &value) {
 }
 bool NativeSettings::record_chord(const KeyChord &chord) {
   auto s = state_;
-  if (!s->window.isVisible)
+  if (!s->window.isVisible || !s->window.isKeyWindow)
     return false;
   auto responder = s->window.firstResponder;
   NSTextField *field = nil;
