@@ -58,3 +58,5 @@ THE SOFTWARE.
 Icons are copyrighted by their respective authors.
 
 T14 optional macOS migration helper uses RealmSwift10.54.6 and RealmCore14.14.0 (Apache-2.0), pinned in tools/import-clipy/Package.resolved. Their complete license and upstream third-party notices are in tools/import-clipy/licenses/ and accompany the separate migration package. Realm is not linked or bundled into the main Cliptiq application. SDK analytics is explicitly disabled in the offline helper.
+
+T15 optional macOS updater uses Sparkle2.10.0 (permissive Sparkle license, including upstream notices in its LICENSE). The complete license accompanies the measured framework in Contents/Resources/Sparkle-LICENSE.txt. A narrowly scoped pinned source patch in packaging/updates/patch_sparkle.py enforces appcast/archive byte bounds in both downloader targets; installer and signature verification are unchanged. The source archive SHA256 and patched file SHA256 are recorded in each size report. Base builds contain no Sparkle/Firebase runtime.

@@ -15,11 +15,11 @@ sdk=out/'t15-sparkle-sdk';sdk.mkdir(exist_ok=True)
 # Pinned official SDK includes intentional framework symlinks; never unpack an
 # unverified user archive using this policy.
 with tarfile.open(archive) as t:t.extractall(sdk,filter='fully_trusted')
-framework=next(sdk.rglob('Sparkle.framework'));build=out/'core-Darwin-sparkle'
+build=out/'core-Darwin-sparkle'
 # Public RFC8032 fixture keys, never production identities, no Keychain access.
 key=out/'t15-fixture-key';wrong=out/'t15-fixture-wrong-key';payload=out/'t15-fixture-payload.bin'
-key.write_bytes(base64.b64encode(bytes.fromhex('9d61b19deffd5a60ba844af492ec2cc44449c5697b326919703bac031cae7f60d75a980182b10ab7d54bfed3c964073a0ee172f3daa62325af021a68f707511a')))
-wrong.write_bytes(base64.b64encode(bytes.fromhex('4ccd089b28ff96da9db6c346ec114e0f5b8a319f35aba624da8cf6ed4fb8a6fb3d4017c3e843895a92b70aa74d1b7ebc9c982ccf2ec4968cc0cd55f12af4660c')))
+key.write_bytes(base64.b64encode(bytes.fromhex('9d61b19deffd5a60ba844af492ec2cc44449c5697b326919703bac031cae7f60')))
+wrong.write_bytes(base64.b64encode(bytes.fromhex('4ccd089b28ff96da9db6c346ec114e0f5b8a319f35aba624da8cf6ed4fb8a6fb')))
 key.chmod(0o600);wrong.chmod(0o600);payload.write_bytes(b'Cliptiq synthetic update payload')
 sign=sdk/'bin/sign_update'
 signature=run([sign,'--ed-key-file',key,'-p',payload]).strip()
@@ -32,6 +32,37 @@ r=subprocess.run([str(sign),'--ed-key-file',str(key),'--verify',str(payload),sig
 assert r.returncode!=0,'SDK accepted tampered bytes'
 log.write('Sparkle real Ed25519 verifier: correct/wrong identity, missing/malformed signature, tampered payload passed\n');log.flush()
 key.unlink();wrong.unlink();payload.unlink()
+# Build the exact source snapshot with byte enforcement in BOTH downloader lanes.
+source_archive=out/'t15-Sparkle-source.tar.gz'
+urllib.request.urlretrieve('https://codeload.github.com/sparkle-project/Sparkle/tar.gz/refs/tags/2.10.0',source_archive)
+source_digest='cf43af1f26a921a8dc0be80834b9c3038bea5fd645708d26375126cbc57c316b'
+assert hashlib.sha256(source_archive.read_bytes()).hexdigest()==source_digest
+source_parent=out/'t15-sparkle-source';source_parent.mkdir(exist_ok=True)
+with tarfile.open(source_archive) as t:t.extractall(source_parent,filter='data')
+source=source_parent/'Sparkle-2.10.0'
+fixture=out/'t15-downloader-fixture';fixture.mkdir(exist_ok=True)
+def bounds_fixture(red=False):
+ original=(source/'Downloader/SPUDownloader.m').read_text()
+ original=original.replace('[NSURLSessionConfiguration defaultSessionConfiguration]','CliptiqFixtureConfiguration()')
+ original=original.replace('[NSURLSessionConfiguration ephemeralSessionConfiguration]','CliptiqFixtureConfiguration()')
+ (fixture/'SPUDownloaderFixture.inc').write_text(original)
+ exe=fixture/'bounds-test'
+ run(['clang','-x','objective-c','-fobjc-arc','-DBUILDING_SPARKLE_SOURCES_EXTERNALLY=1','-DSPU_OBJC_DIRECT=','-DSPU_OBJC_DIRECT_MEMBERS=', '-I'+str(source/'Sparkle'),'-I'+str(source/'Downloader'),'-I'+str(fixture),root/'tests/integration/sparkle_bounds.m',source/'Sparkle/SPUDownloadData.m','-framework','Foundation','-o',exe])
+ if red:
+  r=subprocess.run([str(exe),'--red'],capture_output=True,text=True)
+  assert r.returncode==1,'Unpatched SDK unexpectedly enforces bounds; review test'
+  log.write('RED unpatched SDK: '+r.stderr);log.flush()
+ else:run([exe])
+bounds_fixture(red=True)
+import importlib.util
+spec=importlib.util.spec_from_file_location('bounds_patch',root/'packaging/updates/patch_sparkle.py');patch=importlib.util.module_from_spec(spec);spec.loader.exec_module(patch)
+patched_digest=patch.patch(source)
+bounds_fixture()
+derived=out/'t15-sparkle-derived'
+run(['xcodebuild','-project',source/'Sparkle.xcodeproj','-scheme','Sparkle','-configuration','Release','-derivedDataPath',derived,'-arch',platform.machine(),'CODE_SIGNING_ALLOWED=NO','CODE_SIGN_IDENTITY=','DEVELOPMENT_TEAM=','build'])
+framework=derived/'Build/Products/Release/Sparkle.framework'
+assert framework.exists()
+(framework/'.cliptiq-byte-bounds').write_text(source_digest+'\n'+patched_digest+'\n')
 run(['cmake','-S',root,'-B',build,'-G','Ninja','-DCMAKE_BUILD_TYPE=MinSizeRel','-DBUILD_TESTING=ON',f'-DCLIPTIQ_SPARKLE_FRAMEWORK={framework}'])
 run(['cmake','--build',build,'--target','cliptiq_app','update_test','update_native_test','--parallel','3'])
 run(['ctest','--test-dir',build,'-R','^update','--output-on-failure'])
@@ -56,6 +87,6 @@ try:run([app/'Contents/MacOS/Cliptiq','--about'])
 finally:hidden.rename(framework)
 packed=out/'t15-sparkle-app.zip';run(['ditto','-c','-k','--keepParent',app,packed])
 files={p.relative_to(app).as_posix():{'bytes':p.stat().st_size,'sha256':hashlib.sha256(p.read_bytes()).hexdigest()} for p in sorted(app.rglob('*')) if p.is_file() and not p.is_symlink()}
-report={'source_commit':run(['git','rev-parse','HEAD']).strip(),'source_dirty':bool(run(['git','status','--porcelain']).strip()),'arch':arch,'sparkle_version':'2.10.0','sdk_sha256':digest,'app_owned_bytes':sum(v['bytes'] for v in files.values()),'zip_bytes':packed.stat().st_size,'files':files,'relocation':'passed, build-tree SDK unavailable','signing':'ad hoc only; no Developer ID/notarization/production feed identity','scope':'actual app bundle plus complete Sparkle helpers/resources/license; no installer/system frameworks; no production update was installed'}
+report={'source_commit':run(['git','rev-parse','HEAD']).strip(),'source_dirty':bool(run(['git','status','--porcelain']).strip()),'arch':arch,'sparkle_version':'2.10.0','sdk_sha256':digest,'source_archive_sha256':source_digest,'patched_downloader_sha256':patched_digest,'actual_byte_bounds':'native downloader RED unpatched, GREEN source-built;128KiB appcast/5MiB archive','app_owned_bytes':sum(v['bytes'] for v in files.values()),'zip_bytes':packed.stat().st_size,'files':files,'relocation':'passed, build-tree SDK unavailable','signing':'ad hoc only; no Developer ID/notarization/production feed identity','scope':'actual app bundle plus complete Sparkle helpers/resources/license; no installer/system frameworks; no production update was installed'}
 (out/'t15-sparkle-report.json').write_text(json.dumps(report,indent=2)+'\n')
 print(json.dumps({k:v for k,v in report.items() if k!='files'},indent=2))
