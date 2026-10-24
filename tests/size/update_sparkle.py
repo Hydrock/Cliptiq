@@ -4,7 +4,10 @@ import subprocess,urllib.request,hashlib,tarfile,shutil,json,platform,base64
 root=Path(__file__).resolve().parents[2];out=root/'out';out.mkdir(exist_ok=True)
 log=(out/'t15-sparkle-test.log').open('w')
 def run(args):
- args=list(map(str,args));r=subprocess.run(args,cwd=root,text=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT);log.write('$ '+' '.join(args)+'\n'+r.stdout);log.flush()
+ args=list(map(str,args));r=subprocess.run(args,cwd=root,text=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
+ text=r.stdout
+ if len(text)>65536:text=text[:4096]+'\n[verbose build output elided; SHA256='+hashlib.sha256(r.stdout.encode()).hexdigest()+']\n'+text[-32768:]
+ log.write('$ '+' '.join(args)+'\n'+text);log.flush()
  if r.returncode:raise RuntimeError(r.stdout[-5000:])
  return r.stdout
 archive=out/'t15-Sparkle.tar.xz'
