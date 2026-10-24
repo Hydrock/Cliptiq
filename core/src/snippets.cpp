@@ -291,7 +291,12 @@ Result<void> save_folder(Store &store, const Folder &folder) {
     Transaction tx(db);
     check_version(db, true, folder.id, folder.revision);
     auto order = ids(db);
-    place(order, folder.id, folder.index);
+    Statement previous_position(
+        db, "SELECT position FROM snippet_folders WHERE id=?");
+    previous_position.bind(1, folder.id);
+    previous_position.row();
+    if (folder.index != std::size_t(previous_position.number(0)))
+      place(order, folder.id, folder.index);
     Statement q(db, "UPDATE snippet_folders SET title=? WHERE id=?");
     q.bind(1, folder.title);
     q.bind(2, folder.id);
@@ -325,13 +330,17 @@ Result<SnippetId> save_snippet(Store &store, const Snippet &s) {
       check_version(db, false, id, s.revision);
     auto destination = ids(db, &s.folder_id);
     FolderId previous;
+    bool unchanged_position = false;
     if (!s.id.empty()) {
-      Statement old(db, "SELECT folder_id FROM snippets WHERE id=?");
+      Statement old(db, "SELECT folder_id,position FROM snippets WHERE id=?");
       old.bind(1, id);
       old.row();
       previous = old.text(0);
+      unchanged_position =
+          previous == s.folder_id && s.index == std::size_t(old.number(1));
     }
-    place(destination, id, s.index);
+    if (!unchanged_position)
+      place(destination, id, s.index);
     Statement q(
         db, s.id.empty()
                 ? "INSERT INTO snippets(id,folder_id,title,content,position) "

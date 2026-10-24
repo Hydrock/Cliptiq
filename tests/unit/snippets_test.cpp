@@ -138,5 +138,23 @@ int main() {
     }
     std::filesystem::remove(path);
   });
+  test("legacy_sparse_positions_allow_content_edits_and_repair_order", [] {
+    auto db = take(open_store(":memory:"));
+    auto f = take(create_folder(db, "F"));
+    auto id = take(save_snippet(db, make(f, "body")));
+    sql(db, "UPDATE snippet_folders SET position=99;UPDATE snippets SET "
+            "position=99");
+    auto snippet = take(get_snippet(db, id));
+    snippet.content = "changed";
+    auto edited = save_snippet(db, snippet);
+    auto folder = take(list_folders(db))[0];
+    folder.title = "renamed";
+    auto renamed = save_folder(db, folder);
+    std::cout << "legacy snippet edit=" << bool(edited)
+              << " folder rename=" << bool(renamed) << '\n';
+    CHECK(edited && renamed);
+    CHECK(take(get_snippet(db, id)).index == 0 &&
+          take(list_folders(db))[0].index == 0);
+  });
   return fails ? 1 : 0;
 }
