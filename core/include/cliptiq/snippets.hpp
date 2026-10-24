@@ -8,6 +8,7 @@ struct SnippetItemId {
   SnippetItemKind kind;
   std::string value;
 };
+struct SnippetItemVersion { SnippetItemId item; std::uint64_t revision; };
 struct Folder {
   FolderId id;
   std::string title;
@@ -34,8 +35,8 @@ Result<FolderId> create_folder(Store &, const std::string &title);
 Result<void> save_folder(Store &, const Folder &);
 Result<SnippetId> save_snippet(Store &, const Snippet &);
 Result<void> move_snippet(Store &, const SnippetId &, const FolderId &,
-                          std::size_t index);
-Result<void> reorder_folders(Store &, const std::vector<FolderId> &);
+                          std::size_t index, std::optional<std::uint64_t> expected_revision = {});
+Result<void> reorder_folders(Store &, const std::vector<FolderId> &, std::optional<SnippetItemVersion> expected = {});
 Result<void> set_enabled(Store &, const SnippetItemId &, bool);
 Result<void> erase_snippet_item(Store &, const SnippetItemId &);
 } // namespace cliptiq

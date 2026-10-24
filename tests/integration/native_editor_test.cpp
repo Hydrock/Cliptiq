@@ -208,6 +208,29 @@ int run() {
     CHECK(session->finish_drag(drag, other, 0, true));
     CHECK(take(get_snippet(store, id)).folder_id == other);
     CHECK(changes >= 5);
+    CHECK(ui.show(session));
+    auto external = take(get_snippet(store, id)); external.content = "external";
+    CHECK(save_snippet(store, external));
+#ifdef _WIN32
+    window = reinterpret_cast<HWND>(ui.native_handle());
+    body = GetDlgItem(window, 504);
+    CHECK(SetWindowTextW(body, L"unsaved draft"));
+    SendMessageW(window, WM_COMMAND, MAKEWPARAM(504, EN_CHANGE), reinterpret_cast<LPARAM>(body));
+#elif defined(__APPLE__)
+    window = (__bridge NSWindow *)(void *)ui.native_handle();
+    body = (NSTextView *)find(window.contentView, @"editor-content");
+    body.string = @"unsaved draft";
+    [body.delegate textDidChange:[NSNotification notificationWithName:NSTextDidChangeNotification object:body]];
+#else
+    window = reinterpret_cast<GtkWidget *>(ui.native_handle());
+    body = find(window, "editor-content");
+    gtk_text_buffer_set_text(gtk_text_view_get_buffer(GTK_TEXT_VIEW(body)), "unsaved draft", -1);
+#endif
+    CHECK(session->has_unsaved());
+    auto handle = ui.native_handle();
+    CHECK(!ui.show(session));
+    CHECK(ui.native_handle() == handle && take(get_snippet(store,id)).content == "external");
+    CHECK(session->reload());
     std::cout << "PASS "
                  "native_editor_autosave_unicode_undo_enabled_menu_folder_"
                  "binding_conflict_and_drag_contract\n";

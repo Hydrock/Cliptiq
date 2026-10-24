@@ -32,6 +32,7 @@ public:
   Result<void> edit_content(const std::string &);
   Result<void> enable(bool);
   Result<void> erase_selected(bool confirmed);
+  bool has_unsaved() const;
   bool can_undo() const;
   bool can_redo() const;
   Result<void> undo();

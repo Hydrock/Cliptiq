@@ -362,12 +362,13 @@ Result<SnippetId> save_snippet(Store &store, const Snippet &s) {
   });
 }
 Result<void> move_snippet(Store &store, const SnippetId &id,
-                          const FolderId &folder, std::size_t index) {
+                          const FolderId &folder, std::size_t index, std::optional<std::uint64_t> expected_revision) {
   return detail::guarded<void>([&]() -> Result<void> {
     id_valid(id);
     auto db = store.connection();
     Transaction tx(db);
     require_folder(db, folder);
+    if (expected_revision) check_version(db, false, id, *expected_revision);
     Statement old(db, "SELECT folder_id FROM snippets WHERE id=?");
     old.bind(1, id);
     if (!old.row())
@@ -392,10 +393,14 @@ Result<void> move_snippet(Store &store, const SnippetId &id,
     return {};
   });
 }
-Result<void> reorder_folders(Store &store, const std::vector<FolderId> &order) {
+Result<void> reorder_folders(Store &store, const std::vector<FolderId> &order, std::optional<SnippetItemVersion> expected) {
   return detail::guarded<void>([&]() -> Result<void> {
     auto db = store.connection();
     Transaction tx(db);
+    if (expected) {
+      if (expected->item.kind != SnippetItemKind::Folder) invalid("Folder reorder guard kind");
+      check_version(db, true, expected->item.value, expected->revision);
+    }
     auto current = ids(db);
     std::set<std::string> a(current.begin(), current.end()),
         b(order.begin(), order.end());
