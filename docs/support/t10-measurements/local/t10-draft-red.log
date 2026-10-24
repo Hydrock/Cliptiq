@@ -1,0 +1,48 @@
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+    Start 1: editor_native_x11
+1/2 Test #1: editor_native_x11 ................***Failed    0.63 sec
+dbus-daemon[53806]: [session uid=1000 pid=53806] Activating service name='org.a11y.Bus' requested by ':1.0' (uid=1000 pid=53821 comm="/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard" label="kernel")
+dbus-daemon[53806]: [session uid=1000 pid=53806] Successfully activated service 'org.a11y.Bus'
+dbus-daemon[53806]: [session uid=1000 pid=53806] Activating service name='org.gtk.vfs.Daemon' requested by ':1.2' (uid=1000 pid=53821 comm="/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard" label="kernel")
+dbus-daemon[53806]: [session uid=1000 pid=53806] Successfully activated service 'org.gtk.vfs.Daemon'
+FAIL native_editor: !ui.show(session)
+A connection to the bus can't be made
+
+    Start 2: editor_native_wayland
+2/2 Test #2: editor_native_wayland ............***Failed    0.26 sec
+dbus-daemon[53850]: [session uid=1000 pid=53850] Activating service name='org.a11y.Bus' requested by ':1.1' (uid=1000 pid=53856 comm="/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard" label="kernel")
+dbus-daemon[53850]: [session uid=1000 pid=53850] Successfully activated service 'org.a11y.Bus'
+dbus-daemon[53850]: [session uid=1000 pid=53850] Activating service name='org.gtk.vfs.Daemon' requested by ':1.0' (uid=1000 pid=53856 comm="/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard" label="kernel")
+dbus-daemon[53850]: [session uid=1000 pid=53850] Successfully activated service 'org.gtk.vfs.Daemon'
+FAIL native_editor: !ui.show(session)
+00:00:00.009 [DEBUG] [wlr] [types/output/swapchain.c:27] Choosing primary buffer format XR24 (0x34325258) for output 'HEADLESS-1'
+00:00:00.009 [DEBUG] [wlr] [types/output/swapchain.c:96] Testing swapchain for output 'HEADLESS-1'
+00:00:00.009 [DEBUG] [wlr] [render/swapchain.c:106] Allocating new swapchain buffer
+00:00:00.009 [DEBUG] [wlr] [render/pixman/renderer.c:152] Created pixman buffer 800x600
+00:00:00.009 [DEBUG] [wlr] [types/output/cursor.c:458] Falling back to software cursor on output 'HEADLESS-1'
+00:00:00.009 [DEBUG] [sway/tree/workspace.c:277] Workspace: Generating new workspace name for output HEADLESS-1
+00:00:00.009 [DEBUG] [sway/tree/output.c:127] Creating default workspace 1
+00:00:00.009 [DEBUG] [sway/tree/workspace.c:65] Adding workspace 1 for output HEADLESS-1
+00:00:00.024 [DEBUG] [wlr] [xcursor/wlr_xcursor.c:225] Loaded cursor theme 'default' at size 24 (59 available cursors)
+00:00:00.024 [DEBUG] [sway/desktop/layer_shell.c:229] Usable area changed, rearranging output
+00:00:00.024 [DEBUG] [sway/tree/arrange.c:263] Usable area for ws: 800x600@0,0
+00:00:00.024 [DEBUG] [sway/tree/arrange.c:297] Arranging workspace '1' at 0.000000, 0.000000
+00:00:00.024 [DEBUG] [sway/tree/arrange.c:263] Usable area for ws: 800x600@0,0
+00:00:00.024 [DEBUG] [sway/tree/arrange.c:297] Arranging workspace '1' at 0.000000, 0.000000
+00:00:00.024 [DEBUG] [sway/desktop/transaction.c:398] Transaction 0x5eb51db81230 committing with 2 instructions
+00:00:00.024 [DEBUG] [sway/desktop/transaction.c:294] Applying transaction 0x5eb51db81230
+00:00:00.024 [INFO] [wlr] [backend/headless/backend.c:17] Starting headless backend
+00:00:00.024 [INFO] [sway/server.c:396] Running compositor on wayland display 'wayland-1'
+00:00:00.050 [DEBUG] [wlr] [types/wlr_compositor.c:692] New wlr_surface 0x5eb51dbc2d30 (res 0x5eb51db83ea0)
+00:00:00.050 [DEBUG] [wlr] [types/wlr_compositor.c:692] New wlr_surface 0x5eb51dbc3180 (res 0x5eb51db84200)
+A connection to the bus can't be made
+
+
+0% tests passed, 2 tests failed out of 2
+
+Total Test time (real) =   0.92 sec
+
+The following tests FAILED:
+	  1 - editor_native_x11 (Failed)
+	  2 - editor_native_wayland (Failed)
+Errors while running CTest

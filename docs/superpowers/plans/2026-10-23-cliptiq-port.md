@@ -205,11 +205,15 @@ Capture contract: сохранять все разрешённые representatio
 
 **Interfaces:** `list_folders(Store&)->Result<vector<Folder>>`; `create_folder(Store&, string)->Result<FolderId>`; `save_snippet(Store&, Snippet)->Result<SnippetId>`; `move_snippet(Store&, SnippetId, FolderId, size_t index)->Result<void>`; `reorder_folders(Store&, vector<FolderId>)->Result<void>`; `set_enabled(Store&, ItemId,bool)->Result<void>`; `erase_snippet_item(Store&, ItemId)->Result<void>`. Folder/Snippet contain id/title/index/enabled; Snippet folder_id/content.
 
-- [ ] Failing tests: CRUD, Unicode/multiline, disabled flags, inter-folder move, duplicate index repair transaction, folder delete cascades snippets/hotkey cleanup.
-- [ ] `ctest --preset test -R snippets --output-on-failure`, затем repository/native editor. Не добавлять nesting/tag/templating, которых нет у Clipy.
-- [ ] Implement native DnD, focus/undo-per-snippet, delete confirm, folder shortcut recorder. Содержимое plain text, не HTML editor.
-- [ ] Restart persistence, cancelled drag, empty folder, keyboard editing, enable toggles; same tests на каждой оболочке.
-- [ ] Commit `feat: add folders and native snippet editors`.
+- [x] Failing tests: CRUD, Unicode/multiline, disabled flags, inter-folder move, duplicate index repair transaction, folder delete cascades snippets/hotkey cleanup.
+- [x] `ctest --preset test -R snippets --output-on-failure`, затем repository/native editor. Не добавлять nesting/tag/templating, которых нет у Clipy.
+- [x] Implement native DnD, focus/undo-per-snippet, delete confirm, folder shortcut recorder. Содержимое plain text, не HTML editor.
+- [x] Restart persistence, cancelled drag, empty folder, keyboard editing, enable toggles; same tests на каждой оболочке.
+- [x] Commit `feat: add folders and native snippet editors`.
+
+Автоматическая часть: source `879cc511c3b6f51baeb31c71d5e629634ce1ff7d`, [CI40061508988](https://github.com/Hydrock/Cliptiq/actions/runs/40061508988) —7/7. [Результаты](../../support/t10-results.md).
+
+- [ ] T10 physical native drag, desktop focus/activation/permissions/portal consent, keyboard/accessibility/DPI/clean-VM manual acceptance. T04–T09 manual OPEN. Background title/body autosave; discrete commands synchronous/no-wait, not filesystem-I/O-free. T11 не начат.
 
 ### T11. XML совместимость Clipy
 

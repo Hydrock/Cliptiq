@@ -1,0 +1,65 @@
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Failed
+-- Looking for pthread_create in pthreads
+-- Looking for pthread_create in pthreads - not found
+-- Looking for pthread_create in pthread
+-- Looking for pthread_create in pthread - not found
+-- Found Threads: TRUE
+-- Configuring done (1.9s)
+-- Generating done (0.2s)
+-- Build files have been written to: C:/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Windows-test
+[1/30] Building CXX object CMakeFiles\snippet_integration_test.dir\tests\integration\snippet_integration_test.cpp.obj
+[2/30] Building CXX object CMakeFiles\cliptiq_core.dir\core\src\snippets.cpp.obj
+[3/30] Building CXX object CMakeFiles\editor_test.dir\tests\unit\editor_test.cpp.obj
+[4/30] Building CXX object CMakeFiles\cliptiq_editor_native.dir\platform\windows\SnippetEditor.cpp.obj
+[5/30] Building CXX object CMakeFiles\snippets_test.dir\tests\unit\snippets_test.cpp.obj
+[6/30] Building CXX object CMakeFiles\native_editor_test.dir\tests\integration\native_editor_test.cpp.obj
+[7/30] Building CXX object CMakeFiles\cliptiq_menu_host.dir\platform\MenuHost.cpp.obj
+[8/30] Building CXX object CMakeFiles\cliptiq_core.dir\core\src\editor.cpp.obj
+[9/30] Linking CXX static library cliptiq_core.lib
+[10/30] Linking CXX static library cliptiq_editor_native.lib
+[11/30] Linking CXX executable native_hotkeys_test.exe
+[12/30] Linking CXX executable native_paste_test.exe
+[13/30] Linking CXX executable windows_hotkey_boundary_test.exe
+[14/30] Linking CXX executable hotkeys_test.exe
+[15/30] Linking CXX executable native_menu_test.exe
+[16/30] Linking CXX executable editor_test.exe
+[17/30] Linking CXX executable snippet_integration_test.exe
+[18/30] Linking CXX executable menu_regression_test.exe
+[19/30] Linking CXX executable menu_preview_test.exe
+[20/30] Linking CXX executable snippets_test.exe
+[21/30] Linking CXX executable native_settings_test.exe
+[22/30] Linking CXX executable settings_test.exe
+[23/30] Linking CXX executable paste_test.exe
+[24/30] Linking CXX executable paste_boundary_test.exe
+[25/30] Linking CXX executable menu_test.exe
+[26/30] Linking CXX executable policy_test.exe
+[27/30] Linking CXX executable history_test.exe
+[28/30] Linking CXX executable windows_clipboard_test.exe
+[29/30] Linking CXX executable native_editor_test.exe
+[30/30] Linking CXX executable cliptiq_menu_host.exe
+Test project C:/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Windows-test
+      Start  2: snippets_menu_hotkeys
+ 1/10 Test  #2: snippets_menu_hotkeys ............   Passed    0.68 sec
+      Start  3: editor
+ 2/10 Test  #3: editor ...........................   Passed    0.89 sec
+      Start  4: snippets
+ 3/10 Test  #4: snippets .........................   Passed    0.68 sec
+      Start  8: settings
+ 4/10 Test  #8: settings .........................   Passed    0.60 sec
+      Start  9: hotkeys
+ 5/10 Test  #9: hotkeys ..........................   Passed    0.15 sec
+      Start 11: paste_native_boundary
+ 6/10 Test #11: paste_native_boundary ............   Passed    0.58 sec
+      Start 12: paste
+ 7/10 Test #12: paste ............................   Passed    0.64 sec
+      Start 13: menu_unicode_conformance
+ 8/10 Test #13: menu_unicode_conformance .........   Passed    0.02 sec
+      Start 18: menu_preview
+ 9/10 Test #18: menu_preview .....................   Passed    0.12 sec
+      Start 19: menu
+10/10 Test #19: menu .............................   Passed    0.81 sec
+
+100% tests passed, 0 tests failed out of 10
+
+Total Test time (real) =   9.66 sec

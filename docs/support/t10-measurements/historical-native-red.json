@@ -1,0 +1,29 @@
+{
+  "120768555222": {
+    "url": "https://github.com/Hydrock/Cliptiq/actions/runs/40059113529/job/120768555222",
+    "failure_lines": [
+      "2026-10-24T03:39:15.3706410Z  1/24 Test  #1: editor_native ....................***Failed    0.16 sec",
+      "2026-10-24T03:39:15.3706924Z FAIL native_editor: !ui.show(session)",
+      "2026-10-24T03:39:19.1388511Z 96% tests passed, 1 tests failed out of 24",
+      "2026-10-24T03:39:19.1389796Z The following tests FAILED:"
+    ]
+  },
+  "120768555329": {
+    "url": "https://github.com/Hydrock/Cliptiq/actions/runs/40059113529/job/120768555329",
+    "failure_lines": [
+      "2026-10-24T03:38:59.1847020Z  1/21 Test  #1: editor_native ....................***Failed    1.28 sec",
+      "2026-10-24T03:38:59.1929010Z FAIL native_editor: !ui.show(session)",
+      "2026-10-24T03:39:11.1080490Z 95% tests passed, 1 tests failed out of 21",
+      "2026-10-24T03:39:11.1081220Z The following tests FAILED:"
+    ]
+  },
+  "120771593368": {
+    "url": "https://github.com/Hydrock/Cliptiq/actions/runs/40060120818/job/120771593368",
+    "failure_lines": [
+      "2026-10-24T03:54:07.9405544Z  1/24 Test  #1: editor_native ....................***Failed    0.14 sec",
+      "2026-10-24T03:54:07.9406192Z FAIL native_editor: !take(get_snippet(store, id)).enabled",
+      "2026-10-24T03:54:11.4893221Z 96% tests passed, 1 tests failed out of 24",
+      "2026-10-24T03:54:11.4894254Z The following tests FAILED:"
+    ]
+  }
+}

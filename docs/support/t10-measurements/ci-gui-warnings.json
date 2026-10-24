@@ -1,0 +1,62 @@
+{
+  "120775823900": {
+    "url": "https://github.com/Hydrock/Cliptiq/actions/runs/40061508988/job/120775823900",
+    "observed_lines": [
+      "2026-10-24T04:13:56.6748793Z   gir1.2-gdkpixbuf-2.0 gir1.2-glib-2.0 gir1.2-glib-2.0-dev gir1.2-gtk-3.0",
+      "2026-10-24T04:13:56.6756586Z   libfribidi-dev libgdk-pixbuf-2.0-dev libgdk-pixbuf2.0-bin",
+      "2026-10-24T04:13:56.7125717Z   gir1.2-gdkpixbuf-2.0 gir1.2-glib-2.0-dev gir1.2-gtk-3.0 gir1.2-harfbuzz-0.0",
+      "2026-10-24T04:13:56.7130296Z   libfontconfig-dev libfreetype-dev libfribidi-dev libgdk-pixbuf-2.0-dev",
+      "2026-10-24T04:13:56.7131236Z   libgdk-pixbuf2.0-bin libgirepository-2.0-0 libgl-dev libgles-dev libgles1",
+      "2026-10-24T04:13:59.5825327Z Get:12 https://archive.ubuntu.com/ubuntu noble-updates/main amd64 gir1.2-gdkpixbuf-2.0 amd64 2.42.10+dfsg-3ubuntu3.3 [9482 B]",
+      "2026-10-24T04:14:07.4878388Z Get:74 https://archive.ubuntu.com/ubuntu noble-updates/main amd64 libgdk-pixbuf2.0-bin amd64 2.42.10+dfsg-3ubuntu3.3 [13.9 kB]",
+      "2026-10-24T04:14:09.0524963Z Get:86 https://archive.ubuntu.com/ubuntu noble-updates/main amd64 libgdk-pixbuf-2.0-dev amd64 2.42.10+dfsg-3ubuntu3.3 [47.9 kB]",
+      "2026-10-24T04:14:18.3130731Z Selecting previously unselected package gir1.2-gdkpixbuf-2.0:amd64.",
+      "2026-10-24T04:14:18.3259462Z Preparing to unpack .../010-gir1.2-gdkpixbuf-2.0_2.42.10+dfsg-3ubuntu3.3_amd64.deb ...",
+      "2026-10-24T04:14:18.3268302Z Unpacking gir1.2-gdkpixbuf-2.0:amd64 (2.42.10+dfsg-3ubuntu3.3) ...",
+      "2026-10-24T04:14:20.6364312Z Selecting previously unselected package libgdk-pixbuf2.0-bin.",
+      "2026-10-24T04:14:20.6487083Z Preparing to unpack .../072-libgdk-pixbuf2.0-bin_2.42.10+dfsg-3ubuntu3.3_amd64.deb ...",
+      "2026-10-24T04:14:20.6493429Z Unpacking libgdk-pixbuf2.0-bin (2.42.10+dfsg-3ubuntu3.3) ...",
+      "2026-10-24T04:14:21.0940385Z Selecting previously unselected package libgdk-pixbuf-2.0-dev:amd64.",
+      "2026-10-24T04:14:21.1070430Z Preparing to unpack .../084-libgdk-pixbuf-2.0-dev_2.42.10+dfsg-3ubuntu3.3_amd64.deb ...",
+      "2026-10-24T04:14:21.1077560Z Unpacking libgdk-pixbuf-2.0-dev:amd64 (2.42.10+dfsg-3ubuntu3.3) ...",
+      "2026-10-24T04:14:23.0983868Z Setting up libgdk-pixbuf2.0-bin (2.42.10+dfsg-3ubuntu3.3) ...",
+      "2026-10-24T04:14:23.2766133Z Setting up gir1.2-gdkpixbuf-2.0:amd64 (2.42.10+dfsg-3ubuntu3.3) ...",
+      "2026-10-24T04:14:23.3663097Z Setting up libgdk-pixbuf-2.0-dev:amd64 (2.42.10+dfsg-3ubuntu3.3) ...",
+      "2026-10-24T04:15:55.9560981Z (menu_native_probe:6854): dbind-WARNING **: 04:15:55.955: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files",
+      "2026-10-24T04:15:56.1367837Z (menu_native_probe:6871): dbind-WARNING **: 04:15:56.136: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files",
+      "2026-10-24T04:15:56.4530673Z (paste_native_probe:6904): dbind-WARNING **: 04:15:56.452: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files",
+      "2026-10-24T04:15:56.6321962Z (paste_native_probe:6921): dbind-WARNING **: 04:15:56.631: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files",
+      "2026-10-24T04:15:56.8995594Z (settings_native_probe:6954): dbind-WARNING **: 04:15:56.899: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files",
+      "2026-10-24T04:15:56.9396158Z (settings_native_probe:6954): Gtk-WARNING **: 04:15:56.939: Could not load a pixbuf from /org/gtk/libgtk/theme/Adwaita/assets/check-symbolic.svg.",
+      "2026-10-24T04:15:56.9397771Z This may indicate that pixbuf loaders or the mime database could not be found.",
+      "2026-10-24T04:15:57.1308462Z (settings_native_probe:6972): dbind-WARNING **: 04:15:57.130: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files",
+      "2026-10-24T04:15:57.1698119Z (settings_native_probe:6972): Gtk-WARNING **: 04:15:57.169: Could not load a pixbuf from /org/gtk/libgtk/theme/Adwaita/assets/check-symbolic.svg.",
+      "2026-10-24T04:15:57.1699253Z This may indicate that pixbuf loaders or the mime database could not be found.",
+      "2026-10-24T04:15:57.5041881Z (snippet_editor_probe:7005): dbind-WARNING **: 04:15:57.503: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files",
+      "2026-10-24T04:15:57.5446682Z (snippet_editor_probe:7005): Gtk-WARNING **: 04:15:57.544: Could not load a pixbuf from /org/gtk/libgtk/theme/Adwaita/assets/check-symbolic.svg.",
+      "2026-10-24T04:15:57.5447920Z This may indicate that pixbuf loaders or the mime database could not be found.",
+      "2026-10-24T04:15:57.7847962Z (snippet_editor_probe:7023): dbind-WARNING **: 04:15:57.784: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files",
+      "2026-10-24T04:15:57.8236855Z (snippet_editor_probe:7023): Gtk-WARNING **: 04:15:57.823: Could not load a pixbuf from /org/gtk/libgtk/theme/Adwaita/assets/check-symbolic.svg.",
+      "2026-10-24T04:15:57.8237793Z This may indicate that pixbuf loaders or the mime database could not be found.",
+      "2026-10-24T04:15:58.0259036Z         \"\\tlibgdk_pixbuf-2.0.so.0 => /lib/x86_64-linux-gnu/libgdk_pixbuf-2.0.so.0 (0x00007f3fbcfd6000)\",",
+      "2026-10-24T04:15:58.0300605Z         \"\\tlibgdk_pixbuf-2.0.so.0 => /lib/x86_64-linux-gnu/libgdk_pixbuf-2.0.so.0 (0x00007f3fbcfd6000)\",",
+      "2026-10-24T04:15:58.0339531Z         \"\\tlibgdk_pixbuf-2.0.so.0 => /lib/x86_64-linux-gnu/libgdk_pixbuf-2.0.so.0 (0x00007fe9b9001000)\",",
+      "2026-10-24T04:15:58.0381578Z         \"\\tlibgdk_pixbuf-2.0.so.0 => /lib/x86_64-linux-gnu/libgdk_pixbuf-2.0.so.0 (0x00007fe9b9001000)\",",
+      "2026-10-24T04:15:58.0429114Z         \"\\tlibgdk_pixbuf-2.0.so.0 => /lib/x86_64-linux-gnu/libgdk_pixbuf-2.0.so.0 (0x00007f7f8f3fe000)\",",
+      "2026-10-24T04:15:58.0470335Z         \"\\tlibgdk_pixbuf-2.0.so.0 => /lib/x86_64-linux-gnu/libgdk_pixbuf-2.0.so.0 (0x00007f7f8f3fe000)\",",
+      "2026-10-24T04:15:58.0510309Z         \"\\tlibgdk_pixbuf-2.0.so.0 => /lib/x86_64-linux-gnu/libgdk_pixbuf-2.0.so.0 (0x00007f8f76a6d000)\","
+    ]
+  },
+  "120775823925": {
+    "url": "https://github.com/Hydrock/Cliptiq/actions/runs/40061508988/job/120775823925",
+    "observed_lines": []
+  },
+  "120775823935": {
+    "url": "https://github.com/Hydrock/Cliptiq/actions/runs/40061508988/job/120775823935",
+    "observed_lines": []
+  },
+  "120775823959": {
+    "url": "https://github.com/Hydrock/Cliptiq/actions/runs/40061508988/job/120775823959",
+    "observed_lines": []
+  }
+}

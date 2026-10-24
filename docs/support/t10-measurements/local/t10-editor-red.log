@@ -1,0 +1,16 @@
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+    Start 1: editor
+1/1 Test #1: editor ...........................***Failed    0.02 sec
+FAIL autosave_undo_redo_resets_at_selection_boundary: e.reload()
+FAIL cancelled_drag_and_stale_drag_do_not_mutate: e.reload()
+FAIL delete_confirmation_empty_folder_and_binding_conflicts: e.reload()
+FAIL failed_edit_preserves_document_and_undo: e.reload()
+
+
+0% tests passed, 1 tests failed out of 1
+
+Total Test time (real) =   0.05 sec
+
+The following tests FAILED:
+	  1 - editor (Failed)
+Errors while running CTest
