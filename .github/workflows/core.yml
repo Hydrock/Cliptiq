@@ -1,4 +1,4 @@
-name: Portable core and native clipboards (T02-T15)
+name: Portable core and native clipboards (T02-T16)
 on:
   workflow_dispatch:
   push:
@@ -8,6 +8,12 @@ on:
       - 'third_party/tinyxml2/**'
       - 'platform/SnippetXml.hpp'
       - 'platform/Media*'
+      - 'platform/Ocr*'
+      - 'platform/Index*'
+      - 'tools/test-ocr.py'
+      - 'tests/integration/*ocr*'
+      - 'tests/integration/fts*'
+      - 'tests/fixtures/ocr/**'
       - 'platform/Lifecycle*'
       - 'platform/Updates*'
       - 'packaging/**'
@@ -213,3 +219,30 @@ jobs:
           path: |
             out/t15-sparkle-report.json
             out/t15-sparkle-test.log
+
+  ocr_backends:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {os: ubuntu-24.04, engine: tesseract}
+          - {os: windows-2025, engine: tesseract}
+          - {os: windows-2025, engine: native}
+          - {os: macos-15, engine: native}
+          - {os: macos-15-intel, engine: native}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - if: runner.os == 'Linux'
+        run: bash tools/install-linux-backend-deps.sh
+      - run: python tools/fetch-footprint-deps.py
+      - run: python tools/test-ocr.py --engine ${{ matrix.engine }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ocr-${{ matrix.os }}-${{ matrix.engine }}
+          path: |
+            out/t16-ocr-size-*.json
+            out/ocr-*/Testing/Temporary/LastTest.log
+            out/ocr-pack-*.zip

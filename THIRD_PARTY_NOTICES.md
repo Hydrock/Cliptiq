@@ -60,3 +60,12 @@ Icons are copyrighted by their respective authors.
 T14 optional macOS migration helper uses RealmSwift10.54.6 and RealmCore14.14.0 (Apache-2.0), pinned in tools/import-clipy/Package.resolved. Their complete license and upstream third-party notices are in tools/import-clipy/licenses/ and accompany the separate migration package. Realm is not linked or bundled into the main Cliptiq application. SDK analytics is explicitly disabled in the offline helper.
 
 T15 optional macOS updater uses Sparkle2.10.0 (permissive Sparkle license, including upstream notices in its LICENSE). The complete license accompanies the measured framework in Contents/Resources/Sparkle-LICENSE.txt. A narrowly scoped pinned source patch in packaging/updates/patch_sparkle.py enforces appcast/archive byte bounds in both downloader targets; installer and signature verification are unchanged. The source archive SHA256 and patched file SHA256 are recorded in each size report. Base builds contain no Sparkle/Firebase runtime.
+
+
+T16 optional offline OCR pack: Tesseract 5.5.1 (Apache-2.0),
+Leptonica 1.85.0 (BSD-2-Clause), tessdata_fast EN/RU 4.1.0 (Apache-2.0).
+Sources and hashes: packaging/ocr/pins.json. License texts:
+packaging/ocr/licenses/. These components are excluded from Base.
+Native Vision / Windows.Media.Ocr use installed OS frameworks; available
+languages and correction behavior depend on the OS. No language downloads
+are performed by Cliptiq.

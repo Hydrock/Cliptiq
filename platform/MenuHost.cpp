@@ -1,3 +1,9 @@
+#ifdef CLIPTIQ_OCR_INDEX
+#include "Index.hpp"
+#endif
+#ifdef CLIPTIQ_WITH_OCR
+#include "Ocr.hpp"
+#endif
 #ifdef CLIPTIQ_WITH_UPDATES
 #include "Updates.hpp"
 #endif
@@ -431,6 +437,16 @@ int host(int argc, char **argv) {
 #endif
     auto configure_media=[&]{auto result=media.configure(preferences,smoke);if(!result)std::cerr<<result.error().message<<'\n';};
     configure_media();
+#ifdef CLIPTIQ_OCR_INDEX
+    IndexService search_index_worker(store);
+#endif
+
+#ifdef CLIPTIQ_WITH_OCR
+    const char* model_path=std::getenv("CLIPTIQ_OCR_MODELS");
+    OcrService ocr(store,make_native_ocr(model_path?model_path:(std::filesystem::u8path(take(executable_path())).parent_path()/"tessdata").u8string()),decode_native_image);
+    capabilities.ocr={CapabilityStatus::Available,"Optional offline OCR build"};
+#endif
+
     auto decorate_media=[&](MenuModel& menu){auto status=media.observation_status();if(status.status==CapabilityStatus::Unavailable){MenuItem item;item.label="Screenshots: "+tr(status.reason);item.enabled=false;menu.items.push_back(std::move(item));}};
 #endif
 #ifdef CLIPTIQ_WITH_LIFECYCLE
@@ -908,6 +924,14 @@ int host(int argc, char **argv) {
       }
 #endif
 #ifdef CLIPTIQ_WITH_MEDIA
+#ifdef CLIPTIQ_WITH_OCR
+      auto ocr_policy=settings_capture(preferences);ocr_policy.request_ocr=!smoke;
+      auto ocr_result=ocr.poll(ocr_policy,capabilities);
+      if(!ocr_result)std::cerr<<ocr_result.error().message<<'\n';
+#endif
+#ifdef CLIPTIQ_OCR_INDEX
+      if(!smoke){auto indexed=search_index_worker.poll();if(!indexed)std::cerr<<indexed.error().message<<'\n';}
+#endif
       auto media_result=media.poll();
       if(!media_result){std::cerr<<media_result.error().message<<'\n';settings_window.status(tr(media.observation_status().reason));refresh=true;}
       else if(media_result.value())refresh=true;

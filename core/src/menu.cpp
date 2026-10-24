@@ -113,6 +113,10 @@ const char *prefix(CanonicalKind k) {
   }
 }
 } // namespace
+Result<std::string> index_text(const Bytes&bytes,TextEncoding encoding){
+ if(bytes.size()>1024*1024)return Error{ErrorCode::TooLarge,"Index text exceeds bound"};
+ return menu_text(decode(bytes,encoding),10000,false);
+}
 Result<std::string> menu_text(const std::string &input, size_t limit,
                               bool first) {
   return detail::guarded<std::string>([&]() -> Result<std::string> {

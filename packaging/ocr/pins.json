@@ -1,0 +1,22 @@
+{
+  "leptonica": {
+    "url": "https://codeload.github.com/DanBloomberg/leptonica/tar.gz/refs/tags/1.85.0",
+    "sha256": "c01376bce0379d4ea4bc2ec5d5cbddaa49e2f06f88242619ab8c059e21adf233",
+    "bytes": 13685574
+  },
+  "tesseract": {
+    "url": "https://codeload.github.com/tesseract-ocr/tesseract/tar.gz/refs/tags/5.5.1",
+    "sha256": "a7a3f2a7420cb6a6a94d80c24163e183cf1d2f1bed2df3bbc397c81808a57237",
+    "bytes": 1897616
+  },
+  "eng": {
+    "url": "https://raw.githubusercontent.com/tesseract-ocr/tessdata_fast/4.1.0/eng.traineddata",
+    "sha256": "7d4322bd2a7749724879683fc3912cb542f19906c83bcc1a52132556427170b2",
+    "bytes": 4113088
+  },
+  "rus": {
+    "url": "https://raw.githubusercontent.com/tesseract-ocr/tessdata_fast/4.1.0/rus.traineddata",
+    "sha256": "e16e5e036cce1d9ec2b00063cf8b54472625b9e14d893a169e2b0dedeb4df225",
+    "bytes": 3861738
+  }
+}

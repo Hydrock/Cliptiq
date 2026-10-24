@@ -67,3 +67,5 @@ Result<void> validate_menu_command(Store &, const MenuCommand &);
 Result<std::string> menu_text(const std::string &, std::size_t,
                               bool first_line = true);
 } // namespace cliptiq
+
+namespace cliptiq { Result<std::string> index_text(const Bytes&, TextEncoding); }

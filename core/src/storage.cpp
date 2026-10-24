@@ -13,6 +13,8 @@ Result<Store> open_store(const std::string& path,Limits limits){return detail::g
  sqlite3* raw=nullptr;int rc=sqlite3_open_v2(path.c_str(),&raw,SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE|SQLITE_OPEN_FULLMUTEX,nullptr);
  std::unique_ptr<sqlite3,decltype(&sqlite3_close_v2)> owner(raw,sqlite3_close_v2);
  if(rc!=SQLITE_OK)throw detail::Failure{detail::db_error(raw,rc)};
+ detail::check(raw,sqlite3_create_module(raw,"fts5",nullptr,nullptr));
+ detail::check(raw,sqlite3_create_module(raw,"fts5vocab",nullptr,nullptr));
  sqlite3_extended_result_codes(raw,1);sqlite3_busy_timeout(raw,1000);sqlite3_limit(raw,SQLITE_LIMIT_LENGTH,65*1024*1024);
  detail::exec(raw,"PRAGMA foreign_keys=ON; PRAGMA trusted_schema=OFF");
  detail::Statement version(raw,"PRAGMA user_version");version.row();auto v=version.number(0);
@@ -47,6 +49,7 @@ PRAGMA user_version=2;
  detail::Statement integrity(raw,"PRAGMA quick_check");if(!integrity.row()||integrity.text(0)!="ok")return Error{ErrorCode::Corrupt,"database integrity check failed"};
  detail::Statement state(raw,"SELECT data_revision,cleanup_interval,cleanup_last FROM store_state WHERE id=1");if(!state.row())return Error{ErrorCode::Corrupt,"missing store state"};
  sqlite3_db_config(raw,SQLITE_DBCONFIG_DEFENSIVE,1,nullptr);
+ detail::invalidate_companion(raw);
  Store result(raw,limits);owner.release();return result;
 });}
 Result<std::uint64_t> data_revision(Store& s){return detail::guarded<std::uint64_t>([&]()->Result<std::uint64_t>{detail::Statement q(s.connection(),"SELECT data_revision FROM store_state WHERE id=1");if(!q.row())return Error{ErrorCode::Corrupt,"missing store state"};return static_cast<std::uint64_t>(q.number(0));});}
