@@ -1,3 +1,4 @@
+#include "../LocaleNative.hpp"
 #include "cliptiq/native_menu.hpp"
 #include <chrono>
 #include <gdk/gdkwayland.h>
@@ -580,7 +581,7 @@ Result<void> NativeMenu::initialize() {
   gtk_window_set_title(GTK_WINDOW(s->window), "Cliptiq");
   gtk_window_set_default_size(GTK_WINDOW(s->window), 280, 100);
   s->button = gtk_menu_button_new();
-  gtk_button_set_label(GTK_BUTTON(s->button), "Clipboard History");
+  gtk_button_set_label(GTK_BUTTON(s->button), lc("Clipboard History"));
   gtk_container_add(GTK_CONTAINER(s->window), s->button);
   g_signal_connect(
       s->window, "delete-event",

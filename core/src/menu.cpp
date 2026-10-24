@@ -1,4 +1,5 @@
 #include "cliptiq/menu.hpp"
+#include "cliptiq/locale.hpp"
 #include "db.hpp"
 extern "C" {
 #include "grapheme.h"
@@ -102,13 +103,13 @@ const char *prefix(CanonicalKind k) {
   case CanonicalKind::Pdf:
     return "[PDF]";
   case CanonicalKind::Files:
-    return "[Files]";
+    return lc("[Files]");
   case CanonicalKind::Url:
     return "[URL]";
   case CanonicalKind::Image:
-    return "[Image]";
+    return lc("[Image]");
   default:
-    return "[Clipboard]";
+    return lc("[Clipboard]");
   }
 }
 } // namespace
@@ -280,7 +281,7 @@ Result<MenuModel> build_menu(Store &store, MenuKind kind,
           return title.error();
         folder.label = title.value();
         if (folder.label.empty())
-          folder.label = "Snippets";
+          folder.label = lc("Snippets");
         detail::Statement items(
             store.connection(),
             "SELECT id,substr(title,1,65536),substr(content,1,65536) FROM "
@@ -298,7 +299,7 @@ Result<MenuModel> build_menu(Store &store, MenuKind kind,
           auto label = menu_text(text, s.title_characters);
           if (!label)
             return label.error();
-          item.label = label.value().empty() ? "Snippet" : label.value();
+          item.label = label.value().empty() ? lc("Snippet") : label.value();
           if (s.tooltips) {
             auto tooltip =
                 menu_text(items.text(2), s.tooltip_characters, false);
@@ -324,14 +325,14 @@ Result<MenuModel> build_menu(Store &store, MenuKind kind,
     if (!m.items.empty())
       m.items.push_back(separator());
     MenuItem clear;
-    clear.label = "Clear History";
+    clear.label = lc("Clear History");
     clear.action = MenuAction::ClearHistory;
     clear.enabled = any_history;
     m.items.push_back(std::move(clear));
     if (kind == MenuKind::Main) {
-      for (auto pair : {std::pair{"Edit Snippets", MenuAction::OpenEditor},
-                        std::pair{"Settings", MenuAction::OpenSettings},
-                        std::pair{"Quit", MenuAction::Quit}}) {
+      for (auto pair : {std::pair{lc("Edit Snippets"), MenuAction::OpenEditor},
+                        std::pair{lc("Settings"), MenuAction::OpenSettings},
+                        std::pair{lc("Quit"), MenuAction::Quit}}) {
         MenuItem i;
         i.label = pair.first;
         i.action = pair.second;
@@ -358,7 +359,7 @@ Result<MenuModel> build_folder_menu(Store &store, const FolderId &id,
       result.items = std::move(folder.children);
       if (result.items.empty()) {
         MenuItem empty;
-        empty.label = "Empty folder";
+        empty.label = lc("Empty folder");
         empty.enabled = false;
         result.items.push_back(std::move(empty));
       }

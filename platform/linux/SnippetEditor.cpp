@@ -1,3 +1,4 @@
+#include "../LocaleNative.hpp"
 #include "cliptiq/editor.hpp"
 #ifdef CLIPTIQ_EDITOR_XML
 #include "../SnippetXml.hpp"
@@ -34,9 +35,13 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
 #endif
   }
   void status(Result<void> r) {
-    gtk_label_set_text(GTK_LABEL(message),
-                       r ? ((model->saving() ? std::string("Saving locally...") : "Saved locally. " + model->binding_status())).c_str()
-                         : r.error().message.c_str());
+    gtk_label_set_text(
+        GTK_LABEL(message),
+        r ? ((model->saving()
+                  ? std::string(lc("Saving locally..."))
+                  : lc("Saved locally. ") + model->binding_status()))
+                .c_str()
+          : r.error().message.c_str());
   }
 #ifdef CLIPTIQ_EDITOR_XML
   void xml_sensitive(bool value) { gtk_widget_set_sensitive(window, value); }
@@ -46,8 +51,8 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
     auto result = xml.start(*model, path, importing);
     if (result) {
       xml_sensitive(false);
-      status(Error{ErrorCode::Busy,
-                   importing ? "Importing XML..." : "Exporting XML..."});
+      status(Error{ErrorCode::Busy, importing ? lc("Importing XML...")
+                                              : lc("Exporting XML...")});
     }
     return result;
   }
@@ -79,10 +84,11 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
       return;
     }
     auto dialog = gtk_file_chooser_dialog_new(
-        importing ? "Import Clipy XML" : "Export Clipy XML", GTK_WINDOW(window),
+        importing ? lc("Import Clipy XML") : lc("Export Clipy XML"),
+        GTK_WINDOW(window),
         importing ? GTK_FILE_CHOOSER_ACTION_OPEN : GTK_FILE_CHOOSER_ACTION_SAVE,
-        "Cancel", GTK_RESPONSE_CANCEL, importing ? "Import" : "Export",
-        GTK_RESPONSE_ACCEPT, nullptr);
+        lc("Cancel"), GTK_RESPONSE_CANCEL,
+        importing ? lc("Import") : lc("Export"), GTK_RESPONSE_ACCEPT, nullptr);
     auto filter = gtk_file_filter_new();
     gtk_file_filter_set_name(filter, "XML files");
     gtk_file_filter_add_pattern(filter, "*.xml");
@@ -299,7 +305,7 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
     auto dialog = gtk_message_dialog_new(
         GTK_WINDOW(window), GTK_DIALOG_MODAL, GTK_MESSAGE_QUESTION,
         GTK_BUTTONS_YES_NO,
-        "Delete selected item? A folder also deletes its snippets.");
+        lc("Delete selected item? A folder also deletes its snippets."));
     gtk_dialog_set_default_response(GTK_DIALOG(dialog), GTK_RESPONSE_NO);
     bool yes = gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_YES;
     gtk_widget_destroy(dialog);
@@ -434,7 +440,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
   s->model = std::move(model);
   auto background=s->model->background_saves();if(!background) return background;
   s->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title(GTK_WINDOW(s->window), "Cliptiq Snippets");
+  gtk_window_set_title(GTK_WINDOW(s->window), lc("Cliptiq Snippets"));
   gtk_window_set_default_size(GTK_WINDOW(s->window), 900, 650);
   auto root = gtk_box_new(GTK_ORIENTATION_VERTICAL, 8);
   gtk_container_set_border_width(GTK_CONTAINER(root), 10);
@@ -450,24 +456,24 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
     return b;
   };
   button(
-      "Add Folder", "editor-add-folder",
+      lc("Add Folder"), "editor-add-folder",
       +[](GtkButton *, gpointer p) { static_cast<State *>(p)->add(true); });
   s->add_snippet = button(
-      "Add Snippet", "editor-add-snippet",
+      lc("Add Snippet"), "editor-add-snippet",
       +[](GtkButton *, gpointer p) { static_cast<State *>(p)->add(false); });
   button(
-      "Delete…", "editor-delete",
+      lc("Delete…"), "editor-delete",
       +[](GtkButton *, gpointer p) { static_cast<State *>(p)->remove(); });
   s->undo = button(
-      "Undo", "editor-undo", +[](GtkButton *, gpointer p) {
+      lc("Undo"), "editor-undo", +[](GtkButton *, gpointer p) {
         static_cast<State *>(p)->undo_action(false);
       });
   s->redo = button(
-      "Redo", "editor-redo", +[](GtkButton *, gpointer p) {
+      lc("Redo"), "editor-redo", +[](GtkButton *, gpointer p) {
         static_cast<State *>(p)->undo_action(true);
       });
   button(
-      "Reload", "editor-reload", +[](GtkButton *, gpointer p) {
+      lc("Reload"), "editor-reload", +[](GtkButton *, gpointer p) {
         auto s = static_cast<State *>(p);
         auto keep = s->shared_from_this();
         auto r = s->model->reload();
@@ -477,11 +483,11 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
       });
 #ifdef CLIPTIQ_EDITOR_XML
   button(
-      "Import XML…", "editor-import", +[](GtkButton *, gpointer p) {
+      lc("Import XML…"), "editor-import", +[](GtkButton *, gpointer p) {
         static_cast<State *>(p)->xml_picker(true);
       });
   button(
-      "Export XML…", "editor-export", +[](GtkButton *, gpointer p) {
+      lc("Export XML…"), "editor-export", +[](GtkButton *, gpointer p) {
         static_cast<State *>(p)->xml_picker(false);
       });
 #endif
@@ -495,7 +501,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
   gtk_tree_view_set_headers_visible(GTK_TREE_VIEW(s->tree), FALSE);
   auto cell = gtk_cell_renderer_toggle_new();
   gtk_tree_view_insert_column_with_attributes(
-      GTK_TREE_VIEW(s->tree), -1, "Enabled", cell, "active", 3, nullptr);
+      GTK_TREE_VIEW(s->tree), -1, lc("Enabled"), cell, "active", 3, nullptr);
   gtk_tree_view_insert_column_with_attributes(
       GTK_TREE_VIEW(s->tree), -1, "Item", gtk_cell_renderer_text_new(), "text",
       0, nullptr);
@@ -511,7 +517,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
   gtk_label_set_mnemonic_widget(GTK_LABEL(label), s->title);
   gtk_box_pack_start(GTK_BOX(right), label, FALSE, FALSE, 0);
   gtk_box_pack_start(GTK_BOX(right), s->title, FALSE, FALSE, 0);
-  s->enabled = gtk_check_button_new_with_label("Enabled in menu");
+  s->enabled = gtk_check_button_new_with_label(lc("Enabled in menu"));
   gtk_widget_set_name(s->enabled, "editor-enabled");
   gtk_box_pack_start(GTK_BOX(right), s->enabled, FALSE, FALSE, 0);
   auto hotkeys = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 6);
@@ -519,7 +525,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
   s->shortcut = gtk_entry_new();
   gtk_widget_set_name(s->shortcut, "editor-shortcut");
   gtk_entry_set_placeholder_text(GTK_ENTRY(s->shortcut),
-                                 "Folder shortcut: press chord, then Bind");
+                                 lc("Folder shortcut: press chord, then Bind"));
   gtk_box_pack_start(GTK_BOX(hotkeys), s->shortcut, TRUE, TRUE, 0);
   s->bind = gtk_button_new_with_label("Bind / Clear");
   gtk_widget_set_name(s->bind, "editor-bind");

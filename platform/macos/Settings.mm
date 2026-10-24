@@ -1,4 +1,5 @@
 #include "cliptiq/settings.hpp"
+#include "../LocaleNative.hpp"
 #import <AppKit/AppKit.h>
 #include <thread>
 using namespace cliptiq;
@@ -123,7 +124,7 @@ struct NativeSettings::State : std::enable_shared_from_this<State> {
     }
     settings = std::move(draft.value());
     ++settings.revision;
-    message.stringValue = @"Saved. Unsupported functions remain disabled.";
+    message.stringValue = loc(@"Saved. Unsupported functions remain disabled.");
   }
 };
 NativeSettings::NativeSettings() : state_(std::make_shared<State>()) {}
@@ -153,7 +154,7 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
                   backing:NSBackingStoreBuffered
                     defer:NO];
   s->window.releasedWhenClosed = NO;
-  s->window.title = @"Cliptiq Settings";
+  s->window.title = loc(@"Cliptiq Settings");
   s->target = [CliptiqSettingsActions new];
   s->window.delegate = s->target;
   std::weak_ptr<State> weak = s;
@@ -166,8 +167,8 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
   tabs.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
   [s->window.contentView addSubview:tabs];
   NSArray *names = @[
-    @"General", @"Menu", @"Types", @"Excluded", @"Shortcuts", @"Updates",
-    @"Beta", @"Donate"
+    loc(@"General"), loc(@"Menu"), loc(@"Types"), loc(@"Excluded"),
+    loc(@"Shortcuts"), loc(@"Updates"), loc(@"Beta"), loc(@"About")
   ];
   NSStackView *stacks[8];
   for (unsigned g = 0; g < 8; ++g) {
@@ -191,7 +192,8 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
     auto row = [NSStackView new];
     row.orientation = NSUserInterfaceLayoutOrientationHorizontal;
     row.spacing = 12;
-    auto label = [NSTextField labelWithString:str(f.label)];
+    auto label = [NSTextField wrappingLabelWithString:str(f.label)];
+    label.preferredMaxLayoutWidth = 430;
     [label.widthAnchor constraintEqualToConstant:430].active = YES;
     [row addArrangedSubview:label];
     NSView *control = nil;
@@ -215,6 +217,7 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
       control = field;
     }
     control.identifier = str(f.key);
+    [control setAccessibilityLabel:str(f.label)];
     control.toolTip = str(f.reason.empty() ? f.label : f.reason);
     [control.widthAnchor constraintEqualToConstant:320].active = YES;
     if (multiline)
@@ -233,7 +236,7 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
     stacks[g].frame =
         NSMakeRect(0, 0, 830, std::max(570.0, double(size.height)));
   }
-  auto apply = [NSButton buttonWithTitle:@"Apply"
+  auto apply = [NSButton buttonWithTitle:loc(@"Apply")
                                   target:s->target
                                   action:@selector(apply:)];
   apply.identifier = @"apply";
@@ -258,10 +261,10 @@ std::uintptr_t NativeSettings::native_handle() const {
 }
 bool NativeSettings::confirm_clear() const {
   auto alert = [NSAlert new];
-  alert.messageText = @"Clear Cliptiq history?";
-  alert.informativeText = @"Snippets and current system clipboard remain.";
-  [alert addButtonWithTitle:@"Clear"];
-  [alert addButtonWithTitle:@"Cancel"];
+  alert.messageText = loc(@"Clear Cliptiq history?");
+  alert.informativeText = loc(@"Snippets and current system clipboard remain.");
+  [alert addButtonWithTitle:loc(@"Clear")];
+  [alert addButtonWithTitle:loc(@"Cancel")];
   return [alert runModal] == NSAlertFirstButtonReturn;
 }
 void NativeSettings::status(const std::string &value) {

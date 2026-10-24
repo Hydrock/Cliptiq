@@ -1,3 +1,4 @@
+#include "cliptiq/locale.hpp"
 #include "cliptiq/native_menu.hpp"
 #include "cliptiq/settings.hpp"
 #include <algorithm>
@@ -87,8 +88,14 @@ int run() {
       return save_settings(store, s);
     }));
     CHECK(ui.native_handle());
+    bool russian = active_locale() == "ru";
 #ifdef _WIN32
     auto window = reinterpret_cast<HWND>(ui.native_handle());
+    if (russian) {
+      wchar_t title[128]{};
+      GetWindowTextW(window, title, 128);
+      CHECK(std::wstring(title) == L"Настройки Cliptiq");
+    }
     CHECK(TabCtrl_GetItemCount(GetDlgItem(window, 200)) == 8);
     CHECK(SetWindowTextW(child(window, 1000), L"5"));
     auto fields = settings_fields(settings, caps);
@@ -134,6 +141,8 @@ int run() {
     SendMessageW(window, WM_COMMAND, 100, 0);
 #elif defined(__APPLE__)
     auto window = (__bridge NSWindow *)(void *)ui.native_handle();
+    if (russian)
+      CHECK([window.title isEqualToString:@"Настройки Cliptiq"]);
     auto tabs = find(window.contentView, @"settings-tabs");
     CHECK([tabs isKindOfClass:NSTabView.class] &&
           [(NSTabView *)tabs numberOfTabViewItems] == 8);
@@ -159,6 +168,9 @@ int run() {
     [(NSButton *)find(window.contentView, @"apply") performClick:nil];
 #else
     auto window = reinterpret_cast<GtkWidget *>(ui.native_handle());
+    if (russian)
+      CHECK(std::string(gtk_window_get_title(GTK_WINDOW(window))) ==
+            u8"Настройки Cliptiq");
     auto tabs = find(window, "settings-tabs");
     CHECK(tabs && gtk_notebook_get_n_pages(GTK_NOTEBOOK(tabs)) == 8);
     auto field = find(window, "history_count");
@@ -201,8 +213,9 @@ int run() {
     CHECK(!ui.record_chord(take(parse_chord("Ctrl+Alt+W"))));
     gtk_widget_destroy(other);
     gtk_button_clicked(GTK_BUTTON(apply));
-    auto future = find(window, "login");
+    auto future = find(window, "updates_auto");
     CHECK(future && !gtk_widget_get_sensitive(future));
+    CHECK(gtk_widget_get_sensitive(find(window, "login")));
 #endif
     CHECK(ui.process_events());
     CHECK(applied == 1 &&
@@ -265,7 +278,9 @@ int run() {
     return 1;
   }
 }
-int main() {
+int main(int argc, char **argv) {
+  if (argc > 1 && std::string(argv[1]) == "--ru")
+    activate_locale("ru");
 #ifdef __APPLE__
   @autoreleasepool {
     return run();

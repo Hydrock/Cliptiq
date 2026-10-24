@@ -157,6 +157,13 @@ if system == 'Windows':
 
 snippet_xml = menu_variant('snippet_xml_probe')
 media = menu_variant('media_native_probe')
+lifecycle = menu_variant('lifecycle_native_probe')
+report['lifecycle'] = {'baseline': media, 'with_lifecycle': lifecycle, 'added_bytes': lifecycle['executable_bytes']-media['executable_bytes'], 'added_zip_bytes': lifecycle['zip_bytes']-media['zip_bytes'], 'scope': 'paired media host without/with single-instance lock/mailbox, autostart, shared translation catalogues and native lifecycle integration; smoke creates no real IPC/registration/capture; not installer'}
+for directory in ('resources', 'platform/posix'):
+    for p in sorted((root/directory).rglob('*')):
+        if p.is_file(): report['source_files_sha256'][p.relative_to(root).as_posix()] = hashlib.sha256(p.read_bytes()).hexdigest()
+for name in ('platform/Lifecycle.cpp', 'platform/LifecycleNative.hpp', 'platform/LocaleNative.hpp'):
+    report['source_files_sha256'][name] = hashlib.sha256((root/name).read_bytes()).hexdigest()
 report['media'] = {'baseline': snippet_xml, 'with_media': media, 'added_bytes': media['executable_bytes']-snippet_xml['executable_bytes'], 'added_zip_bytes': media['zip_bytes']-snippet_xml['zip_bytes'], 'scope': 'paired XML host with/without native media codecs, bounded worker, cache and screenshot file monitor; no watcher/clipboard/input in smoke; not installer'}
 for name in ['platform/Media.cpp', 'platform/Media.hpp']:
     report['source_files_sha256'][name] = hashlib.sha256((root/name).read_bytes()).hexdigest()

@@ -1,5 +1,9 @@
 #include "Application.hpp"
 #include "cliptiq/menu.hpp"
+#include "cliptiq/locale.hpp"
+#ifdef CLIPTIQ_WITH_LIFECYCLE
+#include "cliptiq/lifecycle.hpp"
+#endif
 #ifdef CLIPTIQ_WITH_MEDIA
 #include "Media.hpp"
 #endif
@@ -28,6 +32,12 @@
 #include <cstdlib>
 #include <iostream>
 #include <thread>
+#ifdef CLIPTIQ_GUI_ENTRY
+// clang-format off
+#include <windows.h>
+#include <shellapi.h>
+// clang-format on
+#endif
 using namespace cliptiq;
 template <class T> T take(Result<T> r) {
   if (!r)
@@ -41,6 +51,10 @@ void ok(Result<void> r) {
 int host(int argc, char **argv) {
   try {
     bool smoke = false, capture = false, demo = false;
+#ifdef CLIPTIQ_WITH_LIFECYCLE
+    bool background = false, remove_autostart = false;
+    std::string requested_locale;
+#endif
     std::string path = ":memory:";
     MenuKind kind = MenuKind::Main;
     TrayStyle tray = TrayStyle::Standard;
@@ -75,6 +89,24 @@ int host(int argc, char **argv) {
       std::string arg = argv[i];
       if (arg == "--smoke")
         smoke = true;
+#ifdef CLIPTIQ_WITH_LIFECYCLE
+      else if (arg == "--background")
+        background = true;
+      else if (arg == "--remove-autostart")
+        remove_autostart = true;
+      else if (arg == "--locale" && i + 1 < argc)
+        requested_locale = argv[++i];
+      else if (arg == "--about") {
+#ifdef CLIPTIQ_GUI_ENTRY
+        MessageBoxW(nullptr,
+                    L"Cliptiq 0.1.0\nhttps://github.com/Hydrock/Cliptiq",
+                    L"Cliptiq", MB_OK);
+#else
+        std::cout << "Cliptiq 0.1.0\nhttps://github.com/Hydrock/Cliptiq\n";
+#endif
+        return 0;
+      }
+#endif
       else if (arg == "--capture")
         capture = true;
       else if (arg == "--demo")
@@ -155,8 +187,10 @@ int host(int argc, char **argv) {
     take(selection_action(0, bindings));
 #endif
 #ifdef CLIPTIQ_WITH_SETTINGS
+#ifndef CLIPTIQ_WITH_LIFECYCLE
     if (capture && !explicit_database)
       throw std::runtime_error("Capture requires --database PATH");
+#endif
     if (path == ":memory:" && !smoke && !demo) {
       std::filesystem::path folder;
 #ifdef _WIN32
@@ -186,9 +220,48 @@ int host(int argc, char **argv) {
       path = (folder / "history.sqlite3").u8string();
     }
 #endif
+#ifdef CLIPTIQ_WITH_LIFECYCLE
+    Autostart startup({take(executable_path()), {}, smoke});
+    if (remove_autostart) {
+      take(startup.set_autostart(false));
+      std::cout << startup.status().reason << '\n';
+      return 0;
+    }
+    SessionInstance instance;
+    if (!smoke && !demo) {
+      std::optional<LaunchAction> route = LaunchAction::Main;
+      if (!launch_action.empty()) {
+        auto parsed = parse_launch_action(launch_action);
+        if (parsed)
+          route = parsed.value();
+        else if (launch_action == "clear" ||
+                 launch_action.rfind("folder:", 0) == 0)
+          route.reset();
+        else
+          throw std::runtime_error(parsed.error().message);
+      }
+      auto role = take(instance.start(
+          {take(lifecycle_directory()), lifecycle_scope()}, route));
+      if (role == InstanceRole::Forwarded)
+        return 0;
+      capture = true;
+    }
+    bool startup_problem = false;
+#endif
     auto store = take(open_store(path));
 #ifdef CLIPTIQ_WITH_SETTINGS
     auto preferences = take(load_settings(store));
+#ifdef CLIPTIQ_WITH_LIFECYCLE
+    auto language = requested_locale.empty() ? preferences.values.at("locale")
+                                             : requested_locale;
+    activate_locale(language == "auto" ? system_locale() : language);
+    if (!smoke) {
+      auto inspected = startup.inspect();
+      startup_problem = preferences.values.at("login") == "1" &&
+                        (!inspected || !inspected.value().enabled ||
+                         inspected.value().requires_approval);
+    }
+#endif
     auto loaded_bindings = settings_modifiers(preferences);
     if (!auto_override)
       auto_paste = preferences.values.at("auto_paste") == "1";
@@ -348,7 +421,17 @@ int host(int argc, char **argv) {
 #endif
     auto configure_media=[&]{auto result=media.configure(preferences,smoke);if(!result)std::cerr<<result.error().message<<'\n';};
     configure_media();
-    auto decorate_media=[&](MenuModel& menu){auto status=media.observation_status();if(status.status==CapabilityStatus::Unavailable){MenuItem item;item.label="Screenshots: "+status.reason;item.enabled=false;menu.items.push_back(std::move(item));}};
+    auto decorate_media=[&](MenuModel& menu){auto status=media.observation_status();if(status.status==CapabilityStatus::Unavailable){MenuItem item;item.label="Screenshots: "+tr(status.reason);item.enabled=false;menu.items.push_back(std::move(item));}};
+#endif
+#ifdef CLIPTIQ_WITH_LIFECYCLE
+    auto decorate_lifecycle = [&](MenuModel &menu) {
+      if (startup_problem) {
+        MenuItem item;
+        item.label = tr(startup.status().reason);
+        item.enabled = false;
+        menu.items.push_back(std::move(item));
+      }
+    };
 #endif
     NativeMenu ui(options, [&](MenuCommand command) {
       auto valid = validate_menu_command(store, command);
@@ -414,6 +497,9 @@ int host(int argc, char **argv) {
 #ifdef CLIPTIQ_WITH_MEDIA
     decorate_media(model);
 #endif
+#ifdef CLIPTIQ_WITH_LIFECYCLE
+    decorate_lifecycle(model);
+#endif
     ok(ui.update(model));
 #ifdef CLIPTIQ_WITH_SETTINGS
     auto rebuild = [&]() -> Result<void> {
@@ -432,6 +518,9 @@ int host(int argc, char **argv) {
       filter_model(model);
 #ifdef CLIPTIQ_WITH_MEDIA
       decorate_media(model);
+#endif
+#ifdef CLIPTIQ_WITH_LIFECYCLE
+      decorate_lifecycle(model);
 #endif
       return ui.update(model);
     };
@@ -456,14 +545,35 @@ int host(int argc, char **argv) {
       auto opened = settings_window.show(
           std::move(latest.value()), capabilities,
           [&](Settings draft) -> Result<void> {
+#ifdef CLIPTIQ_WITH_LIFECYCLE
+            bool login_changed =
+                draft.values.at("login") != preferences.values.at("login");
+            if (smoke && login_changed)
+              return Error{ErrorCode::Unsupported,
+                           "Smoke never changes autostart"};
+#endif
             if (session)
               session->stop();
 #ifdef CLIPTIQ_WITH_MEDIA
             media.stop();
             auto media_applied=media.configure(draft,smoke);
-            if(!media_applied){configure_media();restart_capture();return media_applied;}
+            if(!media_applied){
+              configure_media();
+              restart_capture();
+              return media_applied;
+            }
 #endif
+#ifdef CLIPTIQ_WITH_LIFECYCLE
+            auto applied =
+                startup.apply(draft.values.at("login") == "1",
+                              preferences.values.at("login") == "1", [&] {
+                                return apply_settings(store, registry, draft);
+                              });
+            if (login_changed)
+              startup_problem = !applied || startup.status().requires_approval;
+#else
             auto applied = apply_settings(store, registry, draft);
+#endif
             if (!applied) {
               restart_capture();
 #ifdef CLIPTIQ_WITH_MEDIA
@@ -509,7 +619,11 @@ int host(int argc, char **argv) {
       if (!opened)
         std::cerr << opened.error().message << '\n';
 #ifdef CLIPTIQ_WITH_MEDIA
-      else settings_window.status(media.observation_status().reason);
+      else settings_window.status(tr(media.observation_status().reason));
+#endif
+#ifdef CLIPTIQ_WITH_LIFECYCLE
+      if (opened && startup_problem)
+        settings_window.status(tr(startup.status().reason));
 #endif
     };
 #ifdef CLIPTIQ_WITH_EDITOR
@@ -586,7 +700,37 @@ int host(int argc, char **argv) {
     auto last = take(data_revision(store));
     auto checked = std::chrono::steady_clock::now();
     unsigned iterations = 0;
+#ifdef CLIPTIQ_WITH_LIFECYCLE
+    auto ipc_checked = std::chrono::steady_clock::now();
+#endif
     while (!quit) {
+#ifdef CLIPTIQ_WITH_LIFECYCLE
+      if (!smoke && !demo &&
+          std::chrono::steady_clock::now() - ipc_checked >=
+              std::chrono::milliseconds(100)) {
+        auto events = instance.receive();
+        if (!events)
+          std::cerr << events.error().message << '\n';
+        else
+          for (auto action : events.value()) {
+            if (action == LaunchAction::Settings)
+              show_settings();
+#ifdef CLIPTIQ_WITH_EDITOR
+            else if (action == LaunchAction::Editor)
+              show_editor();
+#endif
+            else {
+              active_folder.clear();
+              kind = action == LaunchAction::History    ? MenuKind::History
+                     : action == LaunchAction::Snippets ? MenuKind::Snippets
+                                                        : MenuKind::Main;
+              ok(rebuild());
+              ok(ui.show());
+            }
+          }
+        ipc_checked = std::chrono::steady_clock::now();
+      }
+#endif
 #ifdef CLIPTIQ_WITH_SETTINGS
 #ifdef CLIPTIQ_WITH_EDITOR
       ok(editor_window.process_events());
@@ -715,7 +859,7 @@ int host(int argc, char **argv) {
       auto now = std::chrono::steady_clock::now();
 #ifdef CLIPTIQ_WITH_MEDIA
       auto media_result=media.poll();
-      if(!media_result){std::cerr<<media_result.error().message<<'\n';settings_window.status(media.observation_status().reason);refresh=true;}
+      if(!media_result){std::cerr<<media_result.error().message<<'\n';settings_window.status(tr(media.observation_status().reason));refresh=true;}
       else if(media_result.value())refresh=true;
 #endif
       if (refresh || now - checked > std::chrono::milliseconds(250)) {
@@ -756,10 +900,40 @@ int host(int argc, char **argv) {
       std::cout << "PASS menu_host_smoke\n";
     return 0;
   } catch (const std::exception &e) {
+#ifdef CLIPTIQ_GUI_ENTRY
+    MessageBoxA(nullptr, e.what(), "Cliptiq", MB_OK | MB_ICONERROR);
+#endif
     std::cerr << e.what() << '\n';
     return 1;
   }
 }
+#ifdef CLIPTIQ_GUI_ENTRY
+int WINAPI wWinMain(HINSTANCE, HINSTANCE, PWSTR, int) {
+  int count = 0;
+  auto raw = CommandLineToArgvW(GetCommandLineW(), &count);
+  if (!raw)
+    return 1;
+  std::vector<std::string> args;
+  for (int n = 0; n < count; ++n) {
+    int size = WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, raw[n], -1,
+                                   nullptr, 0, nullptr, nullptr);
+    if (!size) {
+      LocalFree(raw);
+      return 1;
+    }
+    std::string value(size, '\0');
+    WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, raw[n], -1, value.data(),
+                        size, nullptr, nullptr);
+    value.pop_back();
+    args.push_back(std::move(value));
+  }
+  LocalFree(raw);
+  std::vector<char *> pointers;
+  for (auto &arg : args)
+    pointers.push_back(arg.data());
+  return host(count, pointers.data());
+}
+#else
 int main(int argc, char **argv) {
 #ifdef __APPLE__
   @autoreleasepool {
@@ -769,3 +943,4 @@ int main(int argc, char **argv) {
   return host(argc, argv);
 #endif
 }
+#endif

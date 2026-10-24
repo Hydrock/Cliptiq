@@ -1,3 +1,4 @@
+#include "../LocaleNative.hpp"
 #include "cliptiq/editor.hpp"
 #ifdef CLIPTIQ_EDITOR_XML
 #include "../SnippetXml.hpp"
@@ -319,8 +320,12 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
   void status(Result<void> r) {
     if (message)
       SetWindowTextW(
-          message, r ? wide((model->saving() ? std::string("Saving locally...") : "Saved locally. " + model->binding_status())).c_str()
-                     : wide(r.error().message).c_str());
+          message,
+          r ? wide((model->saving()
+                        ? std::string(lc("Saving locally..."))
+                        : lc("Saved locally. ") + model->binding_status()))
+                  .c_str()
+            : wide(r.error().message).c_str());
   }
 #ifdef CLIPTIQ_EDITOR_XML
   void xml_sensitive(bool value) { EnableWindow(window, value); }
@@ -330,8 +335,8 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
     auto result = xml.start(*model, path, importing);
     if (result) {
       xml_sensitive(false);
-      status(Error{ErrorCode::Busy,
-                   importing ? "Importing XML..." : "Exporting XML..."});
+      status(Error{ErrorCode::Busy, importing ? lc("Importing XML...")
+                                              : lc("Exporting XML...")});
     }
     return result;
   }
@@ -548,7 +553,7 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
       bool yes =
           MessageBoxW(
               window,
-              L"Delete selected item? A folder also deletes its snippets.",
+              lw(L"Delete selected item? A folder also deletes its snippets."),
               L"Cliptiq", MB_YESNO | MB_ICONQUESTION | MB_DEFBUTTON2) == IDYES;
       r = model->erase_selected(yes);
       if (r && yes)
@@ -937,7 +942,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
   wc.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1);
   RegisterClassW(&wc);
   s->window = CreateWindowExW(WS_EX_CONTROLPARENT, wc.lpszClassName,
-                              L"Cliptiq Snippets", WS_OVERLAPPEDWINDOW,
+                              lw(L"Cliptiq Snippets"), WS_OVERLAPPEDWINDOW,
                               CW_USEDEFAULT, CW_USEDEFAULT, 920, 700, nullptr,
                               nullptr, wc.hInstance, s.get());
   if (!s->window)
@@ -952,16 +957,16 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
     SendMessageW(w, WM_SETFONT, reinterpret_cast<WPARAM>(font), TRUE);
     return w;
   };
-  const wchar_t *names[] = {L"Add Folder",
-                            L"Add Snippet",
-                            L"Delete…",
-                            L"Undo",
-                            L"Redo",
-                            L"Reload"
+  const wchar_t *names[] = {lw(L"Add Folder"),
+                            lw(L"Add Snippet"),
+                            lw(L"Delete…"),
+                            lw(L"Undo"),
+                            lw(L"Redo"),
+                            lw(L"Reload")
 #ifdef CLIPTIQ_EDITOR_XML
-                            ,
-                            L"Import XML…",
-                            L"Export XML…"
+                                ,
+                            lw(L"Import XML…"),
+                            lw(L"Export XML…")
 #endif
   };
   for (int n = 0; n < int(sizeof(names) / sizeof(names[0])); ++n) {
@@ -980,7 +985,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
                     WS_EX_CLIENTEDGE);
   s->title = control(L"EDIT", L"", 502, ES_AUTOHSCROLL, WS_EX_CLIENTEDGE);
   SendMessageW(s->title, EM_SETLIMITTEXT, 4096, 0);
-  s->enabled = control(L"BUTTON", L"Enabled in menu", 503, BS_AUTOCHECKBOX);
+  s->enabled = control(L"BUTTON", lw(L"Enabled in menu"), 503, BS_AUTOCHECKBOX);
   s->shortcut = control(L"EDIT", L"", 505, ES_AUTOHSCROLL, WS_EX_CLIENTEDGE);
   SendMessageW(s->shortcut, EM_SETLIMITTEXT, 128, 0);
   s->bind = control(L"BUTTON", L"Bind / Clear", 506, BS_PUSHBUTTON);

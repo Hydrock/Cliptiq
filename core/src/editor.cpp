@@ -1,9 +1,10 @@
 #include "cliptiq/editor.hpp"
+#include "cliptiq/locale.hpp"
 #include "db.hpp"
 #include <algorithm>
+#include <chrono>
 #include <deque>
 #include <future>
-#include <chrono>
 namespace cliptiq {
 namespace {
 template <class T> T need(Result<T> r) {
@@ -245,7 +246,7 @@ Result<FolderId> SnippetEditorSession::add_folder() {
     auto &s = *state_;
     UiBusyScope no_wait(s.store,bool(s.worker));
     s.require_saved();
-    auto id = need(create_folder(s.store, "New Folder"));
+    auto id = need(create_folder(s.store, tr("New Folder")));
     s.catalog();
     s.select(SnippetItemId{SnippetItemKind::Folder, id}, true);
     s.changed();
@@ -261,7 +262,7 @@ Result<SnippetId> SnippetEditorSession::add_snippet() {
       return Error{ErrorCode::InvalidArgument, "Select a folder first"};
     Snippet next;
     next.folder_id = s.folder ? s.folder->id : s.doc->folder_id;
-    next.title = "New Snippet";
+    next.title = tr("New Snippet");
     auto id = need(save_snippet(s.store, next));
     s.catalog();
     s.select(SnippetItemId{SnippetItemKind::Snippet, id}, true);

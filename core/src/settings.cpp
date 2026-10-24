@@ -1,4 +1,5 @@
 #include "cliptiq/settings.hpp"
+#include "cliptiq/locale.hpp"
 #include "db.hpp"
 #include <charconv>
 #include <sstream>
@@ -27,8 +28,9 @@ const std::vector<Spec> &specs() {
        "0", 0, 1},
       {SettingsGroup::General, "cleanup_seconds", "Cleanup interval seconds",
        "3600", 300, 604800},
-      {SettingsGroup::General, "login", "Launch at login", "0", 0, 1,
-       "T13: startup integration not installed"},
+      {SettingsGroup::General, "login", "Launch at login", "0", 0, 1, ""},
+      {SettingsGroup::General, "locale", "Language (auto/en/ru)", "auto", -1,
+       -1},
       {SettingsGroup::Menu, "tray", "Tray: 0 standard / 1 reversed / 2 hidden",
        "0", 0, 2},
       {SettingsGroup::Menu, "inline_count", "Inline items", "0", 0, 100},
@@ -80,10 +82,10 @@ const std::vector<Spec> &specs() {
        "0", 0, 8},
       {SettingsGroup::Beta, "screenshots", "Observe screenshot files", "0", 0,
        1},
-      {SettingsGroup::Beta, "screenshot_directory", "Screenshot directory (absolute path)", "", -1, -1},
+      {SettingsGroup::Beta, "screenshot_directory",
+       "Screenshot directory (absolute path)", "", -1, -1},
       {SettingsGroup::Donate, "support", "Project support",
-       "https://github.com/Hydrock/Cliptiq", -1, -1,
-       "T13: project support links; no Clipy donation destination"}};
+       "https://github.com/Hydrock/Cliptiq", -1, -1}};
   return s;
 }
 int number(const std::string &s) {
@@ -207,6 +209,14 @@ Result<void> validate_settings(const Settings &s) {
         return Error{ErrorCode::Unsupported, spec.future};
     }
     auto seconds = n(s, "cleanup_seconds");
+    const auto &language = s.values.at("locale");
+    if (language.empty() || language.size() > 64 ||
+        language.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQ"
+                                   "RSTUVWXYZ0123456789-_.@") !=
+            std::string::npos)
+      detail::invalid("Invalid language identifier");
+    if (s.values.at("support") != "https://github.com/Hydrock/Cliptiq")
+      detail::invalid("Project support URL is fixed");
     if (seconds != 300 && seconds != 1800 && seconds != 3600 &&
         seconds != 14400 && seconds != 28800 && seconds != 86400 &&
         seconds != 259200 && seconds != 604800)
@@ -476,7 +486,7 @@ std::vector<SettingField> settings_fields(const Settings &s,
   for (auto &spec : specs()) {
     SettingField f{spec.group,
                    spec.key,
-                   spec.label,
+                   tr(spec.label),
                    s.values.at(spec.key),
                    spec.future,
                    true,
@@ -484,6 +494,10 @@ std::vector<SettingField> settings_fields(const Settings &s,
                    false};
     if (!f.reason.empty())
       f.enabled = false;
+    if (f.key == "support") {
+      f.enabled = false;
+      f.reason = "Cliptiq 0.1.0 — https://github.com/Hydrock/Cliptiq";
+    }
     if ((f.key == "auto_paste" &&
          caps.auto_paste.status == CapabilityStatus::Unavailable) ||
         (f.group == SettingsGroup::Types &&
@@ -506,7 +520,7 @@ std::vector<SettingField> settings_fields(const Settings &s,
   }
   for (auto &p : s.hotkeys)
     out.push_back(
-        {SettingsGroup::Shortcuts, "hotkey:" + p.first, p.first,
+        {SettingsGroup::Shortcuts, "hotkey:" + p.first, tr(p.first),
          p.second ? format_chord(*p.second) : "",
          caps.hotkeys.status == CapabilityStatus::Unavailable
              ? caps.hotkeys.reason + "; preference only, not registered"

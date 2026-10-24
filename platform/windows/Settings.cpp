@@ -1,4 +1,5 @@
 #include "cliptiq/settings.hpp"
+#include "../LocaleNative.hpp"
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 // clang-format off
@@ -193,7 +194,8 @@ struct NativeSettings::State : std::enable_shared_from_this<State> {
     }
     settings = std::move(draft.value());
     ++settings.revision;
-    SetWindowTextW(message, L"Saved. Unsupported functions remain disabled.");
+    SetWindowTextW(message,
+                   lw(L"Saved. Unsupported functions remain disabled."));
   }
   void page() {
     int selected = TabCtrl_GetCurSel(tabs);
@@ -265,7 +267,7 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
   page_class.lpszClassName = L"Cliptiq.Settings.Page.v1";
   RegisterClassW(&page_class);
   s->window =
-      CreateWindowExW(0, wc.lpszClassName, L"Cliptiq Settings",
+      CreateWindowExW(0, wc.lpszClassName, lw(L"Cliptiq Settings"),
                       WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 920,
                       800, nullptr, nullptr, wc.hInstance, s.get());
   if (!s->window)
@@ -273,8 +275,9 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
   s->tabs = CreateWindowExW(
       0, WC_TABCONTROLW, L"", WS_CHILD | WS_VISIBLE | WS_TABSTOP, 8, 8, 884,
       690, s->window, reinterpret_cast<HMENU>(200), wc.hInstance, nullptr);
-  const wchar_t *names[] = {L"General",   L"Menu",    L"Types", L"Excluded",
-                            L"Shortcuts", L"Updates", L"Beta",  L"Donate"};
+  const wchar_t *names[] = {lw(L"General"),  lw(L"Menu"),      lw(L"Types"),
+                            lw(L"Excluded"), lw(L"Shortcuts"), lw(L"Updates"),
+                            lw(L"Beta"),     lw(L"About")};
   int rows[8]{};
   for (int p = 0; p < 8; ++p) {
     TCITEMW item{};
@@ -293,9 +296,18 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
   for (auto &f : settings_fields(s->settings, caps)) {
     unsigned p = unsigned(f.group);
     int y = 6 + rows[p];
+    auto caption = wide(f.label);
+    RECT measured{0, 0, 440, 0};
+    auto dc = GetDC(s->pages[p].window);
+    auto old_font = SelectObject(dc, font);
+    DrawTextW(dc, caption.c_str(), int(caption.size()), &measured,
+              DT_CALCRECT | DT_WORDBREAK | DT_NOPREFIX);
+    SelectObject(dc, old_font);
+    ReleaseDC(s->pages[p].window, dc);
+    int label_height = std::max(23, int(measured.bottom));
     auto label = CreateWindowExW(0, L"STATIC", wide(f.label).c_str(), WS_CHILD,
-                                 24, y, 440, 23, s->pages[p].window, nullptr,
-                                 wc.hInstance, nullptr);
+                                 24, y, 440, label_height, s->pages[p].window,
+                                 nullptr, wc.hInstance, nullptr);
     bool multi = f.key == "excluded";
     auto control = CreateWindowExW(
         f.boolean ? 0 : WS_EX_CLIENTEDGE, f.boolean ? L"BUTTON" : L"EDIT",
@@ -317,7 +329,7 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
     if (f.shortcut)
       SetWindowSubclass(control, State::recorder, 1, 0);
     s->controls.push_back({f.key, control, f.boolean});
-    rows[p] += multi ? 84 : 30;
+    rows[p] += std::max(label_height, multi ? 76 : 25) + 6;
     if (!f.reason.empty()) {
       auto reason = CreateWindowExW(
           0, L"STATIC", wide(f.reason).c_str(), WS_CHILD, 24, 6 + rows[p], 820,
@@ -337,7 +349,7 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
                       WS_CHILD | WS_VISIBLE, 16, 706, 730, 40, s->window,
                       nullptr, wc.hInstance, nullptr);
   auto apply = s->apply_button = CreateWindowExW(
-      0, L"BUTTON", L"Apply",
+      0, L"BUTTON", lw(L"Apply"),
       WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_DEFPUSHBUTTON, 780, 710, 100, 30,
       s->window, reinterpret_cast<HMENU>(100), wc.hInstance, nullptr);
   SendMessageW(apply, WM_SETFONT, reinterpret_cast<WPARAM>(font), TRUE);

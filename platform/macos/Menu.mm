@@ -1,3 +1,4 @@
+#include "../LocaleNative.hpp"
 #include "cliptiq/native_menu.hpp"
 #import <AppKit/AppKit.h>
 #include <map>
@@ -264,7 +265,7 @@ Result<void> NativeMenu::initialize() {
   s->window.releasedWhenClosed = NO;
   s->window.title = @"Cliptiq";
   s->button = [[NSButton alloc] initWithFrame:NSMakeRect(24, 32, 250, 40)];
-  s->button.title = @"Clipboard History";
+  s->button.title = loc(@"Clipboard History");
   s->button.bezelStyle = NSBezelStyleRounded;
   s->button.target = s->target;
   s->button.action = @selector(open:);

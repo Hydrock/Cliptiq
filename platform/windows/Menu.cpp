@@ -1,3 +1,4 @@
+#include "../LocaleNative.hpp"
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 // clang-format off
@@ -287,7 +288,7 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
       }
       switch (message) {
       case WM_CREATE: {
-        CreateWindowW(L"BUTTON", L"Clipboard History",
+        CreateWindowW(L"BUTTON", lw(L"Clipboard History"),
                       WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_PUSHBUTTON, 16,
                       16, 240, 42, w, reinterpret_cast<HMENU>(1),
                       GetModuleHandleW(nullptr), nullptr);

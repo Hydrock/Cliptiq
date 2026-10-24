@@ -1,3 +1,4 @@
+#include "../LocaleNative.hpp"
 #include "cliptiq/editor.hpp"
 #ifdef CLIPTIQ_EDITOR_XML
 #include "../SnippetXml.hpp"
@@ -298,8 +299,11 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
 #endif
   }
   void status(Result<void> r) {
-    message.stringValue = r ? str((model->saving() ? std::string("Saving locally...") : "Saved locally. " + model->binding_status()))
-                            : str(r.error().message);
+    message.stringValue =
+        r ? str((model->saving()
+                     ? std::string(lc("Saving locally..."))
+                     : lc("Saved locally. ") + model->binding_status()))
+          : str(r.error().message);
   }
 #ifdef CLIPTIQ_EDITOR_XML
   void xml_sensitive(bool value) {
@@ -318,8 +322,8 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
     auto result = xml.start(*model, path, importing);
     if (result) {
       xml_sensitive(false);
-      status(Error{ErrorCode::Busy,
-                   importing ? "Importing XML..." : "Exporting XML..."});
+      status(Error{ErrorCode::Busy, importing ? lc("Importing XML...")
+                                              : lc("Exporting XML...")});
     }
     return result;
   }
@@ -537,10 +541,10 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
       }
     } else if (command == 509) {
       auto alert = [NSAlert new];
-      alert.messageText = @"Delete selected item?";
+      alert.messageText = loc(@"Delete selected item?");
       alert.informativeText = @"A folder also deletes its snippets.";
-      [alert addButtonWithTitle:@"Cancel"];
-      [alert addButtonWithTitle:@"Delete"];
+      [alert addButtonWithTitle:loc(@"Cancel")];
+      [alert addButtonWithTitle:loc(@"Delete")];
       bool confirmed = [alert runModal] == NSAlertSecondButtonReturn;
       r = model->erase_selected(confirmed);
       if (r && confirmed)
@@ -612,7 +616,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
                   backing:NSBackingStoreBuffered
                     defer:NO];
   s->window.releasedWhenClosed = NO;
-  s->window.title = @"Cliptiq Snippets";
+  s->window.title = loc(@"Cliptiq Snippets");
   s->window.minSize = NSMakeSize(700, 400);
   s->bridge = [CliptiqSnippetBridge new];
   s->window.delegate = s->bridge;
@@ -628,16 +632,16 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
     [tools addArrangedSubview:b];
     return b;
   };
-  button(@"Add Folder", @"editor-add-folder", @selector(addFolder:));
-  s->addSnippet =
-      button(@"Add Snippet", @"editor-add-snippet", @selector(addSnippet:));
-  button(@"Delete…", @"editor-delete", @selector(remove:));
-  s->undo = button(@"Undo", @"editor-undo", @selector(undo:));
-  s->redo = button(@"Redo", @"editor-redo", @selector(redo:));
-  button(@"Reload", @"editor-reload", @selector(reload:));
+  button(loc(@"Add Folder"), @"editor-add-folder", @selector(addFolder:));
+  s->addSnippet = button(loc(@"Add Snippet"), @"editor-add-snippet",
+                         @selector(addSnippet:));
+  button(loc(@"Delete…"), @"editor-delete", @selector(remove:));
+  s->undo = button(loc(@"Undo"), @"editor-undo", @selector(undo:));
+  s->redo = button(loc(@"Redo"), @"editor-redo", @selector(redo:));
+  button(loc(@"Reload"), @"editor-reload", @selector(reload:));
 #ifdef CLIPTIQ_EDITOR_XML
-  button(@"Import XML…", @"editor-import", @selector(importXML:));
-  button(@"Export XML…", @"editor-export", @selector(exportXML:));
+  button(loc(@"Import XML…"), @"editor-import", @selector(importXML:));
+  button(loc(@"Export XML…"), @"editor-export", @selector(exportXML:));
 #endif
   auto split = [[NSSplitView alloc] initWithFrame:NSMakeRect(12, 64, 876, 528)];
   split.vertical = YES;
@@ -662,12 +666,12 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
   [split setPosition:280 ofDividerAtIndex:0];
   s->title = [[NSTextField alloc] initWithFrame:NSMakeRect(12, 488, 571, 26)];
   s->title.identifier = @"editor-title";
-  s->title.placeholderString = @"Title";
-  s->title.accessibilityLabel = @"Title";
+  s->title.placeholderString = loc(@"Title");
+  s->title.accessibilityLabel = loc(@"Title");
   s->title.delegate = s->bridge;
   s->title.autoresizingMask = NSViewWidthSizable | NSViewMinYMargin;
   [right addSubview:s->title];
-  s->enabled = [NSButton checkboxWithTitle:@"Enabled in menu"
+  s->enabled = [NSButton checkboxWithTitle:loc(@"Enabled in menu")
                                     target:s->bridge
                                     action:@selector(enable:)];
   s->enabled.identifier = @"editor-enabled";
@@ -677,8 +681,9 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
   s->shortcut = [[CliptiqFolderShortcutField alloc]
       initWithFrame:NSMakeRect(12, 418, 441, 26)];
   s->shortcut.identifier = @"editor-shortcut";
-  s->shortcut.placeholderString = @"Folder shortcut: press chord, then Bind";
-  s->shortcut.accessibilityLabel = @"Folder shortcut";
+  s->shortcut.placeholderString =
+      loc(@"Folder shortcut: press chord, then Bind");
+  s->shortcut.accessibilityLabel = loc(@"Folder shortcut");
   s->shortcut.autoresizingMask = NSViewWidthSizable | NSViewMinYMargin;
   [right addSubview:s->shortcut];
   s->bind = [NSButton buttonWithTitle:@"Bind / Clear"

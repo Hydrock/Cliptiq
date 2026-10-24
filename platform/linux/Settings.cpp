@@ -1,4 +1,5 @@
 #include "cliptiq/settings.hpp"
+#include "../LocaleNative.hpp"
 #include <gtk/gtk.h>
 #include <thread>
 namespace cliptiq {
@@ -44,7 +45,7 @@ struct NativeSettings::State : std::enable_shared_from_this<State> {
     settings = std::move(draft.value());
     ++settings.revision;
     gtk_label_set_text(GTK_LABEL(message),
-                       "Saved. Unavailable functions remain disabled.");
+                       lc("Saved. Unavailable functions remain disabled."));
   }
 };
 NativeSettings::NativeSettings() : state_(std::make_shared<State>()) {}
@@ -68,15 +69,16 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
   s->apply = std::move(callback);
   s->authorize = std::move(authorize);
   s->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title(GTK_WINDOW(s->window), "Cliptiq Settings");
+  gtk_window_set_title(GTK_WINDOW(s->window), lc("Cliptiq Settings"));
   gtk_window_set_default_size(GTK_WINDOW(s->window), 760, 680);
   auto box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 8);
   gtk_container_add(GTK_CONTAINER(s->window), box);
   auto tabs = gtk_notebook_new();
   gtk_widget_set_name(tabs, "settings-tabs");
   gtk_box_pack_start(GTK_BOX(box), tabs, TRUE, TRUE, 0);
-  const char *names[] = {"General",   "Menu",    "Types", "Excluded",
-                         "Shortcuts", "Updates", "Beta",  "Donate"};
+  const char *names[] = {lc("General"),  lc("Menu"),      lc("Types"),
+                         lc("Excluded"), lc("Shortcuts"), lc("Updates"),
+                         lc("Beta"),     lc("About")};
   GtkWidget *grids[8]{};
   int rows[8]{};
   for (unsigned i = 0; i < 8; ++i) {
@@ -92,10 +94,14 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
   for (auto &f : settings_fields(s->settings, caps)) {
     auto label = gtk_label_new(f.label.c_str());
     gtk_label_set_xalign(GTK_LABEL(label), 0);
+    gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+    gtk_label_set_max_width_chars(GTK_LABEL(label), 48);
     auto control = f.boolean ? gtk_check_button_new()
                              : (f.key == "excluded" ? gtk_text_view_new()
                                                     : gtk_entry_new());
     gtk_widget_set_name(control, f.key.c_str());
+    gtk_label_set_mnemonic_widget(GTK_LABEL(label), control);
+    atk_object_set_name(gtk_widget_get_accessible(control), f.label.c_str());
     if (f.boolean)
       gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(control), f.value == "1");
     else if (GTK_IS_TEXT_VIEW(control)) {
@@ -167,12 +173,12 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
         s.get());
     gtk_grid_attach(GTK_GRID(grids[4]), authorize, 0, rows[4]++, 2, 1);
   }
-  s->message =
-      gtk_label_new("Shortcut fields record Ctrl/Alt/Super chords; Backspace "
-                    "clears optional bindings. Conflicts keep prior settings.");
+  s->message = gtk_label_new(
+      lc("Shortcut fields record Ctrl/Alt/Super chords; Backspace clears "
+         "optional bindings. Conflicts keep prior settings."));
   gtk_label_set_line_wrap(GTK_LABEL(s->message), TRUE);
   gtk_box_pack_start(GTK_BOX(box), s->message, FALSE, FALSE, 0);
-  auto apply = gtk_button_new_with_label("Apply");
+  auto apply = gtk_button_new_with_label(lc("Apply"));
   gtk_widget_set_name(apply, "apply");
   g_signal_connect(apply, "clicked",
                    G_CALLBACK(+[](GtkButton *, gpointer data) {
@@ -204,7 +210,8 @@ bool NativeSettings::confirm_clear() const {
   auto dialog = gtk_message_dialog_new(
       state_->window ? GTK_WINDOW(state_->window) : nullptr, GTK_DIALOG_MODAL,
       GTK_MESSAGE_QUESTION, GTK_BUTTONS_OK_CANCEL,
-      "Clear Cliptiq history? Snippets and current system clipboard remain.");
+      lc("Clear Cliptiq history? Snippets and current system clipboard "
+         "remain."));
   bool confirmed = gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK;
   gtk_widget_destroy(dialog);
   return confirmed;

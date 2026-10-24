@@ -1,4 +1,4 @@
-name: Portable core and native clipboards (T02-T12)
+name: Portable core and native clipboards (T02-T13)
 on:
   workflow_dispatch:
   push:
@@ -8,6 +8,12 @@ on:
       - 'third_party/tinyxml2/**'
       - 'platform/SnippetXml.hpp'
       - 'platform/Media*'
+      - 'platform/Lifecycle*'
+      - 'platform/LocaleNative.hpp'
+      - 'platform/posix/**'
+      - 'resources/**'
+      - 'tools/generate-locales.py'
+      - 'tests/integration/lifecycle*'
       - 'tests/integration/native_media_test.cpp'
       - 'tests/fixtures/media/**'
       - 'platform/MenuHost.cpp'
