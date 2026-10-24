@@ -170,6 +170,22 @@ struct SnippetEditorSession::State {
 SnippetEditorSession::SnippetEditorSession(Store &s, SnippetEditorCallbacks cb)
     : state_(new State(s, std::move(cb))) {}
 SnippetEditorSession::~SnippetEditorSession() = default;
+std::string SnippetEditorSession::database_path() const {
+  auto path = sqlite3_db_filename(state_->store.connection(), "main");
+  return path ? path : "";
+}
+Limits SnippetEditorSession::store_limits() const {
+  return state_->store.limits();
+}
+Result<void> SnippetEditorSession::refresh_external() {
+  if (has_unsaved())
+    return Error{ErrorCode::Busy,
+                 "Draft must be saved before refreshing imported data"};
+  auto result = reload();
+  if (result)
+    state_->changed();
+  return result;
+}
 Result<void> SnippetEditorSession::reload() {
   return detail::guarded<void>([&]() -> Result<void> {
     auto &s = *state_;

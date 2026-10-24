@@ -19,6 +19,9 @@ public:
   explicit SnippetEditorSession(Store &, SnippetEditorCallbacks = {});
   ~SnippetEditorSession();
   Result<void> reload();
+  std::string database_path() const;
+  Limits store_limits() const;
+  Result<void> refresh_external();
   const std::vector<Folder> &folders() const;
   const std::vector<SnippetInfo> &snippets() const;
   std::optional<SnippetItemId> selected() const;
@@ -58,6 +61,9 @@ public:
   ~NativeSnippetEditor();
   Result<void> show(std::shared_ptr<SnippetEditorSession>);
   Result<void> process_events();
+  Result<void> import_xml_path(const std::string &);
+  Result<void> export_xml_path(const std::string &);
+  bool xml_transfer_busy() const;
   Result<bool> request_close();
   std::uintptr_t native_handle() const;
   bool record_chord(const KeyChord &);

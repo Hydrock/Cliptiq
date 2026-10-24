@@ -1,9 +1,15 @@
 #include "cliptiq/editor.hpp"
+#ifdef CLIPTIQ_EDITOR_XML
+#include "../SnippetXml.hpp"
+#endif
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 // clang-format off
 #include <windows.h>
 #include <commctrl.h>
+#ifdef CLIPTIQ_EDITOR_XML
+#include <commdlg.h>
+#endif
 #include <windowsx.h>
 #include <richedit.h>
 #include <oleidl.h>
@@ -172,6 +178,9 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
   HMODULE rich = nullptr;
   HRESULT ole = E_FAIL;
   std::shared_ptr<SnippetEditorSession> model;
+#ifdef CLIPTIQ_EDITOR_XML
+  SnippetXmlTransfer xml;
+#endif
   bool updating = false;
   std::map<HTREEITEM, SnippetItemId> nodes;
   std::uint64_t drag = 0;
@@ -306,8 +315,83 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
           message, r ? wide((model->saving() ? std::string("Saving locally...") : "Saved locally. " + model->binding_status())).c_str()
                      : wide(r.error().message).c_str());
   }
+#ifdef CLIPTIQ_EDITOR_XML
+  void xml_sensitive(bool value) { EnableWindow(window, value); }
+  Result<void> start_xml(const std::string &path, bool importing) {
+    if (!window || !model)
+      return Error{ErrorCode::InvalidArgument, "Open the snippet editor first"};
+    auto result = xml.start(*model, path, importing);
+    if (result) {
+      xml_sensitive(false);
+      status(Error{ErrorCode::Busy,
+                   importing ? "Importing XML..." : "Exporting XML..."});
+    }
+    return result;
+  }
+  bool poll_xml() {
+    if (!xml.busy())
+      return false;
+    auto result = xml.poll(*model);
+    if (xml.busy())
+      return true;
+    xml_sensitive(true);
+    if (result) {
+      if (xml.importing())
+        rebuild();
+      else
+        detail();
+      SetWindowTextW(message, wide(xml.message()).c_str());
+    } else {
+      detail();
+      status(result.error());
+    }
+    return true;
+  }
+  void xml_picker(bool importing) {
+    auto keep = shared_from_this();
+    if (xml.busy() || model->has_unsaved()) {
+      status(Error{
+          ErrorCode::Busy,
+          "Save or Reload the draft and finish the current transfer first"});
+      return;
+    }
+    std::vector<wchar_t> path(32768);
+    if (!importing)
+      wcscpy_s(path.data(), path.size(), L"snippets.xml");
+    OPENFILENAMEW picker{};
+    picker.lStructSize = sizeof(picker);
+    picker.hwndOwner = window;
+    picker.lpstrFile = path.data();
+    picker.nMaxFile = DWORD(path.size());
+    picker.lpstrFilter = L"XML files (*.xml)\0*.xml\0All files (*.*)\0*.*\0\0";
+    picker.lpstrDefExt = L"xml";
+    picker.Flags = OFN_EXPLORER | OFN_NOCHANGEDIR | OFN_PATHMUSTEXIST |
+                   (importing ? OFN_FILEMUSTEXIST : OFN_OVERWRITEPROMPT);
+    auto accepted =
+        importing ? GetOpenFileNameW(&picker) : GetSaveFileNameW(&picker);
+    if (accepted) {
+      int count =
+          WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, path.data(), -1,
+                              nullptr, 0, nullptr, nullptr);
+      if (!count) {
+        status(Error{ErrorCode::InvalidArgument, "Invalid Unicode XML path"});
+        return;
+      }
+      std::string chosen(std::size_t(count), 0);
+      WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, path.data(), -1,
+                          chosen.data(), count, nullptr, nullptr);
+      chosen.resize(std::size_t(count) - 1);
+      status(start_xml(chosen, importing));
+    } else if (CommDlgExtendedError())
+      status(Error{ErrorCode::Io, "Cannot show XML file picker"});
+  }
+#endif
   void poll() {
     if(!model || !window) return;
+#ifdef CLIPTIQ_EDITOR_XML
+    if (poll_xml())
+      return;
+#endif
     auto result=model->poll_saves();
     if(!result) status(result.error());
     else if(result.value()) {status({});selected_label();}
@@ -318,6 +402,13 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
     EnableWindow(redo, model->can_redo());
   }
   bool confirm_close() {
+#ifdef CLIPTIQ_EDITOR_XML
+    if (xml.busy()) {
+      status(
+          Error{ErrorCode::Busy, "XML transfer pending; wait before closing"});
+      return false;
+    }
+#endif
     if(model && model->saving()) {status(Error{ErrorCode::Busy,"Save pending; wait before closing"});return false;}
 
     if (!model || !model->has_unsaved())
@@ -425,6 +516,12 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
   }
   void perform(int command) {
     auto keep = shared_from_this();
+#ifdef CLIPTIQ_EDITOR_XML
+    if (command == 513 || command == 514) {
+      xml_picker(command == 513);
+      return;
+    }
+#endif
     Result<void> r;
     if (command == 507 || command == 508) {
       auto added = command == 507 ? model->add_folder() : model->add_snippet();
@@ -690,7 +787,7 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
             s->history();
             return 0;
           }
-          if (id >= 503 && id <= 512 && id != 504 && id != 505) {
+          if (id >= 503 && id <= 514 && id != 504 && id != 505) {
             s->perform(id);
             return 0;
           }
@@ -788,6 +885,10 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
   auto s = state_;
   if (GetCurrentThreadId() != s->owner)
     return Error{ErrorCode::InvalidArgument, "Editor requires owner thread"};
+#ifdef CLIPTIQ_EDITOR_XML
+  if (s->xml.busy())
+    return Error{ErrorCode::Busy, "XML transfer pending in existing editor"};
+#endif
   if (!model)
     return Error{ErrorCode::InvalidArgument, "No editor session"};
   if (s->window && s->model && s->model->has_unsaved())
@@ -828,11 +929,21 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
     SendMessageW(w, WM_SETFONT, reinterpret_cast<WPARAM>(font), TRUE);
     return w;
   };
-  const wchar_t *names[] = {L"Add Folder", L"Add Snippet", L"Delete…",
-                            L"Undo",       L"Redo",        L"Reload"};
-  for (int n = 0; n < 6; ++n) {
+  const wchar_t *names[] = {L"Add Folder",
+                            L"Add Snippet",
+                            L"Delete…",
+                            L"Undo",
+                            L"Redo",
+                            L"Reload"
+#ifdef CLIPTIQ_EDITOR_XML
+                            ,
+                            L"Import XML…",
+                            L"Export XML…"
+#endif
+  };
+  for (int n = 0; n < int(sizeof(names) / sizeof(names[0])); ++n) {
     auto button = control(L"BUTTON", names[n], 507 + n, BS_PUSHBUTTON);
-    MoveWindow(button, 12 + n * 110, 12, 104, 30, TRUE);
+    MoveWindow(button, 12 + n * 84, 12, 80, 30, TRUE);
     if (n == 1)
       s->addSnippet = button;
     if (n == 3)
@@ -921,5 +1032,34 @@ bool NativeSnippetEditor::record_chord(const KeyChord &chord) {
     return false;
   SetWindowTextW(s->shortcut, wide(format_chord(chord)).c_str());
   return true;
+}
+Result<void> NativeSnippetEditor::import_xml_path(const std::string &path) {
+#ifdef CLIPTIQ_EDITOR_XML
+  auto s = state_;
+  if (GetCurrentThreadId() != s->owner)
+    return Error{ErrorCode::InvalidArgument, "Editor requires owner thread"};
+  return s->start_xml(path, true);
+#else
+  (void)path;
+  return Error{ErrorCode::Unsupported, "XML disabled in baseline probe"};
+#endif
+}
+Result<void> NativeSnippetEditor::export_xml_path(const std::string &path) {
+#ifdef CLIPTIQ_EDITOR_XML
+  auto s = state_;
+  if (GetCurrentThreadId() != s->owner)
+    return Error{ErrorCode::InvalidArgument, "Editor requires owner thread"};
+  return s->start_xml(path, false);
+#else
+  (void)path;
+  return Error{ErrorCode::Unsupported, "XML disabled in baseline probe"};
+#endif
+}
+bool NativeSnippetEditor::xml_transfer_busy() const {
+#ifdef CLIPTIQ_EDITOR_XML
+  return state_->xml.busy();
+#else
+  return false;
+#endif
 }
 } // namespace cliptiq

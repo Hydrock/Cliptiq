@@ -154,4 +154,10 @@ if system == 'Windows':
     rich = pathlib.Path(os.environ['WINDIR']) / 'System32' / 'Msftedit.dll'
     report['snippets']['dynamic_system_component'] = {'name': 'Msftedit.dll', 'bytes': rich.stat().st_size, 'sha256': hashlib.sha256(rich.read_bytes()).hexdigest(), 'scope': 'existing OS RichEdit component loaded from System32, not bundled; not full system dependency closure'}
 (root / 'out' / 't02-size.json').write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
+
+snippet_xml = menu_variant('snippet_xml_probe')
+report['xml'] = {'baseline': snippet_editor, 'with_xml': snippet_xml, 'added_bytes': snippet_xml['executable_bytes']-snippet_editor['executable_bytes'], 'added_zip_bytes': snippet_xml['zip_bytes']-snippet_editor['zip_bytes'], 'scope': 'paired same native snippet editor host with XML disabled/enabled; pinned static TinyXML2 + bounded codec, atomic append/file IO, native file pickers and worker; no clipboard/input/global grabs in smoke; not installer/full product'}
+report['source_files_sha256'].update({p.relative_to(root).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted((root/'third_party/tinyxml2').rglob('*')) if p.is_file()})
+report['source_files_sha256']['platform/SnippetXml.hpp']=hashlib.sha256((root/'platform/SnippetXml.hpp').read_bytes()).hexdigest()
+(root / 'out' / 't02-size.json').write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
 print(json.dumps(report, indent=2))

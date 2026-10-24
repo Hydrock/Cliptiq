@@ -1,4 +1,7 @@
 #include "cliptiq/editor.hpp"
+#ifdef CLIPTIQ_EDITOR_XML
+#include "../SnippetXml.hpp"
+#endif
 #include <algorithm>
 #include <gtk/gtk.h>
 #include <thread>
@@ -11,6 +14,9 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
             *redo = nullptr, *add_snippet = nullptr;
   GtkTreeStore *rows = nullptr;
   std::shared_ptr<SnippetEditorSession> model;
+#ifdef CLIPTIQ_EDITOR_XML
+  SnippetXmlTransfer xml;
+#endif
   bool updating = false;
   std::uint64_t drag = 0;
   std::optional<SnippetItemId> dragged;
@@ -25,8 +31,78 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
                        r ? ((model->saving() ? std::string("Saving locally...") : "Saved locally. " + model->binding_status())).c_str()
                          : r.error().message.c_str());
   }
+#ifdef CLIPTIQ_EDITOR_XML
+  void xml_sensitive(bool value) { gtk_widget_set_sensitive(window, value); }
+  Result<void> start_xml(const std::string &path, bool importing) {
+    if (!window || !model)
+      return Error{ErrorCode::InvalidArgument, "Open the snippet editor first"};
+    auto result = xml.start(*model, path, importing);
+    if (result) {
+      xml_sensitive(false);
+      status(Error{ErrorCode::Busy,
+                   importing ? "Importing XML..." : "Exporting XML..."});
+    }
+    return result;
+  }
+  bool poll_xml() {
+    if (!xml.busy())
+      return false;
+    auto result = xml.poll(*model);
+    if (xml.busy())
+      return true;
+    xml_sensitive(true);
+    if (result) {
+      if (xml.importing())
+        rebuild();
+      else
+        detail();
+      gtk_label_set_text(GTK_LABEL(message), xml.message().c_str());
+    } else {
+      detail();
+      status(result.error());
+    }
+    return true;
+  }
+  void xml_picker(bool importing) {
+    auto keep = shared_from_this();
+    if (xml.busy() || model->has_unsaved()) {
+      status(Error{
+          ErrorCode::Busy,
+          "Save or Reload the draft and finish the current transfer first"});
+      return;
+    }
+    auto dialog = gtk_file_chooser_dialog_new(
+        importing ? "Import Clipy XML" : "Export Clipy XML", GTK_WINDOW(window),
+        importing ? GTK_FILE_CHOOSER_ACTION_OPEN : GTK_FILE_CHOOSER_ACTION_SAVE,
+        "Cancel", GTK_RESPONSE_CANCEL, importing ? "Import" : "Export",
+        GTK_RESPONSE_ACCEPT, nullptr);
+    auto filter = gtk_file_filter_new();
+    gtk_file_filter_set_name(filter, "XML files");
+    gtk_file_filter_add_pattern(filter, "*.xml");
+    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter);
+    if (!importing) {
+      gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog),
+                                        "snippets.xml");
+      gtk_file_chooser_set_do_overwrite_confirmation(GTK_FILE_CHOOSER(dialog),
+                                                     TRUE);
+    }
+    if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
+      auto path = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
+      std::string chosen = path ? path : "";
+      g_free(path);
+      gtk_widget_destroy(dialog);
+      status(start_xml(chosen, importing));
+      return;
+    }
+    gtk_widget_destroy(dialog);
+  }
+#endif
   void poll() {
     if(!model || !window) return;
+#ifdef CLIPTIQ_EDITOR_XML
+    if (poll_xml())
+      return;
+#endif
     auto result=model->poll_saves();
     if(!result) status(result.error());
     else if(result.value()) {status({});selected_label();}
@@ -68,6 +144,13 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
     }
   }
   bool confirm_close() {
+#ifdef CLIPTIQ_EDITOR_XML
+    if (xml.busy()) {
+      status(
+          Error{ErrorCode::Busy, "XML transfer pending; wait before closing"});
+      return false;
+    }
+#endif
     if(model && model->saving()) {status(Error{ErrorCode::Busy,"Save pending; wait before closing"});return false;}
 
     if (!model->has_unsaved())
@@ -302,6 +385,10 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
   auto s = state_;
   if (s->owner != std::this_thread::get_id())
     return Error{ErrorCode::InvalidArgument, "Editor requires GUI thread"};
+#ifdef CLIPTIQ_EDITOR_XML
+  if (s->xml.busy())
+    return Error{ErrorCode::Busy, "XML transfer pending in existing editor"};
+#endif
   if (!model)
     return Error{ErrorCode::InvalidArgument, "No editor session"};
   if (!gtk_init_check(nullptr, nullptr))
@@ -361,6 +448,16 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
         if (r)
           s->rebuild();
       });
+#ifdef CLIPTIQ_EDITOR_XML
+  button(
+      "Import XML…", "editor-import", +[](GtkButton *, gpointer p) {
+        static_cast<State *>(p)->xml_picker(true);
+      });
+  button(
+      "Export XML…", "editor-export", +[](GtkButton *, gpointer p) {
+        static_cast<State *>(p)->xml_picker(false);
+      });
+#endif
   auto split = gtk_paned_new(GTK_ORIENTATION_HORIZONTAL);
   gtk_box_pack_start(GTK_BOX(root), split, TRUE, TRUE, 0);
   auto scroll = gtk_scrolled_window_new(nullptr, nullptr);
@@ -654,5 +751,34 @@ bool NativeSnippetEditor::record_chord(const KeyChord &chord) {
     return false;
   gtk_entry_set_text(GTK_ENTRY(s->shortcut), format_chord(chord).c_str());
   return true;
+}
+Result<void> NativeSnippetEditor::import_xml_path(const std::string &path) {
+#ifdef CLIPTIQ_EDITOR_XML
+  auto s = state_;
+  if (s->owner != std::this_thread::get_id())
+    return Error{ErrorCode::InvalidArgument, "Editor requires owner thread"};
+  return s->start_xml(path, true);
+#else
+  (void)path;
+  return Error{ErrorCode::Unsupported, "XML disabled in baseline probe"};
+#endif
+}
+Result<void> NativeSnippetEditor::export_xml_path(const std::string &path) {
+#ifdef CLIPTIQ_EDITOR_XML
+  auto s = state_;
+  if (s->owner != std::this_thread::get_id())
+    return Error{ErrorCode::InvalidArgument, "Editor requires owner thread"};
+  return s->start_xml(path, false);
+#else
+  (void)path;
+  return Error{ErrorCode::Unsupported, "XML disabled in baseline probe"};
+#endif
+}
+bool NativeSnippetEditor::xml_transfer_busy() const {
+#ifdef CLIPTIQ_EDITOR_XML
+  return state_->xml.busy();
+#else
+  return false;
+#endif
 }
 } // namespace cliptiq

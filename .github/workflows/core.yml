@@ -1,10 +1,12 @@
-name: Portable core and native clipboards (T02-T10)
+name: Portable core and native clipboards (T02-T11)
 on:
   workflow_dispatch:
   push:
     paths:
       - 'core/**'
       - 'third_party/libgrapheme/**'
+      - 'third_party/tinyxml2/**'
+      - 'platform/SnippetXml.hpp'
       - 'platform/MenuHost.cpp'
       - 'platform/macos/**'
       - 'platform/windows/**'
@@ -16,6 +18,9 @@ on:
       - 'tests/integration/native_paste_test.cpp'
       - 'tests/integration/native_settings_test.cpp'
       - 'tests/integration/native_editor_test.cpp'
+      - 'tests/integration/native_xml_test.cpp'
+      - 'tests/integration/xml_interop.py'
+      - 'tests/fixtures/xml/**'
       - 'tests/integration/snippet_integration_test.cpp'
       - 'tests/integration/native_hotkeys_test.cpp'
       - 'tests/integration/linux_hotkey_portal_test.cpp'

@@ -1,4 +1,5 @@
 #include "cliptiq/snippets.hpp"
+#include "cliptiq/xml.hpp"
 #include "db.hpp"
 #include <algorithm>
 #include <random>
@@ -515,6 +516,67 @@ Result<void> erase_snippet_item(Store &store, const SnippetItemId &item) {
     revision(db);
     tx.commit();
     return {};
+  });
+}
+Result<ImportSummary>
+append_import(Store &store, const std::vector<ImportedFolder> &folders) {
+  return detail::guarded<ImportSummary>([&]() -> Result<ImportSummary> {
+    auto db = store.connection();
+    Transaction tx(db);
+    auto order = ids(db);
+    ImportSummary summary;
+    if (folders.size() > 1000 - order.size())
+      return Error{ErrorCode::TooLarge, "Import exceeds folder count"};
+    Statement budget(db, "SELECT count(*),coalesce(sum(length(CAST(content AS "
+                         "BLOB))),0) FROM snippets");
+    budget.row();
+    std::uint64_t count = std::uint64_t(budget.number(0)),
+                  total = std::uint64_t(budget.number(1));
+    if (count > 10000 || total > total_limit)
+      return Error{ErrorCode::TooLarge,
+                   "Existing snippet collection exceeds budget"};
+    for (auto &f : folders) {
+      utf8(f.title, 1024);
+      for (auto &s : f.snippets) {
+        utf8(s.title, 1024);
+        utf8(s.content, std::size_t(std::min(
+                            text_limit, store.limits().representation_bytes)));
+        if (++count > 10000 || s.content.size() > total_limit - total)
+          return Error{ErrorCode::TooLarge,
+                       "Import exceeds snippet/text budget"};
+        total += s.content.size();
+      }
+    }
+    for (auto &f : folders) {
+      auto folder_id = uuid();
+      Statement insert(
+          db, "INSERT INTO snippet_folders(id,title,position) VALUES(?,?,?)");
+      insert.bind(1, folder_id);
+      insert.bind(2, f.title);
+      insert.bind(3, std::int64_t(order.size()));
+      insert.done();
+      order.push_back(folder_id);
+      ++summary.folders;
+      std::size_t position = 0;
+      for (auto &s : f.snippets) {
+        Statement item(
+            db, "INSERT INTO snippets(id,folder_id,title,content,position) "
+                "VALUES(?,?,?,?,?)");
+        item.bind(1, uuid());
+        item.bind(2, folder_id);
+        item.bind(3, s.title);
+        item.bind(4, s.content);
+        item.bind(5, std::int64_t(position++));
+        item.done();
+        ++summary.snippets;
+      }
+    }
+    if (summary.folders) {
+      reindex(db, true, order);
+      revision(db);
+    }
+    tx.commit();
+    return summary;
   });
 }
 } // namespace cliptiq
