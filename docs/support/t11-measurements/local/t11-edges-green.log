@@ -1,0 +1,11 @@
+[1/4] Building CXX object CMakeFiles/cliptiq_xml.dir/core/src/xml.cpp.o
+[2/4] Building CXX object CMakeFiles/cliptiq_xml.dir/core/src/xml_file.cpp.o
+[3/4] Linking CXX static library libcliptiq_xml.a
+[4/4] Linking CXX executable xml_test
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+    Start 1: xml
+1/1 Test #1: xml ..............................   Passed    0.03 sec
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =   0.05 sec

@@ -1,0 +1,47 @@
+EEE
+======================================================================
+ERROR: test_complete_real_feature_matrix (test_coverage.CoverageTests.test_complete_real_feature_matrix)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\SmiteVils\Documents\ChatGPT\ClipBoard Project\tests\tools\test_coverage.py", line 7, in test_complete_real_feature_matrix
+    tool=load('verify-coverage');self.assertEqual(tool.validate(ROOT/'docs/research/2026-10-23-clipy-audit.md',json.loads((ROOT/'docs/support/feature-status.json').read_text()),ROOT),[])
+  File "C:\Users\SmiteVils\Documents\ChatGPT\ClipBoard Project\tests\tools\test_coverage.py", line 4, in load
+    spec=importlib.util.spec_from_file_location(name,ROOT/'tools'/f'{name}.py');module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module);return module
+                                                                                                                             ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "<frozen importlib._bootstrap_external>", line 755, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 892, in get_code
+  File "<frozen importlib._bootstrap_external>", line 950, in get_data
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\SmiteVils\\Documents\\ChatGPT\\ClipBoard Project\\tools\\verify-coverage.py'
+
+======================================================================
+ERROR: test_duplicate_rows_unknown_status_escape_and_manual_closure_fail (test_coverage.CoverageTests.test_duplicate_rows_unknown_status_escape_and_manual_closure_fail)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\SmiteVils\Documents\ChatGPT\ClipBoard Project\tests\tools\test_coverage.py", line 14, in test_duplicate_rows_unknown_status_escape_and_manual_closure_fail
+    tool=load('verify-coverage');source=json.loads((ROOT/'docs/support/feature-status.json').read_text())
+  File "C:\Users\SmiteVils\Documents\ChatGPT\ClipBoard Project\tests\tools\test_coverage.py", line 4, in load
+    spec=importlib.util.spec_from_file_location(name,ROOT/'tools'/f'{name}.py');module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module);return module
+                                                                                                                             ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "<frozen importlib._bootstrap_external>", line 755, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 892, in get_code
+  File "<frozen importlib._bootstrap_external>", line 950, in get_data
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\SmiteVils\\Documents\\ChatGPT\\ClipBoard Project\\tools\\verify-coverage.py'
+
+======================================================================
+ERROR: test_missing_sensitive_ids_and_unproven_verified_are_rejected (test_coverage.CoverageTests.test_missing_sensitive_ids_and_unproven_verified_are_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\SmiteVils\Documents\ChatGPT\ClipBoard Project\tests\tools\test_coverage.py", line 9, in test_missing_sensitive_ids_and_unproven_verified_are_rejected
+    tool=load('verify-coverage');source=json.loads((ROOT/'docs/support/feature-status.json').read_text())
+  File "C:\Users\SmiteVils\Documents\ChatGPT\ClipBoard Project\tests\tools\test_coverage.py", line 4, in load
+    spec=importlib.util.spec_from_file_location(name,ROOT/'tools'/f'{name}.py');module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module);return module
+                                                                                                                             ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "<frozen importlib._bootstrap_external>", line 755, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 892, in get_code
+  File "<frozen importlib._bootstrap_external>", line 950, in get_data
+FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\SmiteVils\\Documents\\ChatGPT\\ClipBoard Project\\tools\\verify-coverage.py'
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.002s
+
+FAILED (errors=3)

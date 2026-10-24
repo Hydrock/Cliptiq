@@ -1,0 +1,76 @@
+Preset CMake variables:
+
+  BUILD_TESTING="ON"
+  CMAKE_BUILD_TYPE="Debug"
+
+-- Configuring done (1.9s)
+-- Generating done (0.1s)
+-- Build files have been written to: /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+[1/18] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/menu.cpp.o
+[2/18] Building CXX object CMakeFiles/menu_test.dir/tests/unit/menu_test.cpp.o
+[3/18] Linking CXX static library libcliptiq_core.a
+[4/18] Building CXX object CMakeFiles/linux_clipboard_test.dir/tests/integration/linux_clipboard_test.cpp.o
+[5/18] Building CXX object CMakeFiles/cliptiq_linux.dir/platform/linux/Transfer.cpp.o
+[6/18] Building CXX object CMakeFiles/cliptiq_linux.dir/platform/linux/ClipboardX11.cpp.o
+[7/18] Building CXX object CMakeFiles/cliptiq_linux.dir/platform/linux/ClipboardWayland.cpp.o
+[8/18] Building CXX object CMakeFiles/linux_x11_wire_test.dir/tests/integration/linux_x11_wire_test.cpp.o
+[9/18] Building CXX object CMakeFiles/linux_wayland_wire_test.dir/tests/integration/linux_wayland_wire_test.cpp.o
+[10/18] Building CXX object CMakeFiles/linux_native_clipboard_test.dir/tests/integration/linux_native_clipboard_test.cpp.o
+[11/18] Linking CXX executable menu_test
+[12/18] Linking CXX executable history_test
+[13/18] Linking CXX executable policy_test
+[14/18] Linking CXX static library libcliptiq_linux.a
+[15/18] Linking CXX executable linux_clipboard_test
+[16/18] Linking CXX executable linux_x11_wire_test
+[17/18] Linking CXX executable linux_native_clipboard_test
+[18/18] Linking CXX executable linux_wayland_wire_test
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+      Start  1: menu
+ 1/10 Test  #1: menu ...............................***Failed    0.22 sec
+FAIL empty_clear_disabled: Not implemented
+FAIL grouping_0_1: Not implemented
+FAIL grouping_0_10: Not implemented
+FAIL grouping_0_100: Not implemented
+FAIL grouping_1_1: Not implemented
+FAIL grouping_1_10: Not implemented
+FAIL grouping_1_100: Not implemented
+FAIL grouping_100_1: Not implemented
+FAIL grouping_100_10: Not implemented
+FAIL grouping_100_100: Not implemented
+FAIL zero_one_numbering_and_ten_shortcuts: Not implemented
+FAIL numbering_and_shortcuts_independent: Not implemented
+FAIL graphemes_first_line_trim_and_ellipsis: Not implemented
+FAIL invalid_utf8_controls_are_sanitized: Not implemented
+FAIL utf16_history_title_and_tooltip: Not implemented
+FAIL snippet_order_above_below_and_kinds: Not implemented
+FAIL tooltip_and_title_limits: Not implemented
+FAIL hex_swatches_and_image_reference: Not implemented
+FAIL revision_and_deleted_ids_reject_stale_commands: Not implemented
+FAIL build_does_not_mutate_history: Not implemented
+
+      Start  2: linux_clipboard_protocol
+ 2/10 Test  #2: linux_clipboard_protocol ...........   Passed    0.03 sec
+      Start  3: linux_clipboard_wayland_wire
+ 3/10 Test  #3: linux_clipboard_wayland_wire .......   Passed    1.35 sec
+      Start  4: linux_clipboard_x11_wire
+ 4/10 Test  #4: linux_clipboard_x11_wire ...........   Passed    0.67 sec
+      Start  5: linux_clipboard_external_clients
+ 5/10 Test  #5: linux_clipboard_external_clients ...   Passed    2.41 sec
+      Start  6: linux_clipboard_x11
+ 6/10 Test  #6: linux_clipboard_x11 ................   Passed    0.55 sec
+      Start  7: linux_clipboard_wayland
+ 7/10 Test  #7: linux_clipboard_wayland ............   Passed    0.35 sec
+      Start  8: policy
+ 8/10 Test  #8: policy .............................   Passed    0.02 sec
+      Start  9: history
+ 9/10 Test  #9: history ............................   Passed    0.22 sec
+      Start 10: history_crash
+10/10 Test #10: history_crash ......................   Passed    0.43 sec
+
+90% tests passed, 1 tests failed out of 10
+
+Total Test time (real) =   6.32 sec
+
+The following tests FAILED:
+	  1 - menu (Failed)
+Errors while running CTest

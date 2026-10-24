@@ -1,0 +1,26 @@
+{
+  "host": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "scope": "existing C++ GTK3 Base full update payload; shared system dependencies excluded; no install/repository signing test",
+  "files": [
+    {
+      "name": "probe_cpp",
+      "bytes": 728112,
+      "sha256": "088dd563b657194f8c21c41573461b1e4b3f9ac61594a2a63b130a8b8b60bbf4"
+    },
+    {
+      "name": "cliptiq-t01_0.0.1_amd64.deb",
+      "bytes": 344624,
+      "sha256": "693b98c8d4054dc290450ffae565d8669aa98cd5ad920c6f262c65f50615b46f"
+    },
+    {
+      "name": "cliptiq-t01.tar.xz",
+      "bytes": 344108,
+      "sha256": "8e1fd93dcdb252874d46c70d5f14ee36f64b00f014a88da7ad452a20b89ca83e"
+    }
+  ],
+  "updater_app_owned_bytes": 0,
+  "method": "distribution repository/package manager owns download/signature/install; tar lane requires explicit external/manual replacement, no bundled updater",
+  "delta_bytes": null,
+  "delta_reason": "No two real releases or binary patch/apply/verification implementation; tiny deltas are not claimed",
+  "package_tool": "Debian 'dpkg-deb' package archive backend version 1.22.6 (amd64)."
+}

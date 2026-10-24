@@ -1,0 +1,59 @@
+-- Configuring done (0.8s)
+-- Generating done (0.1s)
+-- Build files have been written to: C:/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Windows-test
+[1/29] Linking CXX static library cliptiq_core.lib
+[2/29] Linking CXX static library cliptiq_xml.lib
+[3/29] Linking CXX executable snippets_test.exe
+[4/29] Linking CXX executable native_hotkeys_test.exe
+[5/29] Linking CXX executable native_settings_test.exe
+[6/29] Linking CXX executable native_paste_test.exe
+[7/29] Linking CXX executable windows_hotkey_boundary_test.exe
+[8/29] Linking CXX executable menu_preview_test.exe
+[9/29] Linking CXX executable paste_boundary_test.exe
+[10/29] Linking CXX executable hotkeys_test.exe
+[11/29] Linking CXX executable editor_test.exe
+[12/29] Linking CXX executable menu_regression_test.exe
+[13/29] Linking CXX executable paste_test.exe
+[14/29] Linking CXX executable settings_test.exe
+[15/29] Linking CXX executable snippet_integration_test.exe
+[16/29] Linking CXX executable policy_test.exe
+[17/29] Linking CXX executable history_test.exe
+[18/29] Linking CXX executable windows_clipboard_test.exe
+[19/29] Linking CXX executable menu_test.exe
+[20/29] Linking CXX executable native_menu_test.exe
+[21/29] Building CXX object CMakeFiles\xml_test.dir\tests\unit\xml_test.cpp.obj
+[22/29] Building CXX object CMakeFiles\cliptiq_editor_native.dir\platform\windows\SnippetEditor.cpp.obj
+[23/29] Linking CXX static library cliptiq_editor_native.lib
+[24/29] Building CXX object CMakeFiles\cliptiq_editor_xml_native.dir\platform\windows\SnippetEditor.cpp.obj
+[25/29] Linking CXX static library cliptiq_editor_xml_native.lib
+[26/29] Linking CXX executable xml_test.exe
+[27/29] Linking CXX executable native_editor_test.exe
+[28/29] Linking CXX executable cliptiq_menu_host.exe
+[29/29] Linking CXX executable native_xml_test.exe
+Test project C:/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Windows-test
+      Start  2: xml
+ 1/11 Test  #2: xml ..............................   Passed    0.66 sec
+      Start  5: snippets_menu_hotkeys
+ 2/11 Test  #5: snippets_menu_hotkeys ............   Passed    0.69 sec
+      Start  6: editor
+ 3/11 Test  #6: editor ...........................   Passed    1.09 sec
+      Start  7: snippets
+ 4/11 Test  #7: snippets .........................   Passed    0.83 sec
+      Start 11: settings
+ 5/11 Test #11: settings .........................   Passed    0.81 sec
+      Start 12: hotkeys
+ 6/11 Test #12: hotkeys ..........................   Passed    0.18 sec
+      Start 14: paste_native_boundary
+ 7/11 Test #14: paste_native_boundary ............   Passed    0.58 sec
+      Start 15: paste
+ 8/11 Test #15: paste ............................   Passed    0.76 sec
+      Start 16: menu_unicode_conformance
+ 9/11 Test #16: menu_unicode_conformance .........   Passed    0.02 sec
+      Start 21: menu_preview
+10/11 Test #21: menu_preview .....................   Passed    0.09 sec
+      Start 22: menu
+11/11 Test #22: menu .............................   Passed    0.82 sec
+
+100% tests passed, 0 tests failed out of 11
+
+Total Test time (real) =  12.28 sec

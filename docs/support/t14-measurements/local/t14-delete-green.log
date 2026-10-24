@@ -1,0 +1,13 @@
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+    Start 49: import
+1/4 Test #49: import ...........................   Passed    2.32 sec
+    Start 50: import_native_x11
+2/4 Test #50: import_native_x11 ................   Passed    0.56 sec
+    Start 51: import_native_wayland
+3/4 Test #51: import_native_wayland ............   Passed    0.40 sec
+    Start 52: import_bounds
+4/4 Test #52: import_bounds ....................   Passed    0.09 sec
+
+100% tests passed, 0 tests failed out of 4
+
+Total Test time (real) =   3.45 sec

@@ -1,0 +1,16 @@
+Preset CMake variables:
+
+  BUILD_TESTING="ON"
+  CMAKE_BUILD_TYPE="Debug"
+
+-- Configuring done (2.5s)
+-- Generating done (0.7s)
+-- Build files have been written to: /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+[1/2] Building CXX object CMakeFiles/ocr_test.dir/tests/unit/ocr_test.cpp.o
+FAILED: CMakeFiles/ocr_test.dir/tests/unit/ocr_test.cpp.o 
+/usr/bin/c++  -I"/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/include" -g -std=c++17 -MD -MT CMakeFiles/ocr_test.dir/tests/unit/ocr_test.cpp.o -MF CMakeFiles/ocr_test.dir/tests/unit/ocr_test.cpp.o.d -o CMakeFiles/ocr_test.dir/tests/unit/ocr_test.cpp.o -c '/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/tests/unit/ocr_test.cpp'
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/tests/unit/ocr_test.cpp:1:10: fatal error: cliptiq/ocr.hpp: No such file or directory
+    1 | #include "cliptiq/ocr.hpp"
+      |          ^~~~~~~~~~~~~~~~~
+compilation terminated.
+ninja: build stopped: subcommand failed.

@@ -1,0 +1,156 @@
+{
+  "id": 40105477768,
+  "html_url": "https://github.com/Hydrock/Cliptiq/actions/runs/40105477768",
+  "head_sha": "5380462ede50273817be0dbcb4a2e832fabdf93b",
+  "status": "completed",
+  "conclusion": "success",
+  "created_at": "2026-10-24T15:06:40Z",
+  "updated_at": "2026-10-24T15:28:07Z",
+  "run_attempt": 2,
+  "jobs": [
+    {
+      "id": 120909687105,
+      "name": "history (ubuntu-24.04)",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/Hydrock/Cliptiq/actions/runs/40105477768/job/120909687105",
+      "started_at": "2026-10-24T15:22:30Z",
+      "completed_at": "2026-10-24T15:28:06Z"
+    },
+    {
+      "id": 120909687737,
+      "name": "history (windows-2025)",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/Hydrock/Cliptiq/actions/runs/40105477768/job/120909687737",
+      "started_at": "2026-10-24T15:07:17Z",
+      "completed_at": "2026-10-24T15:14:27Z"
+    },
+    {
+      "id": 120909687939,
+      "name": "sparkle_update (macos-15-intel)",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/Hydrock/Cliptiq/actions/runs/40105477768/job/120909687939",
+      "started_at": "2026-10-24T15:08:04Z",
+      "completed_at": "2026-10-24T15:11:26Z"
+    },
+    {
+      "id": 120909687952,
+      "name": "windows_backend_asan",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/Hydrock/Cliptiq/actions/runs/40105477768/job/120909687952",
+      "started_at": "2026-10-24T15:06:44Z",
+      "completed_at": "2026-10-24T15:09:47Z"
+    },
+    {
+      "id": 120909688017,
+      "name": "ocr_backends (macos-15, native)",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/Hydrock/Cliptiq/actions/runs/40105477768/job/120909688017",
+      "started_at": "2026-10-24T15:12:47Z",
+      "completed_at": "2026-10-24T15:14:23Z"
+    },
+    {
+      "id": 120909688064,
+      "name": "ocr_backends (windows-2025, tesseract)",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/Hydrock/Cliptiq/actions/runs/40105477768/job/120909688064",
+      "started_at": "2026-10-24T15:06:50Z",
+      "completed_at": "2026-10-24T15:11:18Z"
+    },
+    {
+      "id": 120909688125,
+      "name": "history (macos-15-intel)",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/Hydrock/Cliptiq/actions/runs/40105477768/job/120909688125",
+      "started_at": "2026-10-24T15:11:38Z",
+      "completed_at": "2026-10-24T15:21:28Z"
+    },
+    {
+      "id": 120909688126,
+      "name": "ocr_backends (macos-15-intel, native)",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/Hydrock/Cliptiq/actions/runs/40105477768/job/120909688126",
+      "started_at": "2026-10-24T15:09:12Z",
+      "completed_at": "2026-10-24T15:15:10Z"
+    },
+    {
+      "id": 120909688134,
+      "name": "ocr_backends (windows-2025, native)",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/Hydrock/Cliptiq/actions/runs/40105477768/job/120909688134",
+      "started_at": "2026-10-24T15:07:35Z",
+      "completed_at": "2026-10-24T15:10:43Z"
+    },
+    {
+      "id": 120909688189,
+      "name": "history (macos-15)",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/Hydrock/Cliptiq/actions/runs/40105477768/job/120909688189",
+      "started_at": "2026-10-24T15:08:10Z",
+      "completed_at": "2026-10-24T15:15:09Z"
+    },
+    {
+      "id": 120909709046,
+      "name": "sparkle_update (macos-15)",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/Hydrock/Cliptiq/actions/runs/40105477768/job/120909709046",
+      "started_at": "2026-10-24T15:08:47Z",
+      "completed_at": "2026-10-24T15:11:32Z"
+    },
+    {
+      "id": 120909715172,
+      "name": "legacy_migration (macos-15)",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/Hydrock/Cliptiq/actions/runs/40105477768/job/120909715172",
+      "started_at": "2026-10-24T15:06:45Z",
+      "completed_at": "2026-10-24T15:08:07Z"
+    },
+    {
+      "id": 120909715523,
+      "name": "macos_backend_sanitizers",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/Hydrock/Cliptiq/actions/runs/40105477768/job/120909715523",
+      "started_at": "2026-10-24T15:12:09Z",
+      "completed_at": "2026-10-24T15:14:15Z"
+    },
+    {
+      "id": 120909715763,
+      "name": "ocr_backends (ubuntu-24.04, tesseract)",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/Hydrock/Cliptiq/actions/runs/40105477768/job/120909715763",
+      "started_at": "2026-10-24T15:06:44Z",
+      "completed_at": "2026-10-24T15:09:32Z"
+    },
+    {
+      "id": 120909719059,
+      "name": "sanitizers",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/Hydrock/Cliptiq/actions/runs/40105477768/job/120909719059",
+      "started_at": "2026-10-24T15:06:44Z",
+      "completed_at": "2026-10-24T15:08:45Z"
+    },
+    {
+      "id": 120909724245,
+      "name": "legacy_migration (macos-15-intel)",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/Hydrock/Cliptiq/actions/runs/40105477768/job/120909724245",
+      "started_at": "2026-10-24T15:14:20Z",
+      "completed_at": "2026-10-24T15:16:52Z"
+    }
+  ]
+}

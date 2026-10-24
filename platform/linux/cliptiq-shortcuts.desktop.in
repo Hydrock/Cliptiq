@@ -1,0 +1,20 @@
+[Desktop Entry]
+Type=Application
+Name=Cliptiq
+Comment=Clipboard history with native menus
+Exec=cliptiq_menu_host --show-main
+Terminal=false
+Categories=Utility;
+Actions=History;Snippets;Settings;
+
+[Desktop Action History]
+Name=Clipboard history
+Exec=cliptiq_menu_host --show-history
+
+[Desktop Action Snippets]
+Name=Snippets
+Exec=cliptiq_menu_host --show-snippets
+
+[Desktop Action Settings]
+Name=Settings
+Exec=cliptiq_menu_host --show-settings

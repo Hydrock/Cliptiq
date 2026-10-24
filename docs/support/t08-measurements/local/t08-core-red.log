@@ -1,0 +1,29 @@
+[1/2] Building CXX object CMakeFiles/paste_test.dir/tests/unit/paste_test.cpp.o
+[2/2] Linking CXX executable paste_test
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+    Start 1: paste
+1/1 Test #1: paste ............................***Failed    0.03 sec
+FAIL auto_off_copies_original_all_formats_and_touches: T08 not implemented
+FAIL plain_keeps_only_text_without_rich_formats: T08 not implemented
+FAIL image_only_plain_never_overwrites_clipboard: T08 not implemented
+FAIL delete_only_removes_history_without_write_or_input: T08 not implemented
+FAIL paste_delete_removes_only_after_backend_acceptance: T08 not implemented
+FAIL denied_paste_delete_keeps_sole_record_and_manual_copy: T08 not implemented
+FAIL auto_off_paste_delete_does_not_delete: T08 not implemented
+FAIL failed_write_never_dispatches_or_deletes: !result&&result.error().code==ErrorCode::Io
+FAIL stale_menu_revision_has_no_side_effect: !result&&result.error().code==ErrorCode::Busy
+FAIL concurrent_revision_after_dispatch_does_not_delete: T08 not implemented
+FAIL terminal_shortcut_and_missing_target_manual: T08 not implemented
+FAIL snippets_copied_without_history_deletion: T08 not implemented
+FAIL destructive_modifier_never_deletes_snippet: T08 not implemented
+FAIL modifier_binding_unique_single_and_conflicting_held_cancel: T08 not implemented
+FAIL invalid_action_shortcut_or_clock_rejected_before_write: !result&&result.error().code==ErrorCode::InvalidArgument
+
+
+0% tests passed, 1 tests failed out of 1
+
+Total Test time (real) =   0.07 sec
+
+The following tests FAILED:
+	  1 - paste (Failed)
+Errors while running CTest

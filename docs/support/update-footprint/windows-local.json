@@ -1,0 +1,33 @@
+{
+  "scope": "Standalone native HTTPS staging/AuthentiCode certificate pin gate; no installer execution, UI, feed parser, rollback or production signing",
+  "variants": {
+    "MT": {
+      "exe_bytes": 145920,
+      "sha256": "e8ab47de09e475cac15f6cd7b7198cd664120fafe0c93574329dc3cdd86f2ecc",
+      "unsigned_rejection": "trust_status=0x800b0100 publisher_pin_match=0",
+      "imports": "Microsoft (R) COFF/PE Dumper Version 14.51.36247.0\nCopyright (C) Microsoft Corporation.  All rights reserved.\n\n\nDump of file C:\\Users\\SmiteVils\\Documents\\ChatGPT\\ClipBoard Project\\out\\update-footprint\\windows\\MT\\update-helper.exe\n\nFile Type: EXECUTABLE IMAGE\n\n  Image has the following dependencies:\n\n    WINHTTP.dll\n    WINTRUST.dll\n    CRYPT32.dll\n    KERNEL32.dll\n\n  Summary\n\n        2000 .data\n        1000 .fptable\n        2000 .pdata\n        C000 .rdata\n        1000 .reloc\n       16000 .text\n",
+      "zip_bytes": 76035
+    },
+    "MD": {
+      "exe_bytes": 13312,
+      "sha256": "0be50fd56a660f9140a571e95cc7bda8638143d0ed7ec5ef423a3ba779d0c986",
+      "unsigned_rejection": "trust_status=0x800b0100 publisher_pin_match=0",
+      "imports": "Microsoft (R) COFF/PE Dumper Version 14.51.36247.0\nCopyright (C) Microsoft Corporation.  All rights reserved.\n\n\nDump of file C:\\Users\\SmiteVils\\Documents\\ChatGPT\\ClipBoard Project\\out\\update-footprint\\windows\\MD\\update-helper.exe\n\nFile Type: EXECUTABLE IMAGE\n\n  Image has the following dependencies:\n\n    WINHTTP.dll\n    WINTRUST.dll\n    CRYPT32.dll\n    KERNEL32.dll\n    VCRUNTIME140.dll\n    api-ms-win-crt-string-l1-1-0.dll\n    api-ms-win-crt-stdio-l1-1-0.dll\n    api-ms-win-crt-runtime-l1-1-0.dll\n    api-ms-win-crt-math-l1-1-0.dll\n    api-ms-win-crt-locale-l1-1-0.dll\n    api-ms-win-crt-heap-l1-1-0.dll\n\n  Summary\n\n        1000 .data\n        1000 .pdata\n        2000 .rdata\n        1000 .reloc\n        2000 .text\n",
+      "zip_bytes": 6151,
+      "direct_crt_files": [
+        {
+          "name": "vcruntime140.dll",
+          "bytes": 178616
+        }
+      ],
+      "exe_plus_direct_crt_bytes": 191928
+    }
+  },
+  "signature_gate_checks": {
+    "fixture": "C:\\Program Files (x86)\\Microsoft Visual Studio\\18\\BuildTools\\VC\\Redist\\MSVC\\14.51.36231\\x64\\Microsoft.VC145.CRT\\vcruntime140.dll",
+    "valid_signature_correct_pin": "trust_status=0x00000000 publisher_pin_match=1",
+    "valid_signature_wrong_pin": "trust_status=0x00000000 publisher_pin_match=0",
+    "note": "Microsoft embedded signed CRT DLL, not Cliptiq release; catalog-only OS files are not supported by this spike"
+  },
+  "toolchain": "14.51.36231"
+}

@@ -1,0 +1,20 @@
+[0/1] Re-running CMake...
+-- Configuring done (2.8s)
+-- Generating done (0.9s)
+-- Build files have been written to: /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/ocr-Linux-tesseract
+[1/2] Building CXX object CMakeFiles/fts_transaction_race.dir/tests/integration/fts_transaction_race.cpp.o
+[2/2] Linking CXX executable fts_transaction_race
+Internal ctest changing into directory: /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/ocr-Linux-tesseract
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/ocr-Linux-tesseract
+    Start 59: fts_transaction_race
+1/1 Test #59: fts_transaction_race .............***Failed    0.10 sec
+rebuild published deleted payload before writer commit
+
+
+0% tests passed, 1 tests failed out of 1
+
+Total Test time (real) =   0.14 sec
+
+The following tests FAILED:
+	 59 - fts_transaction_race (Failed)
+Errors while running CTest

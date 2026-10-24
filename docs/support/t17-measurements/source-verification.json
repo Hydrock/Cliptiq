@@ -1,0 +1,10 @@
+{
+  "runtime_source": "5380462ede50273817be0dbcb4a2e832fabdf93b",
+  "ci_run": 40105477768,
+  "core_reports": 4,
+  "ocr_reports": 5,
+  "verified_source_digests": 1322,
+  "source_paths": 185,
+  "models_bytes": 7974826,
+  "clean_consumer_vm_verified": false
+}

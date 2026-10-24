@@ -1,0 +1,52 @@
+-- Configuring done (3.0s)
+-- Generating done (0.3s)
+-- Build files have been written to: C:/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Windows-test
+[1/6] Building CXX object CMakeFiles\cliptiq_lifecycle.dir\platform\Lifecycle.cpp.obj
+[2/6] Linking CXX static library cliptiq_lifecycle.lib
+[3/6] Building CXX object CMakeFiles\lifecycle_test.dir\tests\unit\lifecycle_test.cpp.obj
+[4/6] Linking CXX executable cliptiq_menu_host.exe
+[5/6] Linking CXX executable Cliptiq.exe
+[6/6] Linking CXX executable lifecycle_test.exe
+Test project C:/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Windows-test
+      Start  2: xml
+ 1/19 Test  #2: xml ..............................   Passed    0.13 sec
+      Start  6: snippets_menu_hotkeys
+ 2/19 Test  #6: snippets_menu_hotkeys ............   Passed    0.05 sec
+      Start  7: editor
+ 3/19 Test  #7: editor ...........................   Passed    0.39 sec
+      Start  8: snippets
+ 4/19 Test  #8: snippets .........................   Passed    0.13 sec
+      Start 13: settings
+ 5/19 Test #13: settings .........................   Passed    0.06 sec
+      Start 14: hotkeys
+ 6/19 Test #14: hotkeys ..........................   Passed    0.03 sec
+      Start 16: paste_native_boundary
+ 7/19 Test #16: paste_native_boundary ............   Passed    0.05 sec
+      Start 17: paste
+ 8/19 Test #17: paste ............................   Passed    0.12 sec
+      Start 18: menu_unicode_conformance
+ 9/19 Test #18: menu_unicode_conformance .........   Passed    0.15 sec
+      Start 23: lifecycle
+10/19 Test #23: lifecycle ........................   Passed    2.03 sec
+      Start 24: lifecycle_process
+11/19 Test #24: lifecycle_process ................   Passed    0.66 sec
+      Start 25: lifecycle_locale_schema
+12/19 Test #25: lifecycle_locale_schema ..........   Passed    0.17 sec
+      Start 27: media_review_clear
+13/19 Test #27: media_review_clear ...............   Passed    1.46 sec
+      Start 28: media_review_root
+14/19 Test #28: media_review_root ................   Passed    1.46 sec
+      Start 29: media_review_error
+15/19 Test #29: media_review_error ...............   Passed    0.35 sec
+      Start 30: native_media
+16/19 Test #30: native_media .....................   Passed    8.04 sec
+      Start 31: media
+17/19 Test #31: media ............................   Passed    0.02 sec
+      Start 32: menu_preview
+18/19 Test #32: menu_preview .....................   Passed    0.01 sec
+      Start 33: menu
+19/19 Test #33: menu .............................   Passed    0.30 sec
+
+100% tests passed, 0 tests failed out of 19
+
+Total Test time (real) =  17.54 sec

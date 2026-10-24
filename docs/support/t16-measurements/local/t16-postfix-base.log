@@ -1,0 +1,167 @@
+[1/47] Building CXX object CMakeFiles/cliptiq_xml.dir/core/src/xml.cpp.o
+[2/47] Building CXX object CMakeFiles/cliptiq_xml.dir/core/src/xml_file.cpp.o
+[3/47] Building CXX object CMakeFiles/cliptiq_lifecycle.dir/platform/Lifecycle.cpp.o
+[4/47] Linking CXX static library libcliptiq_xml.a
+[5/47] Linking CXX static library libcliptiq_lifecycle.a
+[6/47] Linking CXX executable snippet_integration_test
+[7/47] Linking CXX executable snippets_test
+[8/47] Linking CXX executable xml_test
+[9/47] Linking CXX executable native_xml_test
+[10/47] Linking CXX executable native_settings_test
+[11/47] Linking CXX executable native_hotkeys_test
+[12/47] Linking CXX executable native_editor_test
+[13/47] Linking CXX executable settings_test
+[14/47] Linking CXX executable hotkeys_test
+[15/47] Linking CXX executable linux_hotkey_portal_test
+[16/47] Linking CXX executable native_paste_test
+[17/47] Linking CXX executable menu_paste_bridge_test
+[18/47] Linking CXX executable cliptiq_menu_host
+[19/47] Linking CXX executable native_menu_test
+[20/47] Linking CXX executable menu_regression_test
+[21/47] Linking CXX executable paste_test
+[22/47] Linking CXX executable menu_preview_test
+[23/47] Linking CXX executable media_test
+[24/47] Linking CXX executable lifecycle_test
+[25/47] Linking CXX executable menu_test
+[26/47] Linking CXX executable native_media_test
+[27/47] Linking CXX executable media_review_test
+[28/47] Linking CXX executable linux_clipboard_test
+[29/47] Linking CXX executable policy_test
+[30/47] Linking CXX executable linux_wayland_wire_test
+[31/47] Linking CXX executable linux_x11_wire_test
+[32/47] Linking CXX executable linux_native_clipboard_test
+[33/47] Building CXX object CMakeFiles/import_test.dir/tests/integration/import_test.cpp.o
+[34/47] Linking CXX executable update_native_test
+[35/47] Linking CXX executable update_test
+[36/47] Building CXX object CMakeFiles/import_native_test.dir/tests/integration/import_native_test.cpp.o
+[37/47] Linking CXX executable ocr_test
+[38/47] Linking CXX executable fts_test
+[39/47] Linking CXX executable fts_variant_probe
+[40/47] Building CXX object CMakeFiles/cliptiq_ocr_queue.dir/platform/Ocr.cpp.o
+[41/47] Linking CXX static library libcliptiq_ocr_queue.a
+[42/47] Building CXX object tools/import-clipy/CMakeFiles/cliptiq_migration.dir/__/__/core/src/migration.cpp.o
+[43/47] Linking CXX static library tools/import-clipy/libcliptiq_migration.a
+[44/47] Linking CXX executable ocr_queue_test
+[45/47] Linking CXX executable tools/import-clipy/cliptiq-import
+[46/47] Linking CXX executable import_test
+[47/47] Linking CXX executable import_native_test
+Internal ctest changing into directory: /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+      Start  1: xml_native_x11
+ 1/57 Test  #1: xml_native_x11 .....................   Passed    0.90 sec
+      Start  2: xml_native_wayland
+ 2/57 Test  #2: xml_native_wayland .................   Passed    0.46 sec
+      Start  3: xml
+ 3/57 Test  #3: xml ................................   Passed    0.16 sec
+      Start  4: xml_bounded_scan
+ 4/57 Test  #4: xml_bounded_scan ...................   Passed    1.62 sec
+      Start  5: xml_interop
+ 5/57 Test  #5: xml_interop ........................   Passed    0.24 sec
+      Start  6: editor_native_x11
+ 6/57 Test  #6: editor_native_x11 ..................   Passed    0.51 sec
+      Start  7: editor_native_wayland
+ 7/57 Test  #7: editor_native_wayland ..............   Passed    0.50 sec
+      Start  8: snippets_menu_hotkeys
+ 8/57 Test  #8: snippets_menu_hotkeys ..............   Passed    0.02 sec
+      Start  9: editor
+ 9/57 Test  #9: editor .............................   Passed    0.25 sec
+      Start 10: snippets
+10/57 Test #10: snippets ...........................   Passed    0.08 sec
+      Start 11: settings_native_x11
+11/57 Test #11: settings_native_x11 ................   Passed    0.56 sec
+      Start 12: lifecycle_ui_ru_x11
+12/57 Test #12: lifecycle_ui_ru_x11 ................   Passed    0.66 sec
+      Start 13: hotkeys_native_x11
+13/57 Test #13: hotkeys_native_x11 .................   Passed    0.76 sec
+      Start 14: settings_native_wayland
+14/57 Test #14: settings_native_wayland ............   Passed    0.70 sec
+      Start 15: lifecycle_ui_ru_wayland
+15/57 Test #15: lifecycle_ui_ru_wayland ............   Passed    0.63 sec
+      Start 16: hotkeys_native_wayland
+16/57 Test #16: hotkeys_native_wayland .............   Passed    0.17 sec
+      Start 17: settings
+17/57 Test #17: settings ...........................   Passed    0.02 sec
+      Start 18: hotkeys
+18/57 Test #18: hotkeys ............................   Passed    0.01 sec
+      Start 19: paste_native_x11
+19/57 Test #19: paste_native_x11 ...................   Passed    0.47 sec
+      Start 20: paste_native_wayland
+20/57 Test #20: paste_native_wayland ...............   Passed    0.18 sec
+      Start 21: hotkeys_portal_protocol
+21/57 Test #21: hotkeys_portal_protocol ............   Passed    0.39 sec
+      Start 22: paste_menu_bridge
+22/57 Test #22: paste_menu_bridge ..................   Passed    0.29 sec
+      Start 23: paste
+23/57 Test #23: paste ..............................   Passed    0.04 sec
+      Start 24: menu_unicode_conformance
+24/57 Test #24: menu_unicode_conformance ...........   Passed    0.01 sec
+      Start 25: menu_regression_context_x11
+25/57 Test #25: menu_regression_context_x11 ........   Passed    0.28 sec
+      Start 26: menu_regression_context_wayland
+26/57 Test #26: menu_regression_context_wayland ....   Passed    0.25 sec
+      Start 27: menu_regression_coordinates
+27/57 Test #27: menu_regression_coordinates ........   Passed    0.38 sec
+      Start 28: menu_native_x11
+28/57 Test #28: menu_native_x11 ....................   Passed    0.42 sec
+      Start 29: menu_native_wayland
+29/57 Test #29: menu_native_wayland ................   Passed    0.35 sec
+      Start 30: lifecycle
+30/57 Test #30: lifecycle ..........................   Passed    0.51 sec
+      Start 31: lifecycle_process
+31/57 Test #31: lifecycle_process ..................   Passed    1.10 sec
+      Start 32: lifecycle_locale_schema
+32/57 Test #32: lifecycle_locale_schema ............   Passed    0.13 sec
+      Start 33: media_review_clear
+33/57 Test #33: media_review_clear .................   Passed    1.04 sec
+      Start 34: media_review_root
+34/57 Test #34: media_review_root ..................   Passed    1.03 sec
+      Start 35: media_review_error
+35/57 Test #35: media_review_error .................   Passed    0.24 sec
+      Start 36: native_media
+36/57 Test #36: native_media .......................   Passed    7.08 sec
+      Start 37: media
+37/57 Test #37: media ..............................   Passed    0.02 sec
+      Start 38: menu_preview
+38/57 Test #38: menu_preview .......................   Passed    0.01 sec
+      Start 39: menu
+39/57 Test #39: menu ...............................   Passed    0.38 sec
+      Start 40: linux_clipboard_protocol
+40/57 Test #40: linux_clipboard_protocol ...........   Passed    0.03 sec
+      Start 41: linux_clipboard_wayland_wire
+41/57 Test #41: linux_clipboard_wayland_wire .......   Passed    1.51 sec
+      Start 42: linux_clipboard_x11_wire
+42/57 Test #42: linux_clipboard_x11_wire ...........   Passed    0.49 sec
+      Start 43: linux_clipboard_external_clients
+43/57 Test #43: linux_clipboard_external_clients ...   Passed    2.45 sec
+      Start 44: linux_clipboard_x11
+44/57 Test #44: linux_clipboard_x11 ................   Passed    0.62 sec
+      Start 45: linux_clipboard_wayland
+45/57 Test #45: linux_clipboard_wayland ............   Passed    0.41 sec
+      Start 46: policy
+46/57 Test #46: policy .............................   Passed    0.02 sec
+      Start 47: history
+47/57 Test #47: history ............................   Passed    0.19 sec
+      Start 48: history_crash
+48/57 Test #48: history_crash ......................   Passed    0.56 sec
+      Start 49: import
+49/57 Test #49: import .............................   Passed    3.96 sec
+      Start 50: import_native_x11
+50/57 Test #50: import_native_x11 ..................   Passed    0.52 sec
+      Start 51: import_native_wayland
+51/57 Test #51: import_native_wayland ..............   Passed    0.47 sec
+      Start 52: import_bounds
+52/57 Test #52: import_bounds ......................   Passed    0.10 sec
+      Start 53: update
+53/57 Test #53: update .............................   Passed    0.02 sec
+      Start 54: update_native
+54/57 Test #54: update_native ......................   Passed    0.01 sec
+      Start 55: ocr
+55/57 Test #55: ocr ................................   Passed    0.03 sec
+      Start 56: fts
+56/57 Test #56: fts ................................   Passed    0.05 sec
+      Start 57: ocr_queue
+57/57 Test #57: ocr_queue ..........................   Passed    0.50 sec
+
+100% tests passed, 0 tests failed out of 57
+
+Total Test time (real) =  35.18 sec

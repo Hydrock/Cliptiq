@@ -1,0 +1,155 @@
+Start testing: Oct 23 14:45 UTC
+----------------------------------------------------------
+1/4 Testing: macos_clipboard
+1/4 Test: macos_clipboard
+Command: "/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sanitize/macos_clipboard_test"
+Directory: /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sanitize
+"macos_clipboard" start time: Oct 23 14:45 UTC
+Output:
+----------------------------------------------------------
+PASS multiple_items_and_native_metadata
+PASS png_preference_preserves_other_item_tiff
+PASS root_filenames_tiff_fallback
+PASS stable_token_when_foreground_changes
+PASS change_during_read_bounded_retry
+PASS permission_denied_no_payload_read
+PASS privacy_transient_before_payload
+PASS unknown_source_exclusions_and_marker_prefix
+PASS html_disabled_and_native_roundtrip
+PASS replay_files_flags_and_item_boundaries
+PASS oversize_read_and_invalid_write_are_atomic
+PASS poll_500ms_main_thread_own_write_suppression
+PASS stop_and_destroy_inside_callback
+PASS session_privacy_and_worker_persistence
+PASS session_rejection_creates_no_database
+PASS system_rtfd_pdf_and_image_only_bytes
+PASS remote_native_primary_and_secondary_privacy
+PASS legacy_root_replay_and_unknown_type_dropped
+PASS main_thread_contract
+PASS off_main_stop_then_immediate_restart
+PASS worker_queue_overflow_is_explicit
+PASS worker_byte_limit_before_database_creation
+PASS ask_default_and_permission_recovery_injected
+PASS disabled_and_unknown_item_payload_never_fetched
+PASS session_destroy_inside_completion
+PASS initial_existing_clipboard_is_captured_like_clipy
+PASS legacy_alias_replay_uses_valid_modern_item_types
+PASS legacy_modern_collision_rejected_before_clear
+<end of output>
+Test time =  11.08 sec
+----------------------------------------------------------
+Test Passed.
+"macos_clipboard" end time: Oct 23 14:45 UTC
+"macos_clipboard" time elapsed: 00:00:11
+----------------------------------------------------------
+
+2/4 Testing: policy
+2/4 Test: policy
+Command: "/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sanitize/policy_test"
+Directory: /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sanitize
+"policy" start time: Oct 23 14:45 UTC
+Output:
+----------------------------------------------------------
+PASS transient_always_rejected
+PASS concealed_option
+PASS remote_primary_file_rejected
+PASS remote_secondary_file_removed
+PASS marker_prefix_exclusion
+PASS unknown_source_is_not_known_safe
+PASS screenshot_uses_same_policy
+PASS html_off_keeps_text_rtf_only
+PASS unknown_type_is_not_persisted
+PASS unknown_source_with_exclusions_is_rejected
+PASS foreground_exclusion_and_best_effort
+PASS capabilities_default_unavailable
+PASS unavailable_source_overrides_claimed_identity
+PASS limited_source_downgrades_known
+PASS missing_id_is_unknown
+PASS remote_macos_option_and_platform_scope
+PASS remote_marker_and_original_primary_before_filter
+PASS marker_representation_is_never_payload
+PASS all_kinds_can_be_disabled
+PASS each_supported_kind_and_item_order
+PASS spoofed_registered_kind_is_filtered
+PASS rejected_inputs_call_no_consumers
+PASS filtered_snapshot_only_reaches_consumers
+PASS store_error_or_no_retained_id_skips_derivatives
+PASS ocr_requires_request_and_capability
+PASS invalid_inputs_fail_closed
+PASS reason_messages_are_stable_non_sensitive
+PASS each_kind_toggle_filters_only_its_class
+PASS native_encoding_and_platform_must_match_registration
+PASS all_source_policy_modes
+PASS unknown_flags_remain_unknown
+PASS remote_secondary_pruning_keeps_item_indices
+PASS unsupported_primary_does_not_promote_remote_file
+PASS limited_capture_does_not_enable_other_capabilities
+<end of output>
+Test time =   0.25 sec
+----------------------------------------------------------
+Test Passed.
+"policy" end time: Oct 23 14:45 UTC
+"policy" time elapsed: 00:00:00
+----------------------------------------------------------
+
+3/4 Testing: history
+3/4 Test: history
+Command: "/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sanitize/history_test"
+Directory: /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sanitize
+"history" start time: Oct 23 14:45 UTC
+Output:
+----------------------------------------------------------
+PASS preserves_all_representations
+PASS duplicate_mode_switch_keeps_digest
+PASS duplicate_flags
+PASS blank_text_ignored
+PASS last_used_preserves_created
+PASS limit_three
+PASS periodic_clear_is_not_ttl
+PASS clear_preserves_snippets
+PASS oversize_is_atomic
+PASS quota_prunes_by_current_sort
+PASS reopen_and_periodic_state
+PASS transaction_failure_rolls_back
+PASS read_only_and_full_are_errors
+PASS corrupt_db_not_replaced
+PASS digest_has_unambiguous_boundaries
+PASS invalid_policy_and_empty_snapshot
+PASS revision_clear_compact
+PASS sha256_standard_vectors
+PASS collision_is_not_equality
+PASS source_changes_do_not_create_new_content
+PASS rtf_blank_and_primary_order
+PASS metadata_and_representation_limits
+PASS cleanup_disable_change_and_clock_rewind
+PASS foreign_and_future_db_preserved
+PASS load_rechecks_persisted_limits
+PASS duplicate_candidate_limits_checked
+PASS returned_id_survives_pruning
+PASS native_utf16_blank_text_ignored
+PASS utf16_roundtrip_and_big_endian_blank
+<end of output>
+Test time =   0.77 sec
+----------------------------------------------------------
+Test Passed.
+"history" end time: Oct 23 14:45 UTC
+"history" time elapsed: 00:00:00
+----------------------------------------------------------
+
+4/4 Testing: history_crash
+4/4 Test: history_crash
+Command: "/opt/homebrew/Frameworks/Python.framework/Versions/3.14/bin/python3.14" "/Users/runner/work/Cliptiq/Cliptiq/tests/integration/history_crash.py" "/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sanitize/history_test"
+Directory: /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sanitize
+"history_crash" start time: Oct 23 14:45 UTC
+Output:
+----------------------------------------------------------
+PASS process interruption rollback and reopen
+<end of output>
+Test time =   0.63 sec
+----------------------------------------------------------
+Test Passed.
+"history_crash" end time: Oct 23 14:45 UTC
+"history_crash" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Oct 23 14:45 UTC

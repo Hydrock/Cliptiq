@@ -1,0 +1,45 @@
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+    Start 1: settings_native_x11
+1/3 Test #1: settings_native_x11 ..............   Passed    0.44 sec
+    Start 2: hotkeys_native_x11
+2/3 Test #2: hotkeys_native_x11 ...............   Passed    0.53 sec
+    Start 3: settings_native_wayland
+3/3 Test #3: settings_native_wayland ..........***Failed    0.37 sec
+dbus-daemon[42123]: [session uid=1000 pid=42123] Activating service name='org.a11y.Bus' requested by ':1.1' (uid=1000 pid=42129 comm="/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard" label="kernel")
+dbus-daemon[42123]: [session uid=1000 pid=42123] Successfully activated service 'org.a11y.Bus'
+dbus-daemon[42123]: [session uid=1000 pid=42123] Activating service name='org.gtk.vfs.Daemon' requested by ':1.0' (uid=1000 pid=42129 comm="/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard" label="kernel")
+dbus-daemon[42123]: [session uid=1000 pid=42123] Successfully activated service 'org.gtk.vfs.Daemon'
+dbus-daemon[42142]: Activating service name='org.a11y.atspi.Registry' requested by ':1.0' (uid=1000 pid=42129 comm="/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard" label="kernel")
+dbus-daemon[42142]: Successfully activated service 'org.a11y.atspi.Registry'
+SpiRegistry daemon is running with well-known name - org.a11y.atspi.Registry
+FAIL native_settings: ui.record_chord(take(parse_chord("Ctrl+Alt+Q")))
+00:00:00.052 [DEBUG] [wlr] [types/wlr_compositor.c:692] New wlr_surface 0x5b1b276aa690 (res 0x5b1b2766ac60)
+00:00:00.112 [DEBUG] [wlr] [types/wlr_compositor.c:692] New wlr_surface 0x5b1b276aacc0 (res 0x5b1b27677ba0)
+00:00:00.112 [DEBUG] [wlr] [types/xdg_shell/wlr_xdg_surface.c:388] new xdg_surface 0x5b1b276ab0d0 (res 0x5b1b27677cc0)
+00:00:00.112 [DEBUG] [sway/desktop/xdg_shell.c:530] New xdg_shell toplevel title='Cliptiq Settings' app_id='native_settings_test'
+00:00:00.112 [DEBUG] [wlr] [types/wlr_server_decoration.c:104] new server_decoration 0x5b1b276aab90 (res 0x5b1b276781f0)
+00:00:00.112 [DEBUG] [wlr] [types/wlr_compositor.c:692] New wlr_surface 0x5b1b276ab6c0 (res 0x5b1b27678310)
+00:00:00.112 [DEBUG] [wlr] [types/wlr_primary_selection_v1.c:148] Ignoring duplicate MIME type offer text/plain;charset=utf-8
+00:00:00.112 [DEBUG] [wlr] [types/wlr_primary_selection_v1.c:148] Ignoring duplicate MIME type offer text/plain
+00:00:00.112 [DEBUG] [wlr] [types/wlr_primary_selection.c:49] Rejecting set_primary_selection request, serial 0 was never given to client
+00:00:00.153 [DEBUG] [sway/tree/arrange.c:263] Usable area for ws: 800x600@0,0
+00:00:00.153 [DEBUG] [sway/tree/arrange.c:297] Arranging workspace '1' at 0.000000, 0.000000
+00:00:00.153 [DEBUG] [sway/tree/arrange.c:77] Arranging 0x7fffcf7799e0 horizontally
+00:00:00.153 [DEBUG] [sway/desktop/transaction.c:398] Transaction 0x5b1b27679bc0 committing with 3 instructions
+00:00:00.180 [DEBUG] [sway/desktop/transaction.c:494] Transaction 0x5b1b27679bc0 is ready
+00:00:00.180 [DEBUG] [sway/desktop/transaction.c:294] Applying transaction 0x5b1b27679bc0
+00:00:00.180 [DEBUG] [sway/tree/container.c:1320] Container 0x5b1b276abf30 entered output 0x5b1b276a4f10
+00:00:00.250 [DEBUG] [sway/tree/arrange.c:263] Usable area for ws: 800x600@0,0
+00:00:00.250 [DEBUG] [sway/tree/arrange.c:297] Arranging workspace '1' at 0.000000, 0.000000
+00:00:00.250 [DEBUG] [sway/desktop/transaction.c:398] Transaction 0x5b1b2764d6e0 committing with 2 instructions
+00:00:00.250 [DEBUG] [sway/desktop/transaction.c:294] Applying transaction 0x5b1b2764d6e0
+A connection to the bus can't be made
+
+
+67% tests passed, 1 tests failed out of 3
+
+Total Test time (real) =   1.37 sec
+
+The following tests FAILED:
+	  3 - settings_native_wayland (Failed)
+Errors while running CTest

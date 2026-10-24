@@ -1,0 +1,93 @@
+{
+  "120815007879": {
+    "url": "https://github.com/Hydrock/Cliptiq/actions/runs/40074549461/job/120815007879",
+    "observed_lines": [
+      "2026-10-24T07:35:12.9004430Z (node:1504) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.",
+      "2026-10-24T07:35:16.4011145Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/"
+    ]
+  },
+  "120815008010": {
+    "url": "https://github.com/Hydrock/Cliptiq/actions/runs/40074549461/job/120815008010",
+    "observed_lines": [
+      "2026-10-24T07:32:51.9855104Z   gir1.2-gdkpixbuf-2.0 gir1.2-glib-2.0 gir1.2-glib-2.0-dev gir1.2-gtk-3.0",
+      "2026-10-24T07:32:51.9857235Z   libfribidi-dev libgdk-pixbuf-2.0-dev libgdk-pixbuf2.0-bin",
+      "2026-10-24T07:32:52.0642733Z   gir1.2-gdkpixbuf-2.0 gir1.2-glib-2.0-dev gir1.2-gtk-3.0 gir1.2-harfbuzz-0.0",
+      "2026-10-24T07:32:52.0644469Z   libfontconfig-dev libfreetype-dev libfribidi-dev libgdk-pixbuf-2.0-dev",
+      "2026-10-24T07:32:52.0644760Z   libgdk-pixbuf2.0-bin libgirepository-2.0-0 libgl-dev libgles-dev libgles1",
+      "2026-10-24T07:32:55.5983218Z Get:12 https://archive.ubuntu.com/ubuntu noble-updates/main amd64 gir1.2-gdkpixbuf-2.0 amd64 2.42.10+dfsg-3ubuntu3.3 [9482 B]",
+      "2026-10-24T07:33:03.3002161Z Get:74 https://archive.ubuntu.com/ubuntu noble-updates/main amd64 libgdk-pixbuf2.0-bin amd64 2.42.10+dfsg-3ubuntu3.3 [13.9 kB]",
+      "2026-10-24T07:33:03.9914757Z Get:86 https://archive.ubuntu.com/ubuntu noble-updates/main amd64 libgdk-pixbuf-2.0-dev amd64 2.42.10+dfsg-3ubuntu3.3 [47.9 kB]",
+      "2026-10-24T07:33:14.1710465Z Selecting previously unselected package gir1.2-gdkpixbuf-2.0:amd64.",
+      "2026-10-24T07:33:14.1806602Z Preparing to unpack .../010-gir1.2-gdkpixbuf-2.0_2.42.10+dfsg-3ubuntu3.3_amd64.deb ...",
+      "2026-10-24T07:33:14.1851619Z Unpacking gir1.2-gdkpixbuf-2.0:amd64 (2.42.10+dfsg-3ubuntu3.3) ...",
+      "2026-10-24T07:33:16.3402164Z Selecting previously unselected package libgdk-pixbuf2.0-bin.",
+      "2026-10-24T07:33:16.3504144Z Preparing to unpack .../072-libgdk-pixbuf2.0-bin_2.42.10+dfsg-3ubuntu3.3_amd64.deb ...",
+      "2026-10-24T07:33:16.3511498Z Unpacking libgdk-pixbuf2.0-bin (2.42.10+dfsg-3ubuntu3.3) ...",
+      "2026-10-24T07:33:16.7609913Z Selecting previously unselected package libgdk-pixbuf-2.0-dev:amd64.",
+      "2026-10-24T07:33:16.7708753Z Preparing to unpack .../084-libgdk-pixbuf-2.0-dev_2.42.10+dfsg-3ubuntu3.3_amd64.deb ...",
+      "2026-10-24T07:33:16.7715201Z Unpacking libgdk-pixbuf-2.0-dev:amd64 (2.42.10+dfsg-3ubuntu3.3) ...",
+      "2026-10-24T07:33:18.4589796Z Setting up libgdk-pixbuf2.0-bin (2.42.10+dfsg-3ubuntu3.3) ...",
+      "2026-10-24T07:33:18.6244810Z Setting up gir1.2-gdkpixbuf-2.0:amd64 (2.42.10+dfsg-3ubuntu3.3) ...",
+      "2026-10-24T07:33:18.7098014Z Setting up libgdk-pixbuf-2.0-dev:amd64 (2.42.10+dfsg-3ubuntu3.3) ...",
+      "2026-10-24T07:34:48.7249975Z (menu_native_probe:6811): dbind-WARNING **: 07:34:48.724: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files",
+      "2026-10-24T07:34:48.8749846Z (menu_native_probe:6828): dbind-WARNING **: 07:34:48.874: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files",
+      "2026-10-24T07:34:49.1012732Z (paste_native_probe:6861): dbind-WARNING **: 07:34:49.101: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files",
+      "2026-10-24T07:34:49.2486043Z (paste_native_probe:6878): dbind-WARNING **: 07:34:49.248: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files",
+      "2026-10-24T07:34:49.4762562Z (settings_native_probe:6911): dbind-WARNING **: 07:34:49.476: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files",
+      "2026-10-24T07:34:49.5018355Z (settings_native_probe:6911): Gtk-WARNING **: 07:34:49.501: Could not load a pixbuf from /org/gtk/libgtk/theme/Adwaita/assets/check-symbolic.svg.",
+      "2026-10-24T07:34:49.5018818Z This may indicate that pixbuf loaders or the mime database could not be found.",
+      "2026-10-24T07:34:49.6773249Z (settings_native_probe:6929): dbind-WARNING **: 07:34:49.677: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files",
+      "2026-10-24T07:34:49.7024660Z (settings_native_probe:6929): Gtk-WARNING **: 07:34:49.702: Could not load a pixbuf from /org/gtk/libgtk/theme/Adwaita/assets/check-symbolic.svg.",
+      "2026-10-24T07:34:49.7025488Z This may indicate that pixbuf loaders or the mime database could not be found.",
+      "2026-10-24T07:34:49.9130643Z (snippet_editor_probe:6962): dbind-WARNING **: 07:34:49.912: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files",
+      "2026-10-24T07:34:49.9395413Z (snippet_editor_probe:6962): Gtk-WARNING **: 07:34:49.939: Could not load a pixbuf from /org/gtk/libgtk/theme/Adwaita/assets/check-symbolic.svg.",
+      "2026-10-24T07:34:49.9395949Z This may indicate that pixbuf loaders or the mime database could not be found.",
+      "2026-10-24T07:34:50.1130032Z (snippet_editor_probe:6980): dbind-WARNING **: 07:34:50.112: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files",
+      "2026-10-24T07:34:50.1383583Z (snippet_editor_probe:6980): Gtk-WARNING **: 07:34:50.138: Could not load a pixbuf from /org/gtk/libgtk/theme/Adwaita/assets/check-symbolic.svg.",
+      "2026-10-24T07:34:50.1384038Z This may indicate that pixbuf loaders or the mime database could not be found.",
+      "2026-10-24T07:34:50.3999027Z (snippet_xml_probe:7013): dbind-WARNING **: 07:34:50.399: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files",
+      "2026-10-24T07:34:50.4262430Z (snippet_xml_probe:7013): Gtk-WARNING **: 07:34:50.426: Could not load a pixbuf from /org/gtk/libgtk/theme/Adwaita/assets/check-symbolic.svg.",
+      "2026-10-24T07:34:50.4263251Z This may indicate that pixbuf loaders or the mime database could not be found.",
+      "2026-10-24T07:34:50.5976907Z (snippet_xml_probe:7031): dbind-WARNING **: 07:34:50.597: AT-SPI: Error retrieving accessibility bus address: org.freedesktop.DBus.Error.ServiceUnknown: The name org.a11y.Bus was not provided by any .service files",
+      "2026-10-24T07:34:50.6218674Z (snippet_xml_probe:7031): Gtk-WARNING **: 07:34:50.621: Could not load a pixbuf from /org/gtk/libgtk/theme/Adwaita/assets/check-symbolic.svg.",
+      "2026-10-24T07:34:50.6219116Z This may indicate that pixbuf loaders or the mime database could not be found.",
+      "2026-10-24T07:34:50.7833445Z         \"\\tlibgdk_pixbuf-2.0.so.0 => /lib/x86_64-linux-gnu/libgdk_pixbuf-2.0.so.0 (0x00007fcaac7a8000)\",",
+      "2026-10-24T07:34:50.7855296Z         \"\\tlibgdk_pixbuf-2.0.so.0 => /lib/x86_64-linux-gnu/libgdk_pixbuf-2.0.so.0 (0x00007fcaac7a8000)\",",
+      "2026-10-24T07:34:50.7875751Z         \"\\tlibgdk_pixbuf-2.0.so.0 => /lib/x86_64-linux-gnu/libgdk_pixbuf-2.0.so.0 (0x00007fca2a7d2000)\",",
+      "2026-10-24T07:34:50.7906463Z         \"\\tlibgdk_pixbuf-2.0.so.0 => /lib/x86_64-linux-gnu/libgdk_pixbuf-2.0.so.0 (0x00007fca2a7d2000)\",",
+      "2026-10-24T07:34:50.7926986Z         \"\\tlibgdk_pixbuf-2.0.so.0 => /lib/x86_64-linux-gnu/libgdk_pixbuf-2.0.so.0 (0x00007fc47d067000)\",",
+      "2026-10-24T07:34:50.7948668Z         \"\\tlibgdk_pixbuf-2.0.so.0 => /lib/x86_64-linux-gnu/libgdk_pixbuf-2.0.so.0 (0x00007fc47d067000)\",",
+      "2026-10-24T07:34:50.7969227Z         \"\\tlibgdk_pixbuf-2.0.so.0 => /lib/x86_64-linux-gnu/libgdk_pixbuf-2.0.so.0 (0x00007f883a7d3000)\",",
+      "2026-10-24T07:34:50.7990468Z         \"\\tlibgdk_pixbuf-2.0.so.0 => /lib/x86_64-linux-gnu/libgdk_pixbuf-2.0.so.0 (0x00007f883a7d3000)\",",
+      "2026-10-24T07:34:50.8010725Z         \"\\tlibgdk_pixbuf-2.0.so.0 => /lib/x86_64-linux-gnu/libgdk_pixbuf-2.0.so.0 (0x00007fdeadbe4000)\",",
+      "2026-10-24T07:34:50.9116998Z (node:7052) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.",
+      "2026-10-24T07:34:52.0824821Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/"
+    ]
+  },
+  "120815008018": {
+    "url": "https://github.com/Hydrock/Cliptiq/actions/runs/40074549461/job/120815008018",
+    "observed_lines": [
+      "2026-10-24T07:33:04.2606120Z /Users/runner/work/Cliptiq/Cliptiq/platform/macos/SnippetEditor.mm:355:11: warning: 'allowedFileTypes' is deprecated: first deprecated in macOS 12.0 - Use -allowedContentTypes instead [-Wdeprecated-declarations]",
+      "2026-10-24T07:33:04.2611650Z /Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSSavePanel.h:286:49: note: 'allowedFileTypes' has been explicitly marked deprecated here",
+      "2026-10-24T07:33:04.2613200Z   286 | @property (nullable, copy) NSArray<NSString *> *allowedFileTypes API_DEPRECATED(\"Use -allowedContentTypes instead\", macos(10.3,12.0));",
+      "2026-10-24T07:33:50.7837530Z /Users/runner/work/Cliptiq/Cliptiq/platform/macos/SnippetEditor.mm:355:11: warning: 'allowedFileTypes' is deprecated: first deprecated in macOS 12.0 - Use -allowedContentTypes instead [-Wdeprecated-declarations]",
+      "2026-10-24T07:33:50.8140440Z /Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSSavePanel.h:286:49: note: 'allowedFileTypes' has been explicitly marked deprecated here",
+      "2026-10-24T07:33:50.8240530Z   286 | @property (nullable, copy) NSArray<NSString *> *allowedFileTypes API_DEPRECATED(\"Use -allowedContentTypes instead\", macos(10.3,12.0));",
+      "2026-10-24T07:34:31.3951220Z (node:13661) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.",
+      "2026-10-24T07:34:33.8668650Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/"
+    ]
+  },
+  "120815008085": {
+    "url": "https://github.com/Hydrock/Cliptiq/actions/runs/40074549461/job/120815008085",
+    "observed_lines": [
+      "2026-10-24T07:33:29.2100880Z /Users/runner/work/Cliptiq/Cliptiq/platform/macos/SnippetEditor.mm:355:11: warning: 'allowedFileTypes' is deprecated: first deprecated in macOS 12.0 - Use -allowedContentTypes instead [-Wdeprecated-declarations]",
+      "2026-10-24T07:33:29.5120160Z /Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSSavePanel.h:286:49: note: 'allowedFileTypes' has been explicitly marked deprecated here",
+      "2026-10-24T07:33:29.6131380Z   286 | @property (nullable, copy) NSArray<NSString *> *allowedFileTypes API_DEPRECATED(\"Use -allowedContentTypes instead\", macos(10.3,12.0));",
+      "2026-10-24T07:35:39.2557120Z /Users/runner/work/Cliptiq/Cliptiq/platform/macos/SnippetEditor.mm:355:11: warning: 'allowedFileTypes' is deprecated: first deprecated in macOS 12.0 - Use -allowedContentTypes instead [-Wdeprecated-declarations]",
+      "2026-10-24T07:35:39.5565530Z /Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSSavePanel.h:286:49: note: 'allowedFileTypes' has been explicitly marked deprecated here",
+      "2026-10-24T07:35:39.6567260Z   286 | @property (nullable, copy) NSArray<NSString *> *allowedFileTypes API_DEPRECATED(\"Use -allowedContentTypes instead\", macos(10.3,12.0));",
+      "2026-10-24T07:37:15.3509020Z (node:5319) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.",
+      "2026-10-24T07:37:18.7130770Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/"
+    ]
+  }
+}

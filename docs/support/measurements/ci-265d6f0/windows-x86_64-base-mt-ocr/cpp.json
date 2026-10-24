@@ -1,0 +1,119 @@
+{
+  "schema_version": 1,
+  "target": "windows",
+  "arch": "x86_64",
+  "toolchain": {
+    "cmake": "cmake version 4.3.1-msvc1",
+    "rustc": "rustc 1.99.0 (b940084d7 2026-09-28)",
+    "sqlite": "3.53.4",
+    "host": "Windows-2025Server-10.0.26100-SP0",
+    "cc": "14.51.36231"
+  },
+  "flags": {
+    "fts5": false,
+    "static_crt": true,
+    "gtk": null,
+    "cpp": "MinSizeRel",
+    "cpp_lto": false,
+    "ocr_probe": true,
+    "rust": "opt-level=z panic=abort lto=thin codegen-units=1"
+  },
+  "app_bytes": 970150,
+  "archive_bytes": 545612,
+  "dependency_delta_bytes": null,
+  "ocr_bytes": null,
+  "total_offline_bytes": null,
+  "idle_memory_bytes": 13762560,
+  "startup_ms": 4.0061,
+  "measurement_scope": "prototype; host OS libraries excluded, clean-machine closure unverified",
+  "archive_sha256": "9c2e06b62f80c2f7221d94cb6ab6d17b2751749d48fd5b9e84ac13b8f452bed0",
+  "files": [
+    {
+      "path": "NOTICE.txt",
+      "bytes": 422,
+      "sha256": "2d2825762056493c9cdba84e15e2cdaf42e51dc82bef0f7b489741ef9fc14ae3"
+    },
+    {
+      "path": "probe_cpp.exe",
+      "bytes": 969728,
+      "sha256": "ff3b1cd8431debfb2afe3f9738fb5590685677da2afe7e0c5dc32ebedc98cffe"
+    }
+  ],
+  "runtime": {
+    "entries": 33,
+    "representations": 35,
+    "native_ui_ready": true,
+    "fts5": false,
+    "idle_memory_bytes": 13762560,
+    "startup_ms": 4.0061,
+    "startup_definition": "main-to-fixture-and-hidden-native-window; loader time excluded",
+    "clipboard_roundtrip": "not exercised; user clipboard preserved",
+    "ocr": "recognized",
+    "samples": [
+      {
+        "entries": 33,
+        "representations": 35,
+        "native_ui_ready": true,
+        "fts5": false,
+        "idle_memory_bytes": 13918208,
+        "startup_ms": 3.9235,
+        "startup_definition": "main-to-fixture-and-hidden-native-window; loader time excluded",
+        "clipboard_roundtrip": "not exercised; user clipboard preserved",
+        "ocr": "recognized"
+      },
+      {
+        "entries": 33,
+        "representations": 35,
+        "native_ui_ready": true,
+        "fts5": false,
+        "idle_memory_bytes": 13758464,
+        "startup_ms": 4.0061,
+        "startup_definition": "main-to-fixture-and-hidden-native-window; loader time excluded",
+        "clipboard_roundtrip": "not exercised; user clipboard preserved",
+        "ocr": "recognized"
+      },
+      {
+        "entries": 33,
+        "representations": 35,
+        "native_ui_ready": true,
+        "fts5": false,
+        "idle_memory_bytes": 13766656,
+        "startup_ms": 4.0693,
+        "startup_definition": "main-to-fixture-and-hidden-native-window; loader time excluded",
+        "clipboard_roundtrip": "not exercised; user clipboard preserved",
+        "ocr": "recognized"
+      },
+      {
+        "entries": 33,
+        "representations": 35,
+        "native_ui_ready": true,
+        "fts5": false,
+        "idle_memory_bytes": 13762560,
+        "startup_ms": 4.0015,
+        "startup_definition": "main-to-fixture-and-hidden-native-window; loader time excluded",
+        "clipboard_roundtrip": "not exercised; user clipboard preserved",
+        "ocr": "recognized"
+      },
+      {
+        "entries": 33,
+        "representations": 35,
+        "native_ui_ready": true,
+        "fts5": false,
+        "idle_memory_bytes": 13762560,
+        "startup_ms": 4.0683,
+        "startup_definition": "main-to-fixture-and-hidden-native-window; loader time excluded",
+        "clipboard_roundtrip": "not exercised; user clipboard preserved",
+        "ocr": "recognized"
+      }
+    ]
+  },
+  "language": "cpp",
+  "lane": "windows-x86_64-base-mt-ocr",
+  "feature_scope": "33 entries / 35 representations, SQLite, XML, shared native host; no updater/history monitor; generated-image OCR availability probe, model closure unknown",
+  "native_ui_ready": true,
+  "evidence_provenance": {
+    "source": "ci-265d6f0",
+    "ci_run": "https://github.com/Hydrock/Cliptiq/actions/runs/39931524164",
+    "source_commit": "265d6f097d0a6a552085cb2030f1329b4c8d411e"
+  }
+}

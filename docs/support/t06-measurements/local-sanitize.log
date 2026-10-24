@@ -1,0 +1,44 @@
+Preset CMake variables:
+
+  BUILD_TESTING="ON"
+  CLIPTIQ_SANITIZE="ON"
+  CMAKE_BUILD_TYPE="Debug"
+
+-- Configuring done (1.7s)
+-- Generating done (0.2s)
+-- Build files have been written to: /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-sanitize
+[1/12] Building CXX object CMakeFiles/linux_clipboard_test.dir/tests/integration/linux_clipboard_test.cpp.o
+[2/12] Building CXX object CMakeFiles/cliptiq_linux.dir/platform/linux/Transfer.cpp.o
+[3/12] Building CXX object CMakeFiles/linux_wayland_wire_test.dir/tests/integration/linux_wayland_wire_test.cpp.o
+[4/12] Building CXX object CMakeFiles/linux_x11_wire_test.dir/tests/integration/linux_x11_wire_test.cpp.o
+[5/12] Building CXX object CMakeFiles/cliptiq_linux.dir/platform/linux/ClipboardWayland.cpp.o
+[6/12] Building CXX object CMakeFiles/linux_native_clipboard_test.dir/tests/integration/linux_native_clipboard_test.cpp.o
+[7/12] Building CXX object CMakeFiles/cliptiq_linux.dir/platform/linux/ClipboardX11.cpp.o
+[8/12] Linking CXX static library libcliptiq_linux.a
+[9/12] Linking CXX executable linux_clipboard_test
+[10/12] Linking CXX executable linux_native_clipboard_test
+[11/12] Linking CXX executable linux_x11_wire_test
+[12/12] Linking CXX executable linux_wayland_wire_test
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-sanitize
+    Start 1: linux_clipboard_protocol
+1/9 Test #1: linux_clipboard_protocol ...........   Passed    0.16 sec
+    Start 2: linux_clipboard_wayland_wire
+2/9 Test #2: linux_clipboard_wayland_wire .......   Passed    1.61 sec
+    Start 3: linux_clipboard_x11_wire
+3/9 Test #3: linux_clipboard_x11_wire ...........   Passed    0.52 sec
+    Start 4: linux_clipboard_external_clients
+4/9 Test #4: linux_clipboard_external_clients ...   Passed    2.60 sec
+    Start 5: linux_clipboard_x11
+5/9 Test #5: linux_clipboard_x11 ................   Passed    0.82 sec
+    Start 6: linux_clipboard_wayland
+6/9 Test #6: linux_clipboard_wayland ............   Passed    0.56 sec
+    Start 7: policy
+7/9 Test #7: policy .............................   Passed    0.23 sec
+    Start 8: history
+8/9 Test #8: history ............................   Passed    0.69 sec
+    Start 9: history_crash
+9/9 Test #9: history_crash ......................   Passed    1.03 sec
+
+100% tests passed, 0 tests failed out of 9
+
+Total Test time (real) =   8.29 sec

@@ -1,0 +1,29 @@
+name: T01 isolated profile installation
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'experiments/clean-install/**'
+      - '.github/workflows/clean-install.yml'
+permissions:
+  contents: read
+jobs:
+  profile:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-2025, macos-15, macos-15-intel]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - if: runner.os == 'macOS'
+        run: command -v ninja || brew install ninja
+      - run: python tools/build-footprint.py
+      - run: python experiments/clean-install/clean_profile.py
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: clean-profile-${{ matrix.os }}
+          path: out/clean-profile/
+          retention-days: 14

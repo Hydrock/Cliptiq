@@ -1,0 +1,15 @@
+name: Distribution policy (T17)
+on:
+  workflow_dispatch:
+  push:
+    paths: ['tools/**', 'tests/tools/**', 'packaging/**', 'docs/support/feature-status.json', 'docs/support/size-baseline.json', 'docs/support/release-checklist.json', '.github/workflows/**']
+permissions:
+  contents: read
+jobs:
+  policy:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - run: python3 -m unittest discover -s tests/tools
+      - run: python3 tools/verify-coverage.py --audit docs/research/2026-10-23-clipy-audit.md --status docs/support/feature-status.json
+      - run: python3 tools/verify-release.py --checklist docs/support/release-checklist.json --expect-blocked

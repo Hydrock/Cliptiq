@@ -1,0 +1,57 @@
+{
+  "schema_version": 2,
+  "status": "engineering-candidate-gates",
+  "product_budget_approved": false,
+  "units": "bytes",
+  "limits": {
+    "app_bytes": 10485760,
+    "archive_bytes": 5242880
+  },
+  "optional_limits": {
+    "app_bytes": 16777216,
+    "archive_bytes": 8388608
+  },
+  "growth_review_fraction": 0.1,
+  "variants": {
+    "macos-aarch64-base": {
+      "app_bytes": 1910472,
+      "archive_bytes": 787416
+    },
+    "macos-x86_64-base": {
+      "app_bytes": 1893264,
+      "archive_bytes": 818369
+    },
+    "windows-x86_64-base": {
+      "app_bytes": 1697504,
+      "archive_bytes": 870535
+    },
+    "linux-x86_64-base": {
+      "app_bytes": 1529680,
+      "archive_bytes": 728281
+    },
+    "macos-aarch64-ocr": {
+      "app_bytes": 2137070,
+      "archive_bytes": 897427
+    },
+    "macos-x86_64-ocr": {
+      "app_bytes": 2127542,
+      "archive_bytes": 932976
+    },
+    "windows-x86_64-ocr": {
+      "app_bytes": 11382726,
+      "archive_bytes": 5323293
+    },
+    "linux-x86_64-ocr": {
+      "app_bytes": 12709014,
+      "archive_bytes": 5792186
+    }
+  },
+  "dependency_delta_bytes": null,
+  "total_offline_bytes": null,
+  "evidence": "docs/support/t16-measurements/summary.json",
+  "notes": [
+    "T16 measured app plus12000B explicit license/manifest staging allowance, then10% growth; not a user-approved product budget.",
+    "Optional models already included in app_bytes; external system delta stays null without clean VMs.",
+    "Unmeasured architectures fail closed; manual T04-T16 acceptance remains OPEN."
+  ]
+}

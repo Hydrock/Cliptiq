@@ -1,0 +1,16 @@
+Internal ctest changing into directory: /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/ocr-Linux-tesseract
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/ocr-Linux-tesseract
+    Start 55: ocr
+1/5 Test #55: ocr ..............................   Passed    0.03 sec
+    Start 56: fts
+2/5 Test #56: fts ..............................   Passed    0.15 sec
+    Start 57: ocr_queue
+3/5 Test #57: ocr_queue ........................   Passed    0.48 sec
+    Start 58: native_ocr
+4/5 Test #58: native_ocr .......................   Passed    0.48 sec
+    Start 59: fts_transaction_race
+5/5 Test #59: fts_transaction_race .............   Passed    1.24 sec
+
+100% tests passed, 0 tests failed out of 5
+
+Total Test time (real) =   2.45 sec

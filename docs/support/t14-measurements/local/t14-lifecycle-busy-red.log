@@ -1,0 +1,17 @@
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-release
+    Start 31: lifecycle_process
+1/1 Test #31: lifecycle_process ................***Failed    0.97 sec
+Traceback (most recent call last):
+  File "/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/tests/integration/lifecycle_process.py", line 27, in <module>
+    try:assert owner.poll() is None,('primary must retry transient mailbox Busy',owner.communicate())
+               ^^^^^^^^^^^^^^^^^^^^
+AssertionError: ('primary must retry transient mailbox Busy', ('', 'database is locked\n'))
+
+
+0% tests passed, 1 tests failed out of 1
+
+Total Test time (real) =   0.99 sec
+
+The following tests FAILED:
+	 31 - lifecycle_process (Failed)
+Errors while running CTest

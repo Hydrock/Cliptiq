@@ -1,0 +1,109 @@
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+      Start  1: xml_native_x11
+ 1/52 Test  #1: xml_native_x11 .....................   Passed    1.12 sec
+      Start  2: xml_native_wayland
+ 2/52 Test  #2: xml_native_wayland .................   Passed    0.74 sec
+      Start  3: xml
+ 3/52 Test  #3: xml ................................   Passed    0.05 sec
+      Start  4: xml_bounded_scan
+ 4/52 Test  #4: xml_bounded_scan ...................   Passed    1.26 sec
+      Start  5: xml_interop
+ 5/52 Test  #5: xml_interop ........................   Passed    0.38 sec
+      Start  6: editor_native_x11
+ 6/52 Test  #6: editor_native_x11 ..................   Passed    0.67 sec
+      Start  7: editor_native_wayland
+ 7/52 Test  #7: editor_native_wayland ..............   Passed    0.59 sec
+      Start  8: snippets_menu_hotkeys
+ 8/52 Test  #8: snippets_menu_hotkeys ..............   Passed    0.02 sec
+      Start  9: editor
+ 9/52 Test  #9: editor .............................   Passed    0.25 sec
+      Start 10: snippets
+10/52 Test #10: snippets ...........................   Passed    0.26 sec
+      Start 11: settings_native_x11
+11/52 Test #11: settings_native_x11 ................   Passed    0.48 sec
+      Start 12: lifecycle_ui_ru_x11
+12/52 Test #12: lifecycle_ui_ru_x11 ................   Passed    0.48 sec
+      Start 13: hotkeys_native_x11
+13/52 Test #13: hotkeys_native_x11 .................   Passed    0.58 sec
+      Start 14: settings_native_wayland
+14/52 Test #14: settings_native_wayland ............   Passed    0.63 sec
+      Start 15: lifecycle_ui_ru_wayland
+15/52 Test #15: lifecycle_ui_ru_wayland ............   Passed    0.67 sec
+      Start 16: hotkeys_native_wayland
+16/52 Test #16: hotkeys_native_wayland .............   Passed    0.21 sec
+      Start 17: settings
+17/52 Test #17: settings ...........................   Passed    0.02 sec
+      Start 18: hotkeys
+18/52 Test #18: hotkeys ............................   Passed    0.01 sec
+      Start 19: paste_native_x11
+19/52 Test #19: paste_native_x11 ...................   Passed    0.49 sec
+      Start 20: paste_native_wayland
+20/52 Test #20: paste_native_wayland ...............   Passed    0.17 sec
+      Start 21: hotkeys_portal_protocol
+21/52 Test #21: hotkeys_portal_protocol ............   Passed    0.37 sec
+      Start 22: paste_menu_bridge
+22/52 Test #22: paste_menu_bridge ..................   Passed    0.24 sec
+      Start 23: paste
+23/52 Test #23: paste ..............................   Passed    0.03 sec
+      Start 24: menu_unicode_conformance
+24/52 Test #24: menu_unicode_conformance ...........   Passed    0.01 sec
+      Start 25: menu_regression_context_x11
+25/52 Test #25: menu_regression_context_x11 ........   Passed    0.24 sec
+      Start 26: menu_regression_context_wayland
+26/52 Test #26: menu_regression_context_wayland ....   Passed    0.21 sec
+      Start 27: menu_regression_coordinates
+27/52 Test #27: menu_regression_coordinates ........   Passed    0.28 sec
+      Start 28: menu_native_x11
+28/52 Test #28: menu_native_x11 ....................   Passed    0.31 sec
+      Start 29: menu_native_wayland
+29/52 Test #29: menu_native_wayland ................   Passed    0.28 sec
+      Start 30: lifecycle
+30/52 Test #30: lifecycle ..........................   Passed    0.45 sec
+      Start 31: lifecycle_process
+31/52 Test #31: lifecycle_process ..................   Passed    0.46 sec
+      Start 32: lifecycle_locale_schema
+32/52 Test #32: lifecycle_locale_schema ............   Passed    0.08 sec
+      Start 33: media_review_clear
+33/52 Test #33: media_review_clear .................   Passed    1.03 sec
+      Start 34: media_review_root
+34/52 Test #34: media_review_root ..................   Passed    1.03 sec
+      Start 35: media_review_error
+35/52 Test #35: media_review_error .................   Passed    0.24 sec
+      Start 36: native_media
+36/52 Test #36: native_media .......................   Passed    7.11 sec
+      Start 37: media
+37/52 Test #37: media ..............................   Passed    0.01 sec
+      Start 38: menu_preview
+38/52 Test #38: menu_preview .......................   Passed    0.00 sec
+      Start 39: menu
+39/52 Test #39: menu ...............................   Passed    0.27 sec
+      Start 40: linux_clipboard_protocol
+40/52 Test #40: linux_clipboard_protocol ...........   Passed    0.03 sec
+      Start 41: linux_clipboard_wayland_wire
+41/52 Test #41: linux_clipboard_wayland_wire .......   Passed    1.48 sec
+      Start 42: linux_clipboard_x11_wire
+42/52 Test #42: linux_clipboard_x11_wire ...........   Passed    0.41 sec
+      Start 43: linux_clipboard_external_clients
+43/52 Test #43: linux_clipboard_external_clients ...   Passed    2.46 sec
+      Start 44: linux_clipboard_x11
+44/52 Test #44: linux_clipboard_x11 ................   Passed    0.68 sec
+      Start 45: linux_clipboard_wayland
+45/52 Test #45: linux_clipboard_wayland ............   Passed    0.39 sec
+      Start 46: policy
+46/52 Test #46: policy .............................   Passed    0.02 sec
+      Start 47: history
+47/52 Test #47: history ............................   Passed    0.47 sec
+      Start 48: history_crash
+48/52 Test #48: history_crash ......................   Passed    0.35 sec
+      Start 49: import
+49/52 Test #49: import .............................   Passed    3.96 sec
+      Start 50: import_native_x11
+50/52 Test #50: import_native_x11 ..................   Passed    0.48 sec
+      Start 51: import_native_wayland
+51/52 Test #51: import_native_wayland ..............   Passed    0.45 sec
+      Start 52: import_bounds
+52/52 Test #52: import_bounds ......................   Passed    0.11 sec
+
+100% tests passed, 0 tests failed out of 52
+
+Total Test time (real) =  33.33 sec

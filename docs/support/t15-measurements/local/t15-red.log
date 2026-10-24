@@ -1,0 +1,16 @@
+Preset CMake variables:
+
+  BUILD_TESTING="ON"
+  CMAKE_BUILD_TYPE="Debug"
+
+-- Configuring done (2.3s)
+-- Generating done (0.7s)
+-- Build files have been written to: /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+[1/2] Building CXX object CMakeFiles/update_test.dir/tests/unit/update_test.cpp.o
+FAILED: CMakeFiles/update_test.dir/tests/unit/update_test.cpp.o 
+/usr/bin/c++  -I"/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/include" -g -std=c++17 -MD -MT CMakeFiles/update_test.dir/tests/unit/update_test.cpp.o -MF CMakeFiles/update_test.dir/tests/unit/update_test.cpp.o.d -o CMakeFiles/update_test.dir/tests/unit/update_test.cpp.o -c '/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/tests/unit/update_test.cpp'
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/tests/unit/update_test.cpp:1:10: fatal error: cliptiq/update.hpp: No such file or directory
+    1 | #include "cliptiq/update.hpp"
+      |          ^~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+ninja: build stopped: subcommand failed.

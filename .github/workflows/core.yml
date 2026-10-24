@@ -1,0 +1,286 @@
+name: Portable core and native clipboards (T02-T17)
+on:
+  workflow_dispatch:
+  workflow_call:
+  push:
+    paths:
+      - 'core/**'
+      - 'tests/tools/**'
+      - 'tools/verify-coverage.py'
+      - 'tools/distribution.py'
+      - 'tools/size-report.py'
+      - 'tools/verify-release.py'
+      - 'tests/integration/package_entry.py'
+      - 'tests/integration/fuzz_smoke.cpp'
+      - 'docs/support/feature-status.json'
+      - 'docs/support/size-baseline.json'
+      - 'third_party/libgrapheme/**'
+      - 'third_party/tinyxml2/**'
+      - 'platform/SnippetXml.hpp'
+      - 'platform/Media*'
+      - 'platform/Ocr*'
+      - 'platform/Index*'
+      - 'tools/test-ocr.py'
+      - 'tests/integration/*ocr*'
+      - 'tests/integration/fts*'
+      - 'tests/fixtures/ocr/**'
+      - 'platform/Lifecycle*'
+      - 'platform/Updates*'
+      - 'packaging/**'
+      - 'tools/verify-update/**'
+      - 'tests/integration/update*'
+      - 'tests/size/update*'
+      - 'platform/LocaleNative.hpp'
+      - 'platform/posix/**'
+      - 'resources/**'
+      - 'tools/generate-locales.py'
+      - 'tools/import-clipy/**'
+      - 'tests/integration/import*'
+      - 'tests/fixtures/migration/**'
+      - 'tests/integration/lifecycle*'
+      - 'tests/integration/native_media_test.cpp'
+      - 'tests/fixtures/media/**'
+      - 'platform/MenuHost.cpp'
+      - 'platform/macos/**'
+      - 'platform/windows/**'
+      - 'platform/linux/**'
+      - 'tools/run-linux-isolated.py'
+      - 'tools/install-linux-backend-deps.sh'
+      - 'tests/integration/linux*'
+      - 'tests/integration/native_menu_test.cpp'
+      - 'tests/integration/native_paste_test.cpp'
+      - 'tests/integration/native_settings_test.cpp'
+      - 'tests/integration/native_editor_test.cpp'
+      - 'tests/integration/native_xml_test.cpp'
+      - 'tests/integration/xml_interop.py'
+      - 'tests/integration/xml_bounded_scan.py'
+      - 'tests/fixtures/xml/**'
+      - 'tests/integration/snippet_integration_test.cpp'
+      - 'tests/integration/native_hotkeys_test.cpp'
+      - 'tests/integration/linux_hotkey_portal_test.cpp'
+      - 'tests/integration/windows_paste_boundary_test.cpp'
+      - 'tests/integration/windows_hotkey_boundary_test.cpp'
+      - 'tests/integration/macos_paste_boundary_test.mm'
+      - 'tests/integration/menu_paste_bridge_test.cpp'
+      - 'tests/integration/menu_regression_test.cpp'
+      - 'tests/fixtures/linux/**'
+      - 'tests/fixtures/PasteHistory.hpp'
+      - 'cmake/**'
+      - 'CMakeLists.txt'
+      - 'CMakePresets.json'
+      - 'tests/unit/**'
+      - 'tests/integration/history_crash.py'
+      - 'tests/integration/macos_clipboard_test.mm'
+      - 'tests/integration/windows_clipboard_test.cpp'
+      - 'tests/fixtures/windows/**'
+      - 'tests/manual/macos_clipboard_manual.mm'
+      - 'tests/size/**'
+      - '.github/workflows/core.yml'
+permissions:
+  contents: read
+jobs:
+  history:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-2025, ubuntu-24.04, macos-15, macos-15-intel]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: MSVC environment
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $vsPath = & "${env:ProgramFiles(x86)}/Microsoft Visual Studio/Installer/vswhere.exe" -latest -products '*' -property installationPath
+          cmd /c "`"$vsPath\Common7\Tools\VsDevCmd.bat`" -arch=x64 >nul && set" | ForEach-Object {
+            if ($_ -match '^([^=]+)=(.*)$') { "$( $matches[1] )=$( $matches[2] )" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8 }
+          }
+      - name: Linux backend/test dependencies
+        if: runner.os == 'Linux'
+        run: bash tools/install-linux-backend-deps.sh
+      - name: Fetch pinned SQLite
+        run: python tools/fetch-footprint-deps.py
+      - name: Configure tests
+        run: cmake --preset test
+      - name: Build tests
+        run: cmake --build --preset test
+      - name: Policy, history contracts and crash recovery
+        run: ctest --preset test --output-on-failure
+      - name: Configure size build
+        run: cmake --preset release -DCLIPTIQ_BUILD_SIZE_PROBE=ON
+      - name: Build size probe
+        run: cmake --build --preset release
+      - name: Release tests
+        run: ctest --preset release --output-on-failure
+      - name: Package and validate Base distribution
+        run: python packaging/package.py
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: distribution-base-${{ matrix.os }}
+          path: |
+            out/t17-*/size.json
+            out/t17-*/package-report.json
+            out/t17-*/*.zip
+            out/t17-*/*.deb
+            out/t17-*/*.rpm
+            out/t17-*/*.tar.xz
+            out/t17-*/*.msix
+      - name: Collect sizes
+        run: python tests/size/report.py
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: core-${{ matrix.os }}
+          path: |
+            out/t02-size.json
+            out/core-*/Testing/Temporary/LastTest.log
+  sanitizers:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - run: bash tools/install-linux-backend-deps.sh
+      - run: python tools/fetch-footprint-deps.py
+      - run: cmake --preset sanitize -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
+      - run: cmake --build --preset sanitize
+      - run: ctest --preset sanitize --output-on-failure
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: linux-backend-sanitizers
+          path: out/core-Linux-sanitize/Testing/Temporary/LastTest.log
+  macos_backend_sanitizers:
+    runs-on: macos-15
+    timeout-minutes: 15
+    env:
+      ASAN_OPTIONS: detect_leaks=0
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - run: python tools/fetch-footprint-deps.py
+      - run: cmake --preset sanitize
+      - run: cmake --build --preset sanitize
+      - run: ctest --preset sanitize --output-on-failure
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: macos-backend-sanitizers
+          path: out/core-Darwin-sanitize/Testing/Temporary/LastTest.log
+  windows_backend_asan:
+    runs-on: windows-2025
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: MSVC environment
+        shell: pwsh
+        run: |
+          $vsPath = & "${env:ProgramFiles(x86)}/Microsoft Visual Studio/Installer/vswhere.exe" -latest -products '*' -property installationPath
+          cmd /c "`"$vsPath\Common7\Tools\VsDevCmd.bat`" -arch=x64 >nul && set" | ForEach-Object {
+            if ($_ -match '^([^=]+)=(.*)$') { "$( $matches[1] )=$( $matches[2] )" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8 }
+          }
+      - run: python tools/fetch-footprint-deps.py
+      - name: Configure MSVC AddressSanitizer
+        run: cmake -S . -B out/core-Windows-asan -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILD_TESTING=ON -DCMAKE_C_FLAGS=/fsanitize=address "-DCMAKE_CXX_FLAGS=/fsanitize=address /EHsc" -DCMAKE_EXE_LINKER_FLAGS=/INCREMENTAL:NO
+      - run: cmake --build out/core-Windows-asan
+      - run: ctest --test-dir out/core-Windows-asan --output-on-failure
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: windows-backend-asan
+          path: out/core-Windows-asan/Testing/Temporary/LastTest.log
+  legacy_migration:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-15, macos-15-intel]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - run: python3 tools/fetch-footprint-deps.py
+      - run: cmake --preset release -DCLIPTIQ_BUILD_SIZE_PROBE=ON
+      - run: cmake --build --preset release --target cliptiq_import cliptiq_import_macos
+      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
+        id: realm_cache
+        with:
+          path: out/legacy-build
+          key: realm10546-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('tools/import-clipy/Package.swift') }}
+      - name: Build optional isolated Realm helper
+        run: swift build --package-path tools/import-clipy --scratch-path out/legacy-build -c release --jobs 3 --disable-sandbox
+      - uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
+        if: steps.realm_cache.outputs.cache-hit != 'true'
+        with:
+          path: out/legacy-build
+          key: realm10546-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('tools/import-clipy/Package.swift') }}
+      - name: Stage and measure separate helper closure
+        run: python3 tests/size/migration_legacy.py out/legacy-build/release
+      - name: Real Realm file and archive migration/source preservation
+        run: python3 tests/integration/import_macos.py out/t14-legacy-package/cliptiq-import out/t14-legacy-package/cliptiq-import-macos out/t14-legacy-package/cliptiq-legacy
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: legacy-migration-${{ matrix.os }}
+          path: |
+            out/t14-legacy-size.json
+            tools/import-clipy/Package.resolved
+
+  sparkle_update:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-15, macos-15-intel]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - run: command -v ninja || brew install ninja
+      - run: python3 tools/fetch-footprint-deps.py
+      - run: python3 tests/size/update_sparkle.py
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: sparkle-update-${{ matrix.os }}
+          path: |
+            out/t15-sparkle-report.json
+            out/t15-sparkle-test.log
+
+  ocr_backends:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {os: ubuntu-24.04, engine: tesseract}
+          - {os: windows-2025, engine: tesseract}
+          - {os: windows-2025, engine: native}
+          - {os: macos-15, engine: native}
+          - {os: macos-15-intel, engine: native}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - if: runner.os == 'Linux'
+        run: bash tools/install-linux-backend-deps.sh
+      - run: python tools/fetch-footprint-deps.py
+      - run: python tools/test-ocr.py --engine ${{ matrix.engine }}
+      - name: Package and validate OCR distribution
+        if: runner.os != 'Windows' || matrix.engine == 'tesseract'
+        run: python packaging/package.py --variant ocr
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: runner.os != 'Windows' || matrix.engine == 'tesseract'
+        with:
+          name: distribution-ocr-${{ matrix.os }}
+          path: |
+            out/t17-*/size.json
+            out/t17-*/package-report.json
+            out/t17-*/*.zip
+            out/t17-*/*.deb
+            out/t17-*/*.rpm
+            out/t17-*/*.tar.xz
+            out/t17-*/*.msix
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: ocr-${{ matrix.os }}-${{ matrix.engine }}
+          path: |
+            out/t16-ocr-size-*.json
+            out/ocr-*/Testing/Temporary/LastTest.log
+            out/ocr-pack-*.zip

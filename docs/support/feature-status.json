@@ -1,0 +1,2762 @@
+{
+  "schema_version": 1,
+  "scope": "audited feature contracts, not full manual release acceptance",
+  "features": [
+    {
+      "feature_id": "C01",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t04-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C02",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t04-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C03",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t04-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C04",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t04-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C05",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t04-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C06",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t04-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C07",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t04-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C08",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t04-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C09",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t04-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C10",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t04-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C11",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t03-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C12",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t03-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C13",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t03-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C14",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t03-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C15",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t03-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C16",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t03-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H01",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t02-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H02",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t02-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H03",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t02-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H04",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t02-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H05",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t02-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H06",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t07-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H07",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t07-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H08",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t07-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H09",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t07-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H10",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t07-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H11",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t07-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H12",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t07-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H13",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t08-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H14",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t08-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H15",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t08-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H16",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t08-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H17",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t09-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H18",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t09-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S01",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t10-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S02",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t10-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S03",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t10-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S04",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t10-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S05",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t11-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S06",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t11-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S07",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t12-results.md"
+      ],
+      "limitation": "Bounded PNG screenshot file observation; native image conversion, not screen recording. Manual desktop acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S08",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t13-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S09",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t09-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S10",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t15-results.md"
+      ],
+      "limitation": "Base explicit/native delivery route; complete Sparkle optional on Mac; production signing/feed/install acceptance OPEN. Manual desktop acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S11",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t15-results.md"
+      ],
+      "limitation": "User accepted local-only redacted diagnostics instead of Firebase Analytics/Crashlytics. Manual desktop acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S12",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t09-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S13",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t13-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S14",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t14-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S15",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t02-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "B01",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t16-results.md"
+      ],
+      "limitation": "Optional OCR build: Vision or pinned EN/RU Tesseract; Windows.Media.Ocr positive MSIX acceptance OPEN; engine quality/detection differs. Manual desktop acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "B02",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t16-results.md"
+      ],
+      "limitation": "Disposable companion FTS instead of main-DB FTS triggers; Base excludes FTS; no user search UI. Manual desktop acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "B03",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "unsupported",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t16-results.md"
+      ],
+      "limitation": "Dormant/internal upstream item, not an active user feature; no cloud service or unused icon-size UI added.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "B04",
+      "platform": "macos",
+      "backend": "AppKit/native pasteboard",
+      "status": "unsupported",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t16-results.md"
+      ],
+      "limitation": "Dormant/internal upstream item, not an active user feature; no cloud service or unused icon-size UI added.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C01",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t04-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C02",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t04-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C03",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t04-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C04",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t04-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C05",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t04-results.md"
+      ],
+      "limitation": "Opaque RTFD retention outside Mac; usable paste needs actual text/RTF/HTML/image fallback. Manual desktop acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C06",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t04-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C07",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t04-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C08",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t04-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C09",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t04-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C10",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t04-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C11",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t03-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C12",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t03-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C13",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t03-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C14",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t03-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C15",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t03-results.md"
+      ],
+      "limitation": "Universal Clipboard semantics are macOS-specific; native remote flags only where observable. Manual desktop acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C16",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t03-results.md"
+      ],
+      "limitation": "Source attribution may be unknown; exclusions fail closed according to policy. Manual desktop acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H01",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t02-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H02",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t02-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H03",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t02-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H04",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t02-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H05",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t02-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H06",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t07-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H07",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t07-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H08",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t07-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H09",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t07-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H10",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t07-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H11",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t07-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H12",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t07-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H13",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t08-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H14",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t08-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H15",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t08-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H16",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t08-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H17",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t09-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H18",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t09-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S01",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t10-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S02",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t10-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S03",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t10-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S04",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t10-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S05",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t11-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S06",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t11-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S07",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t12-results.md"
+      ],
+      "limitation": "Bounded PNG screenshot file observation; native image conversion, not screen recording. Manual desktop acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S08",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t13-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S09",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t09-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S10",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t15-results.md"
+      ],
+      "limitation": "Base explicit/native delivery route; complete Sparkle optional on Mac; production signing/feed/install acceptance OPEN. Manual desktop acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S11",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t15-results.md"
+      ],
+      "limitation": "User accepted local-only redacted diagnostics instead of Firebase Analytics/Crashlytics. Manual desktop acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S12",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t09-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S13",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t13-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S14",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t14-results.md"
+      ],
+      "limitation": "Optional Mac Realm/archive helper; cross-platform normalized SQLite import, no heavy runtime in Base. Manual desktop acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S15",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t02-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "B01",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t16-results.md"
+      ],
+      "limitation": "Optional OCR build: Vision or pinned EN/RU Tesseract; Windows.Media.Ocr positive MSIX acceptance OPEN; engine quality/detection differs. Manual desktop acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "B02",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t16-results.md"
+      ],
+      "limitation": "Disposable companion FTS instead of main-DB FTS triggers; Base excludes FTS; no user search UI. Manual desktop acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "B03",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "unsupported",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t16-results.md"
+      ],
+      "limitation": "Dormant/internal upstream item, not an active user feature; no cloud service or unused icon-size UI added.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "B04",
+      "platform": "windows",
+      "backend": "Win32 clipboard/native UI",
+      "status": "unsupported",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t16-results.md"
+      ],
+      "limitation": "Dormant/internal upstream item, not an active user feature; no cloud service or unused icon-size UI added.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C01",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t04-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C02",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t04-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C03",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t04-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C04",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t04-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C05",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t04-results.md"
+      ],
+      "limitation": "Opaque RTFD retention outside Mac; usable paste needs actual text/RTF/HTML/image fallback. Manual desktop acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C06",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t04-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C07",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t04-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C08",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t04-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C09",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t04-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C10",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t04-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C11",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t03-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C12",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t03-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C13",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t03-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C14",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t03-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C15",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t03-results.md"
+      ],
+      "limitation": "Universal Clipboard semantics are macOS-specific; native remote flags only where observable. Manual desktop acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C16",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t03-results.md"
+      ],
+      "limitation": "Source attribution may be unknown; exclusions fail closed according to policy. Manual desktop acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H01",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t02-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H02",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t02-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H03",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t02-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H04",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t02-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H05",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t02-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H06",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t07-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H07",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t07-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H08",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t07-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H09",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t07-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H10",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t07-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H11",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t07-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H12",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t07-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H13",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t08-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H14",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t08-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H15",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t08-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H16",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t08-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H17",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t09-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H18",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t09-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S01",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t10-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S02",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t10-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S03",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t10-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S04",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t10-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S05",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t11-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S06",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t11-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S07",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t12-results.md"
+      ],
+      "limitation": "Bounded PNG screenshot file observation; native image conversion, not screen recording. Manual desktop acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S08",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t13-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S09",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t09-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S10",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t15-results.md"
+      ],
+      "limitation": "Base explicit/native delivery route; complete Sparkle optional on Mac; production signing/feed/install acceptance OPEN. Manual desktop acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S11",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t15-results.md"
+      ],
+      "limitation": "User accepted local-only redacted diagnostics instead of Firebase Analytics/Crashlytics. Manual desktop acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S12",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t09-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S13",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t13-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S14",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t14-results.md"
+      ],
+      "limitation": "Optional Mac Realm/archive helper; cross-platform normalized SQLite import, no heavy runtime in Base. Manual desktop acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S15",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "verified",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t02-results.md"
+      ],
+      "limitation": "Automated contract evidence only; T04–T16 desktop/manual acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "B01",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t16-results.md"
+      ],
+      "limitation": "Optional OCR build: Vision or pinned EN/RU Tesseract; Windows.Media.Ocr positive MSIX acceptance OPEN; engine quality/detection differs. Manual desktop acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "B02",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t16-results.md"
+      ],
+      "limitation": "Disposable companion FTS instead of main-DB FTS triggers; Base excludes FTS; no user search UI. Manual desktop acceptance OPEN.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "B03",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "unsupported",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t16-results.md"
+      ],
+      "limitation": "Dormant/internal upstream item, not an active user feature; no cloud service or unused icon-size UI added.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "B04",
+      "platform": "linux-x11",
+      "backend": "XCB/X11/GTK",
+      "status": "unsupported",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t16-results.md"
+      ],
+      "limitation": "Dormant/internal upstream item, not an active user feature; no cloud service or unused icon-size UI added.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C01",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t04-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C02",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t04-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C03",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t04-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C04",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t04-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C05",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t04-results.md"
+      ],
+      "limitation": "Opaque RTFD retention outside Mac; usable paste needs actual text/RTF/HTML/image fallback. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C06",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t04-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C07",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t04-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C08",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t04-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C09",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t04-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C10",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t04-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C11",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t03-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C12",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t03-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C13",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t03-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C14",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t03-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C15",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t03-results.md"
+      ],
+      "limitation": "Universal Clipboard semantics are macOS-specific; native remote flags only where observable. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "C16",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t03-results.md"
+      ],
+      "limitation": "Source attribution may be unknown; exclusions fail closed according to policy. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H01",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t02-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H02",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t02-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H03",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t02-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H04",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t02-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H05",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t02-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H06",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t07-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H07",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t07-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H08",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t07-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H09",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t07-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H10",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t07-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H11",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t07-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H12",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t07-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H13",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t08-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H14",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t08-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H15",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t08-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H16",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t08-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H17",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t09-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "H18",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t09-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S01",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t10-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S02",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t10-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S03",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t10-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S04",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t10-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S05",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t11-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S06",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t11-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S07",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t12-results.md"
+      ],
+      "limitation": "Bounded PNG screenshot file observation; native image conversion, not screen recording. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S08",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t13-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S09",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t09-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S10",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t15-results.md"
+      ],
+      "limitation": "Base explicit/native delivery route; complete Sparkle optional on Mac; production signing/feed/install acceptance OPEN. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S11",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t15-results.md"
+      ],
+      "limitation": "User accepted local-only redacted diagnostics instead of Firebase Analytics/Crashlytics. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S12",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t09-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S13",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t13-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S14",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t14-results.md"
+      ],
+      "limitation": "Optional Mac Realm/archive helper; cross-platform normalized SQLite import, no heavy runtime in Base. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "S15",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t02-results.md"
+      ],
+      "limitation": "Native platform conventions and explicit capability/fallback contracts differ from macOS. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "B01",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t16-results.md"
+      ],
+      "limitation": "Optional OCR build: Vision or pinned EN/RU Tesseract; Windows.Media.Ocr positive MSIX acceptance OPEN; engine quality/detection differs. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "B02",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "adapted",
+      "adaptation": true,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t16-results.md"
+      ],
+      "limitation": "Disposable companion FTS instead of main-DB FTS triggers; Base excludes FTS; no user search UI. Manual desktop acceptance OPEN. Full history requires compositor data-control; no generic GNOME/Wayland support claim. Paste/hotkey/tray/placement may be limited.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "B03",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "unsupported",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t16-results.md"
+      ],
+      "limitation": "Dormant/internal upstream item, not an active user feature; no cloud service or unused icon-size UI added.",
+      "manual_acceptance": "open"
+    },
+    {
+      "feature_id": "B04",
+      "platform": "linux-wayland",
+      "backend": "Wayland data-control/GTK/portals, conditional",
+      "status": "unsupported",
+      "adaptation": false,
+      "verification_scope": "automated-contract",
+      "evidence": [
+        "docs/support/t16-results.md"
+      ],
+      "limitation": "Dormant/internal upstream item, not an active user feature; no cloud service or unused icon-size UI added.",
+      "manual_acceptance": "open"
+    }
+  ]
+}

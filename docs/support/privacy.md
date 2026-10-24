@@ -1,0 +1,11 @@
+# Privacy and local diagnostics (T15)
+
+The user accepted replacing Firebase Analytics/Crashlytics with local-only diagnostics. Cliptiq has no Firebase SDK, telemetry endpoint, remote crash collection or diagnostics upload. This intentionally removes automatic crash/analytics reporting; it is not a claim of identical service functionality.
+
+`Export Local Diagnostics` opens the platform save picker. The report is a small whitelist of application version, build platform/architecture, disabled telemetry and report-format identifiers. Its generator takes no Store, clipboard, snippet, path, source application, exception message, environment, device identifier or user-provided text. Consequently redaction does not depend on guessing secrets with regular expressions. Cancel produces no file. Export does not send a report anywhere. Existing file replacement requires the native picker confirmation. The user controls subsequent sharing.
+
+Update networking is separate from diagnostics. Automatic checks default OFF. Windows/Linux opt-in checks request only the fixed project release Atom URL over system TLS; no payload, history, snippets, machine identifier or query parameters are attached. The server/proxy naturally observes the network address and `Cliptiq/0.1.0` user agent. The parser accepts at most128KiB, fixed project release links and stable three-component versions. This feed is an **unverified availability hint**, not cryptographic release authentication. No code is downloaded, executed or installed by this metadata worker.
+
+The optional macOS Sparkle lane requires the project's own appcast and Ed25519 public key. System profiling and release-note downloads are disabled, automatic installation is disallowed, and the provider owns its scheduling/user defaults. Application startup does not overwrite previous Sparkle preferences. Explicit Apply in Settings updates provider preferences. Base macOS without configured Sparkle opens the project's release page only on an explicit user action; it does not claim automatic checks.
+
+Source capture filtering remains governed by [POLICY.md](../../core/POLICY.md). T15 does not change capture, preview/OCR or migration ownership policy. Manual T04–T14 acceptance stays OPEN; no T16 work is included.

@@ -1,0 +1,22 @@
+[1/2] Building CXX object CMakeFiles/editor_test.dir/tests/unit/editor_test.cpp.o
+[2/2] Linking CXX executable editor_test
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+    Start 4: editor
+1/1 Test #4: editor ...........................***Failed    0.15 sec
+PASS autosave_undo_redo_resets_at_selection_boundary
+PASS cancelled_drag_and_stale_drag_do_not_mutate
+PASS delete_confirmation_empty_folder_and_binding_conflicts
+PASS failed_edit_preserves_document_and_undo
+PASS failed_autosave_blocks_navigation_until_corrected_or_explicit_reload
+PASS drag_revision_is_checked_inside_write_transaction
+PASS folder_drop_does_not_overwrite_concurrent_other_folder_reorder
+FAIL committed_snapshot_does_not_adopt_peer_revision: e.content()=="mine"
+
+
+0% tests passed, 1 tests failed out of 1
+
+Total Test time (real) =   0.17 sec
+
+The following tests FAILED:
+	  4 - editor (Failed)
+Errors while running CTest

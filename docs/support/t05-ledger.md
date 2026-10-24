@@ -1,0 +1,31 @@
+# T05 execution — 2026-10-23
+
+BASE afea4cbf397fc7c49f4d1b71a119696fc5ed04c7. Plan docs/superpowers/plans/2026-10-23-cliptiq-port.md; spec alongside it. User authorizes Windows backend, privacy integration, size measurements and upload to existing branch/draft PR. T04 manual remains OPEN. T06+ excluded.
+
+Ruling: reuse clean dedicated codex/portability-plan checkout, as previous tasks; no unrelated user edits. Prior approved C++/Win32 design is binding; no renewed architecture approval needed. Apply using-git-worktrees to verify this isolation, not create another checkout.
+
+Pre-flight T02/T03/T04 -> T05: same native byte snapshot, trusted native registry, capability reasons, UI callbacks, worker-owned Store and mandatory privacy gate. Windows single clipboard object has formats, not macOS arbitrary multiple items; CF_HDROP groups paths at item 0. Encoding Utf16Le on Unicode/URL; CF_HTML preserves UTF-8 byte offsets. Never persist GDI/OLE handles.
+
+Ruling: tests switch to a newly created noninteractive window station/desktop BEFORE any clipboard/window calls, abort if isolation fails. Windows has one clipboard per window station. No automated test/size probe may read or overwrite the user's WinSta0 clipboard. Real application smoke is a separate opt-in manual gate.
+
+Ruling: known Windows history exclusion hints are fail-closed; ExcludeClipboardContentFromMonitorProcessing and CanIncludeInClipboardHistory=0 map to transient. Cooperative concealed markers supported, absence not proof of no secret. Owner executable path normalized invariant lowercase is BestEffort, missing/inaccessible owner remains Unknown; no claim of proven clipboard authorship or elevation bypass.
+
+Ruling: WIC decode runs after privacy gate on the storage worker, with dimension/pixel/payload bounds. Store retains original transferable format bytes. CF_HDROP replay requests COPY, never repeats historic CUT. Virtual files/OLE-only objects and unsupported DIB layouts are explicit unsupported formats, not serialized process pointers. No T12 thumbnail/OCR implementation.
+
+Status: implementation/native CI/review fixes verified; final evidence below. Windows manual and T04 manual acceptance remain OPEN; T06 excluded.
+# Native RED confirmed: isolated Windows CI39967338865 / f4f3269, 15/18 scenarios failed on Not implemented/expected missing behavior; 3 fail-closed sanity assertions already passed. Local test station creation is denied (Win32 error5), including unrestricted exec; this is not backend evidence. Pure format test locally RED on Not implemented, then GREEN after parser/WIC implementation. Native station isolation succeeds in hosted Windows CI.
+
+Native GREEN run39968477853 (5ce16be): 6/6 success, 18 native cases plus existing suites. Worker stub RED run39968731979 (892470c) reproduces only two new session tests with Session not implemented; existing native cases pass. Worker implementation uses bounded serial std::thread, same T03 gate, lazy Store and WIC after filtering. Added delayed-provider payload spies, sequence-change injection, malformed formats, virtual-file classification, lifecycle/destruction, byte backpressure and WIC failure/no-DB cases. Local formats/core suites pass; OS clipboard remains explicitly blocked by station creation rights.
+
+Run39969634987 (09bb1a7) reproduced off-thread-stop/immediate-start failure (already registered clipboard listener). start now unregisters pending old listener before new registration; stale generation cleanup cannot remove it. Windows ASan config accidentally replaced CMake CXX flags without /EHsc, disabling RAII exception unwinding and breaking existing transaction_failure_rolls_back. Warning C4530 diagnosed and reproduced locally; restoring /EHsc fixes local ASan formats/core/history/crash (4/4), without touching T02 code/test. Added PNG WIC alpha and DIB24 bottom-up stride, real SQLite locked-writer count backpressure tests.
+
+Final read-only review dispatched per executing-plans to gpt-6-astra, T05 BASE afea4cb through 5acd378. Current CI39970520635 pending. Windows/T04 manual gates remain open; no bypass to user's WinSta0 clipboard.
+
+Final reviewer gpt-6-astra found three Important defects, no Critical/Minor: (1) cloud-upload prohibition lost on replay; (2) RTF truncated at embedded NUL in legal binary attachment; (3) another owner's write after CloseClipboard could be sampled as own sequence and suppressed. Regression f13ed62 run39971304736 reproduces all three native cases plus pure binary-RTF validation under regular/MSVC ASan. Fix pass: every replay explicitly publishes CanUploadToCloudClipboard DWORD0 (no schema change), preserve complete bounded opaque RTF bytes, sample own sequence while clipboard is still locked. Local pure parser/WIC/core remain green; final native CI pending.
+
+Final rulings on declined review scope: OCR/thumbnail deletion resurrection (T12/T16), auto-paste focus/UIPI (T08), Linux/INCR/XML (T06/T07/T09/T11) remain excluded because no such implementation is added. Windows actual apps/elevated/secure desktop/clean install remain OPEN manual checks. T04 manual remains OPEN. Full product footprint remains unknown; only linked hosts measured. No declined behavior is silently counted as PASS.
+
+The first protected pre-close sample fixed external-copy loss, but run39971707333 (d5877c0) exposed Windows' final sequence commit at CloseClipboard: listener_initial_capture_own_write_and_stop reported an own replay. Retain safe pre-close token, then confirm final sequence under a second OpenClipboard lock only if owner is still this backend. If immediate confirmation is busy, an own_pending check retries protected owner confirmation in listener; a different owner is never suppressed. This is the same review fix pass, with both competing regressions kept enabled.
+
+
+Final: fixed all three Important review findings — f13ed62 native/ASan RED to c332565 GREEN, full CI39972287168 7/7. Own-write suppression and external-copy-after-unlock both pass. 35 native cases + format/WIC test + 34 policy/29 history/crash recovery, 100 PASS lines per Windows Debug/Release/ASan log. No deferred minors. Final evidence archived in t05-measurements; source c332565. Manual Windows/T04 remain OPEN; T06 excluded.

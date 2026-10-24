@@ -1,0 +1,15 @@
+[1/2] Building CXX object CMakeFiles/ocr_test.dir/tests/unit/ocr_test.cpp.o
+[2/2] Linking CXX executable ocr_test
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+    Start 55: ocr
+1/1 Test #55: ocr ..............................***Failed    0.02 sec
+!recognize(store,id,generation,image,engine,policy,caps,cancel)
+
+
+0% tests passed, 1 tests failed out of 1
+
+Total Test time (real) =   0.05 sec
+
+The following tests FAILED:
+	 55 - ocr (Failed)
+Errors while running CTest

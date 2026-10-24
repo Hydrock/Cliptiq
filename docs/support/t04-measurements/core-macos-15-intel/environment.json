@@ -1,0 +1,9 @@
+{
+  "ci_run": "https://github.com/Hydrock/Cliptiq/actions/runs/39955178077",
+  "source_commit": "0ab616c52080d0671cec5853600cc64f983ac4f6",
+  "job_id": "120419122232",
+  "compiler_identifications": [
+    "AppleClang 17.0.0.17000013"
+  ],
+  "ci_log_sha256": "31c85dd952dbf6dd68841102a374ceeaaba9268c531d05550c5fda443af0444c"
+}

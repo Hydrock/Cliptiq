@@ -1,0 +1,276 @@
+Preset CMake variables:
+
+  BUILD_TESTING="ON"
+  CMAKE_BUILD_TYPE="MinSizeRel"
+
+-- Configuring done (3.0s)
+-- Generating done (0.8s)
+-- Build files have been written to: /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-release
+[1/117] Building CXX object CMakeFiles/cliptiq_paste_native.dir/platform/linux/Paste.cpp.o
+[2/117] Building CXX object CMakeFiles/cliptiq_settings_native.dir/platform/linux/Hotkeys.cpp.o
+[3/117] Building CXX object CMakeFiles/cliptiq_settings_native.dir/platform/linux/PortalHotkeys.cpp.o
+[4/117] Building CXX object CMakeFiles/cliptiq_media_native.dir/platform/linux/Media.cpp.o
+[5/117] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/locale.cpp.o
+[6/117] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/locale_catalogue.cpp.o
+[7/117] Building CXX object CMakeFiles/menu_history_baseline.dir/platform/MenuHost.cpp.o
+[8/117] Building CXX object CMakeFiles/cliptiq_settings_native.dir/platform/linux/Settings.cpp.o
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/platform/linux/Settings.cpp: In member function ‘bool cliptiq::NativeSettings::confirm_clear() const’:
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/platform/linux/Settings.cpp:210:39: warning: format not a string literal and no format arguments [-Wformat-security]
+  210 |   auto dialog = gtk_message_dialog_new(
+      |                 ~~~~~~~~~~~~~~~~~~~~~~^
+  211 |       state_->window ? GTK_WINDOW(state_->window) : nullptr, GTK_DIALOG_MODAL,
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  212 |       GTK_MESSAGE_QUESTION, GTK_BUTTONS_OK_CANCEL,
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  213 |       lc("Clear Cliptiq history? Snippets and current system clipboard "
+      |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  214 |          "remain."));
+      |          ~~~~~~~~~~~                   
+[9/117] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/sha256.cpp.o
+[10/117] Building CXX object CMakeFiles/menu_model_probe.dir/platform/MenuHost.cpp.o
+[11/117] Building CXX object CMakeFiles/menu_native_probe.dir/platform/MenuHost.cpp.o
+[12/117] Building CXX object CMakeFiles/paste_native_probe.dir/platform/MenuHost.cpp.o
+[13/117] Building CXX object CMakeFiles/cliptiq_menu_native.dir/platform/linux/Menu.cpp.o
+[14/117] Building CXX object CMakeFiles/cliptiq_editor_native.dir/platform/linux/SnippetEditor.cpp.o
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/platform/linux/SnippetEditor.cpp: In member function ‘void cliptiq::NativeSnippetEditor::State::remove()’:
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/platform/linux/SnippetEditor.cpp:305:41: warning: format not a string literal and no format arguments [-Wformat-security]
+  305 |     auto dialog = gtk_message_dialog_new(
+      |                   ~~~~~~~~~~~~~~~~~~~~~~^
+  306 |         GTK_WINDOW(window), GTK_DIALOG_MODAL, GTK_MESSAGE_QUESTION,
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  307 |         GTK_BUTTONS_YES_NO,
+      |         ~~~~~~~~~~~~~~~~~~~              
+  308 |         lc("Delete selected item? A folder also deletes its snippets."));
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[15/117] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/policy.cpp.o
+[16/117] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/storage.cpp.o
+[17/117] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/menu_preview.cpp.o
+[18/117] Building CXX object CMakeFiles/cliptiq_media_native.dir/platform/Media.cpp.o
+[19/117] Building CXX object CMakeFiles/native_hotkeys_test.dir/tests/integration/native_hotkeys_test.cpp.o
+[20/117] Building CXX object CMakeFiles/snippet_integration_test.dir/tests/integration/snippet_integration_test.cpp.o
+[21/117] Building CXX object CMakeFiles/cliptiq_editor_xml_native.dir/platform/linux/SnippetEditor.cpp.o
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/platform/linux/SnippetEditor.cpp: In member function ‘void cliptiq::NativeSnippetEditor::State::remove()’:
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/platform/linux/SnippetEditor.cpp:305:41: warning: format not a string literal and no format arguments [-Wformat-security]
+  305 |     auto dialog = gtk_message_dialog_new(
+      |                   ~~~~~~~~~~~~~~~~~~~~~~^
+  306 |         GTK_WINDOW(window), GTK_DIALOG_MODAL, GTK_MESSAGE_QUESTION,
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  307 |         GTK_BUTTONS_YES_NO,
+      |         ~~~~~~~~~~~~~~~~~~~              
+  308 |         lc("Delete selected item? A folder also deletes its snippets."));
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[22/117] Building CXX object CMakeFiles/settings_native_probe.dir/platform/MenuHost.cpp.o
+[23/117] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/paste.cpp.o
+[24/117] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/media.cpp.o
+[25/117] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/menu.cpp.o
+[26/117] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/update.cpp.o
+[27/117] Building CXX object CMakeFiles/snippet_editor_probe.dir/platform/MenuHost.cpp.o
+[28/117] Building CXX object CMakeFiles/native_xml_test.dir/tests/integration/native_xml_test.cpp.o
+[29/117] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/history.cpp.o
+[30/117] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/hotkeys.cpp.o
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/src/hotkeys.cpp: In function ‘cliptiq::Result<cliptiq::KeyChord> cliptiq::parse_chord(const std::string&)’:
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/src/hotkeys.cpp:67:39: warning: enumerated and non-enumerated type in conditional expression [-Wextra]
+   67 |                    : token == "Super" ? Super
+      |                      ~~~~~~~~~~~~~~~~~^~~~~~~
+   68 |                                       : 0;
+      |                                       ~~~
+[31/117] Building CXX object CMakeFiles/media_native_probe.dir/platform/MenuHost.cpp.o
+[32/117] Building CXX object CMakeFiles/lifecycle_native_probe.dir/platform/MenuHost.cpp.o
+[33/117] Building CXX object CMakeFiles/menu_preview_test.dir/tests/unit/menu_preview_test.cpp.o
+[34/117] Building CXX object CMakeFiles/linux_hotkey_portal_test.dir/tests/integration/linux_hotkey_portal_test.cpp.o
+[35/117] Building CXX object CMakeFiles/cliptiq_menu_host.dir/platform/MenuHost.cpp.o
+[36/117] Building CXX object CMakeFiles/editor_test.dir/tests/unit/editor_test.cpp.o
+[37/117] Building CXX object CMakeFiles/settings_test.dir/tests/unit/settings_test.cpp.o
+[38/117] Building CXX object CMakeFiles/hotkeys_test.dir/tests/unit/hotkeys_test.cpp.o
+[39/117] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/snippets.cpp.o
+[40/117] Building CXX object CMakeFiles/snippet_xml_probe.dir/platform/MenuHost.cpp.o
+[41/117] Building CXX object CMakeFiles/native_settings_test.dir/tests/integration/native_settings_test.cpp.o
+[42/117] Building CXX object CMakeFiles/media_test.dir/tests/unit/media_test.cpp.o
+[43/117] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/settings.cpp.o
+[44/117] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/editor.cpp.o
+[45/117] Building CXX object CMakeFiles/update_native_test.dir/tests/integration/update_native_test.cpp.o
+[46/117] Building CXX object CMakeFiles/snippets_test.dir/tests/unit/snippets_test.cpp.o
+[47/117] Building CXX object CMakeFiles/media_review_test.dir/tests/integration/media_review_test.cpp.o
+[48/117] Building CXX object CMakeFiles/cliptiq_updates_native.dir/platform/Updates.cpp.o
+[49/117] Building CXX object CMakeFiles/menu_regression_test.dir/tests/integration/menu_regression_test.cpp.o
+[50/117] Building CXX object CMakeFiles/paste_test.dir/tests/unit/paste_test.cpp.o
+[51/117] Building CXX object CMakeFiles/native_menu_test.dir/tests/integration/native_menu_test.cpp.o
+[52/117] Building CXX object CMakeFiles/update_test.dir/tests/unit/update_test.cpp.o
+[53/117] Building CXX object CMakeFiles/menu_paste_bridge_test.dir/tests/integration/menu_paste_bridge_test.cpp.o
+[54/117] Linking CXX static library libcliptiq_core.a
+[55/117] Building CXX object CMakeFiles/native_media_test.dir/tests/integration/native_media_test.cpp.o
+[56/117] Building CXX object CMakeFiles/native_paste_test.dir/tests/integration/native_paste_test.cpp.o
+[57/117] Linking CXX static library libcliptiq_paste_native.a
+[58/117] Linking CXX static library libcliptiq_editor_native.a
+[59/117] Building CXX object CMakeFiles/lifecycle_test.dir/tests/unit/lifecycle_test.cpp.o
+[60/117] Linking CXX static library libcliptiq_menu_native.a
+[61/117] Linking CXX static library libcliptiq_media_native.a
+[62/117] Linking CXX static library libcliptiq_editor_xml_native.a
+[63/117] Linking CXX static library libcliptiq_settings_native.a
+[64/117] Building CXX object CMakeFiles/menu_test.dir/tests/unit/menu_test.cpp.o
+[65/117] Building CXX object CMakeFiles/cliptiq_updates_native.dir/platform/linux/Updates.cpp.o
+[66/117] Linking CXX executable menu_preview_test
+[67/117] Building CXX object CMakeFiles/import_native_test.dir/tests/integration/import_native_test.cpp.o
+[68/117] Building CXX object CMakeFiles/native_editor_test.dir/tests/integration/native_editor_test.cpp.o
+[69/117] Linking CXX executable hotkeys_test
+[70/117] Linking CXX executable core_probe
+[71/117] Linking CXX executable linux_clipboard_baseline
+[72/117] Linking CXX executable core_policy_probe
+[73/117] Linking CXX executable history_test
+[74/117] Linking CXX executable media_test
+[75/117] Linking CXX executable policy_test
+[76/117] Linking CXX executable linux_clipboard_test
+[77/117] Linking CXX executable paste_test
+[78/117] Linking CXX executable settings_test
+[79/117] Linking CXX executable xml_test
+[80/117] Linking CXX static library libcliptiq_updates_native.a
+[81/117] Linking CXX executable lifecycle_test
+[82/117] Linking CXX executable editor_test
+[83/117] Linking CXX executable snippets_test
+[84/117] Linking CXX executable menu_paste_bridge_test
+[85/117] Linking CXX executable snippet_integration_test
+[86/117] Linking CXX executable native_paste_test
+[87/117] Linking CXX executable update_test
+[88/117] Linking CXX executable linux_x11_wire_test
+[89/117] Linking CXX executable menu_history_baseline
+[90/117] Linking CXX executable linux_wayland_wire_test
+[91/117] Linking CXX executable native_hotkeys_test
+[92/117] Linking CXX executable linux_clipboard_probe
+[93/117] Linking CXX executable menu_model_probe
+[94/117] Linking CXX executable linux_native_clipboard_test
+[95/117] Linking CXX executable native_menu_test
+[96/117] Linking CXX executable menu_regression_test
+[97/117] Linking CXX executable linux_hotkey_portal_test
+[98/117] Building CXX object tools/import-clipy/CMakeFiles/cliptiq_migration.dir/__/__/core/src/migration.cpp.o
+[99/117] Linking CXX executable menu_test
+[100/117] Linking CXX executable menu_native_probe
+[101/117] Linking CXX executable update_native_test
+[102/117] Linking CXX static library tools/import-clipy/libcliptiq_migration.a
+[103/117] Linking CXX executable paste_native_probe
+[104/117] Linking CXX executable native_xml_test
+[105/117] Linking CXX executable native_settings_test
+[106/117] Linking CXX executable media_review_test
+[107/117] Linking CXX executable native_media_test
+[108/117] Linking CXX executable settings_native_probe
+[109/117] Linking CXX executable native_editor_test
+[110/117] Linking CXX executable import_test
+[111/117] Linking CXX executable tools/import-clipy/cliptiq-import
+[112/117] Linking CXX executable snippet_editor_probe
+[113/117] Linking CXX executable import_native_test
+[114/117] Linking CXX executable snippet_xml_probe
+[115/117] Linking CXX executable media_native_probe
+[116/117] Linking CXX executable lifecycle_native_probe
+[117/117] Linking CXX executable cliptiq_menu_host
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-release
+      Start  1: xml_native_x11
+ 1/54 Test  #1: xml_native_x11 .....................   Passed    0.80 sec
+      Start  2: xml_native_wayland
+ 2/54 Test  #2: xml_native_wayland .................   Passed    0.54 sec
+      Start  3: xml
+ 3/54 Test  #3: xml ................................   Passed    0.09 sec
+      Start  4: xml_bounded_scan
+ 4/54 Test  #4: xml_bounded_scan ...................   Passed    0.55 sec
+      Start  5: xml_interop
+ 5/54 Test  #5: xml_interop ........................   Passed    0.15 sec
+      Start  6: editor_native_x11
+ 6/54 Test  #6: editor_native_x11 ..................   Passed    0.95 sec
+      Start  7: editor_native_wayland
+ 7/54 Test  #7: editor_native_wayland ..............   Passed    0.56 sec
+      Start  8: snippets_menu_hotkeys
+ 8/54 Test  #8: snippets_menu_hotkeys ..............   Passed    0.01 sec
+      Start  9: editor
+ 9/54 Test  #9: editor .............................   Passed    0.31 sec
+      Start 10: snippets
+10/54 Test #10: snippets ...........................   Passed    0.08 sec
+      Start 11: settings_native_x11
+11/54 Test #11: settings_native_x11 ................   Passed    0.49 sec
+      Start 12: lifecycle_ui_ru_x11
+12/54 Test #12: lifecycle_ui_ru_x11 ................   Passed    0.47 sec
+      Start 13: hotkeys_native_x11
+13/54 Test #13: hotkeys_native_x11 .................   Passed    0.67 sec
+      Start 14: settings_native_wayland
+14/54 Test #14: settings_native_wayland ............   Passed    0.59 sec
+      Start 15: lifecycle_ui_ru_wayland
+15/54 Test #15: lifecycle_ui_ru_wayland ............   Passed    0.55 sec
+      Start 16: hotkeys_native_wayland
+16/54 Test #16: hotkeys_native_wayland .............   Passed    0.23 sec
+      Start 17: settings
+17/54 Test #17: settings ...........................   Passed    0.02 sec
+      Start 18: hotkeys
+18/54 Test #18: hotkeys ............................   Passed    0.01 sec
+      Start 19: paste_native_x11
+19/54 Test #19: paste_native_x11 ...................   Passed    0.71 sec
+      Start 20: paste_native_wayland
+20/54 Test #20: paste_native_wayland ...............   Passed    1.75 sec
+      Start 21: hotkeys_portal_protocol
+21/54 Test #21: hotkeys_portal_protocol ............   Passed    0.39 sec
+      Start 22: paste_menu_bridge
+22/54 Test #22: paste_menu_bridge ..................   Passed    0.35 sec
+      Start 23: paste
+23/54 Test #23: paste ..............................   Passed    0.03 sec
+      Start 24: menu_unicode_conformance
+24/54 Test #24: menu_unicode_conformance ...........   Passed    0.01 sec
+      Start 25: menu_regression_context_x11
+25/54 Test #25: menu_regression_context_x11 ........   Passed    0.34 sec
+      Start 26: menu_regression_context_wayland
+26/54 Test #26: menu_regression_context_wayland ....   Passed    0.31 sec
+      Start 27: menu_regression_coordinates
+27/54 Test #27: menu_regression_coordinates ........   Passed    0.39 sec
+      Start 28: menu_native_x11
+28/54 Test #28: menu_native_x11 ....................   Passed    0.45 sec
+      Start 29: menu_native_wayland
+29/54 Test #29: menu_native_wayland ................   Passed    0.43 sec
+      Start 30: lifecycle
+30/54 Test #30: lifecycle ..........................   Passed    8.88 sec
+      Start 31: lifecycle_process
+31/54 Test #31: lifecycle_process ..................   Passed    0.88 sec
+      Start 32: lifecycle_locale_schema
+32/54 Test #32: lifecycle_locale_schema ............   Passed    0.10 sec
+      Start 33: media_review_clear
+33/54 Test #33: media_review_clear .................   Passed    1.03 sec
+      Start 34: media_review_root
+34/54 Test #34: media_review_root ..................   Passed    1.04 sec
+      Start 35: media_review_error
+35/54 Test #35: media_review_error .................   Passed    0.24 sec
+      Start 36: native_media
+36/54 Test #36: native_media .......................   Passed    7.51 sec
+      Start 37: media
+37/54 Test #37: media ..............................   Passed    0.01 sec
+      Start 38: menu_preview
+38/54 Test #38: menu_preview .......................   Passed    0.00 sec
+      Start 39: menu
+39/54 Test #39: menu ...............................   Passed    0.28 sec
+      Start 40: linux_clipboard_protocol
+40/54 Test #40: linux_clipboard_protocol ...........   Passed    0.03 sec
+      Start 41: linux_clipboard_wayland_wire
+41/54 Test #41: linux_clipboard_wayland_wire .......   Passed    1.48 sec
+      Start 42: linux_clipboard_x11_wire
+42/54 Test #42: linux_clipboard_x11_wire ...........   Passed    0.52 sec
+      Start 43: linux_clipboard_external_clients
+43/54 Test #43: linux_clipboard_external_clients ...   Passed    2.41 sec
+      Start 44: linux_clipboard_x11
+44/54 Test #44: linux_clipboard_x11 ................   Passed    0.70 sec
+      Start 45: linux_clipboard_wayland
+45/54 Test #45: linux_clipboard_wayland ............   Passed    0.46 sec
+      Start 46: policy
+46/54 Test #46: policy .............................   Passed    0.02 sec
+      Start 47: history
+47/54 Test #47: history ............................   Passed    0.19 sec
+      Start 48: history_crash
+48/54 Test #48: history_crash ......................   Passed    0.35 sec
+      Start 49: import
+49/54 Test #49: import .............................   Passed    1.93 sec
+      Start 50: import_native_x11
+50/54 Test #50: import_native_x11 ..................   Passed    0.36 sec
+      Start 51: import_native_wayland
+51/54 Test #51: import_native_wayland ..............   Passed    0.36 sec
+      Start 52: import_bounds
+52/54 Test #52: import_bounds ......................   Passed    0.07 sec
+      Start 53: update
+53/54 Test #53: update .............................   Passed    0.01 sec
+      Start 54: update_native
+54/54 Test #54: update_native ......................   Passed    0.01 sec
+
+100% tests passed, 0 tests failed out of 54
+
+Total Test time (real) =  41.48 sec

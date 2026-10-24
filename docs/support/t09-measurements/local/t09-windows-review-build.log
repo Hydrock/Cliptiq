@@ -1,0 +1,27 @@
+-- Configuring done (0.5s)
+-- Generating done (0.1s)
+-- Build files have been written to: C:/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Windows-test
+[1/5] Linking CXX executable native_settings_test.exe
+[2/5] Linking CXX executable native_hotkeys_test.exe
+[3/5] Linking CXX executable cliptiq_menu_host.exe
+[4/5] Building CXX object CMakeFiles\windows_hotkey_boundary_test.dir\tests\integration\windows_hotkey_boundary_test.cpp.obj
+[5/5] Linking CXX executable windows_hotkey_boundary_test.exe
+Test project C:/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Windows-test
+    Start  4: settings
+1/7 Test  #4: settings .........................   Passed    0.05 sec
+    Start  5: hotkeys
+2/7 Test  #5: hotkeys ..........................   Passed    0.01 sec
+    Start  7: paste_native_boundary
+3/7 Test  #7: paste_native_boundary ............   Passed    0.01 sec
+    Start  8: paste
+4/7 Test  #8: paste ............................   Passed    0.02 sec
+    Start  9: menu_unicode_conformance
+5/7 Test  #9: menu_unicode_conformance .........   Passed    0.01 sec
+    Start 14: menu_preview
+6/7 Test #14: menu_preview .....................   Passed    0.01 sec
+    Start 15: menu
+7/7 Test #15: menu .............................   Passed    0.26 sec
+
+100% tests passed, 0 tests failed out of 7
+
+Total Test time (real) =   0.39 sec

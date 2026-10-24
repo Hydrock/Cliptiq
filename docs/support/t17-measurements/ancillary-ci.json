@@ -1,0 +1,47 @@
+[
+  {
+    "id": 40104960876,
+    "name": "Portable core and native clipboards (T02-T17)",
+    "head_sha": "fe95fdbed250c5c10b7b4df376c431158d15d0f9",
+    "status": "completed",
+    "conclusion": "success",
+    "run_attempt": 1,
+    "html_url": "https://github.com/Hydrock/Cliptiq/actions/runs/40104960876"
+  },
+  {
+    "id": 40104960791,
+    "name": "T01 isolated profile installation",
+    "head_sha": "fe95fdbed250c5c10b7b4df376c431158d15d0f9",
+    "status": "completed",
+    "conclusion": "success",
+    "run_attempt": 2,
+    "html_url": "https://github.com/Hydrock/Cliptiq/actions/runs/40104960791"
+  },
+  {
+    "id": 40104960827,
+    "name": "T01 update footprint",
+    "head_sha": "fe95fdbed250c5c10b7b4df376c431158d15d0f9",
+    "status": "completed",
+    "conclusion": "success",
+    "run_attempt": 1,
+    "html_url": "https://github.com/Hydrock/Cliptiq/actions/runs/40104960827"
+  },
+  {
+    "id": 40105477787,
+    "name": "Distribution policy (T17)",
+    "head_sha": "5380462ede50273817be0dbcb4a2e832fabdf93b",
+    "status": "completed",
+    "conclusion": "success",
+    "run_attempt": 1,
+    "html_url": "https://github.com/Hydrock/Cliptiq/actions/runs/40105477787"
+  },
+  {
+    "id": 40105477796,
+    "name": "Native footprint prototypes",
+    "head_sha": "5380462ede50273817be0dbcb4a2e832fabdf93b",
+    "status": "completed",
+    "conclusion": "success",
+    "run_attempt": 1,
+    "html_url": "https://github.com/Hydrock/Cliptiq/actions/runs/40105477796"
+  }
+]

@@ -1,0 +1,9 @@
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+    Start 1: editor_native_x11
+1/2 Test #1: editor_native_x11 ................   Passed    0.32 sec
+    Start 2: editor_native_wayland
+2/2 Test #2: editor_native_wayland ............   Passed    0.23 sec
+
+100% tests passed, 0 tests failed out of 2
+
+Total Test time (real) =   0.57 sec

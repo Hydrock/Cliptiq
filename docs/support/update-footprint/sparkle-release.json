@@ -1,0 +1,562 @@
+{
+  "version": "2.10.0",
+  "release_url": "https://github.com/sparkle-project/Sparkle/releases/download/2.10.0/Sparkle-2.10.0.tar.xz",
+  "archive_bytes": 16319840,
+  "sha256": "c2bf58aa8387266ac179357b1415d6f2635f044da8be41042af32425dae6da0c",
+  "universal_framework_regular_file_bytes": 5634056,
+  "scope": "Original official archive before CPU thinning, embedding or re-signing; symlinks not counted as duplicate content",
+  "files": [
+    {
+      "path": "./Sparkle.framework/Versions/B/Resources/SUUpdatePermissionPrompt.nib",
+      "bytes": 25390
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/SUUpdatePermissionPrompt.nib",
+      "bytes": 25390
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Resources/SUUpdateAlert.nib",
+      "bytes": 18490
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/SUUpdateAlert.nib",
+      "bytes": 18490
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Sparkle",
+      "bytes": 976240
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Sparkle",
+      "bytes": 976240
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Autoupdate",
+      "bytes": 708288
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Autoupdate",
+      "bytes": 708288
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Headers/SPUDownloadData.h",
+      "bytes": 1222
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Headers/Sparkle.h",
+      "bytes": 1170
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/PrivateHeaders/SPUInstallationType.h",
+      "bytes": 828
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Headers/SUUpdatePermissionResponse.h",
+      "bytes": 2509
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Headers/SPUUpdaterDelegate.h",
+      "bytes": 23537
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Headers/SUUpdaterDelegate.h",
+      "bytes": 13764
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Headers/SPUStandardUserDriverDelegate.h",
+      "bytes": 11256
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Headers/SPUUserUpdateState.h",
+      "bytes": 2052
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/PrivateHeaders/SUAppcastItem+Private.h",
+      "bytes": 1641
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/PrivateHeaders/SUInstallerLauncher+Private.h",
+      "bytes": 1240
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/PrivateHeaders/SPUStandardUserDriver+Private.h",
+      "bytes": 1097
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/PrivateHeaders/SPUUserAgent+Private.h",
+      "bytes": 751
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Headers/SPUUpdateCheck.h",
+      "bytes": 874
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Headers/SUVersionComparisonProtocol.h",
+      "bytes": 1011
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Headers/SUVersionDisplayProtocol.h",
+      "bytes": 3773
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Headers/SUAppcastItem.h",
+      "bytes": 18835
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Headers/SPUStandardUpdaterController.h",
+      "bytes": 5604
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Headers/SPUUpdater.h",
+      "bytes": 20262
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Headers/SUUpdater.h",
+      "bytes": 6874
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Headers/SPUStandardUserDriver.h",
+      "bytes": 1311
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Headers/SPUUserDriver.h",
+      "bytes": 16622
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/PrivateHeaders/SPUAppcastItemStateResolver.h",
+      "bytes": 1105
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Headers/SUStandardVersionComparator.h",
+      "bytes": 1845
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Headers/SPUUpdaterSettings.h",
+      "bytes": 3428
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/PrivateHeaders/SPUGentleUserDriverReminders.h",
+      "bytes": 475
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Headers/SUErrors.h",
+      "bytes": 3289
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Headers/SPUAppcastSigningValidationStatus.h",
+      "bytes": 1007
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Headers/SUExport.h",
+      "bytes": 302
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Headers/SUAppcast.h",
+      "bytes": 1327
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Headers/SPUUpdatePermissionRequest.h",
+      "bytes": 1093
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Updater.app/Contents/PkgInfo",
+      "bytes": 8
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app/Contents/PkgInfo",
+      "bytes": 8
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Modules/module.modulemap",
+      "bytes": 95
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Modules/module.private.modulemap",
+      "bytes": 833
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/XPCServices/Downloader.xpc/Contents/MacOS/Downloader",
+      "bytes": 188704
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Downloader.xpc/Contents/MacOS/Downloader",
+      "bytes": 188704
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/XPCServices/Installer.xpc/Contents/MacOS/Installer",
+      "bytes": 207072
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Installer.xpc/Contents/MacOS/Installer",
+      "bytes": 207072
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Updater.app/Contents/MacOS/Updater",
+      "bytes": 339728
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app/Contents/MacOS/Updater",
+      "bytes": 339728
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/_CodeSignature/CodeResources",
+      "bytes": 22197
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/_CodeSignature/CodeResources",
+      "bytes": 17299
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/XPCServices/Downloader.xpc/Contents/_CodeSignature/CodeResources",
+      "bytes": 2200
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Downloader.xpc/Contents/_CodeSignature/CodeResources",
+      "bytes": 2200
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/XPCServices/Installer.xpc/Contents/_CodeSignature/CodeResources",
+      "bytes": 2200
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Installer.xpc/Contents/_CodeSignature/CodeResources",
+      "bytes": 2200
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Updater.app/Contents/_CodeSignature/CodeResources",
+      "bytes": 2200
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app/Contents/_CodeSignature/CodeResources",
+      "bytes": 2200
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Resources/ca.lproj/Sparkle.strings",
+      "bytes": 3501
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/ca.lproj/Sparkle.strings",
+      "bytes": 3501
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Resources/da.lproj/Sparkle.strings",
+      "bytes": 4882
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/da.lproj/Sparkle.strings",
+      "bytes": 4882
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Resources/fa.lproj/Sparkle.strings",
+      "bytes": 5716
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/fa.lproj/Sparkle.strings",
+      "bytes": 5716
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Resources/ja.lproj/Sparkle.strings",
+      "bytes": 8697
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/ja.lproj/Sparkle.strings",
+      "bytes": 8697
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Resources/nb.lproj/Sparkle.strings",
+      "bytes": 5539
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/nb.lproj/Sparkle.strings",
+      "bytes": 5539
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Resources/de.lproj/Sparkle.strings",
+      "bytes": 11559
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/de.lproj/Sparkle.strings",
+      "bytes": 11559
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Resources/he.lproj/Sparkle.strings",
+      "bytes": 9657
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/he.lproj/Sparkle.strings",
+      "bytes": 9657
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Resources/Base.lproj/Sparkle.strings",
+      "bytes": 6249
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/Base.lproj/Sparkle.strings",
+      "bytes": 6249
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Resources/th.lproj/Sparkle.strings",
+      "bytes": 5339
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/th.lproj/Sparkle.strings",
+      "bytes": 5339
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Resources/fi.lproj/Sparkle.strings",
+      "bytes": 3252
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/fi.lproj/Sparkle.strings",
+      "bytes": 3252
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Resources/vi.lproj/Sparkle.strings",
+      "bytes": 12418
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/vi.lproj/Sparkle.strings",
+      "bytes": 12418
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Resources/zh_HK.lproj/Sparkle.strings",
+      "bytes": 6469
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/zh_HK.lproj/Sparkle.strings",
+      "bytes": 6469
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Resources/sk.lproj/Sparkle.strings",
+      "bytes": 5675
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/sk.lproj/Sparkle.strings",
+      "bytes": 5675
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Resources/uk.lproj/Sparkle.strings",
+      "bytes": 5842
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/uk.lproj/Sparkle.strings",
+      "bytes": 5842
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Resources/el.lproj/Sparkle.strings",
+      "bytes": 5934
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/el.lproj/Sparkle.strings",
+      "bytes": 5934
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Resources/nl.lproj/Sparkle.strings",
+      "bytes": 9574
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/nl.lproj/Sparkle.strings",
+      "bytes": 9574
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Resources/pl.lproj/Sparkle.strings",
+      "bytes": 5453
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/pl.lproj/Sparkle.strings",
+      "bytes": 5453
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Resources/sl.lproj/Sparkle.strings",
+      "bytes": 5646
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/sl.lproj/Sparkle.strings",
+      "bytes": 5646
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Resources/zh_CN.lproj/Sparkle.strings",
+      "bytes": 7475
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/zh_CN.lproj/Sparkle.strings",
+      "bytes": 7475
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Resources/nn.lproj/Sparkle.strings",
+      "bytes": 5671
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/nn.lproj/Sparkle.strings",
+      "bytes": 5671
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Resources/ko.lproj/Sparkle.strings",
+      "bytes": 7797
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/ko.lproj/Sparkle.strings",
+      "bytes": 7797
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Resources/ro.lproj/Sparkle.strings",
+      "bytes": 6115
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/ro.lproj/Sparkle.strings",
+      "bytes": 6115
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Resources/ar.lproj/Sparkle.strings",
+      "bytes": 3554
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/ar.lproj/Sparkle.strings",
+      "bytes": 3554
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Resources/pt-BR.lproj/Sparkle.strings",
+      "bytes": 9976
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/pt-BR.lproj/Sparkle.strings",
+      "bytes": 9976
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Resources/fr.lproj/Sparkle.strings",
+      "bytes": 7855
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/fr.lproj/Sparkle.strings",
+      "bytes": 7855
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Resources/hr.lproj/Sparkle.strings",
+      "bytes": 6367
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/hr.lproj/Sparkle.strings",
+      "bytes": 6367
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Resources/tr.lproj/Sparkle.strings",
+      "bytes": 6183
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/tr.lproj/Sparkle.strings",
+      "bytes": 6183
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Resources/cs.lproj/Sparkle.strings",
+      "bytes": 10774
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/cs.lproj/Sparkle.strings",
+      "bytes": 10774
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Resources/es.lproj/Sparkle.strings",
+      "bytes": 7026
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/es.lproj/Sparkle.strings",
+      "bytes": 7026
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Resources/is.lproj/Sparkle.strings",
+      "bytes": 3954
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/is.lproj/Sparkle.strings",
+      "bytes": 3954
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Resources/it.lproj/Sparkle.strings",
+      "bytes": 10956
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/it.lproj/Sparkle.strings",
+      "bytes": 10956
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Resources/pt-PT.lproj/Sparkle.strings",
+      "bytes": 5827
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/pt-PT.lproj/Sparkle.strings",
+      "bytes": 5827
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Resources/hu.lproj/Sparkle.strings",
+      "bytes": 4449
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/hu.lproj/Sparkle.strings",
+      "bytes": 4449
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Resources/ru.lproj/Sparkle.strings",
+      "bytes": 5784
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/ru.lproj/Sparkle.strings",
+      "bytes": 5784
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Resources/sv.lproj/Sparkle.strings",
+      "bytes": 5160
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/sv.lproj/Sparkle.strings",
+      "bytes": 5160
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Resources/zh_TW.lproj/Sparkle.strings",
+      "bytes": 7625
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/zh_TW.lproj/Sparkle.strings",
+      "bytes": 7625
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Resources/ReleaseNotesColorStyle.css",
+      "bytes": 231
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/ReleaseNotesColorStyle.css",
+      "bytes": 231
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Resources/Info.plist",
+      "bytes": 1341
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/Info.plist",
+      "bytes": 1341
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/XPCServices/Downloader.xpc/Contents/Info.plist",
+      "bytes": 1717
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Downloader.xpc/Contents/Info.plist",
+      "bytes": 1717
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/XPCServices/Installer.xpc/Contents/Info.plist",
+      "bytes": 1605
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Installer.xpc/Contents/Info.plist",
+      "bytes": 1605
+    },
+    {
+      "path": "./Sparkle.framework/Versions/B/Updater.app/Contents/Info.plist",
+      "bytes": 2400
+    },
+    {
+      "path": "./Sparkle Test App.app/Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app/Contents/Info.plist",
+      "bytes": 2400
+    }
+  ]
+}

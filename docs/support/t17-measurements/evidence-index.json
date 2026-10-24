@@ -1,0 +1,266 @@
+{
+  "ancillary-ci.json": {
+    "bytes": 1473,
+    "sha256": "03af292fb62f15612654174c67beabd6ea6cfc92d072aeb07222dba489a063f5"
+  },
+  "ci-run.json": {
+    "bytes": 5626,
+    "sha256": "90e92f94a6e2b2b7a0d47e403f4e0cb4547014626dbbad32b43a0bac7c9c837f"
+  },
+  "intermediate-failures.md": {
+    "bytes": 1724,
+    "sha256": "95c908ddb9bac49cdfc72c378f0a7b28707bd9c4ab8145a58a5f362229c18193"
+  },
+  "source-verification.json": {
+    "bytes": 257,
+    "sha256": "0b3213120980cfb2e213b86a949f7363d0f0385274f445cef9e8dd5d2784dee5"
+  },
+  "summary.json": {
+    "bytes": 65946,
+    "sha256": "34478bbf52bb1b81cca410b72777995835daacbe0d39b34530f61c28548bb805"
+  },
+  "test-counts.json": {
+    "bytes": 1164,
+    "sha256": "43f8f93238026f5006dfd252af3c58fb36de7ceef41d2154c805b8615226fc7d"
+  },
+  "local/t17-budget-green.log": {
+    "bytes": 117,
+    "sha256": "f6abc2707979d9f33076a79b0ea7cb38316ff99450924ee4a23d9c46cbff305c"
+  },
+  "local/t17-budget-red.log": {
+    "bytes": 774,
+    "sha256": "9a32a36e57f9fb1f30fbf8305933273e7c97610f7181e6b617fe83d48f1c3d4d"
+  },
+  "local/t17-coverage-green.log": {
+    "bytes": 101,
+    "sha256": "7af37a5850d582a23e74ab3e867ad36ad2bf43575f12b0646594244bfc0119d1"
+  },
+  "local/t17-coverage-red.log": {
+    "bytes": 4359,
+    "sha256": "78e34429d55cf4dd2daecc7f44aa7cfcec27bd24f558749c83004aaca36af463"
+  },
+  "local/t17-entry-red.log": {
+    "bytes": 512,
+    "sha256": "f758643c1518285b2f337f8b8f02286db307b2359dbb96900d4586b98e72c52d"
+  },
+  "local/t17-final-tools.log": {
+    "bytes": 136,
+    "sha256": "0469b7f459fc2e2249dea3bb623cccd3846b77d0fe5f7bbec277139c62b763da"
+  },
+  "local/t17-ipo.log": {
+    "bytes": 9831,
+    "sha256": "34df1b1170392feb5988ba99b2d56f1db1be9104faa47a6ab8ab32e006865f3d"
+  },
+  "local/t17-local-windows.log": {
+    "bytes": 8913,
+    "sha256": "5c27e995200d6a6930dee9b9d476922b756ce031c4b87f888ed02b1c73713499"
+  },
+  "local/t17-review-green.log": {
+    "bytes": 136,
+    "sha256": "c5f733afcc5c1489844443beb096cb96f8a0c5760af4d8fe1997828a2fd6b857"
+  },
+  "local/t17-review-red.log": {
+    "bytes": 1557,
+    "sha256": "7315ac081158445997509358053adf51bb5f2b296aec5b6ed60657b297927f89"
+  },
+  "local/t17-review-suite-linux.log": {
+    "bytes": 6799,
+    "sha256": "0c5853b5b259f6a9fee6c5519dbb7198a8bf406c6ad6869afc34b77ee461d318"
+  },
+  "local/t17-windows-policy.log": {
+    "bytes": 679,
+    "sha256": "6a67d9507a899efa587411c6939a9bcd4ab7b0c4694580edbb8fd4b6c41f0378"
+  },
+  "local/t17-x11-repeat-red.log": {
+    "bytes": 3446,
+    "sha256": "1ebc57ba675a3ec9e450ed8ccec268d91762f5dc386abf68d81708dbce301fef"
+  },
+  "ci/core-macos-15/t02-size.json": {
+    "bytes": 47645,
+    "sha256": "bcaeb184c71e5cdef08fe1512f040ae948ae9e40e69b3123f20fb21a2862006f"
+  },
+  "ci/core-macos-15-intel/t02-size.json": {
+    "bytes": 47647,
+    "sha256": "69ba85e387b275acb5b5bec2ad25b743608a44e90e6ab13fa2ccaad7e1905090"
+  },
+  "ci/core-ubuntu-24.04/t02-size.json": {
+    "bytes": 117162,
+    "sha256": "8d6e886b36e37ec34963810383823d24dca1ac812f5b0adeee04c2d2adc3d233"
+  },
+  "ci/core-windows-2025/t02-size.json": {
+    "bytes": 41526,
+    "sha256": "84a105d1b168083cb3436aa57f5e1aed7b3a6147968250cca710ff9b7a7903a0"
+  },
+  "ci/linux-backend-sanitizers/LastTest.log": {
+    "bytes": 63779,
+    "sha256": "16e7f3a802f1ac6482f83f127946eb69e9c41f2a4e5b797091b96ed0d21ba7fa"
+  },
+  "ci/macos-backend-sanitizers/LastTest.log": {
+    "bytes": 42104,
+    "sha256": "e90274334d02f8609a07ad1b5fee1c2a501f0775c4bc9a66d3c6520fdb666d18"
+  },
+  "ci/ocr-macos-15-intel-native/t16-ocr-size-Darwin-native.json": {
+    "bytes": 15194,
+    "sha256": "b213e8f70c520fcc7de19e48b192fa9d9519cd2fafd350b7bb2ed547506281a5"
+  },
+  "ci/ocr-macos-15-native/t16-ocr-size-Darwin-native.json": {
+    "bytes": 15191,
+    "sha256": "051939df55288c57bb75481bed84d11dee3da84140d948d3a836be320d3b5f69"
+  },
+  "ci/ocr-ubuntu-24.04-tesseract/t16-ocr-size-Linux-tesseract.json": {
+    "bytes": 19307,
+    "sha256": "146275b965141a81fc57725da7cde12ddc84eae1354a46405723a2355d866241"
+  },
+  "ci/ocr-windows-2025-native/t16-ocr-size-Windows-native.json": {
+    "bytes": 15283,
+    "sha256": "23d868e74638bbec19a60d1bfbde71bc0d086530e7be68d0bf429ad31c704d6b"
+  },
+  "ci/ocr-windows-2025-tesseract/t16-ocr-size-Windows-tesseract.json": {
+    "bytes": 14047,
+    "sha256": "a6d045bfdd11c8fb2785c0aaac20a6e521cb6eacbb8a5bc467d056f42bfb755e"
+  },
+  "ci/sparkle-update-macos-15/t15-sparkle-report.json": {
+    "bytes": 18808,
+    "sha256": "04af23a53c9ce0099a32f8928fec77cb55b7cba356553395fb2b12b49c3a86a7"
+  },
+  "ci/sparkle-update-macos-15/t15-sparkle-test.log": {
+    "bytes": 150041,
+    "sha256": "a33ac23df49f5e260ad1f26938a2b1d0ab5a3175ab39bc9c103900a9395daa58"
+  },
+  "ci/sparkle-update-macos-15-intel/t15-sparkle-report.json": {
+    "bytes": 18808,
+    "sha256": "412db5c5d2cab86c2e4d2d2a9d4a823209d0d429a6a5d0a496cc46826cc2e1f2"
+  },
+  "ci/sparkle-update-macos-15-intel/t15-sparkle-test.log": {
+    "bytes": 149045,
+    "sha256": "182b62e173180bca0dedc5faa5a1104987b766c6ad92b4f35e9184bc6d555454"
+  },
+  "ci/windows-backend-asan/LastTest.log": {
+    "bytes": 44821,
+    "sha256": "90023d000a68a947e679e0e6ac3e67e841fc8d23f648fa9ed37c61832cedf5d0"
+  },
+  "ci/ocr-windows-2025-tesseract/ocr-Windows-tesseract/Testing/Temporary/LastTest.log": {
+    "bytes": 4066,
+    "sha256": "abfd094f1e08f5a13f585dbd4190b22516db60a742cc78e4f793489662b884e8"
+  },
+  "ci/ocr-windows-2025-native/ocr-Windows-native/Testing/Temporary/LastTest.log": {
+    "bytes": 3424,
+    "sha256": "276b0cc94144475f0ba20f63ff9e462e0768c23a71cdf57b55052bec9f2933b5"
+  },
+  "ci/ocr-ubuntu-24.04-tesseract/ocr-Linux-tesseract/Testing/Temporary/LastTest.log": {
+    "bytes": 3904,
+    "sha256": "9ba546c95135f1bd4245517a7258eab3124e0cf441401b5ebcddab5f10b9360a"
+  },
+  "ci/ocr-macos-15-native/ocr-Darwin-native/Testing/Temporary/LastTest.log": {
+    "bytes": 3377,
+    "sha256": "de84aa1a4b7e019ee386b181ecff48dbb5135f0fed363e2892517b69bc5332e5"
+  },
+  "ci/ocr-macos-15-intel-native/ocr-Darwin-native/Testing/Temporary/LastTest.log": {
+    "bytes": 3320,
+    "sha256": "80badcdb5dce39803f7e36c984492b7052b767717d83399e1c0fa8cfb98d76d8"
+  },
+  "ci/legacy-migration-macos-15-intel/out/t14-legacy-size.json": {
+    "bytes": 9142,
+    "sha256": "8dfc9ef2af5e006223775de2006c9e27c24b1dd583499c409c767c62b2b44895"
+  },
+  "ci/legacy-migration-macos-15/out/t14-legacy-size.json": {
+    "bytes": 9262,
+    "sha256": "94ffcc776d3ea6a9652d011d233fb69331b51df291af7f0605647224704ebbd2"
+  },
+  "ci/distribution-ocr-windows-2025/t17-windows-x86_64-ocr/package-report.json": {
+    "bytes": 953,
+    "sha256": "40d257d33928cf7194ca4440c42a86003cf71feeaf2c952ef621513dd51a77c4"
+  },
+  "ci/distribution-ocr-windows-2025/t17-windows-x86_64-ocr/size.json": {
+    "bytes": 5676,
+    "sha256": "71c8fdbd1e82eb3248537bf4ecad69a75911252a0dab3da5a1821520a8b31337"
+  },
+  "ci/distribution-ocr-ubuntu-24.04/t17-linux-x86_64-ocr/package-report.json": {
+    "bytes": 4049,
+    "sha256": "7e7ba7a0df444f9fb4ad1006394595f8b8b27b36e2204e8b93d991d46971a010"
+  },
+  "ci/distribution-ocr-ubuntu-24.04/t17-linux-x86_64-ocr/size.json": {
+    "bytes": 7424,
+    "sha256": "4ce6501ed67a96f15e8d29a483bdeb796ce0e371bbfd969e44d054fdd4f155bf"
+  },
+  "ci/distribution-ocr-macos-15-intel/t17-macos-x86_64-ocr/package-report.json": {
+    "bytes": 1502,
+    "sha256": "244a22f9314e24029515e9736352ba755c41db81e50763e4a4c2497ad921a1e3"
+  },
+  "ci/distribution-ocr-macos-15-intel/t17-macos-x86_64-ocr/size.json": {
+    "bytes": 6181,
+    "sha256": "656021506589a9e4507c8710bb70777320e49a0cd4de31767166b2ca2381a731"
+  },
+  "ci/distribution-ocr-macos-15/t17-macos-aarch64-ocr/package-report.json": {
+    "bytes": 1504,
+    "sha256": "4f4be4b8845ed86d8d5e759eb908860b1400a56e0ced171638dea24296cf22c0"
+  },
+  "ci/distribution-ocr-macos-15/t17-macos-aarch64-ocr/size.json": {
+    "bytes": 6182,
+    "sha256": "849f9050f61f1efa737abfe57945e39adcc62dd713ffd40bbd528845cb22aff2"
+  },
+  "ci/distribution-base-windows-2025/t17-windows-x86_64-base/package-report.json": {
+    "bytes": 954,
+    "sha256": "e72a3ec9421af4f8da6cc9787dda65c6057c037a48b1d8f462e0d453abe15a8b"
+  },
+  "ci/distribution-base-windows-2025/t17-windows-x86_64-base/size.json": {
+    "bytes": 3980,
+    "sha256": "a38b82db883c4756c02392ccad91d07b6901cf33f2f0f76c6ad734cc70517040"
+  },
+  "ci/distribution-base-ubuntu-24.04/t17-linux-x86_64-base/package-report.json": {
+    "bytes": 3667,
+    "sha256": "ed0bd04a4a382f56289ded85fd92313b413770d3478ccedf340a238f73d053c4"
+  },
+  "ci/distribution-base-ubuntu-24.04/t17-linux-x86_64-base/size.json": {
+    "bytes": 5498,
+    "sha256": "1af1c91fc93f7d57a9fa5c0ee7444d17f0cfce38fd9fe8aa20959cf501dc7fb6"
+  },
+  "ci/distribution-base-macos-15-intel/t17-macos-x86_64-base/package-report.json": {
+    "bytes": 1435,
+    "sha256": "adb1f7b8c23eb05ac89a497d42c78b744b31e3e0414136aee979bb4bf313f664"
+  },
+  "ci/distribution-base-macos-15-intel/t17-macos-x86_64-base/size.json": {
+    "bytes": 6036,
+    "sha256": "2251fd1e5ce661cb288dafc57e3e2b8282d1474048eecca1f572ff81314f3471"
+  },
+  "ci/distribution-base-macos-15/t17-macos-aarch64-base/package-report.json": {
+    "bytes": 1437,
+    "sha256": "1bb15ee906ba03f45dc3a253406dbf57f102202687937d9e57fde62dcf3a482d"
+  },
+  "ci/distribution-base-macos-15/t17-macos-aarch64-base/size.json": {
+    "bytes": 6037,
+    "sha256": "87e397325d139fd232657f13ad24b097249629092f8b6c13d5969a1a4f790cf2"
+  },
+  "ci/core-windows-2025/core-Windows-test/Testing/Temporary/LastTest.log": {
+    "bytes": 44821,
+    "sha256": "3da3c7fb634ed4ddb871c0f525d5693913b40be9bddd189f5e4c6a79e8075179"
+  },
+  "ci/core-windows-2025/core-Windows-release/Testing/Temporary/LastTest.log": {
+    "bytes": 45121,
+    "sha256": "7b7e7561a07487d86002f74a5eeb07f2d19480f098b4fae2d558c1543072a952"
+  },
+  "ci/core-ubuntu-24.04/core-Linux-test/Testing/Temporary/LastTest.log": {
+    "bytes": 60010,
+    "sha256": "f8b9cd73b7f403d6e9970e130480fc96f242712ebbbdde179592441d4810ba8c"
+  },
+  "ci/core-ubuntu-24.04/core-Linux-release/Testing/Temporary/LastTest.log": {
+    "bytes": 60400,
+    "sha256": "03e052cceedcf8c8edcfcb84093818220a8d06c9ea86b6300fdf9ac541b33f8a"
+  },
+  "ci/core-macos-15-intel/core-Darwin-test/Testing/Temporary/LastTest.log": {
+    "bytes": 41684,
+    "sha256": "9c924e42da5bb131a2d38a0ae7b73c51a3d9b7fa875434f8f5cf12a76d063e6e"
+  },
+  "ci/core-macos-15-intel/core-Darwin-release/Testing/Temporary/LastTest.log": {
+    "bytes": 41969,
+    "sha256": "62b9c660092da1e74c10210e7f78019ca90980d3f33f899c9956b3508f01a55b"
+  },
+  "ci/core-macos-15/core-Darwin-test/Testing/Temporary/LastTest.log": {
+    "bytes": 41723,
+    "sha256": "476bca9ce31267547d7e75bc2bd7204bdca31d561c1c072cdd4ef5b7d42e1894"
+  },
+  "ci/core-macos-15/core-Darwin-release/Testing/Temporary/LastTest.log": {
+    "bytes": 42008,
+    "sha256": "f0a4d6f05b328b65a4aa22de863c43653853802797774ad124b9c348cdc73f8d"
+  }
+}

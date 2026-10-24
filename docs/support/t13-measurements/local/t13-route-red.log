@@ -1,0 +1,17 @@
+[1/2] Building CXX object CMakeFiles/lifecycle_test.dir/tests/unit/lifecycle_test.cpp.o
+FAILED: CMakeFiles/lifecycle_test.dir/tests/unit/lifecycle_test.cpp.o 
+/usr/bin/c++  -I"/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/include" -g -std=c++17 -MD -MT CMakeFiles/lifecycle_test.dir/tests/unit/lifecycle_test.cpp.o -MF CMakeFiles/lifecycle_test.dir/tests/unit/lifecycle_test.cpp.o.d -o CMakeFiles/lifecycle_test.dir/tests/unit/lifecycle_test.cpp.o -c '/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/tests/unit/lifecycle_test.cpp'
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/tests/unit/lifecycle_test.cpp: In function ‘int main(int, char**)’:
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/tests/unit/lifecycle_test.cpp:104:44: error: cannot convert ‘const std::nullopt_t’ to ‘cliptiq::LaunchAction’
+  104 |       CHECK(!local_only.start(options,std::nullopt));
+      |                                       ~~~~~^~~~~~~
+      |                                            |
+      |                                            const std::nullopt_t
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/tests/unit/lifecycle_test.cpp:13:11: note: in definition of macro ‘CHECK’
+   13 |     if (!(x))                                                                  \
+      |           ^
+In file included from /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/tests/unit/lifecycle_test.cpp:1:
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/include/cliptiq/lifecycle.hpp:21:47: note:   initializing argument 2 of ‘cliptiq::Result<cliptiq::InstanceRole> cliptiq::SessionInstance::start(cliptiq::InstanceOptions, cliptiq::LaunchAction)’
+   21 |   Result<InstanceRole> start(InstanceOptions, LaunchAction);
+      |                                               ^~~~~~~~~~~~
+ninja: build stopped: subcommand failed.

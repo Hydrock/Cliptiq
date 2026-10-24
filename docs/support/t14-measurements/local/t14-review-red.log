@@ -1,0 +1,19 @@
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+    Start 49: import
+1/1 Test #49: import ...........................***Failed    0.52 sec
+Deleted clipboard content retained in provenance
+Traceback (most recent call last):
+  File "/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/tests/integration/import_fixtures.py", line 31, in <module>
+    subprocess.run([test,str(neutral)],check=True)
+  File "/usr/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test/import_test', '/tmp/cliptiq-import-test-hu0ojrhz/v1.neutral']' returned non-zero exit status 1.
+
+
+0% tests passed, 1 tests failed out of 1
+
+Total Test time (real) =   0.56 sec
+
+The following tests FAILED:
+	 49 - import (Failed)
+Errors while running CTest

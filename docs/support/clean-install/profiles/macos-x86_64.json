@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "host": "macOS-15.7.9-x86_64-i386-64bit-Mach-O",
+  "architecture": "x86_64",
+  "scope": "fresh HOME/profile and minimal PATH on ephemeral CI/developer OS; not a clean stock-OS VM",
+  "clean_vm_verified": false,
+  "third_party_runtime_closure_check": "declared linked dependency allowlist, not absence of preinstalled software",
+  "variants": {
+    "cpp": {
+      "installed_app_owned_bytes": 858392,
+      "download_zip_bytes": 465965,
+      "linked_os_dependencies": [
+        "/System/Library/Frameworks/AppKit.framework/Versions/C/AppKit",
+        "/System/Library/Frameworks/Security.framework/Versions/A/Security",
+        "/System/Library/Frameworks/SystemConfiguration.framework/Versions/A/SystemConfiguration",
+        "/usr/lib/libc++.1.dylib",
+        "/usr/lib/libresolv.9.dylib",
+        "/usr/lib/libSystem.B.dylib",
+        "/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation",
+        "/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation",
+        "/usr/lib/libobjc.A.dylib"
+      ],
+      "fresh_profile_fixture": {
+        "entries": 33,
+        "representations": 35,
+        "png_roundtrip": true,
+        "html_rtf_roundtrip": true,
+        "xml_escape": true
+      },
+      "fresh_profile_lifecycle": {
+        "native_window_lifecycle": true
+      },
+      "signature": "ad hoc only"
+    },
+    "rust": {
+      "installed_app_owned_bytes": 1256008,
+      "download_zip_bytes": 630042,
+      "linked_os_dependencies": [
+        "/System/Library/Frameworks/AppKit.framework/Versions/C/AppKit",
+        "/System/Library/Frameworks/Security.framework/Versions/A/Security",
+        "/System/Library/Frameworks/SystemConfiguration.framework/Versions/A/SystemConfiguration",
+        "/usr/lib/libc++.1.dylib",
+        "/usr/lib/libresolv.9.dylib",
+        "/usr/lib/libSystem.B.dylib",
+        "/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation",
+        "/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation",
+        "/usr/lib/libobjc.A.dylib"
+      ],
+      "fresh_profile_fixture": {
+        "entries": 33,
+        "representations": 35,
+        "png_roundtrip": true,
+        "html_rtf_roundtrip": true,
+        "xml_escape": true
+      },
+      "fresh_profile_lifecycle": {
+        "native_window_lifecycle": true
+      },
+      "signature": "ad hoc only"
+    }
+  },
+  "ci_run": "https://github.com/Hydrock/Cliptiq/actions/runs/39936634716",
+  "source_commit": "9c47cfee1851e75750879863cfd0b1c35c55fb1a"
+}

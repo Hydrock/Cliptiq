@@ -1,0 +1,17 @@
+[1/4] Linking CXX static library libcliptiq_core.a
+[2/4] Building CXX object CMakeFiles/linux_hotkey_portal_test.dir/tests/integration/linux_hotkey_portal_test.cpp.o
+[3/4] Linking CXX static library libcliptiq_settings_native.a
+[4/4] Linking CXX executable linux_hotkey_portal_test
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+    Start 9: hotkeys_portal_protocol
+1/1 Test #9: hotkeys_portal_protocol ..........***Failed    0.12 sec
+FAIL portal_hotkeys: native.configure_portal(keys)
+
+
+0% tests passed, 1 tests failed out of 1
+
+Total Test time (real) =   0.14 sec
+
+The following tests FAILED:
+	  9 - hotkeys_portal_protocol (Failed)
+Errors while running CTest

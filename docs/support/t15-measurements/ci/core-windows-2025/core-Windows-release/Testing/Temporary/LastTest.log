@@ -1,0 +1,896 @@
+Start testing: Oct 24 12:39 Coordinated Universal Time
+----------------------------------------------------------
+1/44 Testing: xml_native
+1/44 Test: xml_native
+Command: "D:/a/Cliptiq/Cliptiq/out/core-Windows-release/native_xml_test.exe"
+Directory: D:/a/Cliptiq/Cliptiq/out/core-Windows-release
+"xml_native" start time: Oct 24 12:39 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+PASS native_xml_background_append_export_menu_invalid_atomic_dirty_gate
+<end of output>
+Test time =   0.37 sec
+----------------------------------------------------------
+Test Passed.
+"xml_native" end time: Oct 24 12:39 Coordinated Universal Time
+"xml_native" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/44 Testing: xml
+2/44 Test: xml
+Command: "D:/a/Cliptiq/Cliptiq/out/core-Windows-release/xml_test.exe"
+Directory: D:/a/Cliptiq/Cliptiq/out/core-Windows-release
+"xml" start time: Oct 24 12:39 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+PASS roundtrip_whitespace_unicode_disabled_entity_escape
+PASS fallback_titles_cdata_and_empty_folders
+PASS append_not_replace_and_atomic_rollback
+PASS malformed_is_atomic_external_entity_rejected
+PASS size_count_utf8_and_store_limits
+PASS atomic_destination_and_bounded_file_read
+PASS xml_line_ending_normalization_and_nested_transaction_preservation
+PASS depth_node_budgets_and_no_partial_import_on_existing_count_limit
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"xml" end time: Oct 24 12:39 Coordinated Universal Time
+"xml" time elapsed: 00:00:00
+----------------------------------------------------------
+
+3/44 Testing: xml_bounded_scan
+3/44 Test: xml_bounded_scan
+Command: "C:/hostedtoolcache/windows/Python/3.15.1/x64/python3.exe" "D:/a/Cliptiq/Cliptiq/tests/integration/xml_bounded_scan.py" "D:/a/Cliptiq/Cliptiq/out/core-Windows-release/xml_test.exe"
+Directory: D:/a/Cliptiq/Cliptiq/out/core-Windows-release
+"xml_bounded_scan" start time: Oct 24 12:39 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+PASS adversarial37000 text segments +63MiB suffix completed in 0.385 seconds;20s fixture gate, not throughput guarantee
+<end of output>
+Test time =   0.98 sec
+----------------------------------------------------------
+Test Passed.
+"xml_bounded_scan" end time: Oct 24 12:39 Coordinated Universal Time
+"xml_bounded_scan" time elapsed: 00:00:00
+----------------------------------------------------------
+
+4/44 Testing: xml_interop
+4/44 Test: xml_interop
+Command: "C:/hostedtoolcache/windows/Python/3.15.1/x64/python3.exe" "D:/a/Cliptiq/Cliptiq/tests/integration/xml_interop.py" "D:/a/Cliptiq/Cliptiq/out/core-Windows-release/xml_test.exe" "D:/a/Cliptiq/Cliptiq/tests/fixtures/xml/clipy-layout.xml"
+Directory: D:/a/Cliptiq/Cliptiq/out/core-Windows-release
+"xml_interop" start time: Oct 24 12:39 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+PASS independent ElementTree reads C++ output and C++ reads ElementTree output; whitespace/Unicode/entities/CDATA/fallback/order
+<end of output>
+Test time =   0.09 sec
+----------------------------------------------------------
+Test Passed.
+"xml_interop" end time: Oct 24 12:39 Coordinated Universal Time
+"xml_interop" time elapsed: 00:00:00
+----------------------------------------------------------
+
+5/44 Testing: editor_native
+5/44 Test: editor_native
+Command: "D:/a/Cliptiq/Cliptiq/out/core-Windows-release/native_editor_test.exe"
+Directory: D:/a/Cliptiq/Cliptiq/out/core-Windows-release
+"editor_native" start time: Oct 24 12:39 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+PASS native_editor_autosave_unicode_undo_enabled_menu_folder_binding_conflict_and_drag_contract
+<end of output>
+Test time =   0.45 sec
+----------------------------------------------------------
+Test Passed.
+"editor_native" end time: Oct 24 12:39 Coordinated Universal Time
+"editor_native" time elapsed: 00:00:00
+----------------------------------------------------------
+
+6/44 Testing: snippets_menu_hotkeys
+6/44 Test: snippets_menu_hotkeys
+Command: "D:/a/Cliptiq/Cliptiq/out/core-Windows-release/snippet_integration_test.exe"
+Directory: D:/a/Cliptiq/Cliptiq/out/core-Windows-release
+"snippets_menu_hotkeys" start time: Oct 24 12:39 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+PASS disabled_folder_preferences_never_register_and_reenable_restores
+PASS menu_selection_and_paste_cannot_replay_disabled_or_deleted_snippets
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"snippets_menu_hotkeys" end time: Oct 24 12:39 Coordinated Universal Time
+"snippets_menu_hotkeys" time elapsed: 00:00:00
+----------------------------------------------------------
+
+7/44 Testing: editor
+7/44 Test: editor
+Command: "D:/a/Cliptiq/Cliptiq/out/core-Windows-release/editor_test.exe"
+Directory: D:/a/Cliptiq/Cliptiq/out/core-Windows-release
+"editor" start time: Oct 24 12:39 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+PASS autosave_undo_redo_resets_at_selection_boundary
+PASS cancelled_drag_and_stale_drag_do_not_mutate
+PASS delete_confirmation_empty_folder_and_binding_conflicts
+PASS failed_edit_preserves_document_and_undo
+PASS failed_autosave_blocks_navigation_until_corrected_or_explicit_reload
+PASS drag_revision_is_checked_inside_write_transaction
+PASS folder_drop_does_not_overwrite_concurrent_other_folder_reorder
+PASS committed_snapshot_does_not_adopt_peer_revision
+PASS background_autosave_keeps_event_loop_responsive_under_write_contention
+<end of output>
+Test time =   0.59 sec
+----------------------------------------------------------
+Test Passed.
+"editor" end time: Oct 24 12:39 Coordinated Universal Time
+"editor" time elapsed: 00:00:00
+----------------------------------------------------------
+
+8/44 Testing: snippets
+8/44 Test: snippets
+Command: "D:/a/Cliptiq/Cliptiq/out/core-Windows-release/snippets_test.exe"
+Directory: D:/a/Cliptiq/Cliptiq/out/core-Windows-release
+"snippets" start time: Oct 24 12:39 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+PASS folder_snippet_crud_unicode_multiline_and_entity_cas
+PASS reorder_move_normalizes_duplicates_atomically
+PASS disabled_menu_and_folder_hotkeys_cleanup
+PASS limits_invalid_utf8_and_no_partial_revision
+PASS restart_and_v1_migration_preserve_old_data
+legacy snippet edit=1 folder rename=1
+PASS legacy_sparse_positions_allow_content_edits_and_repair_order
+<end of output>
+Test time =   0.23 sec
+----------------------------------------------------------
+Test Passed.
+"snippets" end time: Oct 24 12:39 Coordinated Universal Time
+"snippets" time elapsed: 00:00:00
+----------------------------------------------------------
+
+9/44 Testing: hotkeys_native_boundary
+9/44 Test: hotkeys_native_boundary
+Command: "D:/a/Cliptiq/Cliptiq/out/core-Windows-release/windows_hotkey_boundary_test.exe"
+Directory: D:/a/Cliptiq/Cliptiq/out/core-Windows-release
+"hotkeys_native_boundary" start time: Oct 24 12:39 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+PASS native_adapter_RegisterHotKey_boundary_conflict_rollback_modifiers_and_cleanup; API scripted, no global OS registration
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"hotkeys_native_boundary" end time: Oct 24 12:39 Coordinated Universal Time
+"hotkeys_native_boundary" time elapsed: 00:00:00
+----------------------------------------------------------
+
+10/44 Testing: settings_native
+10/44 Test: settings_native
+Command: "D:/a/Cliptiq/Cliptiq/out/core-Windows-release/native_settings_test.exe"
+Directory: D:/a/Cliptiq/Cliptiq/out/core-Windows-release
+"settings_native" start time: Oct 24 12:39 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+Alt recorder=1 folder page scrollable=1
+PASS eight_native_panels_apply_to_real_store_and_disabled_future_controls
+PASS live_native_options_rebuild_preview_bitmap
+<end of output>
+Test time =   0.04 sec
+----------------------------------------------------------
+Test Passed.
+"settings_native" end time: Oct 24 12:39 Coordinated Universal Time
+"settings_native" time elapsed: 00:00:00
+----------------------------------------------------------
+
+11/44 Testing: lifecycle_ui_ru
+11/44 Test: lifecycle_ui_ru
+Command: "D:/a/Cliptiq/Cliptiq/out/core-Windows-release/native_settings_test.exe" "--ru"
+Directory: D:/a/Cliptiq/Cliptiq/out/core-Windows-release
+"lifecycle_ui_ru" start time: Oct 24 12:39 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+Alt recorder=1 folder page scrollable=1
+PASS eight_native_panels_apply_to_real_store_and_disabled_future_controls
+PASS live_native_options_rebuild_preview_bitmap
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"lifecycle_ui_ru" end time: Oct 24 12:39 Coordinated Universal Time
+"lifecycle_ui_ru" time elapsed: 00:00:00
+----------------------------------------------------------
+
+12/44 Testing: hotkeys_native
+12/44 Test: hotkeys_native
+Command: "D:/a/Cliptiq/Cliptiq/out/core-Windows-release/native_hotkeys_test.exe"
+Directory: D:/a/Cliptiq/Cliptiq/out/core-Windows-release
+"hotkeys_native" start time: Oct 24 12:39 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+PASS noninteractive_station_denied; real Windows registration acceptance OPEN
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"hotkeys_native" end time: Oct 24 12:39 Coordinated Universal Time
+"hotkeys_native" time elapsed: 00:00:00
+----------------------------------------------------------
+
+13/44 Testing: settings
+13/44 Test: settings
+Command: "D:/a/Cliptiq/Cliptiq/out/core-Windows-release/settings_test.exe"
+Directory: D:/a/Cliptiq/Cliptiq/out/core-Windows-release
+"settings" start time: Oct 24 12:39 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+PASS defaults_audit_and_platform_shortcuts
+PASS atomic_roundtrip_and_privacy_projection
+PASS ranges_rejected_without_partial_write
+PASS settings_cannot_unbind_or_duplicate_and_invalid_values
+PASS eight_groups_and_unknown_capability_disabled_reason
+PASS corrupt_and_future_settings_not_silently_defaulted
+PASS future_schema_save_does_not_overwrite_and_physical_meaning_roundtrip
+PASS count_prunes_now_types_do_not_erase_old_and_folder_route
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"settings" end time: Oct 24 12:39 Coordinated Universal Time
+"settings" time elapsed: 00:00:00
+----------------------------------------------------------
+
+14/44 Testing: hotkeys
+14/44 Test: hotkeys
+Command: "D:/a/Cliptiq/Cliptiq/out/core-Windows-release/hotkeys_test.exe"
+Directory: D:/a/Cliptiq/Cliptiq/out/core-Windows-release
+"hotkeys" start time: Oct 24 12:39 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+PASS chord_roundtrip_meaning_and_reserved
+PASS conflict_keeps_previous_and_settings_protected
+PASS batch_os_or_persistence_failure_rolls_back
+PASS throwing_persistence_releases_candidates_preserves_old
+PASS disabled_deleted_folders_release_routes
+PASS registry_lifetime_releases_and_unknown_actions_rejected
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"hotkeys" end time: Oct 24 12:39 Coordinated Universal Time
+"hotkeys" time elapsed: 00:00:00
+----------------------------------------------------------
+
+15/44 Testing: paste_native
+15/44 Test: paste_native
+Command: "D:/a/Cliptiq/Cliptiq/out/core-Windows-release/native_paste_test.exe"
+Directory: D:/a/Cliptiq/Cliptiq/out/core-Windows-release
+"paste_native" start time: Oct 24 12:39 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+PASS forged_and_missing_targets_never_dispatch
+PASS native_denial_safe_no_permission_prompt
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"paste_native" end time: Oct 24 12:39 Coordinated Universal Time
+"paste_native" time elapsed: 00:00:00
+----------------------------------------------------------
+
+16/44 Testing: paste_native_boundary
+16/44 Test: paste_native_boundary
+Command: "D:/a/Cliptiq/Cliptiq/out/core-Windows-release/paste_boundary_test.exe"
+Directory: D:/a/Cliptiq/Cliptiq/out/core-Windows-release
+"paste_native_boundary" start time: Oct 24 12:39 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+PASS issued_target_success_and_chords
+PASS closed_replaced_process_and_reused_hwnd_rejected
+PASS uipi_unknown_and_held_modifiers_no_input
+PASS unrelated_focus_and_denied_restore_no_input
+PASS normal_self_restore_then_dispatch
+PASS every_partial_prefix_releases_only_injected_keys
+PASS native_denial_preserves_paste_delete_history
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"paste_native_boundary" end time: Oct 24 12:39 Coordinated Universal Time
+"paste_native_boundary" time elapsed: 00:00:00
+----------------------------------------------------------
+
+17/44 Testing: paste
+17/44 Test: paste
+Command: "D:/a/Cliptiq/Cliptiq/out/core-Windows-release/paste_test.exe"
+Directory: D:/a/Cliptiq/Cliptiq/out/core-Windows-release
+"paste" start time: Oct 24 12:39 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+PASS auto_off_copies_original_all_formats_and_touches
+PASS plain_keeps_only_text_without_rich_formats
+PASS image_only_plain_never_overwrites_clipboard
+PASS delete_only_removes_history_without_write_or_input
+PASS paste_delete_removes_only_after_backend_acceptance
+PASS denied_paste_delete_keeps_sole_record_and_manual_copy
+PASS auto_off_paste_delete_does_not_delete
+PASS failed_write_never_dispatches_or_deletes
+PASS stale_menu_revision_has_no_side_effect
+PASS concurrent_revision_after_dispatch_does_not_delete
+PASS terminal_shortcut_and_missing_target_manual
+PASS snippets_copied_without_history_deletion
+PASS destructive_modifier_never_deletes_snippet
+PASS modifier_binding_unique_single_and_conflicting_held_cancel
+PASS invalid_action_shortcut_or_clock_rejected_before_write
+PASS snippet_encoded_and_entry_limits_before_writer
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"paste" end time: Oct 24 12:39 Coordinated Universal Time
+"paste" time elapsed: 00:00:00
+----------------------------------------------------------
+
+18/44 Testing: menu_unicode_conformance
+18/44 Test: menu_unicode_conformance
+Command: "D:/a/Cliptiq/Cliptiq/out/core-Windows-release/grapheme_test.exe" "D:/a/Cliptiq/Cliptiq/third_party/libgrapheme/data/GraphemeBreakTest.txt"
+Directory: D:/a/Cliptiq/Cliptiq/out/core-Windows-release
+"menu_unicode_conformance" start time: Oct 24 12:39 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+PASS Unicode17_grapheme_conformance 766 cases
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"menu_unicode_conformance" end time: Oct 24 12:39 Coordinated Universal Time
+"menu_unicode_conformance" time elapsed: 00:00:00
+----------------------------------------------------------
+
+19/44 Testing: menu_regression_keyboard
+19/44 Test: menu_regression_keyboard
+Command: "D:/a/Cliptiq/Cliptiq/out/core-Windows-release/menu_regression_test.exe" "keyboard"
+Directory: D:/a/Cliptiq/Cliptiq/out/core-Windows-release
+"menu_regression_keyboard" start time: Oct 24 12:39 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+PASS native_menu_review_keyboard
+<end of output>
+Test time =   0.03 sec
+----------------------------------------------------------
+Test Passed.
+"menu_regression_keyboard" end time: Oct 24 12:39 Coordinated Universal Time
+"menu_regression_keyboard" time elapsed: 00:00:00
+----------------------------------------------------------
+
+20/44 Testing: menu_regression_dpi
+20/44 Test: menu_regression_dpi
+Command: "D:/a/Cliptiq/Cliptiq/out/core-Windows-release/menu_regression_test.exe" "dpi"
+Directory: D:/a/Cliptiq/Cliptiq/out/core-Windows-release
+"menu_regression_dpi" start time: Oct 24 12:39 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+PASS native_menu_review_dpi
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"menu_regression_dpi" end time: Oct 24 12:39 Coordinated Universal Time
+"menu_regression_dpi" time elapsed: 00:00:00
+----------------------------------------------------------
+
+21/44 Testing: menu_regression_context
+21/44 Test: menu_regression_context
+Command: "D:/a/Cliptiq/Cliptiq/out/core-Windows-release/menu_regression_test.exe" "context"
+Directory: D:/a/Cliptiq/Cliptiq/out/core-Windows-release
+"menu_regression_context" start time: Oct 24 12:39 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+PASS native_menu_review_context
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"menu_regression_context" end time: Oct 24 12:39 Coordinated Universal Time
+"menu_regression_context" time elapsed: 00:00:00
+----------------------------------------------------------
+
+22/44 Testing: menu_native
+22/44 Test: menu_native
+Command: "D:/a/Cliptiq/Cliptiq/out/core-Windows-release/native_menu_test.exe"
+Directory: D:/a/Cliptiq/Cliptiq/out/core-Windows-release
+"menu_native" start time: Oct 24 12:39 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+PASS hidden_tray_keeps_launcher
+PASS native_structure_enabled_labels_preview_and_selection
+PASS old_native_item_cannot_select_replacement
+PASS tray_style_changes_preserve_fallback
+<end of output>
+Test time =   0.03 sec
+----------------------------------------------------------
+Test Passed.
+"menu_native" end time: Oct 24 12:39 Coordinated Universal Time
+"menu_native" time elapsed: 00:00:00
+----------------------------------------------------------
+
+23/44 Testing: lifecycle
+23/44 Test: lifecycle
+Command: "D:/a/Cliptiq/Cliptiq/out/core-Windows-release/lifecycle_test.exe"
+Directory: D:/a/Cliptiq/Cliptiq/out/core-Windows-release
+"lifecycle" start time: Oct 24 12:39 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+PASS fixed routes, second-instance forwarding, settings recovery, bounded IPC, restart, locale fallback and visible startup failure
+<end of output>
+Test time =   0.85 sec
+----------------------------------------------------------
+Test Passed.
+"lifecycle" end time: Oct 24 12:39 Coordinated Universal Time
+"lifecycle" time elapsed: 00:00:00
+----------------------------------------------------------
+
+24/44 Testing: lifecycle_process
+24/44 Test: lifecycle_process
+Command: "C:/hostedtoolcache/windows/Python/3.15.1/x64/python3.exe" "D:/a/Cliptiq/Cliptiq/tests/integration/lifecycle_process.py" "D:/a/Cliptiq/Cliptiq/out/core-Windows-release/lifecycle_test.exe"
+Directory: D:/a/Cliptiq/Cliptiq/out/core-Windows-release
+"lifecycle_process" start time: Oct 24 12:39 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+PASS separate processes, four fixed routes, settings recovery, crash/restart lock release
+<end of output>
+Test time =   1.02 sec
+----------------------------------------------------------
+Test Passed.
+"lifecycle_process" end time: Oct 24 12:39 Coordinated Universal Time
+"lifecycle_process" time elapsed: 00:00:01
+----------------------------------------------------------
+
+25/44 Testing: lifecycle_locale_schema
+25/44 Test: lifecycle_locale_schema
+Command: "C:/hostedtoolcache/windows/Python/3.15.1/x64/python3.exe" "D:/a/Cliptiq/Cliptiq/tools/generate-locales.py" "--check"
+Directory: D:/a/Cliptiq/Cliptiq/out/core-Windows-release
+"lifecycle_locale_schema" start time: Oct 24 12:39 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+Locale schema: 136 keys; 9 languages; 426 compiled rows
+<end of output>
+Test time =   0.04 sec
+----------------------------------------------------------
+Test Passed.
+"lifecycle_locale_schema" end time: Oct 24 12:39 Coordinated Universal Time
+"lifecycle_locale_schema" time elapsed: 00:00:00
+----------------------------------------------------------
+
+26/44 Testing: lifecycle_gui
+26/44 Test: lifecycle_gui
+Command: "C:/hostedtoolcache/windows/Python/3.15.1/x64/python3.exe" "D:/a/Cliptiq/Cliptiq/tests/integration/lifecycle_windows_app.py" "D:/a/Cliptiq/Cliptiq/out/core-Windows-release/Cliptiq.exe"
+Directory: D:/a/Cliptiq/Cliptiq/out/core-Windows-release
+"lifecycle_gui" start time: Oct 24 12:39 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+PASS native Windows GUI subsystem; no console on login
+<end of output>
+Test time =   0.03 sec
+----------------------------------------------------------
+Test Passed.
+"lifecycle_gui" end time: Oct 24 12:39 Coordinated Universal Time
+"lifecycle_gui" time elapsed: 00:00:00
+----------------------------------------------------------
+
+27/44 Testing: media_review_clear
+27/44 Test: media_review_clear
+Command: "D:/a/Cliptiq/Cliptiq/out/core-Windows-release/media_review_test.exe" "clear"
+Directory: D:/a/Cliptiq/Cliptiq/out/core-Windows-release
+"media_review_clear" start time: Oct 24 12:39 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+PASS clear
+<end of output>
+Test time =   1.37 sec
+----------------------------------------------------------
+Test Passed.
+"media_review_clear" end time: Oct 24 12:39 Coordinated Universal Time
+"media_review_clear" time elapsed: 00:00:01
+----------------------------------------------------------
+
+28/44 Testing: media_review_root
+28/44 Test: media_review_root
+Command: "D:/a/Cliptiq/Cliptiq/out/core-Windows-release/media_review_test.exe" "root"
+Directory: D:/a/Cliptiq/Cliptiq/out/core-Windows-release
+"media_review_root" start time: Oct 24 12:39 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+PASS root
+<end of output>
+Test time =   1.36 sec
+----------------------------------------------------------
+Test Passed.
+"media_review_root" end time: Oct 24 12:39 Coordinated Universal Time
+"media_review_root" time elapsed: 00:00:01
+----------------------------------------------------------
+
+29/44 Testing: media_review_error
+29/44 Test: media_review_error
+Command: "D:/a/Cliptiq/Cliptiq/out/core-Windows-release/media_review_test.exe" "error"
+Directory: D:/a/Cliptiq/Cliptiq/out/core-Windows-release
+"media_review_error" start time: Oct 24 12:39 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+PASS error
+<end of output>
+Test time =   0.31 sec
+----------------------------------------------------------
+Test Passed.
+"media_review_error" end time: Oct 24 12:39 Coordinated Universal Time
+"media_review_error" time elapsed: 00:00:00
+----------------------------------------------------------
+
+30/44 Testing: native_media
+30/44 Test: native_media
+Command: "D:/a/Cliptiq/Cliptiq/out/core-Windows-release/native_media_test.exe"
+Directory: D:/a/Cliptiq/Cliptiq/out/core-Windows-release
+"native_media" start time: Oct 24 12:39 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+PASS native codec, malformed/40MP, partial write, event coalescing, pixel dedup both orders, privacy exclusions/types, stop, deletion race
+<end of output>
+Test time =   8.32 sec
+----------------------------------------------------------
+Test Passed.
+"native_media" end time: Oct 24 12:39 Coordinated Universal Time
+"native_media" time elapsed: 00:00:08
+----------------------------------------------------------
+
+31/44 Testing: media
+31/44 Test: media
+Command: "D:/a/Cliptiq/Cliptiq/out/core-Windows-release/media_test.exe"
+Directory: D:/a/Cliptiq/Cliptiq/out/core-Windows-release
+"media" start time: Oct 24 12:39 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+PASS privacy, aspect-fit, bounds, dimensions, stale generation, deletion race, malformed image
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"media" end time: Oct 24 12:39 Coordinated Universal Time
+"media" time elapsed: 00:00:00
+----------------------------------------------------------
+
+32/44 Testing: menu_preview
+32/44 Test: menu_preview
+Command: "D:/a/Cliptiq/Cliptiq/out/core-Windows-release/menu_preview_test.exe"
+Directory: D:/a/Cliptiq/Cliptiq/out/core-Windows-release
+"menu_preview" start time: Oct 24 12:39 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+PASS swatch_rgba
+PASS aspect_fit_32
+PASS invalid_provider_dimensions_rejected
+PASS short_provider_buffer_rejected
+PASS empty_reference_no_provider
+PASS preview_dpi_96
+PASS preview_dpi_144
+PASS preview_dpi_192
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"menu_preview" end time: Oct 24 12:39 Coordinated Universal Time
+"menu_preview" time elapsed: 00:00:00
+----------------------------------------------------------
+
+33/44 Testing: menu
+33/44 Test: menu
+Command: "D:/a/Cliptiq/Cliptiq/out/core-Windows-release/menu_test.exe"
+Directory: D:/a/Cliptiq/Cliptiq/out/core-Windows-release
+"menu" start time: Oct 24 12:39 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+PASS empty_clear_disabled
+PASS grouping_0_1
+PASS grouping_0_10
+PASS grouping_0_100
+PASS grouping_1_1
+PASS grouping_1_10
+PASS grouping_1_100
+PASS grouping_100_1
+PASS grouping_100_10
+PASS grouping_100_100
+PASS zero_one_numbering_and_ten_shortcuts
+PASS numbering_and_shortcuts_independent
+PASS graphemes_first_line_trim_and_ellipsis
+PASS invalid_utf8_controls_are_sanitized
+PASS utf16_history_title_and_tooltip
+PASS snippet_order_above_below_and_kinds
+PASS tooltip_and_title_limits
+PASS hex_swatches_and_image_reference
+PASS revision_and_deleted_ids_reject_stale_commands
+PASS build_does_not_mutate_history
+PASS clear_command_checks_revision_before_deleting
+PASS native_model_depth_and_text_budget
+PASS global_commands_survive_history_refresh
+PASS native_model_rejects_invalid_utf8_and_nul
+PASS settings_history_limit_applies_without_erasing_store
+<end of output>
+Test time =   0.11 sec
+----------------------------------------------------------
+Test Passed.
+"menu" end time: Oct 24 12:39 Coordinated Universal Time
+"menu" time elapsed: 00:00:00
+----------------------------------------------------------
+
+34/44 Testing: windows_clipboard
+34/44 Test: windows_clipboard
+Command: "D:/a/Cliptiq/Cliptiq/out/core-Windows-release/windows_clipboard_test.exe"
+Directory: D:/a/Cliptiq/Cliptiq/out/core-Windows-release
+"windows_clipboard" start time: Oct 24 12:39 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+PASS unicode_emoji_crlf_and_replay
+PASS html_byte_offsets_and_raw_roundtrip
+PASS invalid_html_offsets_rejected
+PASS hdrop_multiple_unicode_paths_copy_replay
+PASS dibv5_alpha_orientation_and_worker_decoder
+PASS image_header_limits_and_truncation
+PASS registered_pdf_and_rtfd_bytes
+PASS url_utf16_and_known_type_registry
+PASS transient_marker_rejects_before_storage
+PASS history_dword_zero_is_excluded
+PASS disabled_html_and_unknown_not_captured
+PASS unknown_source_with_exclusions_rejects
+PASS sequence_token_independent_of_foreground
+PASS busy_read_is_bounded_and_recovers
+PASS invalid_replay_keeps_current_clipboard
+PASS oversize_read_is_rejected
+PASS listener_initial_capture_own_write_and_stop
+PASS owner_exit_does_not_serialize_handle
+PASS session_gate_lazy_database_and_ui_report
+PASS session_real_worker_persistence
+PASS delayed_disabled_unknown_and_transient_payloads_not_read
+PASS sequence_guard_retries_and_exhausts
+PASS concealed_marker_and_app_prefix_exclusion
+PASS malformed_text_html_files_fail_closed
+PASS virtual_files_are_not_transferable_memory
+PASS off_thread_read_and_stop_restart
+PASS destruction_inside_backend_and_session_callback
+PASS worker_byte_backpressure_creates_no_database
+PASS worker_wic_failure_does_not_create_database
+PASS png_preferred_and_wic_alpha
+PASS dib24_bottom_up_stride
+PASS worker_count_backpressure_with_locked_sqlite
+PASS binary_rtf_attachment_bytes_are_not_truncated
+PASS replay_explicitly_disallows_windows_cloud_upload
+PASS external_copy_after_replay_unlock_is_not_suppressed
+<end of output>
+Test time =   1.03 sec
+----------------------------------------------------------
+Test Passed.
+"windows_clipboard" end time: Oct 24 12:39 Coordinated Universal Time
+"windows_clipboard" time elapsed: 00:00:01
+----------------------------------------------------------
+
+35/44 Testing: windows_formats
+35/44 Test: windows_formats
+Command: "D:/a/Cliptiq/Cliptiq/out/core-Windows-release/windows_clipboard_test.exe" "--formats"
+Directory: D:/a/Cliptiq/Cliptiq/out/core-Windows-release
+"windows_formats" start time: Oct 24 12:39 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+PASS native_format_validation
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"windows_formats" end time: Oct 24 12:39 Coordinated Universal Time
+"windows_formats" time elapsed: 00:00:00
+----------------------------------------------------------
+
+36/44 Testing: policy
+36/44 Test: policy
+Command: "D:/a/Cliptiq/Cliptiq/out/core-Windows-release/policy_test.exe"
+Directory: D:/a/Cliptiq/Cliptiq/out/core-Windows-release
+"policy" start time: Oct 24 12:39 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+PASS transient_always_rejected
+PASS concealed_option
+PASS remote_primary_file_rejected
+PASS remote_secondary_file_removed
+PASS marker_prefix_exclusion
+PASS unknown_source_is_not_known_safe
+PASS screenshot_uses_same_policy
+PASS html_off_keeps_text_rtf_only
+PASS unknown_type_is_not_persisted
+PASS unknown_source_with_exclusions_is_rejected
+PASS foreground_exclusion_and_best_effort
+PASS capabilities_default_unavailable
+PASS unavailable_source_overrides_claimed_identity
+PASS limited_source_downgrades_known
+PASS missing_id_is_unknown
+PASS remote_macos_option_and_platform_scope
+PASS remote_marker_and_original_primary_before_filter
+PASS marker_representation_is_never_payload
+PASS all_kinds_can_be_disabled
+PASS each_supported_kind_and_item_order
+PASS spoofed_registered_kind_is_filtered
+PASS rejected_inputs_call_no_consumers
+PASS filtered_snapshot_only_reaches_consumers
+PASS store_error_or_no_retained_id_skips_derivatives
+PASS ocr_requires_request_and_capability
+PASS invalid_inputs_fail_closed
+PASS reason_messages_are_stable_non_sensitive
+PASS each_kind_toggle_filters_only_its_class
+PASS native_encoding_and_platform_must_match_registration
+PASS all_source_policy_modes
+PASS unknown_flags_remain_unknown
+PASS remote_secondary_pruning_keeps_item_indices
+PASS unsupported_primary_does_not_promote_remote_file
+PASS limited_capture_does_not_enable_other_capabilities
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"policy" end time: Oct 24 12:39 Coordinated Universal Time
+"policy" time elapsed: 00:00:00
+----------------------------------------------------------
+
+37/44 Testing: history
+37/44 Test: history
+Command: "D:/a/Cliptiq/Cliptiq/out/core-Windows-release/history_test.exe"
+Directory: D:/a/Cliptiq/Cliptiq/out/core-Windows-release
+"history" start time: Oct 24 12:39 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+PASS preserves_all_representations
+PASS duplicate_mode_switch_keeps_digest
+PASS duplicate_flags
+PASS blank_text_ignored
+PASS last_used_preserves_created
+PASS limit_three
+PASS periodic_clear_is_not_ttl
+PASS clear_preserves_snippets
+PASS oversize_is_atomic
+PASS quota_prunes_by_current_sort
+PASS reopen_and_periodic_state
+PASS transaction_failure_rolls_back
+PASS read_only_and_full_are_errors
+PASS corrupt_db_not_replaced
+PASS digest_has_unambiguous_boundaries
+PASS invalid_policy_and_empty_snapshot
+PASS revision_clear_compact
+PASS sha256_standard_vectors
+PASS collision_is_not_equality
+PASS source_changes_do_not_create_new_content
+PASS rtf_blank_and_primary_order
+PASS metadata_and_representation_limits
+PASS cleanup_disable_change_and_clock_rewind
+PASS foreign_and_future_db_preserved
+PASS load_rechecks_persisted_limits
+PASS duplicate_candidate_limits_checked
+PASS returned_id_survives_pruning
+PASS native_utf16_blank_text_ignored
+PASS utf16_roundtrip_and_big_endian_blank
+<end of output>
+Test time =   0.51 sec
+----------------------------------------------------------
+Test Passed.
+"history" end time: Oct 24 12:39 Coordinated Universal Time
+"history" time elapsed: 00:00:00
+----------------------------------------------------------
+
+38/44 Testing: history_crash
+38/44 Test: history_crash
+Command: "C:/hostedtoolcache/windows/Python/3.15.1/x64/python3.exe" "D:/a/Cliptiq/Cliptiq/tests/integration/history_crash.py" "D:/a/Cliptiq/Cliptiq/out/core-Windows-release/history_test.exe"
+Directory: D:/a/Cliptiq/Cliptiq/out/core-Windows-release
+"history_crash" start time: Oct 24 12:39 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+PASS process interruption rollback and reopen
+<end of output>
+Test time =   0.47 sec
+----------------------------------------------------------
+Test Passed.
+"history_crash" end time: Oct 24 12:39 Coordinated Universal Time
+"history_crash" time elapsed: 00:00:00
+----------------------------------------------------------
+
+39/44 Testing: import
+39/44 Test: import
+Command: "C:/hostedtoolcache/windows/Python/3.15.1/x64/python3.exe" "D:/a/Cliptiq/Cliptiq/tests/integration/import_fixtures.py" "D:/a/Cliptiq/Cliptiq/out/core-Windows-release/tools/import-clipy/cliptiq-import.exe" "D:/a/Cliptiq/Cliptiq/out/core-Windows-release/import_test.exe"
+Directory: D:/a/Cliptiq/Cliptiq/out/core-Windows-release
+"import" start time: Oct 24 12:39 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+PASS Clipy SQLite v1-v4, duplicate preservation, states/order/times/assets, idempotence, atomic failures, WAL/source hashes
+<end of output>
+Test time =   4.91 sec
+----------------------------------------------------------
+Test Passed.
+"import" end time: Oct 24 12:39 Coordinated Universal Time
+"import" time elapsed: 00:00:04
+----------------------------------------------------------
+
+40/44 Testing: import_native
+40/44 Test: import_native
+Command: "D:/a/Cliptiq/Cliptiq/out/core-Windows-release/import_native_test.exe"
+Directory: D:/a/Cliptiq/Cliptiq/out/core-Windows-release
+"import_native" start time: Oct 24 12:39 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+PASS imported Unicode through native clipboard, macOS repeated types, paste-delete provenance cleanup
+<end of output>
+Test time =   0.46 sec
+----------------------------------------------------------
+Test Passed.
+"import_native" end time: Oct 24 12:39 Coordinated Universal Time
+"import_native" time elapsed: 00:00:00
+----------------------------------------------------------
+
+41/44 Testing: import_bounds
+41/44 Test: import_bounds
+Command: "C:/hostedtoolcache/windows/Python/3.15.1/x64/python3.exe" "D:/a/Cliptiq/Cliptiq/tests/integration/import_bounds.py"
+Directory: D:/a/Cliptiq/Cliptiq/out/core-Windows-release
+"import_bounds" start time: Oct 24 12:39 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+PASS no unbounded image expansion/whole-file preferences reader in migration
+<end of output>
+Test time =   0.04 sec
+----------------------------------------------------------
+Test Passed.
+"import_bounds" end time: Oct 24 12:39 Coordinated Universal Time
+"import_bounds" time elapsed: 00:00:00
+----------------------------------------------------------
+
+42/44 Testing: update
+42/44 Test: update
+Command: "D:/a/Cliptiq/Cliptiq/out/core-Windows-release/update_test.exe"
+Directory: D:/a/Cliptiq/Cliptiq/out/core-Windows-release
+"update" start time: Oct 24 12:39 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+update policy, authentication boundaries, schedule, settings and redacted diagnostics passed
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"update" end time: Oct 24 12:39 Coordinated Universal Time
+"update" time elapsed: 00:00:00
+----------------------------------------------------------
+
+43/44 Testing: update_native
+43/44 Test: update_native
+Command: "D:/a/Cliptiq/Cliptiq/out/core-Windows-release/update_native_test.exe"
+Directory: D:/a/Cliptiq/Cliptiq/out/core-Windows-release
+"update_native" start time: Oct 24 12:39 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+unconfigured native route fails closed without side effects
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"update_native" end time: Oct 24 12:39 Coordinated Universal Time
+"update_native" time elapsed: 00:00:00
+----------------------------------------------------------
+
+44/44 Testing: update_authenticode
+44/44 Test: update_authenticode
+Command: "C:/hostedtoolcache/windows/Python/3.15.1/x64/python3.exe" "D:/a/Cliptiq/Cliptiq/tests/integration/update_authenticode.py" "D:/a/Cliptiq/Cliptiq/out/core-Windows-release/cliptiq_verify_update.exe"
+Directory: D:/a/Cliptiq/Cliptiq/out/core-Windows-release
+"update_authenticode" start time: Oct 24 12:39 Coordinated Universal Time
+Output:
+----------------------------------------------------------
+Authenticode: unsigned, trusted correct/wrong publisher, tampered bytes and invalid pin passed; no installer executed
+<end of output>
+Test time =   0.46 sec
+----------------------------------------------------------
+Test Passed.
+"update_authenticode" end time: Oct 24 12:39 Coordinated Universal Time
+"update_authenticode" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Oct 24 12:39 Coordinated Universal Time

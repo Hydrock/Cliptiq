@@ -1,0 +1,11 @@
+{
+  "runtime_source": "3ac983131e1a167908f4c11ab43db3a62bbc20e7",
+  "ci_run": 40094637399,
+  "reports": 4,
+  "hosted_digests_verified": 640,
+  "local_line_ending_only_hashes": 60,
+  "local_generated_bytecode_excluded_from_git_source_audit": [
+    "packaging/updates/__pycache__/patch_sparkle.cpython-314.pyc"
+  ],
+  "linux_paired_binary_hashes_match_ci": true
+}

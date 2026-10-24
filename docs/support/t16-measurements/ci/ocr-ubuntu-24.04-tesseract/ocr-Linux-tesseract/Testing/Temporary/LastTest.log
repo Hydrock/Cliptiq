@@ -1,0 +1,98 @@
+Start testing: Oct 24 14:13 UTC
+----------------------------------------------------------
+55/59 Testing: ocr
+55/59 Test: ocr
+Command: "/home/runner/work/Cliptiq/Cliptiq/out/ocr-Linux-tesseract/ocr_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/ocr-Linux-tesseract
+"ocr" start time: Oct 24 14:13 UTC
+Output:
+----------------------------------------------------------
+OCR Unicode, empty Done, limits, cancel, supersession, privacy and deletion passed
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"ocr" end time: Oct 24 14:13 UTC
+"ocr" time elapsed: 00:00:00
+----------------------------------------------------------
+
+56/59 Testing: fts
+56/59 Test: fts
+Command: "/home/runner/work/Cliptiq/Cliptiq/out/ocr-Linux-tesseract/fts_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/ocr-Linux-tesseract
+"fts" start time: Oct 24 14:13 UTC
+Output:
+----------------------------------------------------------
+companion index isolation, invalidation, recovery and Base compatibility passed
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"fts" end time: Oct 24 14:13 UTC
+"fts" time elapsed: 00:00:00
+----------------------------------------------------------
+
+57/59 Testing: ocr_queue
+57/59 Test: ocr_queue
+Command: "/home/runner/work/Cliptiq/Cliptiq/out/ocr-Linux-tesseract/ocr_queue_test"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/ocr-Linux-tesseract
+"ocr_queue" start time: Oct 24 14:13 UTC
+Output:
+----------------------------------------------------------
+async privacy revocation prevents publication
+<end of output>
+Test time =   0.42 sec
+----------------------------------------------------------
+Test Passed.
+"ocr_queue" end time: Oct 24 14:13 UTC
+"ocr_queue" time elapsed: 00:00:00
+----------------------------------------------------------
+
+58/59 Testing: native_ocr
+58/59 Test: native_ocr
+Command: "/home/runner/work/Cliptiq/Cliptiq/out/ocr-Linux-tesseract/native_ocr_test" "/home/runner/work/Cliptiq/Cliptiq/.toolchains/ocr/install-Linux/tessdata" "/home/runner/work/Cliptiq/Cliptiq/tests/fixtures/ocr"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/ocr-Linux-tesseract
+"native_ocr" start time: Oct 24 14:13 UTC
+Output:
+----------------------------------------------------------
+Error in pixReadMemTiff: function not present
+Error in pixReadMem: tiff: no pix returned
+Error in pixaGenerateFontFromString: pix not made
+Error in bmfCreate: font pixa not made
+Warning in changeFormatForMissingLib: png library missing; output bmp format
+eng: fixture result: Cliptig clipboard 123
+
+Error in pixReadMemTiff: function not present
+Error in pixReadMem: tiff: no pix returned
+Error in pixaGenerateFontFromString: pix not made
+Error in bmfCreate: font pixa not made
+Warning in changeFormatForMissingLib: png library missing; output bmp format
+eng: recognized
+rus: fixture result: Привет мир 123
+
+rus: recognized
+<end of output>
+Test time =   0.17 sec
+----------------------------------------------------------
+Test Passed.
+"native_ocr" end time: Oct 24 14:13 UTC
+"native_ocr" time elapsed: 00:00:00
+----------------------------------------------------------
+
+59/59 Testing: fts_transaction_race
+59/59 Test: fts_transaction_race
+Command: "/home/runner/work/Cliptiq/Cliptiq/out/ocr-Linux-tesseract/fts_transaction_race"
+Directory: /home/runner/work/Cliptiq/Cliptiq/out/ocr-Linux-tesseract
+"fts_transaction_race" start time: Oct 24 14:13 UTC
+Output:
+----------------------------------------------------------
+index gate spans complete main deletion transaction
+<end of output>
+Test time =   1.01 sec
+----------------------------------------------------------
+Test Passed.
+"fts_transaction_race" end time: Oct 24 14:13 UTC
+"fts_transaction_race" time elapsed: 00:00:01
+----------------------------------------------------------
+
+End testing: Oct 24 14:13 UTC

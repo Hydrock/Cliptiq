@@ -1,0 +1,23 @@
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+    Start 28: media_review_clear
+1/3 Test #28: media_review_clear ...............***Failed    1.04 sec
+take(list_history(db)).empty()
+
+    Start 29: media_review_root
+2/3 Test #29: media_review_root ................***Failed    1.04 sec
+take(list_history(db)).empty()
+
+    Start 30: media_review_error
+3/3 Test #30: media_review_error ...............***Failed    0.13 sec
+status.status==CapabilityStatus::Unavailable
+
+
+0% tests passed, 3 tests failed out of 3
+
+Total Test time (real) =   2.26 sec
+
+The following tests FAILED:
+	 28 - media_review_clear (Failed)
+	 29 - media_review_root (Failed)
+	 30 - media_review_error (Failed)
+Errors while running CTest

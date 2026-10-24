@@ -1,0 +1,19 @@
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+    Start 5: snippets
+1/1 Test #5: snippets .........................***Failed    0.08 sec
+PASS folder_snippet_crud_unicode_multiline_and_entity_cas
+PASS reorder_move_normalizes_duplicates_atomically
+PASS disabled_menu_and_folder_hotkeys_cleanup
+PASS limits_invalid_utf8_and_no_partial_revision
+PASS restart_and_v1_migration_preserve_old_data
+legacy snippet edit=0 folder rename=0
+FAIL legacy_sparse_positions_allow_content_edits_and_repair_order: edited&&renamed
+
+
+0% tests passed, 1 tests failed out of 1
+
+Total Test time (real) =   0.10 sec
+
+The following tests FAILED:
+	  5 - snippets (Failed)
+Errors while running CTest

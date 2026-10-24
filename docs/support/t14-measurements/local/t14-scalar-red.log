@@ -1,0 +1,20 @@
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+    Start 49: import
+1/1 Test #49: import ...........................***Failed    1.84 sec
+Traceback (most recent call last):
+  File "/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/tests/integration/import_fixtures.py", line 59, in <module>
+    d.commit();d.close();run('import',malformed,root/('meta-dest-'+col+'-'+str(value)),ok=False)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/tests/integration/import_fixtures.py", line 6, in run
+    assert (r.returncode==0)==ok,(args,r.stdout,r.stderr)
+           ^^^^^^^^^^^^^^^^^^^^^
+AssertionError: (('import', PosixPath('/tmp/cliptiq-import-test-x0bd_afc/metadata-createdAt-None'), PosixPath('/tmp/cliptiq-import-test-x0bd_afc/meta-dest-createdAt-None')), '2 history, 1 folders, 1 snippets; repeated=0\n', '')
+
+
+0% tests passed, 1 tests failed out of 1
+
+Total Test time (real) =   1.87 sec
+
+The following tests FAILED:
+	 49 - import (Failed)
+Errors while running CTest

@@ -1,0 +1,18 @@
+{
+  "linux-backend-sanitizers/LastTest.log": 57,
+  "macos-backend-sanitizers/LastTest.log": 44,
+  "windows-backend-asan/LastTest.log": 47,
+  "ocr-windows-2025-tesseract/ocr-Windows-tesseract/Testing/Temporary/LastTest.log": 5,
+  "ocr-windows-2025-native/ocr-Windows-native/Testing/Temporary/LastTest.log": 5,
+  "ocr-ubuntu-24.04-tesseract/ocr-Linux-tesseract/Testing/Temporary/LastTest.log": 5,
+  "ocr-macos-15-native/ocr-Darwin-native/Testing/Temporary/LastTest.log": 5,
+  "ocr-macos-15-intel-native/ocr-Darwin-native/Testing/Temporary/LastTest.log": 5,
+  "core-windows-2025/core-Windows-test/Testing/Temporary/LastTest.log": 47,
+  "core-windows-2025/core-Windows-release/Testing/Temporary/LastTest.log": 47,
+  "core-ubuntu-24.04/core-Linux-test/Testing/Temporary/LastTest.log": 57,
+  "core-ubuntu-24.04/core-Linux-release/Testing/Temporary/LastTest.log": 57,
+  "core-macos-15-intel/core-Darwin-test/Testing/Temporary/LastTest.log": 44,
+  "core-macos-15-intel/core-Darwin-release/Testing/Temporary/LastTest.log": 44,
+  "core-macos-15/core-Darwin-test/Testing/Temporary/LastTest.log": 44,
+  "core-macos-15/core-Darwin-release/Testing/Temporary/LastTest.log": 44
+}

@@ -1,0 +1,185 @@
+{
+  "schema_version": 1,
+  "target": "windows",
+  "arch": "x86_64",
+  "toolchain": null,
+  "flags": null,
+  "app_bytes": 11390743,
+  "archive_bytes": 5319390,
+  "dependency_delta_bytes": null,
+  "ocr_bytes": 0,
+  "total_offline_bytes": null,
+  "idle_memory_bytes": null,
+  "startup_ms": null,
+  "measurement_scope": "candidate app-owned files; included models counted once; clean-consumer system delta unverified",
+  "archive_sha256": "73effd36f3a0c7bf588d3416747ee9f5e8d874a6db78d2ce2b0cea781f061ded",
+  "files": [
+    {
+      "path": "cliptiq-package.json",
+      "bytes": 3142,
+      "sha256": "d2fcc1a11bd2fcca4a3ca1ccf7a472da0396c3a80114b03f8221ea9c10714b8f"
+    },
+    {
+      "path": "Cliptiq.exe",
+      "bytes": 3390976,
+      "sha256": "4606cae7d9676c2c41001d65235603fd42a135f39988260bc93b8980de09b354"
+    },
+    {
+      "path": "licenses/libgrapheme-ISC.txt",
+      "bytes": 760,
+      "sha256": "2665f9170b28064c14a31c1c7a0fa27f3689eaad5498d0adce8781d502425073"
+    },
+    {
+      "path": "licenses/ocr/Leptonica-BSD.txt",
+      "bytes": 1521,
+      "sha256": "87829abb5bbb00b55a107365da89e9a33f86c4250169e5a1e5588505be7d5806"
+    },
+    {
+      "path": "licenses/ocr/pins.json",
+      "bytes": 866,
+      "sha256": "a5abe748ce7d2020117e8949099aa1b8e061cb32f0bbb74414f73b6754b5e186"
+    },
+    {
+      "path": "licenses/ocr/Tesseract-Apache-2.0.txt",
+      "bytes": 11358,
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    {
+      "path": "licenses/THIRD_PARTY_NOTICES.md",
+      "bytes": 4491,
+      "sha256": "59779f1d823707e180b2a33c355f5193efcc0de835367e488325d1039b860f35"
+    },
+    {
+      "path": "licenses/TinyXML2-zlib.txt",
+      "bytes": 808,
+      "sha256": "9332252e9b9e46db8285d4a3f0bf25f139bf1dca6781b956d57f2302efca6432"
+    },
+    {
+      "path": "licenses/Unicode.txt",
+      "bytes": 1995,
+      "sha256": "abf84f74dea2812799e1dbef7f0581adf7db244881e4febb8684f441568da0ad"
+    },
+    {
+      "path": "tessdata/eng.traineddata",
+      "bytes": 4113088,
+      "sha256": "7d4322bd2a7749724879683fc3912cb542f19906c83bcc1a52132556427170b2"
+    },
+    {
+      "path": "tessdata/rus.traineddata",
+      "bytes": 3861738,
+      "sha256": "e16e5e036cce1d9ec2b00063cf8b54472625b9e14d893a169e2b0dedeb4df225"
+    }
+  ],
+  "symlinks": [],
+  "runtime": {},
+  "budget_violations": [],
+  "variant": "ocr",
+  "included_ocr_bytes": 7974826,
+  "distribution_manifest": {
+    "schema_version": 1,
+    "target": "windows",
+    "arch": "x86_64",
+    "variant": "ocr",
+    "version": "0.1.0",
+    "source_commit": "5380462ede50273817be0dbcb4a2e832fabdf93b",
+    "source_dirty": false,
+    "manual_acceptance": "open",
+    "release_ready": false,
+    "signature": "unsigned candidate",
+    "project_license": "OPEN: no new project license selected by packaging",
+    "clean_machine_dependency_delta_bytes": null,
+    "toolchain": {
+      "cmake": "cmake version 4.4.4",
+      "platform": "Windows-2025Server-10.0.26100-SP0",
+      "configuration": [
+        "CLIPTIQ_OCR_ENGINE:STRING=tesseract",
+        "CMAKE_CXX_COMPILER:FILEPATH=C:/Program Files/Microsoft Visual Studio/18/Enterprise/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/cl.exe",
+        "CMAKE_CXX_FLAGS_MINSIZEREL:STRING=/O1 /Ob1 /DNDEBUG",
+        "ocr_index:BOOL=ON"
+      ]
+    },
+    "files": [
+      {
+        "path": "Cliptiq.exe",
+        "bytes": 3390976,
+        "sha256": "4606cae7d9676c2c41001d65235603fd42a135f39988260bc93b8980de09b354"
+      },
+      {
+        "path": "licenses/libgrapheme-ISC.txt",
+        "bytes": 760,
+        "sha256": "2665f9170b28064c14a31c1c7a0fa27f3689eaad5498d0adce8781d502425073"
+      },
+      {
+        "path": "licenses/ocr/Leptonica-BSD.txt",
+        "bytes": 1521,
+        "sha256": "87829abb5bbb00b55a107365da89e9a33f86c4250169e5a1e5588505be7d5806"
+      },
+      {
+        "path": "licenses/ocr/pins.json",
+        "bytes": 866,
+        "sha256": "a5abe748ce7d2020117e8949099aa1b8e061cb32f0bbb74414f73b6754b5e186"
+      },
+      {
+        "path": "licenses/ocr/Tesseract-Apache-2.0.txt",
+        "bytes": 11358,
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+      },
+      {
+        "path": "licenses/THIRD_PARTY_NOTICES.md",
+        "bytes": 4491,
+        "sha256": "59779f1d823707e180b2a33c355f5193efcc0de835367e488325d1039b860f35"
+      },
+      {
+        "path": "licenses/TinyXML2-zlib.txt",
+        "bytes": 808,
+        "sha256": "9332252e9b9e46db8285d4a3f0bf25f139bf1dca6781b956d57f2302efca6432"
+      },
+      {
+        "path": "licenses/Unicode.txt",
+        "bytes": 1995,
+        "sha256": "abf84f74dea2812799e1dbef7f0581adf7db244881e4febb8684f441568da0ad"
+      },
+      {
+        "path": "tessdata/eng.traineddata",
+        "bytes": 4113088,
+        "sha256": "7d4322bd2a7749724879683fc3912cb542f19906c83bcc1a52132556427170b2"
+      },
+      {
+        "path": "tessdata/rus.traineddata",
+        "bytes": 3861738,
+        "sha256": "e16e5e036cce1d9ec2b00063cf8b54472625b9e14d893a169e2b0dedeb4df225"
+      }
+    ],
+    "symlinks": [],
+    "binaries": [
+      {
+        "path": "Cliptiq.exe",
+        "format": "pe",
+        "arch": "x86_64",
+        "imports": [
+          "GDI32.dll",
+          "COMCTL32.dll",
+          "USER32.dll",
+          "ole32.dll",
+          "SHELL32.dll",
+          "COMDLG32.dll",
+          "WINHTTP.dll",
+          "ADVAPI32.dll",
+          "KERNEL32.dll"
+        ],
+        "rpaths": []
+      }
+    ],
+    "system_dependencies": [
+      "GDI32.dll",
+      "COMCTL32.dll",
+      "USER32.dll",
+      "ole32.dll",
+      "SHELL32.dll",
+      "COMDLG32.dll",
+      "WINHTTP.dll",
+      "ADVAPI32.dll",
+      "KERNEL32.dll"
+    ]
+  }
+}

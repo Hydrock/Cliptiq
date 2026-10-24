@@ -1,0 +1,44 @@
+Preset CMake variables:
+
+  BUILD_TESTING="ON"
+  CMAKE_BUILD_TYPE="Debug"
+
+-- Configuring done (2.7s)
+-- Generating done (0.8s)
+-- Build files have been written to: /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+[1/4] Building CXX object CMakeFiles/fts_test.dir/tests/unit/fts_test.cpp.o
+FAILED: CMakeFiles/fts_test.dir/tests/unit/fts_test.cpp.o 
+/usr/bin/c++  -I"/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/include" -I"/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/.toolchains/sqlite" -g -std=c++17 -MD -MT CMakeFiles/fts_test.dir/tests/unit/fts_test.cpp.o -MF CMakeFiles/fts_test.dir/tests/unit/fts_test.cpp.o.d -o CMakeFiles/fts_test.dir/tests/unit/fts_test.cpp.o -c '/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/tests/unit/fts_test.cpp'
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/tests/unit/fts_test.cpp:1:10: fatal error: cliptiq/index.hpp: No such file or directory
+    1 | #include "cliptiq/index.hpp"
+      |          ^~~~~~~~~~~~~~~~~~~
+compilation terminated.
+[2/4] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/ocr.cpp.o
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/src/ocr.cpp: In function ‘cliptiq::Result<std::__cxx11::basic_string<char> > cliptiq::truncate_ocr_text(const std::string&)’:
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/src/ocr.cpp:27:3: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+   27 |   if((n==3&&cp<0x800)||(n==4&&cp<0x10000)||(cp>=0xd800&&cp<=0xdfff)||cp>0x10ffff)return Error{ErrorCode::Corrupt,"Noncanonical OCR UTF-8"};i+=n;
+      |   ^~
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/src/ocr.cpp:27:140: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   27 |   if((n==3&&cp<0x800)||(n==4&&cp<0x10000)||(cp>=0xd800&&cp<=0xdfff)||cp>0x10ffff)return Error{ErrorCode::Corrupt,"Noncanonical OCR UTF-8"};i+=n;
+      |                                                                                                                                            ^
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/src/ocr.cpp: In lambda function:
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/src/ocr.cpp:37:2: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+   37 |  if(static_cast<unsigned>(state)>3)return Error{ErrorCode::Corrupt,"Invalid OCR state"};return OcrValue{state,q.text(1)};
+      |  ^~
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/src/ocr.cpp:37:89: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   37 |  if(static_cast<unsigned>(state)>3)return Error{ErrorCode::Corrupt,"Invalid OCR state"};return OcrValue{state,q.text(1)};
+      |                                                                                         ^~~~~~
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/src/ocr.cpp: In function ‘cliptiq::Result<void> cliptiq::recognize(Store&, const EntryId&, uint64_t, const ImageInput&, OcrBackend&, const CapturePolicy&, const Capabilities&, const std::atomic_bool&)’:
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/src/ocr.cpp:75:2: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+   75 |  if(!published)return published.error();if(!published.value())return Error{ErrorCode::Busy,"OCR superseded, cancelled or removed"};
+      |  ^~
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/src/ocr.cpp:75:41: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   75 |  if(!published)return published.error();if(!published.value())return Error{ErrorCode::Busy,"OCR superseded, cancelled or removed"};
+      |                                         ^~
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/src/ocr.cpp:76:2: warning: this ‘if’ clause does not guard... [-Wmisleading-indentation]
+   76 |  if(!result)return result.error();return {};
+      |  ^~
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/src/ocr.cpp:76:35: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the ‘if’
+   76 |  if(!result)return result.error();return {};
+      |                                   ^~~~~~
+ninja: build stopped: subcommand failed.

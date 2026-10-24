@@ -1,0 +1,381 @@
+﻿2026-10-24T09:33:29.4366960Z Current runner version: '2.338.0'
+2026-10-24T09:33:29.4384770Z ##[group]Runner Image Provisioner
+2026-10-24T09:33:29.4385410Z Hosted Compute Agent
+2026-10-24T09:33:29.4385780Z Version: 20260828.587
+2026-10-24T09:33:29.4386190Z Commit: abac92662cab4cc7352de4f9f9d2e2419aad9c29
+2026-10-24T09:33:29.4386650Z Build Date: 2026-08-28T16:44:25Z
+2026-10-24T09:33:29.4387080Z Worker ID: {46f1313e-6174-4892-b73b-f9e69f97274a}
+2026-10-24T09:33:29.4387530Z Azure Region: westus
+2026-10-24T09:33:29.4387900Z ##[endgroup]
+2026-10-24T09:33:29.4388790Z ##[group]Operating System
+2026-10-24T09:33:29.4389180Z macOS
+2026-10-24T09:33:29.4389500Z 15.7.9
+2026-10-24T09:33:29.4389820Z 24G830
+2026-10-24T09:33:29.4390140Z ##[endgroup]
+2026-10-24T09:33:29.4390490Z ##[group]Runner Image
+2026-10-24T09:33:29.4390870Z Image: macos-15-arm64
+2026-10-24T09:33:29.4391240Z Version: 20260907.0337.1
+2026-10-24T09:33:29.4392160Z Included Software: https://github.com/actions/runner-images/blob/macos-15-arm64/20260907.0337/images/macos/macos-15-arm64-Readme.md
+2026-10-24T09:33:29.4393200Z Image Release: https://github.com/actions/runner-images/releases/tag/macos-15-arm64%2F20260907.0337
+2026-10-24T09:33:29.4393850Z ##[endgroup]
+2026-10-24T09:33:29.4394590Z ##[group]GITHUB_TOKEN Permissions
+2026-10-24T09:33:29.4395930Z Contents: read
+2026-10-24T09:33:29.4396290Z Metadata: read
+2026-10-24T09:33:29.4396640Z ##[endgroup]
+2026-10-24T09:33:29.4398110Z Secret source: Actions
+2026-10-24T09:33:29.4398660Z Cache mode: write
+2026-10-24T09:33:29.4399110Z Prepare workflow directory
+2026-10-24T09:33:29.4665810Z Prepare all required actions
+2026-10-24T09:33:29.4703190Z Getting action download info
+2026-10-24T09:33:29.8674170Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-10-24T09:33:30.2289230Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-10-24T09:33:30.4308120Z Complete job name: history (macos-15)
+2026-10-24T09:33:30.4826170Z ##[group]Run actions/checkout@v4
+2026-10-24T09:33:30.4826910Z with:
+2026-10-24T09:33:30.4827230Z   repository: Hydrock/Cliptiq
+2026-10-24T09:33:30.4829840Z   token: ***
+2026-10-24T09:33:30.4830160Z   ssh-strict: true
+2026-10-24T09:33:30.4830480Z   ssh-user: git
+2026-10-24T09:33:30.4830810Z   persist-credentials: true
+2026-10-24T09:33:30.4831170Z   clean: true
+2026-10-24T09:33:30.4831500Z   sparse-checkout-cone-mode: true
+2026-10-24T09:33:30.4831870Z   fetch-depth: 1
+2026-10-24T09:33:30.4832180Z   fetch-tags: false
+2026-10-24T09:33:30.4832500Z   show-progress: true
+2026-10-24T09:33:30.4832830Z   lfs: false
+2026-10-24T09:33:30.4833130Z   submodules: false
+2026-10-24T09:33:30.4833450Z   set-safe-directory: true
+2026-10-24T09:33:30.4833820Z   allow-unsafe-pr-checkout: false
+2026-10-24T09:33:30.4834300Z ##[endgroup]
+2026-10-24T09:33:30.9283400Z Syncing repository: Hydrock/Cliptiq
+2026-10-24T09:33:30.9285220Z ##[group]Getting Git version info
+2026-10-24T09:33:30.9286070Z Working directory is '/Users/runner/work/Cliptiq/Cliptiq'
+2026-10-24T09:33:30.9287170Z [command]/opt/homebrew/bin/git version
+2026-10-24T09:33:30.9815500Z git version 2.55.0
+2026-10-24T09:33:30.9835120Z ##[endgroup]
+2026-10-24T09:33:30.9842050Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/4ed7aea6-32be-40e7-a9ae-13013c86f2a5/.gitconfig'
+2026-10-24T09:33:30.9850470Z Temporarily overriding HOME='/Users/runner/work/_temp/4ed7aea6-32be-40e7-a9ae-13013c86f2a5' before making global git config changes
+2026-10-24T09:33:30.9852860Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-24T09:33:30.9854790Z [command]/opt/homebrew/bin/git config --global --add safe.directory /Users/runner/work/Cliptiq/Cliptiq
+2026-10-24T09:33:30.9985610Z Deleting the contents of '/Users/runner/work/Cliptiq/Cliptiq'
+2026-10-24T09:33:30.9987770Z ##[group]Initializing the repository
+2026-10-24T09:33:30.9992520Z [command]/opt/homebrew/bin/git init /Users/runner/work/Cliptiq/Cliptiq
+2026-10-24T09:33:31.0194060Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-24T09:33:31.0203700Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-24T09:33:31.0206450Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-24T09:33:31.0208600Z hint: call:
+2026-10-24T09:33:31.0210080Z hint:
+2026-10-24T09:33:31.0211460Z hint: 	git config --global init.defaultBranch <name>
+2026-10-24T09:33:31.0213350Z hint:
+2026-10-24T09:33:31.0214420Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-24T09:33:31.0216200Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-24T09:33:31.0217490Z hint:
+2026-10-24T09:33:31.0218150Z hint: 	git branch -m <name>
+2026-10-24T09:33:31.0218940Z hint:
+2026-10-24T09:33:31.0220000Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-24T09:33:31.0221770Z Initialized empty Git repository in /Users/runner/work/Cliptiq/Cliptiq/.git/
+2026-10-24T09:33:31.0224700Z [command]/opt/homebrew/bin/git remote add origin https://github.com/Hydrock/Cliptiq
+2026-10-24T09:33:31.0278610Z ##[endgroup]
+2026-10-24T09:33:31.0279870Z ##[group]Disabling automatic garbage collection
+2026-10-24T09:33:31.0281080Z [command]/opt/homebrew/bin/git config --local gc.auto 0
+2026-10-24T09:33:31.0340320Z ##[endgroup]
+2026-10-24T09:33:31.0342270Z ##[group]Setting up auth
+2026-10-24T09:33:31.0344490Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-24T09:33:31.0401290Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-24T09:33:31.1463090Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-24T09:33:31.1521090Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-24T09:33:31.2331010Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-24T09:33:31.2392630Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-24T09:33:31.3399240Z [command]/opt/homebrew/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-24T09:33:31.3484060Z ##[endgroup]
+2026-10-24T09:33:31.3485390Z ##[group]Fetching the repository
+2026-10-24T09:33:31.3488030Z [command]/opt/homebrew/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +e017a5ff276510bbd0a2f3c1b53c500c085d8f37:refs/remotes/origin/codex/portability-plan
+2026-10-24T09:33:31.8739230Z From https://github.com/Hydrock/Cliptiq
+2026-10-24T09:33:31.8741070Z  * [new ref]         e017a5ff276510bbd0a2f3c1b53c500c085d8f37 -> origin/codex/portability-plan
+2026-10-24T09:33:31.8743230Z ##[endgroup]
+2026-10-24T09:33:31.8743770Z ##[group]Determining the checkout info
+2026-10-24T09:33:31.8744280Z ##[endgroup]
+2026-10-24T09:33:31.8747670Z [command]/opt/homebrew/bin/git sparse-checkout disable
+2026-10-24T09:33:31.8819240Z [command]/opt/homebrew/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-24T09:33:31.8876340Z ##[group]Checking out the ref
+2026-10-24T09:33:31.8878830Z [command]/opt/homebrew/bin/git checkout --progress --force -B codex/portability-plan refs/remotes/origin/codex/portability-plan
+2026-10-24T09:33:32.1916900Z Switched to a new branch 'codex/portability-plan'
+2026-10-24T09:33:32.1924390Z branch 'codex/portability-plan' set up to track 'origin/codex/portability-plan'.
+2026-10-24T09:33:32.1929410Z ##[endgroup]
+2026-10-24T09:33:32.2042410Z [command]/opt/homebrew/bin/git log -1 --format=%H
+2026-10-24T09:33:32.2067780Z e017a5ff276510bbd0a2f3c1b53c500c085d8f37
+2026-10-24T09:33:32.2252430Z ##[group]Run python tools/fetch-footprint-deps.py
+2026-10-24T09:33:32.2253140Z [36;1mpython tools/fetch-footprint-deps.py[0m
+2026-10-24T09:33:32.2297660Z shell: /bin/bash -e {0}
+2026-10-24T09:33:32.2297930Z ##[endgroup]
+2026-10-24T09:33:33.3839050Z /Users/runner/work/Cliptiq/Cliptiq/.toolchains/sqlite
+2026-10-24T09:33:33.3968110Z ##[group]Run cmake --preset test
+2026-10-24T09:33:33.3968390Z [36;1mcmake --preset test[0m
+2026-10-24T09:33:33.4017290Z shell: /bin/bash -e {0}
+2026-10-24T09:33:33.4017520Z ##[endgroup]
+2026-10-24T09:33:35.5588230Z -- The C compiler identification is AppleClang 17.0.0.17000013
+2026-10-24T09:33:36.8717600Z -- The CXX compiler identification is AppleClang 17.0.0.17000013
+2026-10-24T09:33:36.9041550Z -- Detecting C compiler ABI info
+2026-10-24T09:33:37.0740870Z -- Detecting C compiler ABI info - done
+2026-10-24T09:33:37.1114380Z -- Check for working C compiler: /usr/bin/cc - skipped
+2026-10-24T09:33:37.1119340Z -- Detecting C compile features
+2026-10-24T09:33:37.1124970Z -- Detecting C compile features - done
+2026-10-24T09:33:37.1199280Z -- Detecting CXX compiler ABI info
+2026-10-24T09:33:37.2478320Z -- Detecting CXX compiler ABI info - done
+2026-10-24T09:33:37.2855300Z -- Check for working CXX compiler: /usr/bin/c++ - skipped
+2026-10-24T09:33:37.2857110Z -- Detecting CXX compile features
+2026-10-24T09:33:37.2861780Z -- Detecting CXX compile features - done
+2026-10-24T09:33:37.3272110Z -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+2026-10-24T09:33:37.4839460Z -- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+2026-10-24T09:33:37.5088750Z -- Found Threads: TRUE
+2026-10-24T09:33:37.6354340Z -- The OBJCXX compiler identification is AppleClang 17.0.0.17000013
+2026-10-24T09:33:37.6441770Z -- Detecting OBJCXX compiler ABI info
+2026-10-24T09:33:37.8136150Z -- Detecting OBJCXX compiler ABI info - done
+2026-10-24T09:33:37.8568770Z -- Check for working OBJCXX compiler: /usr/bin/c++ - skipped
+2026-10-24T09:33:38.2445770Z -- Found Python3: /opt/homebrew/Frameworks/Python.framework/Versions/3.14/bin/python3.14 (found version "3.14.7") found components: Interpreter
+2026-10-24T09:33:38.8808690Z -- Configuring done (5.4s)
+2026-10-24T09:33:38.9614950Z -- Generating done (0.1s)
+2026-10-24T09:33:38.9722290Z -- Build files have been written to: /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-test
+2026-10-24T09:33:38.9918080Z ##[group]Run cmake --build --preset test
+2026-10-24T09:33:38.9918640Z [36;1mcmake --build --preset test[0m
+2026-10-24T09:33:39.0019250Z shell: /bin/bash -e {0}
+2026-10-24T09:33:39.0019650Z ##[endgroup]
+2026-10-24T09:33:39.2322850Z [1/103] Building C object CMakeFiles/cliptiq_grapheme.dir/third_party/libgrapheme/src/utf8.c.o
+2026-10-24T09:33:39.2375250Z [2/103] Building C object CMakeFiles/cliptiq_grapheme.dir/third_party/libgrapheme/src/cliptiq-util.c.o
+2026-10-24T09:33:39.2926050Z [3/103] Building C object CMakeFiles/cliptiq_grapheme.dir/third_party/libgrapheme/src/character.c.o
+2026-10-24T09:33:40.4622540Z [4/103] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/sha256.cpp.o
+2026-10-24T09:33:41.0149380Z [5/103] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/storage.cpp.o
+2026-10-24T09:33:41.5248640Z [6/103] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/history.cpp.o
+2026-10-24T09:33:41.8614610Z [7/103] Linking C static library libcliptiq_grapheme.a
+2026-10-24T09:33:41.9151510Z [8/103] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/policy.cpp.o
+2026-10-24T09:33:42.5045140Z [9/103] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/menu.cpp.o
+2026-10-24T09:33:42.5346280Z [10/103] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/menu_preview.cpp.o
+2026-10-24T09:33:43.1796550Z [11/103] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/paste.cpp.o
+2026-10-24T09:33:43.6216460Z [12/103] Building C object CMakeFiles/cliptiq_sqlite.dir/.toolchains/sqlite/sqlite3.c.o
+2026-10-24T09:33:43.7458270Z [13/103] Linking C static library libcliptiq_sqlite.a
+2026-10-24T09:33:43.9541660Z [14/103] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/hotkeys.cpp.o
+2026-10-24T09:33:44.0368160Z [15/103] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/settings.cpp.o
+2026-10-24T09:33:44.3874570Z [16/103] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/snippets.cpp.o
+2026-10-24T09:33:44.5636070Z [17/103] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/locale.cpp.o
+2026-10-24T09:33:44.5737770Z [18/103] Building CXX object CMakeFiles/cliptiq_xml_parser.dir/third_party/tinyxml2/tinyxml2.cpp.o
+2026-10-24T09:33:44.6555520Z [19/103] Linking CXX static library libcliptiq_xml_parser.a
+2026-10-24T09:33:44.7811840Z [20/103] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/locale_catalogue.cpp.o
+2026-10-24T09:33:45.4435840Z [21/103] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/media.cpp.o
+2026-10-24T09:33:45.8009560Z [22/103] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/editor.cpp.o
+2026-10-24T09:33:45.9536900Z [23/103] Linking CXX static library libcliptiq_core.a
+2026-10-24T09:33:46.3527630Z [24/103] Building CXX object CMakeFiles/cliptiq_xml.dir/core/src/xml_file.cpp.o
+2026-10-24T09:33:46.4248320Z [25/103] Building CXX object CMakeFiles/cliptiq_xml.dir/core/src/xml.cpp.o
+2026-10-24T09:33:46.7485660Z [26/103] Building CXX object CMakeFiles/cliptiq_lifecycle.dir/platform/Lifecycle.cpp.o
+2026-10-24T09:33:46.7586650Z [27/103] Building CXX object CMakeFiles/cliptiq_lifecycle.dir/platform/posix/LifecycleLock.cpp.o
+2026-10-24T09:33:49.4114880Z [28/103] Building OBJCXX object CMakeFiles/cliptiq_lifecycle.dir/platform/macos/Lifecycle.mm.o
+2026-10-24T09:33:49.6597690Z [29/103] Building OBJCXX object CMakeFiles/cliptiq_settings_native.dir/platform/macos/Hotkeys.mm.o
+2026-10-24T09:33:49.8935460Z [30/103] Building OBJCXX object CMakeFiles/cliptiq_settings_native.dir/platform/macos/Settings.mm.o
+2026-10-24T09:33:50.3216380Z [31/103] Building OBJCXX object CMakeFiles/cliptiq_menu_native.dir/platform/macos/Menu.mm.o
+2026-10-24T09:33:50.7545560Z [32/103] Building OBJCXX object CMakeFiles/cliptiq_paste_native.dir/platform/macos/Paste.mm.o
+2026-10-24T09:33:50.8450560Z [33/103] Linking CXX static library libcliptiq_xml.a
+2026-10-24T09:33:52.0837900Z [34/103] Building OBJCXX object CMakeFiles/cliptiq_macos.dir/platform/macos/Application.mm.o
+2026-10-24T09:33:52.1039990Z [35/103] Building OBJCXX object CMakeFiles/cliptiq_macos.dir/platform/macos/Clipboard.mm.o
+2026-10-24T09:33:52.1141810Z /Users/runner/work/Cliptiq/Cliptiq/platform/macos/Clipboard.mm:121:62: warning: use of GNU ?: conditional expression extension, omitting middle operand [-Wgnu-conditional-omitted-operand]
+2026-10-24T09:33:52.1250910Z   121 |     NSArray<NSPasteboardItem*>* items=board.pasteboardItems ?: @[];
+2026-10-24T09:33:52.1367590Z       |                                                              ^
+2026-10-24T09:33:52.1502640Z /Users/runner/work/Cliptiq/Cliptiq/platform/macos/Clipboard.mm:122:50: warning: use of GNU ?: conditional expression extension, omitting middle operand [-Wgnu-conditional-omitted-operand]
+2026-10-24T09:33:52.1626860Z   122 |     NSArray<NSPasteboardType>* root=board.types ?: @[];
+2026-10-24T09:33:52.1736280Z       |                                                  ^
+2026-10-24T09:33:52.1866410Z 2 warnings generated.
+2026-10-24T09:33:52.1980050Z [36/103] Building OBJCXX object CMakeFiles/cliptiq_media_native.dir/platform/macos/Media.mm.o
+2026-10-24T09:33:52.2219970Z [37/103] Building CXX object CMakeFiles/cliptiq_media_native.dir/platform/Media.cpp.o
+2026-10-24T09:33:52.2346210Z [38/103] Linking CXX static library libcliptiq_lifecycle.a
+2026-10-24T09:33:52.3002120Z [39/103] Linking CXX static library libcliptiq_settings_native.a
+2026-10-24T09:33:52.3112070Z [40/103] Linking CXX static library libcliptiq_paste_native.a
+2026-10-24T09:33:52.3423300Z [41/103] Linking CXX static library libcliptiq_menu_native.a
+2026-10-24T09:33:52.3525930Z [42/103] Linking CXX static library libcliptiq_macos.a
+2026-10-24T09:33:52.4033130Z [43/103] Linking CXX static library libcliptiq_media_native.a
+2026-10-24T09:33:54.0562340Z [44/103] Building OBJCXX object CMakeFiles/cliptiq_editor_xml_native.dir/platform/macos/SnippetEditor.mm.o
+2026-10-24T09:33:54.0667910Z /Users/runner/work/Cliptiq/Cliptiq/platform/macos/SnippetEditor.mm:132:3: warning: 'auto' deduced as 'id' in declaration of 'node' [-Wauto-var-id]
+2026-10-24T09:33:54.0769450Z   132 |   auto node = [view itemAtRow:view.selectedRow];
+2026-10-24T09:33:54.0870490Z       |   ^~~~~~~~~
+2026-10-24T09:33:54.0972230Z /Users/runner/work/Cliptiq/Cliptiq/platform/macos/SnippetEditor.mm:359:11: warning: 'allowedFileTypes' is deprecated: first deprecated in macOS 12.0 - Use -allowedContentTypes instead [-Wdeprecated-declarations]
+2026-10-24T09:33:54.1074080Z   359 |     panel.allowedFileTypes = @[ @"xml" ];
+2026-10-24T09:33:54.1175190Z       |           ^
+2026-10-24T09:33:54.1293460Z /Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSSavePanel.h:286:49: note: 'allowedFileTypes' has been explicitly marked deprecated here
+2026-10-24T09:33:54.1396210Z   286 | @property (nullable, copy) NSArray<NSString *> *allowedFileTypes API_DEPRECATED("Use -allowedContentTypes instead", macos(10.3,12.0));
+2026-10-24T09:33:54.1522150Z       |                                                 ^
+2026-10-24T09:33:54.1623640Z 2 warnings generated.
+2026-10-24T09:33:54.1725440Z [45/103] Linking CXX static library libcliptiq_editor_xml_native.a
+2026-10-24T09:33:54.9944610Z [46/103] Building OBJCXX object CMakeFiles/native_xml_test.dir/tests/integration/native_xml_test.cpp.o
+2026-10-24T09:33:55.2782390Z [47/103] Building OBJCXX object CMakeFiles/cliptiq_editor_native.dir/platform/macos/SnippetEditor.mm.o
+2026-10-24T09:33:55.2886670Z /Users/runner/work/Cliptiq/Cliptiq/platform/macos/SnippetEditor.mm:132:3: warning: 'auto' deduced as 'id' in declaration of 'node' [-Wauto-var-id]
+2026-10-24T09:33:55.2989560Z   132 |   auto node = [view itemAtRow:view.selectedRow];
+2026-10-24T09:33:55.3091700Z       |   ^~~~~~~~~
+2026-10-24T09:33:55.3196320Z 1 warning generated.
+2026-10-24T09:33:55.5108070Z [48/103] Building CXX object CMakeFiles/xml_test.dir/tests/unit/xml_test.cpp.o
+2026-10-24T09:33:56.8968640Z [49/103] Building CXX object CMakeFiles/snippet_integration_test.dir/tests/integration/snippet_integration_test.cpp.o
+2026-10-24T09:33:57.5135990Z [50/103] Building OBJCXX object CMakeFiles/cliptiq_app.dir/platform/MenuHost.cpp.o
+2026-10-24T09:33:57.7049540Z [51/103] Building CXX object CMakeFiles/editor_test.dir/tests/unit/editor_test.cpp.o
+2026-10-24T09:33:57.7149910Z [52/103] Building OBJCXX object CMakeFiles/cliptiq_menu_host.dir/platform/MenuHost.cpp.o
+2026-10-24T09:33:58.8740170Z [53/103] Building OBJCXX object CMakeFiles/native_editor_test.dir/tests/integration/native_editor_test.cpp.o
+2026-10-24T09:33:59.0847430Z [54/103] Building CXX object CMakeFiles/snippets_test.dir/tests/unit/snippets_test.cpp.o
+2026-10-24T09:33:59.3983810Z [55/103] Building CXX object CMakeFiles/settings_test.dir/tests/unit/settings_test.cpp.o
+2026-10-24T09:33:59.8344380Z [56/103] Building OBJCXX object CMakeFiles/native_hotkeys_test.dir/tests/integration/native_hotkeys_test.cpp.o
+2026-10-24T09:34:00.4000360Z [57/103] Building OBJCXX object CMakeFiles/native_settings_test.dir/tests/integration/native_settings_test.cpp.o
+2026-10-24T09:34:00.6787830Z [58/103] Building CXX object CMakeFiles/hotkeys_test.dir/tests/unit/hotkeys_test.cpp.o
+2026-10-24T09:34:01.0579440Z [59/103] Building OBJCXX object CMakeFiles/native_paste_test.dir/tests/integration/native_paste_test.cpp.o
+2026-10-24T09:34:01.4672020Z [60/103] Building CXX object CMakeFiles/paste_test.dir/tests/unit/paste_test.cpp.o
+2026-10-24T09:34:01.4773560Z [61/103] Building CXX object CMakeFiles/grapheme_test.dir/tests/unit/grapheme_test.cpp.o
+2026-10-24T09:34:02.4517650Z [62/103] Building CXX object CMakeFiles/menu_preview_test.dir/tests/unit/menu_preview_test.cpp.o
+2026-10-24T09:34:02.4795330Z [63/103] Building CXX object CMakeFiles/media_test.dir/tests/unit/media_test.cpp.o
+2026-10-24T09:34:02.6201770Z [64/103] Building OBJCXX object CMakeFiles/native_menu_test.dir/tests/integration/native_menu_test.cpp.o
+2026-10-24T09:34:02.8715860Z [65/103] Building OBJCXX object CMakeFiles/paste_boundary_test.dir/tests/integration/macos_paste_boundary_test.mm.o
+2026-10-24T09:34:03.2260330Z [66/103] Building OBJCXX object CMakeFiles/menu_regression_test.dir/tests/integration/menu_regression_test.cpp.o
+2026-10-24T09:34:03.7010450Z [67/103] Building CXX object CMakeFiles/media_review_test.dir/tests/integration/media_review_test.cpp.o
+2026-10-24T09:34:03.7413150Z [68/103] Building CXX object CMakeFiles/lifecycle_test.dir/tests/unit/lifecycle_test.cpp.o
+2026-10-24T09:34:03.9642080Z [69/103] Building CXX object CMakeFiles/native_media_test.dir/tests/integration/native_media_test.cpp.o
+2026-10-24T09:34:04.2050520Z [70/103] Building CXX object CMakeFiles/menu_test.dir/tests/unit/menu_test.cpp.o
+2026-10-24T09:34:04.3155150Z [71/103] Linking CXX static library libcliptiq_editor_native.a
+2026-10-24T09:34:04.5383820Z [72/103] Linking CXX executable cliptiq_menu_host
+2026-10-24T09:34:04.7207070Z [73/103] Linking CXX executable Cliptiq.app/Contents/MacOS/Cliptiq
+2026-10-24T09:34:04.8828330Z [74/103] Linking CXX executable native_xml_test
+2026-10-24T09:34:04.9531640Z [75/103] Linking CXX executable xml_test
+2026-10-24T09:34:04.9633530Z ld: warning: ignoring duplicate libraries: 'libcliptiq_sqlite.a'
+2026-10-24T09:34:05.0969620Z [76/103] Linking CXX executable native_editor_test
+2026-10-24T09:34:05.1071240Z ld: warning: ignoring duplicate libraries: 'libcliptiq_sqlite.a'
+2026-10-24T09:34:05.1618190Z [77/103] Linking CXX executable snippet_integration_test
+2026-10-24T09:34:05.2322120Z [78/103] Linking CXX executable editor_test
+2026-10-24T09:34:05.3125010Z [79/103] Linking CXX executable snippets_test
+2026-10-24T09:34:05.4588090Z [80/103] Linking CXX executable native_settings_test
+2026-10-24T09:34:05.5937270Z [81/103] Linking CXX executable native_hotkeys_test
+2026-10-24T09:34:05.6841470Z [82/103] Linking CXX executable settings_test
+2026-10-24T09:34:05.7720540Z [83/103] Linking CXX executable hotkeys_test
+2026-10-24T09:34:05.9074440Z [84/103] Linking CXX executable native_paste_test
+2026-10-24T09:34:06.0780970Z [85/103] Linking CXX executable paste_boundary_test
+2026-10-24T09:34:06.1411590Z [86/103] Linking CXX executable paste_test
+2026-10-24T09:34:06.1914830Z [87/103] Linking CXX executable grapheme_test
+2026-10-24T09:34:06.3363920Z [88/103] Linking CXX executable native_menu_test
+2026-10-24T09:34:06.4369270Z [89/103] Building OBJCXX object CMakeFiles/macos_clipboard_manual.dir/tests/manual/macos_clipboard_manual.mm.o
+2026-10-24T09:34:06.5225790Z [90/103] Linking CXX executable menu_preview_test
+2026-10-24T09:34:06.5425370Z [91/103] Linking CXX executable menu_regression_test
+2026-10-24T09:34:06.5939230Z [92/103] Linking CXX executable media_test
+2026-10-24T09:34:06.7058970Z [93/103] Linking CXX executable lifecycle_test
+2026-10-24T09:34:06.8091090Z [94/103] Linking CXX executable native_media_test
+2026-10-24T09:34:06.8721610Z [95/103] Linking CXX executable menu_test
+2026-10-24T09:34:06.8930660Z [96/103] Linking CXX executable media_review_test
+2026-10-24T09:34:07.0234940Z [97/103] Linking CXX executable macos_clipboard_manual
+2026-10-24T09:34:07.7102760Z [98/103] Building CXX object CMakeFiles/history_test.dir/tests/unit/history_test.cpp.o
+2026-10-24T09:34:07.8322330Z [99/103] Linking CXX executable history_test
+2026-10-24T09:34:07.8828400Z [100/103] Building CXX object CMakeFiles/policy_test.dir/tests/unit/policy_test.cpp.o
+2026-10-24T09:34:08.0395450Z [101/103] Linking CXX executable policy_test
+2026-10-24T09:34:08.9122070Z [102/103] Building OBJCXX object CMakeFiles/macos_clipboard_test.dir/tests/integration/macos_clipboard_test.mm.o
+2026-10-24T09:34:09.0781940Z [103/103] Linking CXX executable macos_clipboard_test
+2026-10-24T09:34:09.0836410Z ld: warning: ignoring duplicate libraries: 'libcliptiq_sqlite.a'
+2026-10-24T09:34:09.1095180Z ##[group]Run ctest --preset test --output-on-failure
+2026-10-24T09:34:09.1095560Z [36;1mctest --preset test --output-on-failure[0m
+2026-10-24T09:34:09.1146260Z shell: /bin/bash -e {0}
+2026-10-24T09:34:09.1146900Z ##[endgroup]
+2026-10-24T09:34:09.2077940Z Test project /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-test
+2026-10-24T09:34:09.2105850Z       Start  1: xml_native
+2026-10-24T09:34:09.6756090Z  1/35 Test  #1: xml_native .......................   Passed    0.46 sec
+2026-10-24T09:34:09.6838550Z       Start  2: xml
+2026-10-24T09:34:09.7220210Z  2/35 Test  #2: xml ..............................   Passed    0.05 sec
+2026-10-24T09:34:09.7220920Z       Start  3: xml_bounded_scan
+2026-10-24T09:34:14.0656770Z  3/35 Test  #3: xml_bounded_scan .................   Passed    4.34 sec
+2026-10-24T09:34:14.0658290Z       Start  4: xml_interop
+2026-10-24T09:34:14.1882510Z  4/35 Test  #4: xml_interop ......................   Passed    0.12 sec
+2026-10-24T09:34:14.1884310Z       Start  5: editor_native
+2026-10-24T09:34:14.8123690Z  5/35 Test  #5: editor_native ....................   Passed    0.62 sec
+2026-10-24T09:34:14.8189800Z       Start  6: snippets_menu_hotkeys
+2026-10-24T09:34:14.8592050Z  6/35 Test  #6: snippets_menu_hotkeys ............   Passed    0.04 sec
+2026-10-24T09:34:14.8592760Z       Start  7: editor
+2026-10-24T09:34:15.0532420Z  7/35 Test  #7: editor ...........................   Passed    0.19 sec
+2026-10-24T09:34:15.0533470Z       Start  8: snippets
+2026-10-24T09:34:15.0829660Z  8/35 Test  #8: snippets .........................   Passed    0.03 sec
+2026-10-24T09:34:15.0830390Z       Start  9: settings_native
+2026-10-24T09:34:15.3882700Z  9/35 Test  #9: settings_native ..................   Passed    0.30 sec
+2026-10-24T09:34:15.4015670Z       Start 10: lifecycle_ui_ru
+2026-10-24T09:34:15.6943550Z 10/35 Test #10: lifecycle_ui_ru ..................   Passed    0.29 sec
+2026-10-24T09:34:15.6944930Z       Start 11: hotkeys_native
+2026-10-24T09:34:15.7435980Z 11/35 Test #11: hotkeys_native ...................   Passed    0.05 sec
+2026-10-24T09:34:15.7445890Z       Start 12: settings
+2026-10-24T09:34:15.7686880Z 12/35 Test #12: settings .........................   Passed    0.02 sec
+2026-10-24T09:34:15.7687770Z       Start 13: hotkeys
+2026-10-24T09:34:15.7745550Z 13/35 Test #13: hotkeys ..........................   Passed    0.01 sec
+2026-10-24T09:34:15.7746480Z       Start 14: paste_native
+2026-10-24T09:34:15.7835190Z 14/35 Test #14: paste_native .....................   Passed    0.01 sec
+2026-10-24T09:34:15.7837430Z       Start 15: paste_native_boundary
+2026-10-24T09:34:15.8291940Z 15/35 Test #15: paste_native_boundary ............   Passed    0.05 sec
+2026-10-24T09:34:15.8299760Z       Start 16: paste
+2026-10-24T09:34:15.8670440Z 16/35 Test #16: paste ............................   Passed    0.04 sec
+2026-10-24T09:34:15.8671580Z       Start 17: menu_unicode_conformance
+2026-10-24T09:34:15.8792890Z 17/35 Test #17: menu_unicode_conformance .........   Passed    0.01 sec
+2026-10-24T09:34:15.8793930Z       Start 18: menu_regression_context
+2026-10-24T09:34:16.3437100Z 18/35 Test #18: menu_regression_context ..........   Passed    0.46 sec
+2026-10-24T09:34:16.3495890Z       Start 19: paste_menu_status_lifecycle
+2026-10-24T09:34:16.7241820Z 19/35 Test #19: paste_menu_status_lifecycle ......   Passed    0.37 sec
+2026-10-24T09:34:16.7245100Z       Start 20: menu_native
+2026-10-24T09:34:17.2097670Z 20/35 Test #20: menu_native ......................   Passed    0.49 sec
+2026-10-24T09:34:17.2106950Z       Start 21: lifecycle
+2026-10-24T09:34:17.2284250Z 21/35 Test #21: lifecycle ........................***Failed    0.02 sec
+2026-10-24T09:34:17.2284680Z Cannot open private instance mailbox
+2026-10-24T09:34:17.2284900Z 
+2026-10-24T09:34:17.2285050Z       Start 22: lifecycle_process
+2026-10-24T09:34:17.4618170Z 22/35 Test #22: lifecycle_process ................***Failed    0.23 sec
+2026-10-24T09:34:17.4618650Z Traceback (most recent call last):
+2026-10-24T09:34:17.4619850Z   File "/Users/runner/work/Cliptiq/Cliptiq/tests/integration/lifecycle_process.py", line 16, in <module>
+2026-10-24T09:34:17.4620380Z     owner=start()
+2026-10-24T09:34:17.4620780Z   File "/Users/runner/work/Cliptiq/Cliptiq/tests/integration/lifecycle_process.py", line 12, in start
+2026-10-24T09:34:17.4623010Z     if owner.poll() is not None:raise RuntimeError(owner.communicate())
+2026-10-24T09:34:17.4623430Z                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-24T09:34:17.4623810Z RuntimeError: ('', 'Cannot open private instance mailbox\n')
+2026-10-24T09:34:17.4624090Z 
+2026-10-24T09:34:17.4624240Z       Start 23: lifecycle_locale_schema
+2026-10-24T09:34:17.4974780Z 23/35 Test #23: lifecycle_locale_schema ..........   Passed    0.04 sec
+2026-10-24T09:34:17.4975330Z       Start 24: lifecycle_bundle
+2026-10-24T09:34:18.3747110Z 24/35 Test #24: lifecycle_bundle .................   Passed    0.88 sec
+2026-10-24T09:34:18.3747660Z       Start 25: media_review_clear
+2026-10-24T09:34:22.2422810Z 25/35 Test #25: media_review_clear ...............   Passed    3.87 sec
+2026-10-24T09:34:22.2426380Z       Start 26: media_review_root
+2026-10-24T09:34:26.8321000Z 26/35 Test #26: media_review_root ................   Passed    4.59 sec
+2026-10-24T09:34:26.8322090Z       Start 27: media_review_error
+2026-10-24T09:34:27.9545640Z 27/35 Test #27: media_review_error ...............   Passed    1.12 sec
+2026-10-24T09:34:27.9546690Z       Start 28: native_media
+2026-10-24T09:34:55.8387110Z 28/35 Test #28: native_media .....................   Passed   27.88 sec
+2026-10-24T09:34:55.8399560Z       Start 29: media
+2026-10-24T09:34:55.8623370Z 29/35 Test #29: media ............................   Passed    0.02 sec
+2026-10-24T09:34:55.8624820Z       Start 30: menu_preview
+2026-10-24T09:34:55.8706160Z 30/35 Test #30: menu_preview .....................   Passed    0.01 sec
+2026-10-24T09:34:55.8708430Z       Start 31: menu
+2026-10-24T09:34:56.0955680Z 31/35 Test #31: menu .............................   Passed    0.22 sec
+2026-10-24T09:34:56.0956950Z       Start 32: macos_clipboard
+2026-10-24T09:35:06.2809900Z 32/35 Test #32: macos_clipboard ..................   Passed   10.18 sec
+2026-10-24T09:35:06.2881090Z       Start 33: policy
+2026-10-24T09:35:06.3277060Z 33/35 Test #33: policy ...........................   Passed    0.04 sec
+2026-10-24T09:35:06.3279110Z       Start 34: history
+2026-10-24T09:35:06.4613770Z 34/35 Test #34: history ..........................   Passed    0.13 sec
+2026-10-24T09:35:06.4614850Z       Start 35: history_crash
+2026-10-24T09:35:06.6832330Z 35/35 Test #35: history_crash ....................   Passed    0.22 sec
+2026-10-24T09:35:06.6850480Z 
+2026-10-24T09:35:06.6850860Z 94% tests passed, 2 tests failed out of 35
+2026-10-24T09:35:06.6851270Z 
+2026-10-24T09:35:06.6851420Z Total Test time (real) =  57.48 sec
+2026-10-24T09:35:06.6851650Z 
+2026-10-24T09:35:06.6851790Z The following tests FAILED:
+2026-10-24T09:35:06.6853110Z 	 21 - lifecycle (Failed)
+2026-10-24T09:35:06.6853430Z 	 22 - lifecycle_process (Failed)
+2026-10-24T09:35:06.6860360Z Errors while running CTest
+2026-10-24T09:35:06.6995690Z ##[error]Process completed with exit code 8.
+2026-10-24T09:35:06.7385260Z Post job cleanup.
+2026-10-24T09:35:07.1591480Z [command]/opt/homebrew/bin/git version
+2026-10-24T09:35:07.3287370Z git version 2.55.0
+2026-10-24T09:35:07.3616670Z Copying '/Users/runner/.gitconfig' to '/Users/runner/work/_temp/436240fa-58dc-4409-abaa-04848473f6f6/.gitconfig'
+2026-10-24T09:35:07.3632150Z Temporarily overriding HOME='/Users/runner/work/_temp/436240fa-58dc-4409-abaa-04848473f6f6' before making global git config changes
+2026-10-24T09:35:07.3633380Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-24T09:35:07.3641500Z [command]/opt/homebrew/bin/git config --global --add safe.directory /Users/runner/work/Cliptiq/Cliptiq
+2026-10-24T09:35:07.3662850Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-24T09:35:07.3664400Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-24T09:35:07.5195660Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-24T09:35:07.5272270Z http.https://github.com/.extraheader
+2026-10-24T09:35:07.5281240Z [command]/opt/homebrew/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-10-24T09:35:07.5388750Z [command]/opt/homebrew/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-24T09:35:07.6512830Z [command]/opt/homebrew/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-24T09:35:07.6596850Z [command]/opt/homebrew/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-24T09:35:07.8231880Z Cleaning up orphan processes
+2026-10-24T09:35:08.3316330Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

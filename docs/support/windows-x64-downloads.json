@@ -1,0 +1,29 @@
+{
+  "scope": "manual handoff; no acceptance executed",
+  "downloads": [
+    {
+      "variant": "base",
+      "filename": "cliptiq-0.1.0-windows-x86_64-base.zip",
+      "bytes": 865111,
+      "sha256": "365c3ee4077bbd715031a550074d5b8b0c2994b6aa653fc02c330d1cacb8d7f2",
+      "source_commit": "5380462ede50273817be0dbcb4a2e832fabdf93b",
+      "artifact_id": 12563844036,
+      "download_url": "https://github.com/Hydrock/Cliptiq/actions/runs/40105477768/artifacts/12563844036",
+      "expires_at": "2027-01-22T15:06:40Z",
+      "entry_check": "Cliptiq 0.1.0",
+      "inventory_check": "PASS"
+    },
+    {
+      "variant": "ocr",
+      "filename": "cliptiq-0.1.0-windows-x86_64-ocr.zip",
+      "bytes": 5319390,
+      "sha256": "73effd36f3a0c7bf588d3416747ee9f5e8d874a6db78d2ce2b0cea781f061ded",
+      "source_commit": "5380462ede50273817be0dbcb4a2e832fabdf93b",
+      "artifact_id": 12564726876,
+      "download_url": "https://github.com/Hydrock/Cliptiq/actions/runs/40105477768/artifacts/12564726876",
+      "expires_at": "2027-01-22T15:06:40Z",
+      "entry_check": "Cliptiq 0.1.0",
+      "inventory_check": "PASS"
+    }
+  ]
+}

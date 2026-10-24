@@ -1,0 +1,37 @@
+{
+  "scope": "linked T02 core API fixture with pinned SQLite; no UI, not complete Cliptiq",
+  "system": "macOS-15.7.9-x86_64-i386-64bit-Mach-O",
+  "architecture": "x86_64",
+  "source_commit": "004a0d53aa7ac0a484525d2a379737d9d3191e39",
+  "working_tree_dirty": false,
+  "source_files_sha256": {
+    "core/README.md": "23d7cd1acea8e5fe9a910e6271a14fec402932e465067b7034b916a92defcefb",
+    "core/include/cliptiq/history.hpp": "6488b655d54293d5c311aacdd77093df47a7699f52be685fb190b1178b6c0def",
+    "core/include/cliptiq/storage.hpp": "7b18127e2635ade1e8115938a30a8171fc6cdb6975e6bc5cc36b306c913afaba",
+    "core/include/cliptiq/types.hpp": "22549c440ef36a3a2ef2b8bdaf8203580ab83b19656831c8a4ba7048d2dc7828",
+    "core/src/db.hpp": "39d9f45bf8204d8c70fcfa1a48dcabdfc7b2f2d7e8d9dc32b4ef75bf2881e3eb",
+    "core/src/history.cpp": "0d990fee7ae19443e43da49b61cf57aa4cdb5f4580b2da43a1d9982ad77008bf",
+    "core/src/sha256.cpp": "90ef72b4c67b06bbdb8c28b5a1d37840ea4196879160e7af464e5b9cc790a9fd",
+    "core/src/sha256.hpp": "c43286dbf9bfa91ed408f1b6dd28b615716a62503a19e1456f6a99460df4d281",
+    "core/src/storage.cpp": "0337344451136d320356f4c4d47ab7afdd45909c7160f8a0723b826b2c4a3d24",
+    "cmake/Dependencies.cmake": "cb14fb57677f93599fe8bc251a9338f1d9eb7bbd002e00470cecb687c8b99ed4",
+    "cmake/dependencies.json": "9e4b8168742dc192c94c0056d438619860945777d68155e45233fc34585bd0f2"
+  },
+  "build_type": "MinSizeRel",
+  "windows_crt": null,
+  "probe_bytes": 867024,
+  "probe_zip_bytes": 475048,
+  "probe_sha256": "9f46262ab5f9457c25bdc4861801ae90659a620193afb8a1ad4ef3faa5bc4671",
+  "static_archives_bytes": {
+    "libcliptiq_sqlite.a": 1112776,
+    "libcliptiq_core.a": 72648
+  },
+  "full_product_bytes": null,
+  "offline_dependencies_bytes": null,
+  "cmake_configuration": [
+    "CMAKE_CXX_COMPILER:FILEPATH=/usr/bin/c++",
+    "CMAKE_CXX_FLAGS_MINSIZEREL:STRING=-Os -DNDEBUG",
+    "CMAKE_C_COMPILER:FILEPATH=/usr/bin/cc",
+    "CMAKE_C_FLAGS_MINSIZEREL:STRING=-Os -DNDEBUG"
+  ]
+}

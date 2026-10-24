@@ -1,0 +1,89 @@
+-- Configuring done (1.8s)
+-- Generating done (0.2s)
+-- Build files have been written to: C:/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/ocr-Windows-Base
+[1/19] Building CXX object CMakeFiles\cliptiq_core.dir\core\src\storage.cpp.obj
+[2/19] Building CXX object CMakeFiles\cliptiq_core.dir\core\src\history.cpp.obj
+[3/19] Building CXX object CMakeFiles\cliptiq_core.dir\core\src\paste.cpp.obj
+[4/19] Building CXX object CMakeFiles\cliptiq_core.dir\core\src\menu.cpp.obj
+[5/19] Building CXX object CMakeFiles\cliptiq_core.dir\core\src\media.cpp.obj
+C:\Users\SmiteVils\Documents\ChatGPT\ClipBoard Project\core\src\media.cpp(67): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+[6/19] Building CXX object CMakeFiles\cliptiq_core.dir\core\src\settings.cpp.obj
+[7/19] Building CXX object CMakeFiles\cliptiq_core.dir\core\src\snippets.cpp.obj
+[8/19] Building CXX object CMakeFiles\cliptiq_core.dir\core\src\editor.cpp.obj
+[9/19] Building CXX object CMakeFiles\cliptiq_core.dir\core\src\update.cpp.obj
+C:\Users\SmiteVils\Documents\ChatGPT\ClipBoard Project\core\src\update.cpp(30): warning C4456: declaration of 'c' hides previous local declaration
+C:\Users\SmiteVils\Documents\ChatGPT\ClipBoard Project\core\src\update.cpp(22): note: see declaration of 'c'
+[10/19] Building CXX object CMakeFiles\cliptiq_core.dir\core\src\ocr.cpp.obj
+[11/19] Building CXX object CMakeFiles\cliptiq_xml.dir\core\src\xml.cpp.obj
+[12/19] Building CXX object CMakeFiles\cliptiq_core.dir\core\src\index_invalidation.cpp.obj
+[13/19] Linking CXX static library cliptiq_core.lib
+[14/19] Linking CXX executable fts_variant_probe.exe
+[15/19] Building CXX object CMakeFiles\cliptiq_xml.dir\core\src\xml_file.cpp.obj
+[16/19] Building CXX object CMakeFiles\cliptiq_lifecycle.dir\platform\Lifecycle.cpp.obj
+[17/19] Linking CXX static library cliptiq_xml.lib
+[18/19] Linking CXX static library cliptiq_lifecycle.lib
+[19/19] Linking CXX executable Cliptiq.exe
+-- Configuring done (1.9s)
+-- Generating done (0.3s)
+-- Build files have been written to: C:/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/ocr-Windows-tesseract
+[1/30] Building CXX object CMakeFiles\cliptiq_core.dir\core\src\storage.cpp.obj
+[2/30] Building CXX object CMakeFiles\cliptiq_core.dir\core\src\history.cpp.obj
+[3/30] Building CXX object CMakeFiles\cliptiq_core.dir\core\src\paste.cpp.obj
+[4/30] Building CXX object CMakeFiles\cliptiq_core.dir\core\src\menu.cpp.obj
+[5/30] Building CXX object CMakeFiles\cliptiq_core.dir\core\src\settings.cpp.obj
+[6/30] Building CXX object CMakeFiles\cliptiq_core.dir\core\src\media.cpp.obj
+C:\Users\SmiteVils\Documents\ChatGPT\ClipBoard Project\core\src\media.cpp(67): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+[7/30] Building CXX object CMakeFiles\cliptiq_core.dir\core\src\snippets.cpp.obj
+[8/30] Building CXX object CMakeFiles\cliptiq_core.dir\core\src\editor.cpp.obj
+[9/30] Building CXX object CMakeFiles\cliptiq_core.dir\core\src\update.cpp.obj
+C:\Users\SmiteVils\Documents\ChatGPT\ClipBoard Project\core\src\update.cpp(30): warning C4456: declaration of 'c' hides previous local declaration
+C:\Users\SmiteVils\Documents\ChatGPT\ClipBoard Project\core\src\update.cpp(22): note: see declaration of 'c'
+[10/30] Building CXX object CMakeFiles\cliptiq_core.dir\core\src\ocr.cpp.obj
+[11/30] Building CXX object CMakeFiles\cliptiq_core.dir\core\src\index_invalidation.cpp.obj
+[12/30] Building CXX object CMakeFiles\cliptiq_core.dir\core\src\fts.cpp.obj
+[13/30] Building CXX object CMakeFiles\cliptiq_xml.dir\core\src\xml.cpp.obj
+[14/30] Linking CXX static library cliptiq_core.lib
+[15/30] Building CXX object CMakeFiles\cliptiq_xml.dir\core\src\xml_file.cpp.obj
+[16/30] Linking CXX static library cliptiq_xml.lib
+[17/30] Building CXX object CMakeFiles\cliptiq_ocr_queue.dir\platform\Ocr.cpp.obj
+[18/30] Linking CXX static library cliptiq_ocr_queue.lib
+[19/30] Building CXX object CMakeFiles\cliptiq_index_service.dir\platform\Index.cpp.obj
+[20/30] Linking CXX static library cliptiq_index_service.lib
+[21/30] Building CXX object CMakeFiles\cliptiq_lifecycle.dir\platform\Lifecycle.cpp.obj
+[22/30] Linking CXX static library cliptiq_lifecycle.lib
+[23/30] Linking CXX executable fts_test.exe
+[24/30] Linking CXX executable ocr_test.exe
+[25/30] Linking CXX executable ocr_queue_test.exe
+[26/30] Linking CXX executable native_ocr_test.exe
+[27/30] Linking CXX executable Cliptiq.exe
+[28/30] Linking CXX executable fts_variant_probe.exe
+[29/30] Building CXX object CMakeFiles\fts_transaction_race.dir\tests\integration\fts_transaction_race.cpp.obj
+[30/30] Linking CXX executable fts_transaction_race.exe
+Test project C:/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/ocr-Windows-tesseract
+    Start 45: ocr
+1/5 Test #45: ocr ..............................   Passed    0.68 sec
+    Start 46: fts
+2/5 Test #46: fts ..............................   Passed    0.23 sec
+    Start 47: ocr_queue
+3/5 Test #47: ocr_queue ........................   Passed    3.76 sec
+    Start 48: native_ocr
+4/5 Test #48: native_ocr .......................   Passed    0.31 sec
+    Start 49: fts_transaction_race
+5/5 Test #49: fts_transaction_race .............   Passed    1.34 sec
+
+100% tests passed, 0 tests failed out of 5
+
+Total Test time (real) =   7.98 sec
+seed: pass
+index: pass
+base: pass
+index: pass
+clear: pass
+empty: pass
+empty: pass
+indexed -> Base -> indexed, Base clear, crash recovery: pass
+{
+  "engine": "tesseract",
+  "app_owned_bytes": 11372845,
+  "zip_bytes": 5290448
+}

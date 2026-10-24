@@ -1,0 +1,106 @@
+{
+  "schema_version": 1,
+  "release_ready": false,
+  "gates": [
+    {
+      "id": "T04",
+      "status": "open",
+      "reason": "User explicitly keeps manual acceptance OPEN; automated tests do not replace native desktop acceptance."
+    },
+    {
+      "id": "T05",
+      "status": "open",
+      "reason": "User explicitly keeps manual acceptance OPEN; automated tests do not replace native desktop acceptance."
+    },
+    {
+      "id": "T06",
+      "status": "open",
+      "reason": "User explicitly keeps manual acceptance OPEN; automated tests do not replace native desktop acceptance."
+    },
+    {
+      "id": "T07",
+      "status": "open",
+      "reason": "User explicitly keeps manual acceptance OPEN; automated tests do not replace native desktop acceptance."
+    },
+    {
+      "id": "T08",
+      "status": "open",
+      "reason": "User explicitly keeps manual acceptance OPEN; automated tests do not replace native desktop acceptance."
+    },
+    {
+      "id": "T09",
+      "status": "open",
+      "reason": "User explicitly keeps manual acceptance OPEN; automated tests do not replace native desktop acceptance."
+    },
+    {
+      "id": "T10",
+      "status": "open",
+      "reason": "User explicitly keeps manual acceptance OPEN; automated tests do not replace native desktop acceptance."
+    },
+    {
+      "id": "T11",
+      "status": "open",
+      "reason": "User explicitly keeps manual acceptance OPEN; automated tests do not replace native desktop acceptance."
+    },
+    {
+      "id": "T12",
+      "status": "open",
+      "reason": "User explicitly keeps manual acceptance OPEN; automated tests do not replace native desktop acceptance."
+    },
+    {
+      "id": "T13",
+      "status": "open",
+      "reason": "User explicitly keeps manual acceptance OPEN; automated tests do not replace native desktop acceptance."
+    },
+    {
+      "id": "T14",
+      "status": "open",
+      "reason": "User explicitly keeps manual acceptance OPEN; automated tests do not replace native desktop acceptance."
+    },
+    {
+      "id": "T15",
+      "status": "open",
+      "reason": "User explicitly keeps manual acceptance OPEN; automated tests do not replace native desktop acceptance."
+    },
+    {
+      "id": "T16",
+      "status": "open",
+      "reason": "User explicitly keeps manual acceptance OPEN; automated tests do not replace native desktop acceptance."
+    },
+    {
+      "id": "clean-install",
+      "status": "open",
+      "reason": "No clean consumer VMs supplied; no real installation/uninstallation proof."
+    },
+    {
+      "id": "signing",
+      "status": "open",
+      "reason": "No production signing identity supplied; candidates unsigned/ad hoc."
+    },
+    {
+      "id": "notarization",
+      "status": "open",
+      "reason": "Developer ID/notarization not performed."
+    },
+    {
+      "id": "publisher-identity",
+      "status": "open",
+      "reason": "MSIX development Publisher is a placeholder, not production identity."
+    },
+    {
+      "id": "project-license",
+      "status": "open",
+      "reason": "No project-wide license selected; third-party license notices are bundled without assigning a new project license."
+    },
+    {
+      "id": "desktop-support-matrix",
+      "status": "open",
+      "reason": "Actual compositor/OS-version manual matrix not accepted; generic Wayland not supported."
+    },
+    {
+      "id": "offline-closure",
+      "status": "open",
+      "reason": "System dependency delta on clean consumer systems remains unknown."
+    }
+  ]
+}

@@ -1,0 +1,150 @@
+-- Configuring done (1.0s)
+-- Generating done (0.1s)
+-- Build files have been written to: C:/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Windows-test
+[1/82] Building CXX object CMakeFiles\cliptiq_core.dir\core\src\menu_preview.cpp.obj
+C:\Users\SmiteVils\Documents\ChatGPT\ClipBoard Project\core\src\menu_preview.cpp(16): warning C4244: '=': conversion from '_Ty' to '_Ty', possible loss of data
+        with
+        [
+            _Ty=uint32_t
+        ]
+        and
+        [
+            _Ty=uint8_t
+        ]
+C:\Users\SmiteVils\Documents\ChatGPT\ClipBoard Project\core\src\menu_preview.cpp(17): warning C4244: '=': conversion from '_Ty' to '_Ty', possible loss of data
+        with
+        [
+            _Ty=uint32_t
+        ]
+        and
+        [
+            _Ty=uint8_t
+        ]
+C:\Users\SmiteVils\Documents\ChatGPT\ClipBoard Project\core\src\menu_preview.cpp(18): warning C4244: '=': conversion from '_Ty' to '_Ty', possible loss of data
+        with
+        [
+            _Ty=uint32_t
+        ]
+        and
+        [
+            _Ty=uint8_t
+        ]
+[2/82] Building CXX object CMakeFiles\cliptiq_core.dir\core\src\storage.cpp.obj
+[3/82] Building CXX object CMakeFiles\cliptiq_core.dir\core\src\media.cpp.obj
+C:\Users\SmiteVils\Documents\ChatGPT\ClipBoard Project\core\src\media.cpp(67): warning C4146: unary minus operator applied to unsigned type, result still unsigned
+[4/82] Building CXX object CMakeFiles\cliptiq_core.dir\core\src\history.cpp.obj
+[5/82] Building CXX object CMakeFiles\cliptiq_settings_native.dir\platform\windows\Hotkeys.cpp.obj
+[6/82] Building CXX object CMakeFiles\cliptiq_xml.dir\core\src\xml.cpp.obj
+[7/82] Building CXX object CMakeFiles\cliptiq_paste_native.dir\platform\windows\Paste.cpp.obj
+[8/82] Building CXX object CMakeFiles\cliptiq_core.dir\core\src\paste.cpp.obj
+[9/82] Building CXX object CMakeFiles\windows_hotkey_boundary_test.dir\platform\windows\Hotkeys.cpp.obj
+[10/82] Building CXX object CMakeFiles\cliptiq_core.dir\core\src\menu.cpp.obj
+[11/82] Building CXX object CMakeFiles\cliptiq_core.dir\core\src\snippets.cpp.obj
+[12/82] Building CXX object CMakeFiles\native_hotkeys_test.dir\tests\integration\native_hotkeys_test.cpp.obj
+[13/82] Building CXX object CMakeFiles\snippet_integration_test.dir\tests\integration\snippet_integration_test.cpp.obj
+[14/82] Building CXX object CMakeFiles\hotkeys_test.dir\tests\unit\hotkeys_test.cpp.obj
+[15/82] Building CXX object CMakeFiles\cliptiq_core.dir\core\src\settings.cpp.obj
+[16/82] Building CXX object CMakeFiles\cliptiq_windows.dir\platform\windows\Application.cpp.obj
+[17/82] Building CXX object CMakeFiles\cliptiq_core.dir\core\src\hotkeys.cpp.obj
+[18/82] Building CXX object CMakeFiles\cliptiq_menu_native.dir\platform\windows\Menu.cpp.obj
+[19/82] Building CXX object CMakeFiles\snippets_test.dir\tests\unit\snippets_test.cpp.obj
+[20/82] Building CXX object CMakeFiles\cliptiq_settings_native.dir\platform\windows\Settings.cpp.obj
+[21/82] Building CXX object CMakeFiles\cliptiq_menu_native_fixture.dir\platform\windows\Menu.cpp.obj
+[22/82] Building CXX object CMakeFiles\cliptiq_editor_native.dir\platform\windows\SnippetEditor.cpp.obj
+[23/82] Building CXX object CMakeFiles\native_xml_test.dir\tests\integration\native_xml_test.cpp.obj
+[24/82] Building CXX object CMakeFiles\settings_test.dir\tests\unit\settings_test.cpp.obj
+[25/82] Building CXX object CMakeFiles\menu_preview_test.dir\tests\unit\menu_preview_test.cpp.obj
+[26/82] Building CXX object CMakeFiles\windows_hotkey_boundary_test.dir\tests\integration\windows_hotkey_boundary_test.cpp.obj
+[27/82] Building CXX object CMakeFiles\editor_test.dir\tests\unit\editor_test.cpp.obj
+[28/82] Building CXX object CMakeFiles\native_menu_test.dir\tests\integration\native_menu_test.cpp.obj
+[29/82] Building CXX object CMakeFiles\native_settings_test.dir\tests\integration\native_settings_test.cpp.obj
+[30/82] Building CXX object CMakeFiles\cliptiq_xml.dir\core\src\xml_file.cpp.obj
+[31/82] Building CXX object CMakeFiles\native_paste_test.dir\tests\integration\native_paste_test.cpp.obj
+[32/82] Building CXX object CMakeFiles\cliptiq_media_native.dir\platform\windows\Media.cpp.obj
+[33/82] Building CXX object CMakeFiles\menu_test.dir\tests\unit\menu_test.cpp.obj
+[34/82] Building CXX object CMakeFiles\menu_regression_test.dir\tests\integration\menu_regression_test.cpp.obj
+[35/82] Building CXX object CMakeFiles\cliptiq_core.dir\core\src\editor.cpp.obj
+[36/82] Building CXX object CMakeFiles\media_test.dir\tests\unit\media_test.cpp.obj
+[37/82] Building CXX object CMakeFiles\cliptiq_editor_xml_native.dir\platform\windows\SnippetEditor.cpp.obj
+[38/82] Building CXX object CMakeFiles\paste_test.dir\tests\unit\paste_test.cpp.obj
+[39/82] Building CXX object CMakeFiles\paste_boundary_test.dir\tests\integration\windows_paste_boundary_test.cpp.obj
+[40/82] Building CXX object CMakeFiles\policy_test.dir\tests\unit\policy_test.cpp.obj
+[41/82] Building CXX object CMakeFiles\cliptiq_media_native.dir\platform\Media.cpp.obj
+[42/82] Building CXX object CMakeFiles\native_media_test.dir\tests\integration\native_media_test.cpp.obj
+[43/82] Building CXX object CMakeFiles\native_editor_test.dir\tests\integration\native_editor_test.cpp.obj
+[44/82] Linking CXX static library cliptiq_core.lib
+[45/82] Linking CXX static library cliptiq_xml.lib
+[46/82] Linking CXX static library cliptiq_editor_native.lib
+[47/82] Building CXX object CMakeFiles\media_review_test.dir\tests\integration\media_review_test.cpp.obj
+[48/82] Linking CXX static library cliptiq_paste_native.lib
+[49/82] Linking CXX static library cliptiq_menu_native_fixture.lib
+[50/82] Linking CXX static library cliptiq_settings_native.lib
+[51/82] Linking CXX static library cliptiq_menu_native.lib
+[52/82] Building CXX object CMakeFiles\cliptiq_menu_host.dir\platform\MenuHost.cpp.obj
+[53/82] Linking CXX static library cliptiq_editor_xml_native.lib
+[54/82] Linking CXX static library cliptiq_windows.lib
+[55/82] Linking CXX executable paste_test.exe
+[56/82] Linking CXX executable windows_hotkey_boundary_test.exe
+[57/82] Linking CXX executable media_test.exe
+[58/82] Linking CXX static library cliptiq_media_native.lib
+[59/82] Linking CXX executable menu_preview_test.exe
+[60/82] Linking CXX executable menu_test.exe
+[61/82] Linking CXX executable xml_test.exe
+[62/82] Linking CXX executable native_hotkeys_test.exe
+[63/82] Linking CXX executable snippets_test.exe
+[64/82] Linking CXX executable native_settings_test.exe
+[65/82] Linking CXX executable policy_test.exe
+[66/82] Linking CXX executable native_menu_test.exe
+[67/82] Linking CXX executable paste_boundary_test.exe
+[68/82] Linking CXX executable native_xml_test.exe
+[69/82] Building CXX object CMakeFiles\history_test.dir\tests\unit\history_test.cpp.obj
+[70/82] Linking CXX executable editor_test.exe
+[71/82] Linking CXX executable menu_regression_test.exe
+[72/82] Linking CXX executable hotkeys_test.exe
+[73/82] Linking CXX executable snippet_integration_test.exe
+[74/82] Linking CXX executable settings_test.exe
+[75/82] Linking CXX executable native_editor_test.exe
+[76/82] Linking CXX executable native_paste_test.exe
+[77/82] Linking CXX executable history_test.exe
+[78/82] Linking CXX executable native_media_test.exe
+[79/82] Linking CXX executable cliptiq_menu_host.exe
+[80/82] Building CXX object CMakeFiles\windows_clipboard_test.dir\tests\integration\windows_clipboard_test.cpp.obj
+[81/82] Linking CXX executable media_review_test.exe
+[82/82] Linking CXX executable windows_clipboard_test.exe
+Test project C:/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Windows-test
+      Start  2: xml
+ 1/16 Test  #2: xml ..............................   Passed    1.04 sec
+      Start  6: snippets_menu_hotkeys
+ 2/16 Test  #6: snippets_menu_hotkeys ............   Passed    0.76 sec
+      Start  7: editor
+ 3/16 Test  #7: editor ...........................   Passed    0.92 sec
+      Start  8: snippets
+ 4/16 Test  #8: snippets .........................   Passed    0.75 sec
+      Start 12: settings
+ 5/16 Test #12: settings .........................   Passed    0.63 sec
+      Start 13: hotkeys
+ 6/16 Test #13: hotkeys ..........................   Passed    0.14 sec
+      Start 15: paste_native_boundary
+ 7/16 Test #15: paste_native_boundary ............   Passed    0.62 sec
+      Start 16: paste
+ 8/16 Test #16: paste ............................   Passed    0.71 sec
+      Start 17: menu_unicode_conformance
+ 9/16 Test #17: menu_unicode_conformance .........   Passed    0.02 sec
+      Start 22: media_review_clear
+10/16 Test #22: media_review_clear ...............   Passed    2.47 sec
+      Start 23: media_review_root
+11/16 Test #23: media_review_root ................   Passed    1.42 sec
+      Start 24: media_review_error
+12/16 Test #24: media_review_error ...............   Passed    0.33 sec
+      Start 25: native_media
+13/16 Test #25: native_media .....................   Passed    7.99 sec
+      Start 26: media
+14/16 Test #26: media ............................   Passed    0.77 sec
+      Start 27: menu_preview
+15/16 Test #27: menu_preview .....................   Passed    0.12 sec
+      Start 28: menu
+16/16 Test #28: menu .............................   Passed    1.02 sec
+
+100% tests passed, 0 tests failed out of 16
+
+Total Test time (real) =  27.15 sec

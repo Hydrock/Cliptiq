@@ -1,0 +1,92 @@
+{
+  "reference_commit": "71b0e82623d5c73b4b717d81233eb78db8bbe258",
+  "files": {
+    "Clipy/Resources/Localizable.xcstrings": {
+      "sha256": "89bf32239ad33e3dd12715038094f075f6511edefcaba1ed853f9f04273a2cb6",
+      "entries": 18,
+      "locale_entries": {
+        "de": 18,
+        "en": 6,
+        "fa": 18,
+        "it": 18,
+        "ja": 18,
+        "pt-BR": 18,
+        "zh-Hans": 18,
+        "uk": 18
+      }
+    },
+    "Clipy/Resources/Settings.xcstrings": {
+      "sha256": "ef214bb154aa408e55fad85e894f244e309fc6e60ac546661dd888d1cf11ca3b",
+      "entries": 109,
+      "locale_entries": {
+        "de": 109,
+        "fa": 109,
+        "it": 109,
+        "ja": 109,
+        "pt-BR": 109,
+        "uk": 109,
+        "zh-Hans": 109,
+        "en": 9
+      }
+    },
+    "Clipy/Sources/Snippets/de.lproj/CPYSnippetsEditorWindowController.strings": {
+      "sha256": "7ddd43600edb77b0cd0270f87b07ca7eb5a08f1fdc0eb59503623b3143e9c26e",
+      "entries": 12,
+      "locale": "de"
+    },
+    "Clipy/Sources/Snippets/fa.lproj/CPYSnippetsEditorWindowController.strings": {
+      "sha256": "d6f79af9504b93052ea98005d6571d00d7e8d7bc7e94ed46a3bb87d694d772ad",
+      "entries": 10,
+      "locale": "fa"
+    },
+    "Clipy/Sources/Snippets/it.lproj/CPYSnippetsEditorWindowController.strings": {
+      "sha256": "ffbc4324ac331b0fffc186e65e55046979936e46a1364d3431e1c3d23e74cb28",
+      "entries": 12,
+      "locale": "it"
+    },
+    "Clipy/Sources/Snippets/ja.lproj/CPYSnippetsEditorWindowController.strings": {
+      "sha256": "969a822dfcfc944afffbb2a04f2f9e775ea16390db702034f1dc44c8f95a4315",
+      "entries": 12,
+      "locale": "ja"
+    },
+    "Clipy/Sources/Snippets/pt-BR.lproj/CPYSnippetsEditorWindowController.strings": {
+      "sha256": "f80ceed53f6f03ddf20bc48d7af13defd3a02b3fef827f66f66022cfa4f819bd",
+      "entries": 12,
+      "locale": "pt-BR"
+    },
+    "Clipy/Sources/Snippets/uk.lproj/CPYSnippetsEditorWindowController.strings": {
+      "sha256": "09ba0dcb3d93a3bc9f294dddb1c601a51c96d273259f96987af2a0fb79248e1d",
+      "entries": 10,
+      "locale": "uk"
+    },
+    "Clipy/Sources/Snippets/zh-Hans.lproj/CPYSnippetsEditorWindowController.strings": {
+      "sha256": "132193cc12d4715bc3b4a43195cd6b65a3d4f541205703bc4938aa9fe00eed2d",
+      "entries": 12,
+      "locale": "zh-Hans"
+    },
+    "Clipy/Sources/Snippets/Base.lproj/CPYSnippetsEditorWindowController.xib": {
+      "sha256": "1c17e6584ea3246dc9f9a4117e8654c1dd4a7e4130c3683f7c4b0c76091553e5",
+      "ui_nodes": 389,
+      "locale": "Base"
+    }
+  },
+  "copied_entries": {
+    "de": 22,
+    "fa": 22,
+    "it": 22,
+    "ja": 22,
+    "pt-BR": 22,
+    "uk": 22,
+    "zh-Hans": 22
+  },
+  "scope": "Exact English-key matches only; platform-specific/unmatched strings fall back to English. Russian is new Cliptiq translation.",
+  "additional_lproj_matches": {
+    "de": 6,
+    "fa": 6,
+    "it": 6,
+    "ja": 6,
+    "pt-BR": 6,
+    "uk": 6,
+    "zh-Hans": 6
+  }
+}

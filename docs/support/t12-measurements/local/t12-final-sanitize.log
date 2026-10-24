@@ -1,0 +1,240 @@
+Preset CMake variables:
+
+  BUILD_TESTING="ON"
+  CLIPTIQ_SANITIZE="ON"
+  CMAKE_BUILD_TYPE="Debug"
+
+-- The C compiler identification is GNU 13.3.0
+-- The CXX compiler identification is GNU 13.3.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/gcc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/g++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE  
+-- Found PkgConfig: /usr/bin/pkg-config (found version "1.8.1") 
+-- Checking for modules 'xcb;xcb-xfixes'
+--   Found xcb, version 1.15
+--   Found xcb-xfixes, version 1.15
+-- Checking for module 'wayland-client'
+--   Found wayland-client, version 1.22.0
+-- Checking for module 'gtk+-3.0'
+--   Found gtk+-3.0, version 3.24.41
+-- Checking for modules 'x11;xtst'
+--   Found x11, version 1.8.7
+--   Found xtst, version 1.2.3
+-- Found Python3: /usr/bin/python3 (found version "3.12.3") found components: Interpreter 
+-- Checking for module 'wayland-server'
+--   Found wayland-server, version 1.22.0
+-- Configuring done (8.4s)
+-- Generating done (0.7s)
+-- Build files have been written to: /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-sanitize
+[1/105] Building C object CMakeFiles/cliptiq_grapheme.dir/third_party/libgrapheme/src/cliptiq-util.c.o
+[2/105] Building C object CMakeFiles/cliptiq_grapheme.dir/third_party/libgrapheme/src/utf8.c.o
+[3/105] Building C object CMakeFiles/cliptiq_grapheme.dir/third_party/libgrapheme/src/character.c.o
+[4/105] Building C object CMakeFiles/cliptiq_linux_protocols.dir/protocols/wlr-data-control-unstable-v1-protocol.c.o
+[5/105] Building C object CMakeFiles/cliptiq_linux_protocols.dir/protocols/ext-data-control-v1-protocol.c.o
+[6/105] Linking C static library libcliptiq_grapheme.a
+[7/105] Linking C static library libcliptiq_linux_protocols.a
+[8/105] Building CXX object CMakeFiles/cliptiq_paste_native.dir/platform/linux/Paste.cpp.o
+[9/105] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/sha256.cpp.o
+[10/105] Building CXX object CMakeFiles/cliptiq_media_native.dir/platform/linux/Media.cpp.o
+[11/105] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/storage.cpp.o
+[12/105] Building CXX object CMakeFiles/cliptiq_xml_parser.dir/third_party/tinyxml2/tinyxml2.cpp.o
+[13/105] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/menu_preview.cpp.o
+[14/105] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/policy.cpp.o
+[15/105] Building CXX object CMakeFiles/xml_test.dir/tests/unit/xml_test.cpp.o
+[16/105] Building CXX object CMakeFiles/cliptiq_xml.dir/core/src/xml_file.cpp.o
+[17/105] Building CXX object CMakeFiles/cliptiq_menu_native.dir/platform/linux/Menu.cpp.o
+[18/105] Building CXX object CMakeFiles/cliptiq_settings_native.dir/platform/linux/Hotkeys.cpp.o
+[19/105] Building CXX object CMakeFiles/cliptiq_settings_native.dir/platform/linux/Settings.cpp.o
+[20/105] Building CXX object CMakeFiles/snippet_integration_test.dir/tests/integration/snippet_integration_test.cpp.o
+[21/105] Building CXX object CMakeFiles/cliptiq_settings_native.dir/platform/linux/PortalHotkeys.cpp.o
+[22/105] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/paste.cpp.o
+[23/105] Building CXX object CMakeFiles/native_hotkeys_test.dir/tests/integration/native_hotkeys_test.cpp.o
+[24/105] Building CXX object CMakeFiles/native_xml_test.dir/tests/integration/native_xml_test.cpp.o
+[25/105] Building CXX object CMakeFiles/cliptiq_editor_native.dir/platform/linux/SnippetEditor.cpp.o
+[26/105] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/history.cpp.o
+[27/105] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/hotkeys.cpp.o
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/src/hotkeys.cpp: In function ‘cliptiq::Result<cliptiq::KeyChord> cliptiq::parse_chord(const std::string&)’:
+/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/core/src/hotkeys.cpp:67:39: warning: enumerated and non-enumerated type in conditional expression [-Wextra]
+   67 |                    : token == "Super" ? Super
+      |                      ~~~~~~~~~~~~~~~~~^~~~~~~
+   68 |                                       : 0;
+      |                                       ~~~
+[28/105] Building CXX object CMakeFiles/editor_test.dir/tests/unit/editor_test.cpp.o
+[29/105] Building CXX object CMakeFiles/cliptiq_xml.dir/core/src/xml.cpp.o
+[30/105] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/media.cpp.o
+[31/105] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/menu.cpp.o
+[32/105] Linking CXX static library libcliptiq_xml_parser.a
+[33/105] Building CXX object CMakeFiles/cliptiq_linux.dir/platform/linux/Transfer.cpp.o
+[34/105] Building CXX object CMakeFiles/menu_preview_test.dir/tests/unit/menu_preview_test.cpp.o
+[35/105] Building CXX object CMakeFiles/snippets_test.dir/tests/unit/snippets_test.cpp.o
+[36/105] Building CXX object CMakeFiles/grapheme_test.dir/tests/unit/grapheme_test.cpp.o
+[37/105] Building CXX object CMakeFiles/native_settings_test.dir/tests/integration/native_settings_test.cpp.o
+[38/105] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/snippets.cpp.o
+[39/105] Building CXX object CMakeFiles/cliptiq_linux.dir/platform/linux/Application.cpp.o
+[40/105] Building CXX object CMakeFiles/linux_hotkey_portal_test.dir/tests/integration/linux_hotkey_portal_test.cpp.o
+[41/105] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/settings.cpp.o
+[42/105] Building CXX object CMakeFiles/media_test.dir/tests/unit/media_test.cpp.o
+[43/105] Building CXX object CMakeFiles/menu_regression_test.dir/tests/integration/menu_regression_test.cpp.o
+[44/105] Building CXX object CMakeFiles/media_review_test.dir/tests/integration/media_review_test.cpp.o
+[45/105] Building CXX object CMakeFiles/native_menu_test.dir/tests/integration/native_menu_test.cpp.o
+[46/105] Building CXX object CMakeFiles/settings_test.dir/tests/unit/settings_test.cpp.o
+[47/105] Building CXX object CMakeFiles/hotkeys_test.dir/tests/unit/hotkeys_test.cpp.o
+[48/105] Building CXX object CMakeFiles/cliptiq_editor_xml_native.dir/platform/linux/SnippetEditor.cpp.o
+[49/105] Building CXX object CMakeFiles/cliptiq_linux.dir/platform/linux/ClipboardX11.cpp.o
+[50/105] Building CXX object CMakeFiles/cliptiq_media_native.dir/platform/Media.cpp.o
+[51/105] Building CXX object CMakeFiles/menu_paste_bridge_test.dir/tests/integration/menu_paste_bridge_test.cpp.o
+[52/105] Building CXX object CMakeFiles/cliptiq_linux.dir/platform/linux/ClipboardWayland.cpp.o
+[53/105] Linking CXX executable grapheme_test
+[54/105] Building CXX object CMakeFiles/paste_test.dir/tests/unit/paste_test.cpp.o
+[55/105] Building CXX object CMakeFiles/native_editor_test.dir/tests/integration/native_editor_test.cpp.o
+[56/105] Building CXX object CMakeFiles/native_media_test.dir/tests/integration/native_media_test.cpp.o
+[57/105] Building CXX object CMakeFiles/native_paste_test.dir/tests/integration/native_paste_test.cpp.o
+[58/105] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/editor.cpp.o
+[59/105] Building CXX object CMakeFiles/menu_test.dir/tests/unit/menu_test.cpp.o
+[60/105] Building CXX object CMakeFiles/cliptiq_menu_host.dir/platform/MenuHost.cpp.o
+[61/105] Building CXX object CMakeFiles/linux_clipboard_test.dir/tests/integration/linux_clipboard_test.cpp.o
+[62/105] Building CXX object CMakeFiles/policy_test.dir/tests/unit/policy_test.cpp.o
+[63/105] Building CXX object CMakeFiles/history_test.dir/tests/unit/history_test.cpp.o
+[64/105] Building CXX object CMakeFiles/linux_x11_wire_test.dir/tests/integration/linux_x11_wire_test.cpp.o
+[65/105] Building CXX object CMakeFiles/linux_wayland_wire_test.dir/tests/integration/linux_wayland_wire_test.cpp.o
+[66/105] Building CXX object CMakeFiles/linux_native_clipboard_test.dir/tests/integration/linux_native_clipboard_test.cpp.o
+[67/105] Building C object CMakeFiles/cliptiq_sqlite.dir/.toolchains/sqlite/sqlite3.c.o
+[68/105] Linking C static library libcliptiq_sqlite.a
+[69/105] Linking CXX static library libcliptiq_core.a
+[70/105] Linking CXX static library libcliptiq_paste_native.a
+[71/105] Linking CXX static library libcliptiq_menu_native.a
+[72/105] Linking CXX static library libcliptiq_editor_native.a
+[73/105] Linking CXX static library libcliptiq_xml.a
+[74/105] Linking CXX executable menu_preview_test
+[75/105] Linking CXX static library libcliptiq_settings_native.a
+[76/105] Linking CXX static library libcliptiq_media_native.a
+[77/105] Linking CXX static library libcliptiq_editor_xml_native.a
+[78/105] Linking CXX executable history_test
+[79/105] Linking CXX executable policy_test
+[80/105] Linking CXX executable menu_regression_test
+[81/105] Linking CXX executable native_menu_test
+[82/105] Linking CXX executable menu_test
+[83/105] Linking CXX static library libcliptiq_linux.a
+[84/105] Linking CXX executable media_test
+[85/105] Linking CXX executable paste_test
+[86/105] Linking CXX executable native_hotkeys_test
+[87/105] Linking CXX executable hotkeys_test
+[88/105] Linking CXX executable menu_paste_bridge_test
+[89/105] Linking CXX executable xml_test
+[90/105] Linking CXX executable settings_test
+[91/105] Linking CXX executable editor_test
+[92/105] Linking CXX executable linux_hotkey_portal_test
+[93/105] Linking CXX executable snippets_test
+[94/105] Linking CXX executable native_settings_test
+[95/105] Linking CXX executable snippet_integration_test
+[96/105] Linking CXX executable linux_clipboard_test
+[97/105] Linking CXX executable native_paste_test
+[98/105] Linking CXX executable native_media_test
+[99/105] Linking CXX executable media_review_test
+[100/105] Linking CXX executable linux_x11_wire_test
+[101/105] Linking CXX executable linux_wayland_wire_test
+[102/105] Linking CXX executable native_xml_test
+[103/105] Linking CXX executable linux_native_clipboard_test
+[104/105] Linking CXX executable native_editor_test
+[105/105] Linking CXX executable cliptiq_menu_host
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-sanitize
+      Start  1: xml_native_x11
+ 1/43 Test  #1: xml_native_x11 .....................   Passed    0.99 sec
+      Start  2: xml_native_wayland
+ 2/43 Test  #2: xml_native_wayland .................   Passed    0.98 sec
+      Start  3: xml
+ 3/43 Test  #3: xml ................................   Passed    0.29 sec
+      Start  4: xml_bounded_scan
+ 4/43 Test  #4: xml_bounded_scan ...................   Passed    2.80 sec
+      Start  5: xml_interop
+ 5/43 Test  #5: xml_interop ........................   Passed    0.61 sec
+      Start  6: editor_native_x11
+ 6/43 Test  #6: editor_native_x11 ..................   Passed    1.05 sec
+      Start  7: editor_native_wayland
+ 7/43 Test  #7: editor_native_wayland ..............   Passed    0.94 sec
+      Start  8: snippets_menu_hotkeys
+ 8/43 Test  #8: snippets_menu_hotkeys ..............   Passed    0.23 sec
+      Start  9: editor
+ 9/43 Test  #9: editor .............................   Passed    0.47 sec
+      Start 10: snippets
+10/43 Test #10: snippets ...........................   Passed    0.31 sec
+      Start 11: settings_native_x11
+11/43 Test #11: settings_native_x11 ................   Passed    1.07 sec
+      Start 12: hotkeys_native_x11
+12/43 Test #12: hotkeys_native_x11 .................   Passed    0.79 sec
+      Start 13: settings_native_wayland
+13/43 Test #13: settings_native_wayland ............   Passed    1.32 sec
+      Start 14: hotkeys_native_wayland
+14/43 Test #14: hotkeys_native_wayland .............   Passed    0.22 sec
+      Start 15: settings
+15/43 Test #15: settings ...........................   Passed    0.22 sec
+      Start 16: hotkeys
+16/43 Test #16: hotkeys ............................   Passed    0.15 sec
+      Start 17: paste_native_x11
+17/43 Test #17: paste_native_x11 ...................   Passed    0.55 sec
+      Start 18: paste_native_wayland
+18/43 Test #18: paste_native_wayland ...............   Passed    0.37 sec
+      Start 19: hotkeys_portal_protocol
+19/43 Test #19: hotkeys_portal_protocol ............   Passed    0.61 sec
+      Start 20: paste_menu_bridge
+20/43 Test #20: paste_menu_bridge ..................   Passed    0.76 sec
+      Start 21: paste
+21/43 Test #21: paste ..............................   Passed    0.31 sec
+      Start 22: menu_unicode_conformance
+22/43 Test #22: menu_unicode_conformance ...........   Passed    0.01 sec
+      Start 23: menu_regression_context_x11
+23/43 Test #23: menu_regression_context_x11 ........   Passed    0.52 sec
+      Start 24: menu_regression_context_wayland
+24/43 Test #24: menu_regression_context_wayland ....   Passed    0.47 sec
+      Start 25: menu_regression_coordinates
+25/43 Test #25: menu_regression_coordinates ........   Passed    0.55 sec
+      Start 26: menu_native_x11
+26/43 Test #26: menu_native_x11 ....................   Passed    0.60 sec
+      Start 27: menu_native_wayland
+27/43 Test #27: menu_native_wayland ................   Passed    0.52 sec
+      Start 28: media_review_clear
+28/43 Test #28: media_review_clear .................   Passed    1.31 sec
+      Start 29: media_review_root
+29/43 Test #29: media_review_root ..................   Passed    1.24 sec
+      Start 30: media_review_error
+30/43 Test #30: media_review_error .................   Passed    0.44 sec
+      Start 31: native_media
+31/43 Test #31: native_media .......................   Passed    7.34 sec
+      Start 32: media
+32/43 Test #32: media ..............................   Passed    0.21 sec
+      Start 33: menu_preview
+33/43 Test #33: menu_preview .......................   Passed    0.02 sec
+      Start 34: menu
+34/43 Test #34: menu ...............................   Passed    1.37 sec
+      Start 35: linux_clipboard_protocol
+35/43 Test #35: linux_clipboard_protocol ...........   Passed    0.13 sec
+      Start 36: linux_clipboard_wayland_wire
+36/43 Test #36: linux_clipboard_wayland_wire .......   Passed    1.78 sec
+      Start 37: linux_clipboard_x11_wire
+37/43 Test #37: linux_clipboard_x11_wire ...........   Passed    0.77 sec
+      Start 38: linux_clipboard_external_clients
+38/43 Test #38: linux_clipboard_external_clients ...   Passed    2.76 sec
+      Start 39: linux_clipboard_x11
+39/43 Test #39: linux_clipboard_x11 ................   Passed    0.90 sec
+      Start 40: linux_clipboard_wayland
+40/43 Test #40: linux_clipboard_wayland ............   Passed    0.68 sec
+      Start 41: policy
+41/43 Test #41: policy .............................   Passed    0.30 sec
+      Start 42: history
+42/43 Test #42: history ............................   Passed    0.72 sec
+      Start 43: history_crash
+43/43 Test #43: history_crash ......................   Passed    0.99 sec
+
+100% tests passed, 0 tests failed out of 43
+
+Total Test time (real) =  39.04 sec

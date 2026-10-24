@@ -1,0 +1,91 @@
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+      Start  1: xml_native_x11
+ 1/43 Test  #1: xml_native_x11 .....................   Passed    0.75 sec
+      Start  2: xml_native_wayland
+ 2/43 Test  #2: xml_native_wayland .................   Passed    0.48 sec
+      Start  3: xml
+ 3/43 Test  #3: xml ................................   Passed    0.05 sec
+      Start  4: xml_bounded_scan
+ 4/43 Test  #4: xml_bounded_scan ...................   Passed    1.38 sec
+      Start  5: xml_interop
+ 5/43 Test  #5: xml_interop ........................   Passed    0.26 sec
+      Start  6: editor_native_x11
+ 6/43 Test  #6: editor_native_x11 ..................   Passed    0.53 sec
+      Start  7: editor_native_wayland
+ 7/43 Test  #7: editor_native_wayland ..............   Passed    0.51 sec
+      Start  8: snippets_menu_hotkeys
+ 8/43 Test  #8: snippets_menu_hotkeys ..............   Passed    0.02 sec
+      Start  9: editor
+ 9/43 Test  #9: editor .............................   Passed    0.23 sec
+      Start 10: snippets
+10/43 Test #10: snippets ...........................   Passed    0.09 sec
+      Start 11: settings_native_x11
+11/43 Test #11: settings_native_x11 ................   Passed    0.54 sec
+      Start 12: hotkeys_native_x11
+12/43 Test #12: hotkeys_native_x11 .................   Passed    0.62 sec
+      Start 13: settings_native_wayland
+13/43 Test #13: settings_native_wayland ............   Passed    0.58 sec
+      Start 14: hotkeys_native_wayland
+14/43 Test #14: hotkeys_native_wayland .............   Passed    0.18 sec
+      Start 15: settings
+15/43 Test #15: settings ...........................   Passed    0.02 sec
+      Start 16: hotkeys
+16/43 Test #16: hotkeys ............................   Passed    0.01 sec
+      Start 17: paste_native_x11
+17/43 Test #17: paste_native_x11 ...................   Passed    0.34 sec
+      Start 18: paste_native_wayland
+18/43 Test #18: paste_native_wayland ...............   Passed    0.17 sec
+      Start 19: hotkeys_portal_protocol
+19/43 Test #19: hotkeys_portal_protocol ............   Passed    0.39 sec
+      Start 20: paste_menu_bridge
+20/43 Test #20: paste_menu_bridge ..................   Passed    0.26 sec
+      Start 21: paste
+21/43 Test #21: paste ..............................   Passed    0.03 sec
+      Start 22: menu_unicode_conformance
+22/43 Test #22: menu_unicode_conformance ...........   Passed    0.01 sec
+      Start 23: menu_regression_context_x11
+23/43 Test #23: menu_regression_context_x11 ........   Passed    0.25 sec
+      Start 24: menu_regression_context_wayland
+24/43 Test #24: menu_regression_context_wayland ....   Passed    0.21 sec
+      Start 25: menu_regression_coordinates
+25/43 Test #25: menu_regression_coordinates ........   Passed    0.31 sec
+      Start 26: menu_native_x11
+26/43 Test #26: menu_native_x11 ....................   Passed    0.32 sec
+      Start 27: menu_native_wayland
+27/43 Test #27: menu_native_wayland ................   Passed    0.28 sec
+      Start 28: media_review_clear
+28/43 Test #28: media_review_clear .................   Passed    1.03 sec
+      Start 29: media_review_root
+29/43 Test #29: media_review_root ..................   Passed    1.03 sec
+      Start 30: media_review_error
+30/43 Test #30: media_review_error .................   Passed    0.24 sec
+      Start 31: native_media
+31/43 Test #31: native_media .......................   Passed    7.20 sec
+      Start 32: media
+32/43 Test #32: media ..............................   Passed    0.01 sec
+      Start 33: menu_preview
+33/43 Test #33: menu_preview .......................   Passed    0.00 sec
+      Start 34: menu
+34/43 Test #34: menu ...............................   Passed    0.27 sec
+      Start 35: linux_clipboard_protocol
+35/43 Test #35: linux_clipboard_protocol ...........   Passed    0.03 sec
+      Start 36: linux_clipboard_wayland_wire
+36/43 Test #36: linux_clipboard_wayland_wire .......   Passed    1.47 sec
+      Start 37: linux_clipboard_x11_wire
+37/43 Test #37: linux_clipboard_x11_wire ...........   Passed    0.43 sec
+      Start 38: linux_clipboard_external_clients
+38/43 Test #38: linux_clipboard_external_clients ...   Passed    2.39 sec
+      Start 39: linux_clipboard_x11
+39/43 Test #39: linux_clipboard_x11 ................   Passed    0.73 sec
+      Start 40: linux_clipboard_wayland
+40/43 Test #40: linux_clipboard_wayland ............   Passed    0.45 sec
+      Start 41: policy
+41/43 Test #41: policy .............................   Passed    0.03 sec
+      Start 42: history
+42/43 Test #42: history ............................   Passed    0.21 sec
+      Start 43: history_crash
+43/43 Test #43: history_crash ......................   Passed    0.38 sec
+
+100% tests passed, 0 tests failed out of 43
+
+Total Test time (real) =  25.01 sec

@@ -1,0 +1,11 @@
+-- Install configuration: "MinSizeRel"
+-- Installing: /tmp/cliptiq-ocr-install-7bufqsf3/bin/cliptiq
+-- Installing: /tmp/cliptiq-ocr-install-7bufqsf3/share/applications/io.github.hydrock.cliptiq.desktop
+-- Installing: /tmp/cliptiq-ocr-install-7bufqsf3/share/cliptiq/THIRD_PARTY_NOTICES.md
+-- Installing: /tmp/cliptiq-ocr-install-7bufqsf3/tessdata/eng.traineddata
+-- Installing: /tmp/cliptiq-ocr-install-7bufqsf3/tessdata/rus.traineddata
+Traceback (most recent call last):
+  File "/mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/tests/integration/ocr_install_layout.py", line 8, in <module>
+    model=models/(name+'.traineddata');assert model.is_file(),str(model)
+                                              ^^^^^^^^^^^^^^^
+AssertionError: /tmp/cliptiq-ocr-install-7bufqsf3/bin/tessdata/eng.traineddata

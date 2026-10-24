@@ -1,0 +1,84 @@
+Preset CMake variables:
+
+  BUILD_TESTING="ON"
+  CMAKE_BUILD_TYPE="Debug"
+
+-- Checking for module 'gtk+-3.0'
+--   Found gtk+-3.0, version 3.24.41
+-- Configuring done (1.9s)
+-- Generating done (0.2s)
+-- Build files have been written to: /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+[1/14] Building CXX object CMakeFiles/cliptiq_menu_native.dir/platform/linux/Menu.cpp.o
+[2/14] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/menu_preview.cpp.o
+[3/14] Building CXX object CMakeFiles/native_menu_test.dir/tests/integration/native_menu_test.cpp.o
+[4/14] Linking CXX static library libcliptiq_core.a
+[5/14] Linking CXX static library libcliptiq_menu_native.a
+[6/14] Linking CXX executable menu_preview_test
+[7/14] Linking CXX executable native_menu_test
+[8/14] Linking CXX executable history_test
+[9/14] Linking CXX executable policy_test
+[10/14] Linking CXX executable menu_test
+[11/14] Linking CXX executable linux_clipboard_test
+[12/14] Linking CXX executable linux_x11_wire_test
+[13/14] Linking CXX executable linux_wayland_wire_test
+[14/14] Linking CXX executable linux_native_clipboard_test
+Test project /mnt/c/Users/SmiteVils/Documents/ChatGPT/ClipBoard Project/out/core-Linux-test
+      Start  1: menu_native_x11
+ 1/13 Test  #1: menu_native_x11 ....................***Failed    0.10 sec
+FAIL native_menu: Not implemented
+
+      Start  2: menu_native_wayland
+ 2/13 Test  #2: menu_native_wayland ................***Failed    0.09 sec
+FAIL native_menu: Not implemented
+00:00:00.007 [DEBUG] [sway/config/output.c:520] Committing output HEADLESS-1
+00:00:00.007 [DEBUG] [wlr] [types/output/render.c:168] Attaching empty buffer to output for modeset
+00:00:00.007 [DEBUG] [wlr] [types/output/swapchain.c:27] Choosing primary buffer format XR24 (0x34325258) for output 'HEADLESS-1'
+00:00:00.007 [DEBUG] [wlr] [types/output/swapchain.c:96] Testing swapchain for output 'HEADLESS-1'
+00:00:00.007 [DEBUG] [wlr] [render/swapchain.c:106] Allocating new swapchain buffer
+00:00:00.007 [DEBUG] [wlr] [render/pixman/renderer.c:152] Created pixman buffer 800x600
+00:00:00.008 [DEBUG] [wlr] [types/output/cursor.c:458] Falling back to software cursor on output 'HEADLESS-1'
+00:00:00.008 [DEBUG] [sway/tree/workspace.c:277] Workspace: Generating new workspace name for output HEADLESS-1
+00:00:00.008 [DEBUG] [sway/tree/output.c:127] Creating default workspace 1
+00:00:00.008 [DEBUG] [sway/tree/workspace.c:65] Adding workspace 1 for output HEADLESS-1
+00:00:00.012 [DEBUG] [wlr] [xcursor/wlr_xcursor.c:225] Loaded cursor theme 'default' at size 24 (59 available cursors)
+00:00:00.012 [DEBUG] [sway/desktop/layer_shell.c:229] Usable area changed, rearranging output
+00:00:00.012 [DEBUG] [sway/tree/arrange.c:263] Usable area for ws: 800x600@0,0
+00:00:00.012 [DEBUG] [sway/tree/arrange.c:297] Arranging workspace '1' at 0.000000, 0.000000
+00:00:00.012 [DEBUG] [sway/tree/arrange.c:263] Usable area for ws: 800x600@0,0
+00:00:00.012 [DEBUG] [sway/tree/arrange.c:297] Arranging workspace '1' at 0.000000, 0.000000
+00:00:00.012 [DEBUG] [sway/desktop/transaction.c:398] Transaction 0x6204a61111a0 committing with 2 instructions
+00:00:00.012 [DEBUG] [sway/desktop/transaction.c:294] Applying transaction 0x6204a61111a0
+00:00:00.012 [INFO] [wlr] [backend/headless/backend.c:17] Starting headless backend
+00:00:00.012 [INFO] [sway/server.c:396] Running compositor on wayland display 'wayland-1'
+
+      Start  3: menu_preview
+ 3/13 Test  #3: menu_preview .......................   Passed    0.00 sec
+      Start  4: menu
+ 4/13 Test  #4: menu ...............................   Passed    0.25 sec
+      Start  5: linux_clipboard_protocol
+ 5/13 Test  #5: linux_clipboard_protocol ...........   Passed    0.03 sec
+      Start  6: linux_clipboard_wayland_wire
+ 6/13 Test  #6: linux_clipboard_wayland_wire .......   Passed    1.33 sec
+      Start  7: linux_clipboard_x11_wire
+ 7/13 Test  #7: linux_clipboard_x11_wire ...........   Passed    0.40 sec
+      Start  8: linux_clipboard_external_clients
+ 8/13 Test  #8: linux_clipboard_external_clients ...   Passed    2.28 sec
+      Start  9: linux_clipboard_x11
+ 9/13 Test  #9: linux_clipboard_x11 ................   Passed    0.54 sec
+      Start 10: linux_clipboard_wayland
+10/13 Test #10: linux_clipboard_wayland ............   Passed    0.41 sec
+      Start 11: policy
+11/13 Test #11: policy .............................   Passed    0.02 sec
+      Start 12: history
+12/13 Test #12: history ............................   Passed    0.16 sec
+      Start 13: history_crash
+13/13 Test #13: history_crash ......................   Passed    0.32 sec
+
+85% tests passed, 2 tests failed out of 13
+
+Total Test time (real) =   6.02 sec
+
+The following tests FAILED:
+	  1 - menu_native_x11 (Failed)
+	  2 - menu_native_wayland (Failed)
+Errors while running CTest

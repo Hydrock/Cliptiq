@@ -1,0 +1,9 @@
+{
+  "ci_run": "https://github.com/Hydrock/Cliptiq/actions/runs/39943798856",
+  "source_commit": "6824d00d9c129e482ca0ed309163fd708f5a2d28",
+  "job_id": "120381387041",
+  "compiler_identifications": [
+    "MSVC 19.51.36260.0"
+  ],
+  "ci_log_sha256": "2ce9e859638b4ba571901da34b413fc779c7c1c6ad374f956ae852ccd342308c"
+}

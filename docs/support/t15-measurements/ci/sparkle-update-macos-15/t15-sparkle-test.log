@@ -1,0 +1,1288 @@
+$ /Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-sdk/bin/sign_update --ed-key-file /Users/runner/work/Cliptiq/Cliptiq/out/t15-fixture-key -p /Users/runner/work/Cliptiq/Cliptiq/out/t15-fixture-payload.bin
+JvVH2cr9LX+eSQtHpIPyn3A0JObn8Cue6x96E1UlHRD0I3hnA4zHZyZHnnvv9Eb/JwQ05v3W8+sd+ROsWWG4Aw==
+$ /Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-sdk/bin/sign_update --ed-key-file /Users/runner/work/Cliptiq/Cliptiq/out/t15-fixture-key --verify /Users/runner/work/Cliptiq/Cliptiq/out/t15-fixture-payload.bin JvVH2cr9LX+eSQtHpIPyn3A0JObn8Cue6x96E1UlHRD0I3hnA4zHZyZHnnvv9Eb/JwQ05v3W8+sd+ROsWWG4Aw==
+Sparkle real Ed25519 verifier: correct/wrong identity, missing/malformed signature, tampered payload passed
+$ clang -x objective-c -fobjc-arc -DBUILDING_SPARKLE_SOURCES_EXTERNALLY=1 -DSPU_OBJC_DIRECT= -DSPU_OBJC_DIRECT_MEMBERS= -I/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-source/Sparkle-2.10.0/Sparkle -I/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-source/Sparkle-2.10.0/Downloader -I/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture /Users/runner/work/Cliptiq/Cliptiq/tests/integration/sparkle_bounds.m /Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-source/Sparkle-2.10.0/Sparkle/SPUDownloadData.m -framework Foundation -o /Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/bounds-test
+In file included from /Users/runner/work/Cliptiq/Cliptiq/tests/integration/sparkle_bounds.m:35:
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:25:17: warning: pointer is missing a nullability type specifier (_Nonnull, _Nullable, or _Null_unspecified) [-Wnullability-completeness]
+   25 | static NSString *SUDownloadingReason = @"Downloading update related file";
+      |                 ^
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:25:17: note: insert '_Nullable' if the pointer may be null
+   25 | static NSString *SUDownloadingReason = @"Downloading update related file";
+      |                 ^
+      |                   _Nullable 
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:25:17: note: insert '_Nonnull' if the pointer should never be null
+   25 | static NSString *SUDownloadingReason = @"Downloading update related file";
+      |                 ^
+      |                   _Nonnull 
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:191:93: warning: pointer is missing a nullability type specifier (_Nonnull, _Nullable, or _Null_unspecified) [-Wnullability-completeness]
+  191 | static bool SPUValidateStatusCodeAndFailIfInvalid(NSURLResponse * _Nullable response, NSURL *url, id<SPUDownloaderDelegate> delegate)
+      |                                                                                             ^
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:191:93: note: insert '_Nullable' if the pointer may be null
+  191 | static bool SPUValidateStatusCodeAndFailIfInvalid(NSURLResponse * _Nullable response, NSURL *url, id<SPUDownloaderDelegate> delegate)
+      |                                                                                             ^
+      |                                                                                               _Nullable 
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:191:93: note: insert '_Nonnull' if the pointer should never be null
+  191 | static bool SPUValidateStatusCodeAndFailIfInvalid(NSURLResponse * _Nullable response, NSURL *url, id<SPUDownloaderDelegate> delegate)
+      |                                                                                             ^
+      |                                                                                               _Nonnull 
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:191:99: warning: pointer is missing a nullability type specifier (_Nonnull, _Nullable, or _Null_unspecified) [-Wnullability-completeness]
+  191 | static bool SPUValidateStatusCodeAndFailIfInvalid(NSURLResponse * _Nullable response, NSURL *url, id<SPUDownloaderDelegate> delegate)
+      |                                                                                                   ^
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:191:123: note: insert '_Nullable' if the pointer may be null
+  191 | static bool SPUValidateStatusCodeAndFailIfInvalid(NSURLResponse * _Nullable response, NSURL *url, id<SPUDownloaderDelegate> delegate)
+      |                                                                                                                           ^
+      |                                                                                                                             _Nullable
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:191:123: note: insert '_Nonnull' if the pointer should never be null
+  191 | static bool SPUValidateStatusCodeAndFailIfInvalid(NSURLResponse * _Nullable response, NSURL *url, id<SPUDownloaderDelegate> delegate)
+      |                                                                                                                           ^
+      |                                                                                                                             _Nonnull
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:244:34: warning: pointer is missing a nullability type specifier (_Nonnull, _Nullable, or _Null_unspecified) [-Wnullability-completeness]
+  244 | - (void)URLSession:(NSURLSession *)__unused session downloadTask:(NSURLSessionDownloadTask *)downloadTask didFinishDownloadingToURL:(NSURL *)location
+      |                                  ^
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:244:34: note: insert '_Nullable' if the pointer may be null
+  244 | - (void)URLSession:(NSURLSession *)__unused session downloadTask:(NSURLSessionDownloadTask *)downloadTask didFinishDownloadingToURL:(NSURL *)location
+      |                                  ^
+      |                                   _Nullable
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:244:34: note: insert '_Nonnull' if the pointer should never be null
+  244 | - (void)URLSession:(NSURLSession *)__unused session downloadTask:(NSURLSessionDownloadTask *)downloadTask didFinishDownloadingToURL:(NSURL *)location
+      |                                  ^
+      |                                   _Nonnull
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:244:92: warning: pointer is missing a nullability type specifier (_Nonnull, _Nullable, or _Null_unspecified) [-Wnullability-completeness]
+  244 | - (void)URLSession:(NSURLSession *)__unused session downloadTask:(NSURLSessionDownloadTask *)downloadTask didFinishDownloadingToURL:(NSURL *)location
+      |                                                                                            ^
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:244:92: note: insert '_Nullable' if the pointer may be null
+  244 | - (void)URLSession:(NSURLSession *)__unused session downloadTask:(NSURLSessionDownloadTask *)downloadTask didFinishDownloadingToURL:(NSURL *)location
+      |                                                                                            ^
+      |                                                                                             _Nullable
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:244:92: note: insert '_Nonnull' if the pointer should never be null
+  244 | - (void)URLSession:(NSURLSession *)__unused session downloadTask:(NSURLSessionDownloadTask *)downloadTask didFinishDownloadingToURL:(NSURL *)location
+      |                                                                                            ^
+      |                                                                                             _Nonnull
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:244:140: warning: pointer is missing a nullability type specifier (_Nonnull, _Nullable, or _Null_unspecified) [-Wnullability-completeness]
+  244 | - (void)URLSession:(NSURLSession *)__unused session downloadTask:(NSURLSessionDownloadTask *)downloadTask didFinishDownloadingToURL:(NSURL *)location
+      |                                                                                                                                            ^
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:244:140: note: insert '_Nullable' if the pointer may be null
+  244 | - (void)URLSession:(NSURLSession *)__unused session downloadTask:(NSURLSessionDownloadTask *)downloadTask didFinishDownloadingToURL:(NSURL *)location
+      |                                                                                                                                            ^
+      |                                                                                                                                             _Nullable
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:244:140: note: insert '_Nonnull' if the pointer should never be null
+  244 | - (void)URLSession:(NSURLSession *)__unused session downloadTask:(NSURLSessionDownloadTask *)downloadTask didFinishDownloadingToURL:(NSURL *)location
+      |                                                                                                                                            ^
+      |                                                                                                                                             _Nonnull
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:309:34: warning: pointer is missing a nullability type specifier (_Nonnull, _Nullable, or _Null_unspecified) [-Wnullability-completeness]
+  309 | - (void)URLSession:(NSURLSession *)__unused session downloadTask:(NSURLSessionDownloadTask *)__unused downloadTask didWriteData:(int64_t)bytesWritten totalBytesWritten:(int64_t)__unused totalBytesWritten totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
+      |                                  ^
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:309:34: note: insert '_Nullable' if the pointer may be null
+  309 | - (void)URLSession:(NSURLSession *)__unused session downloadTask:(NSURLSessionDownloadTask *)__unused downloadTask didWriteData:(int64_t)bytesWritten totalBytesWritten:(int64_t)__unused totalBytesWritten totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
+      |                                  ^
+      |                                   _Nullable
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:309:34: note: insert '_Nonnull' if the pointer should never be null
+  309 | - (void)URLSession:(NSURLSession *)__unused session downloadTask:(NSURLSessionDownloadTask *)__unused downloadTask didWriteData:(int64_t)bytesWritten totalBytesWritten:(int64_t)__unused totalBytesWritten totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
+      |                                  ^
+      |                                   _Nonnull
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:309:92: warning: pointer is missing a nullability type specifier (_Nonnull, _Nullable, or _Null_unspecified) [-Wnullability-completeness]
+  309 | - (void)URLSession:(NSURLSession *)__unused session downloadTask:(NSURLSessionDownloadTask *)__unused downloadTask didWriteData:(int64_t)bytesWritten totalBytesWritten:(int64_t)__unused totalBytesWritten totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
+      |                                                                                            ^
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:309:92: note: insert '_Nullable' if the pointer may be null
+  309 | - (void)URLSession:(NSURLSession *)__unused session downloadTask:(NSURLSessionDownloadTask *)__unused downloadTask didWriteData:(int64_t)bytesWritten totalBytesWritten:(int64_t)__unused totalBytesWritten totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
+      |                                                                                            ^
+      |                                                                                             _Nullable
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:309:92: note: insert '_Nonnull' if the pointer should never be null
+  309 | - (void)URLSession:(NSURLSession *)__unused session downloadTask:(NSURLSessionDownloadTask *)__unused downloadTask didWriteData:(int64_t)bytesWritten totalBytesWritten:(int64_t)__unused totalBytesWritten totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite
+      |                                                                                            ^
+      |                                                                                             _Nonnull
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:325:34: warning: pointer is missing a nullability type specifier (_Nonnull, _Nullable, or _Null_unspecified) [-Wnullability-completeness]
+  325 | - (void)URLSession:(NSURLSession *)__unused session task:(NSURLSessionTask *)__unused task didCompleteWithError:(NSError *)error
+      |                                  ^
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:325:34: note: insert '_Nullable' if the pointer may be null
+  325 | - (void)URLSession:(NSURLSession *)__unused session task:(NSURLSessionTask *)__unused task didCompleteWithError:(NSError *)error
+      |                                  ^
+      |                                   _Nullable
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:325:34: note: insert '_Nonnull' if the pointer should never be null
+  325 | - (void)URLSession:(NSURLSession *)__unused session task:(NSURLSessionTask *)__unused task didCompleteWithError:(NSError *)error
+      |                                  ^
+      |                                   _Nonnull
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:325:76: warning: pointer is missing a nullability type specifier (_Nonnull, _Nullable, or _Null_unspecified) [-Wnullability-completeness]
+  325 | - (void)URLSession:(NSURLSession *)__unused session task:(NSURLSessionTask *)__unused task didCompleteWithError:(NSError *)error
+      |                                                                            ^
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:325:76: note: insert '_Nullable' if the pointer may be null
+  325 | - (void)URLSession:(NSURLSession *)__unused session task:(NSURLSessionTask *)__unused task didCompleteWithError:(NSError *)error
+      |                                                                            ^
+      |                                                                             _Nullable
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:325:76: note: insert '_Nonnull' if the pointer should never be null
+  325 | - (void)URLSession:(NSURLSession *)__unused session task:(NSURLSessionTask *)__unused task didCompleteWithError:(NSError *)error
+      |                                                                            ^
+      |                                                                             _Nonnull
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:325:122: warning: pointer is missing a nullability type specifier (_Nonnull, _Nullable, or _Null_unspecified) [-Wnullability-completeness]
+  325 | - (void)URLSession:(NSURLSession *)__unused session task:(NSURLSessionTask *)__unused task didCompleteWithError:(NSError *)error
+      |                                                                                                                          ^
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:325:122: note: insert '_Nullable' if the pointer may be null
+  325 | - (void)URLSession:(NSURLSession *)__unused session task:(NSURLSessionTask *)__unused task didCompleteWithError:(NSError *)error
+      |                                                                                                                          ^
+      |                                                                                                                           _Nullable
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:325:122: note: insert '_Nonnull' if the pointer should never be null
+  325 | - (void)URLSession:(NSURLSession *)__unused session task:(NSURLSessionTask *)__unused task didCompleteWithError:(NSError *)error
+      |                                                                                                                          ^
+      |                                                                                                                           _Nonnull
+/Users/runner/work/Cliptiq/Cliptiq/tests/integration/sparkle_bounds.m:61:25: warning: null passed to a callee that requires a non-null argument [-Wnonnull]
+   61 |     [downloader cleanup:nil];
+      |                         ^~~
+/Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/MacTypes.h:96:19: note: expanded from macro 'nil'
+   96 |       #define nil __DARWIN_NULL
+      |                   ^~~~~~~~~~~~~
+/Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/_types.h:64:23: note: expanded from macro '__DARWIN_NULL'
+   64 | #define __DARWIN_NULL ((void *)0)
+      |                       ^~~~~~~~~~~
+12 warnings generated.
+RED unpatched SDK: bounds rejected test: feed
+$ clang -x objective-c -fobjc-arc -DBUILDING_SPARKLE_SOURCES_EXTERNALLY=1 -DSPU_OBJC_DIRECT= -DSPU_OBJC_DIRECT_MEMBERS= -I/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-source/Sparkle-2.10.0/Sparkle -I/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-source/Sparkle-2.10.0/Downloader -I/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture /Users/runner/work/Cliptiq/Cliptiq/tests/integration/sparkle_bounds.m /Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-source/Sparkle-2.10.0/Sparkle/SPUDownloadData.m -framework Foundation -o /Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/bounds-test
+In file included from /Users/runner/work/Cliptiq/Cliptiq/tests/integration/sparkle_bounds.m:35:
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:25:17: warning: pointer is missing a nullability type specifier (_Nonnull, _Nullable, or _Null_unspecified) [-Wnullability-completeness]
+   25 | static NSString *SUDownloadingReason = @"Downloading update related file";
+      |                 ^
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:25:17: note: insert '_Nullable' if the pointer may be null
+   25 | static NSString *SUDownloadingReason = @"Downloading update related file";
+      |                 ^
+      |                   _Nullable 
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:25:17: note: insert '_Nonnull' if the pointer should never be null
+   25 | static NSString *SUDownloadingReason = @"Downloading update related file";
+      |                 ^
+      |                   _Nonnull 
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:191:93: warning: pointer is missing a nullability type specifier (_Nonnull, _Nullable, or _Null_unspecified) [-Wnullability-completeness]
+  191 | static bool SPUValidateStatusCodeAndFailIfInvalid(NSURLResponse * _Nullable response, NSURL *url, id<SPUDownloaderDelegate> delegate)
+      |                                                                                             ^
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:191:93: note: insert '_Nullable' if the pointer may be null
+  191 | static bool SPUValidateStatusCodeAndFailIfInvalid(NSURLResponse * _Nullable response, NSURL *url, id<SPUDownloaderDelegate> delegate)
+      |                                                                                             ^
+      |                                                                                               _Nullable 
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:191:93: note: insert '_Nonnull' if the pointer should never be null
+  191 | static bool SPUValidateStatusCodeAndFailIfInvalid(NSURLResponse * _Nullable response, NSURL *url, id<SPUDownloaderDelegate> delegate)
+      |                                                                                             ^
+      |                                                                                               _Nonnull 
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:191:99: warning: pointer is missing a nullability type specifier (_Nonnull, _Nullable, or _Null_unspecified) [-Wnullability-completeness]
+  191 | static bool SPUValidateStatusCodeAndFailIfInvalid(NSURLResponse * _Nullable response, NSURL *url, id<SPUDownloaderDelegate> delegate)
+      |                                                                                                   ^
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:191:123: note: insert '_Nullable' if the pointer may be null
+  191 | static bool SPUValidateStatusCodeAndFailIfInvalid(NSURLResponse * _Nullable response, NSURL *url, id<SPUDownloaderDelegate> delegate)
+      |                                                                                                                           ^
+      |                                                                                                                             _Nullable
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:191:123: note: insert '_Nonnull' if the pointer should never be null
+  191 | static bool SPUValidateStatusCodeAndFailIfInvalid(NSURLResponse * _Nullable response, NSURL *url, id<SPUDownloaderDelegate> delegate)
+      |                                                                                                                           ^
+      |                                                                                                                             _Nonnull
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:244:55: warning: pointer is missing a nullability type specifier (_Nonnull, _Nullable, or _Null_unspecified) [-Wnullability-completeness]
+  244 | - (void)cliptiqFinishPersistentTask:(NSURLSessionTask *)downloadTask location:(NSURL *)location
+      |                                                       ^
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:244:55: note: insert '_Nullable' if the pointer may be null
+  244 | - (void)cliptiqFinishPersistentTask:(NSURLSessionTask *)downloadTask location:(NSURL *)location
+      |                                                       ^
+      |                                                        _Nullable
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:244:55: note: insert '_Nonnull' if the pointer should never be null
+  244 | - (void)cliptiqFinishPersistentTask:(NSURLSessionTask *)downloadTask location:(NSURL *)location
+      |                                                       ^
+      |                                                        _Nonnull
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:244:86: warning: pointer is missing a nullability type specifier (_Nonnull, _Nullable, or _Null_unspecified) [-Wnullability-completeness]
+  244 | - (void)cliptiqFinishPersistentTask:(NSURLSessionTask *)downloadTask location:(NSURL *)location
+      |                                                                                      ^
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:244:86: note: insert '_Nullable' if the pointer may be null
+  244 | - (void)cliptiqFinishPersistentTask:(NSURLSessionTask *)downloadTask location:(NSURL *)location
+      |                                                                                      ^
+      |                                                                                       _Nullable
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:244:86: note: insert '_Nonnull' if the pointer should never be null
+  244 | - (void)cliptiqFinishPersistentTask:(NSURLSessionTask *)downloadTask location:(NSURL *)location
+      |                                                                                      ^
+      |                                                                                       _Nonnull
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:315:34: warning: pointer is missing a nullability type specifier (_Nonnull, _Nullable, or _Null_unspecified) [-Wnullability-completeness]
+  315 | - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)task didReceiveResponse:(NSURLResponse *)response completionHandler:(void (^)(NSURLSessionResponseDisposition))completion
+      |                                  ^
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:315:34: note: insert '_Nullable' if the pointer may be null
+  315 | - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)task didReceiveResponse:(NSURLResponse *)response completionHandler:(void (^)(NSURLSessionResponseDisposition))completion
+      |                                  ^
+      |                                   _Nullable
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:315:34: note: insert '_Nonnull' if the pointer should never be null
+  315 | - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)task didReceiveResponse:(NSURLResponse *)response completionHandler:(void (^)(NSURLSessionResponseDisposition))completion
+      |                                  ^
+      |                                   _Nonnull
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:315:75: warning: pointer is missing a nullability type specifier (_Nonnull, _Nullable, or _Null_unspecified) [-Wnullability-completeness]
+  315 | - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)task didReceiveResponse:(NSURLResponse *)response completionHandler:(void (^)(NSURLSessionResponseDisposition))completion
+      |                                                                           ^
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:315:75: note: insert '_Nullable' if the pointer may be null
+  315 | - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)task didReceiveResponse:(NSURLResponse *)response completionHandler:(void (^)(NSURLSessionResponseDisposition))completion
+      |                                                                           ^
+      |                                                                            _Nullable
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:315:75: note: insert '_Nonnull' if the pointer should never be null
+  315 | - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)task didReceiveResponse:(NSURLResponse *)response completionHandler:(void (^)(NSURLSessionResponseDisposition))completion
+      |                                                                           ^
+      |                                                                            _Nonnull
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:315:116: warning: pointer is missing a nullability type specifier (_Nonnull, _Nullable, or _Null_unspecified) [-Wnullability-completeness]
+  315 | - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)task didReceiveResponse:(NSURLResponse *)response completionHandler:(void (^)(NSURLSessionResponseDisposition))completion
+      |                                                                                                                    ^
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:315:116: note: insert '_Nullable' if the pointer may be null
+  315 | - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)task didReceiveResponse:(NSURLResponse *)response completionHandler:(void (^)(NSURLSessionResponseDisposition))completion
+      |                                                                                                                    ^
+      |                                                                                                                     _Nullable
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:315:116: note: insert '_Nonnull' if the pointer should never be null
+  315 | - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)task didReceiveResponse:(NSURLResponse *)response completionHandler:(void (^)(NSURLSessionResponseDisposition))completion
+      |                                                                                                                    ^
+      |                                                                                                                     _Nonnull
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:315:152: warning: block pointer is missing a nullability type specifier (_Nonnull, _Nullable, or _Null_unspecified) [-Wnullability-completeness]
+  315 | - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)task didReceiveResponse:(NSURLResponse *)response completionHandler:(void (^)(NSURLSessionResponseDisposition))completion
+      |                                                                                                                                                        ^
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:315:152: note: insert '_Nullable' if the block pointer may be null
+  315 | - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)task didReceiveResponse:(NSURLResponse *)response completionHandler:(void (^)(NSURLSessionResponseDisposition))completion
+      |                                                                                                                                                        ^
+      |                                                                                                                                                         _Nullable
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:315:152: note: insert '_Nonnull' if the block pointer should never be null
+  315 | - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)task didReceiveResponse:(NSURLResponse *)response completionHandler:(void (^)(NSURLSessionResponseDisposition))completion
+      |                                                                                                                                                        ^
+      |                                                                                                                                                         _Nonnull
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:330:34: warning: pointer is missing a nullability type specifier (_Nonnull, _Nullable, or _Null_unspecified) [-Wnullability-completeness]
+  330 | - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)task didReceiveData:(NSData *)data
+      |                                  ^
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:330:34: note: insert '_Nullable' if the pointer may be null
+  330 | - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)task didReceiveData:(NSData *)data
+      |                                  ^
+      |                                   _Nullable
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:330:34: note: insert '_Nonnull' if the pointer should never be null
+  330 | - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)task didReceiveData:(NSData *)data
+      |                                  ^
+      |                                   _Nonnull
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:330:75: warning: pointer is missing a nullability type specifier (_Nonnull, _Nullable, or _Null_unspecified) [-Wnullability-completeness]
+  330 | - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)task didReceiveData:(NSData *)data
+      |                                                                           ^
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:330:75: note: insert '_Nullable' if the pointer may be null
+  330 | - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)task didReceiveData:(NSData *)data
+      |                                                                           ^
+      |                                                                            _Nullable
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:330:75: note: insert '_Nonnull' if the pointer should never be null
+  330 | - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)task didReceiveData:(NSData *)data
+      |                                                                           ^
+      |                                                                            _Nonnull
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:330:105: warning: pointer is missing a nullability type specifier (_Nonnull, _Nullable, or _Null_unspecified) [-Wnullability-completeness]
+  330 | - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)task didReceiveData:(NSData *)data
+      |                                                                                                         ^
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:330:105: note: insert '_Nullable' if the pointer may be null
+  330 | - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)task didReceiveData:(NSData *)data
+      |                                                                                                         ^
+      |                                                                                                          _Nullable
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:330:105: note: insert '_Nonnull' if the pointer should never be null
+  330 | - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)task didReceiveData:(NSData *)data
+      |                                                                                                         ^
+      |                                                                                                          _Nonnull
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:346:34: warning: pointer is missing a nullability type specifier (_Nonnull, _Nullable, or _Null_unspecified) [-Wnullability-completeness]
+  346 | - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error
+      |                                  ^
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:346:34: note: insert '_Nullable' if the pointer may be null
+  346 | - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error
+      |                                  ^
+      |                                   _Nullable
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:346:34: note: insert '_Nonnull' if the pointer should never be null
+  346 | - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error
+      |                                  ^
+      |                                   _Nonnull
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:346:67: warning: pointer is missing a nullability type specifier (_Nonnull, _Nullable, or _Null_unspecified) [-Wnullability-completeness]
+  346 | - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error
+      |                                                                   ^
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:346:67: note: insert '_Nullable' if the pointer may be null
+  346 | - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error
+      |                                                                   ^
+      |                                                                    _Nullable
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:346:67: note: insert '_Nonnull' if the pointer should never be null
+  346 | - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error
+      |                                                                   ^
+      |                                                                    _Nonnull
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:346:104: warning: pointer is missing a nullability type specifier (_Nonnull, _Nullable, or _Null_unspecified) [-Wnullability-completeness]
+  346 | - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error
+      |                                                                                                        ^
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:346:104: note: insert '_Nullable' if the pointer may be null
+  346 | - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error
+      |                                                                                                        ^
+      |                                                                                                         _Nullable
+/Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/SPUDownloaderFixture.inc:346:104: note: insert '_Nonnull' if the pointer should never be null
+  346 | - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error
+      |                                                                                                        ^
+      |                                                                                                         _Nonnull
+/Users/runner/work/Cliptiq/Cliptiq/tests/integration/sparkle_bounds.m:61:25: warning: null passed to a callee that requires a non-null argument [-Wnonnull]
+   61 |     [downloader cleanup:nil];
+      |                         ^~~
+/Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/MacTypes.h:96:19: note: expanded from macro 'nil'
+   96 |       #define nil __DARWIN_NULL
+      |                   ^~~~~~~~~~~~~
+/Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/sys/_types.h:64:23: note: expanded from macro '__DARWIN_NULL'
+   64 | #define __DARWIN_NULL ((void *)0)
+      |                       ^~~~~~~~~~~
+16 warnings generated.
+$ /Users/runner/work/Cliptiq/Cliptiq/out/t15-downloader-fixture/bounds-test
+native downloader: valid response, unknown-length appcast and archive byte ceilings passed
+$ xcodebuild -project /Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-source/Sparkle-2.10.0/Sparkle.xcodeproj -scheme Sparkle -configuration Release -derivedDataPath /Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived -arch arm64 CODE_SIGNING_ALLOWED=NO CODE_SIGN_IDENTITY= DEVELOPMENT_TEAM= build
+Command line invocation:
+    /Applications/Xcode_16.4.app/Contents/Developer/usr/bin/xcodebuild -project /Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-source/Sparkle-2.10.0/Sparkle.xcodeproj -scheme Sparkle -configuration Release -derivedDataPath /Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived -arch arm64 CODE_SIGNING_ALLOWED=NO CODE_SIGN_IDENTITY= DEVELOPMENT_TEAM= build
+
+Build settings from command line:
+    ARCHS = arm64
+    CODE_SIGN_IDENTITY = 
+    CODE_SIGNING_ALLOWED = NO
+    DEVELOPMENT_TEAM = 
+
+Resolve Package Graph
+
+Fetching from https://github.com/apple/swift-argument-parser.git
+
+Creating working copy of package ‘swift-argument-parser’
+
+Checking out 0.4.4 of package ‘swift-argument-parser’
+
+
+Resolved source packages:
+  swift-argument-parser: https://github.com/apple/swift-argument-parser.git @ 0.4.4
+
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:macOS, arch:arm64, id:6e4dbfc2a64f9f198c73a5ca55202b9e7674416f, name:My Mac }
+{ platform:macOS, arch:x86_64, id:6e4dbfc2a64f9f198c73a5ca55202b9e7674416f, name:My Mac }
+{ platform:macOS, name:Any Mac }
+note: Using codesigning identity override: 
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (9 targets)
+    Target 'Sparkle' in project 'Sparkle'
+        ➜ Explicit dependency on target 'SparkleDownloader' in project 'Sparkle'
+        ➜ Explicit dependency on target 'SparkleInstallerConnection' in project 'Sparkle'
+        ➜ Explicit dependency on target 'SparkleInstallerLauncher' in project 'Sparkle'
+        ➜ Explicit dependency on target 'SparkleInstallerStatus' in project 'Sparkle'
+        ➜ Explicit dependency on target 'Autoupdate' in project 'Sparkle'
+        ➜ Explicit dependency on target 'Installer Progress' in project 'Sparkle'
+    Target 'Installer Progress' in project 'Sparkle' (no dependencies)
+    Target 'Autoupdate' in project 'Sparkle'
+        ➜ Explicit dependency on target 'bsdiff' in project 'Sparkle'
+        ➜ Explicit dependency on target 'ed25519' in project 'Sparkle'
+    Target 'ed25519' in project 'Sparkle' (no dependencies)
+    Target 'bsdiff' in project 'Sparkle' (no dependencies)
+    Target 'SparkleInstallerStatus' in project 'Sparkle' (no dependencies)
+    Target 'SparkleInstallerLauncher' in project 'Sparkle' (no dependencies)
+    Target 'SparkleInstallerConnection' in project 'Sparkle' (no dependencies)
+    Target 'SparkleDownloader' in project 'Sparkle' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ExecuteExternalTool /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -arch arm64 -isysroot /Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk -x objective-c -c /dev/null
+
+ExecuteExternalTool /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -arch arm64 -isysroot /Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk -x c -c /dev/null
+
+ExecuteExternalTool /Applications/Xcode_16.4.app/Contents/Developer/usr/bin/ibtool --version --output-format xml1
+
+ExecuteExternalTool /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -isysroot /Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk -x c -c /dev/null
+
+ExecuteExternalTool /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld -version_details
+
+ExecuteExternalTool /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/libtool -V
+
+Build description signature: c1368287bbec7645ad84c81a128c17f1
+Build description path: /Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Intermediates.noindex/XCBuildData/c1368287bbec7645ad84c81a128c17f1.xcbu
+[verbose build output elided; SHA256=39b0446ab8950f2721382c72ae6a749c2e452bd26475703bb8d486bd0965f48c]
+MISSING_FIELD_INITIALIZERS\=YES
+    export GCC_WARN_ABOUT_MISSING_NEWLINE\=YES
+    export GCC_WARN_ABOUT_MISSING_PROTOTYPES\=YES
+    export GCC_WARN_ABOUT_RETURN_TYPE\=YES
+    export GCC_WARN_FOUR_CHARACTER_CONSTANTS\=YES
+    export GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS\=YES
+    export GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED\=YES
+    export GCC_WARN_MULTIPLE_DEFINITION_TYPES_FOR_SELECTOR\=YES
+    export GCC_WARN_NON_VIRTUAL_DESTRUCTOR\=YES
+    export GCC_WARN_PEDANTIC\=YES
+    export GCC_WARN_SHADOW\=YES
+    export GCC_WARN_SIGN_COMPARE\=YES
+    export GCC_WARN_STRICT_SELECTOR_MATCH\=YES
+    export GCC_WARN_UNDECLARED_SELECTOR\=YES
+    export GCC_WARN_UNINITIALIZED_AUTOS\=YES
+    export GCC_WARN_UNKNOWN_PRAGMAS\=YES
+    export GCC_WARN_UNUSED_FUNCTION\=YES
+    export GCC_WARN_UNUSED_LABEL\=YES
+    export GCC_WARN_UNUSED_PARAMETER\=YES
+    export GCC_WARN_UNUSED_VARIABLE\=YES
+    export GENERATED_MODULEMAP_DIR\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Intermediates.noindex/GeneratedModuleMaps
+    export GENERATE_APPCAST_BUILD_LEGACY_DSA_SUPPORT\=1
+    export GENERATE_INFOPLIST_FILE\=NO
+    export GENERATE_INTERMEDIATE_TEXT_BASED_STUBS\=YES
+    export GENERATE_MASTER_OBJECT_FILE\=NO
+    export GENERATE_PKGINFO_FILE\=NO
+    export GENERATE_PROFILING_CODE\=NO
+    export GENERATE_TEXT_BASED_STUBS\=NO
+    export GID\=20
+    export GROUP\=staff
+    export HEADERMAP_INCLUDES_FLAT_ENTRIES_FOR_TARGET_BEING_BUILT\=YES
+    export HEADERMAP_INCLUDES_FRAMEWORK_ENTRIES_FOR_ALL_PRODUCT_TYPES\=YES
+    export HEADERMAP_INCLUDES_FRAMEWORK_ENTRIES_FOR_TARGETS_NOT_BEING_BUILT\=YES
+    export HEADERMAP_INCLUDES_NONPUBLIC_NONPRIVATE_HEADERS\=YES
+    export HEADERMAP_INCLUDES_PROJECT_HEADERS\=YES
+    export HEADERMAP_USES_FRAMEWORK_PREFIX_ENTRIES\=YES
+    export HEADERMAP_USES_VFS\=YES
+    export HEADER_SEARCH_PATHS\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Products/Release/include\ 
+    export HIDE_BITCODE_SYMBOLS\=YES
+    export HOME\=/Users/runner
+    export HOST_ARCH\=arm64
+    export HOST_PLATFORM\=macosx
+    export ICONV\=/usr/bin/iconv
+    export IMPLICIT_DEPENDENCY_DOMAIN\=default
+    export INFOPLIST_ENABLE_CFBUNDLEICONS_MERGE\=YES
+    export INFOPLIST_EXPAND_BUILD_SETTINGS\=YES
+    export INFOPLIST_FILE\=Sparkle/Sparkle-Info.plist
+    export INFOPLIST_OUTPUT_FORMAT\=same-as-input
+    export INFOPLIST_PATH\=Sparkle.framework/Versions/B/Resources/Info.plist
+    export INFOPLIST_PREPROCESS\=NO
+    export INFOSTRINGS_PATH\=Sparkle.framework/Versions/B/Resources/en.lproj/InfoPlist.strings
+    export INLINE_PRIVATE_FRAMEWORKS\=NO
+    export INSTALLAPI_IGNORE_SKIP_INSTALL\=YES
+    export INSTALLER_CONNECTION_BUNDLE_ID\=org.sparkle-project.InstallerConnection
+    export INSTALLER_CONNECTION_NAME\=InstallerConnection
+    export INSTALLER_LAUNCHER_BUNDLE_ID\=org.sparkle-project.InstallerLauncher
+    export INSTALLER_LAUNCHER_NAME\=Installer
+    export INSTALLER_STATUS_BUNDLE_ID\=org.sparkle-project.InstallerStatus
+    export INSTALLER_STATUS_NAME\=InstallerStatus
+    export INSTALLHDRS_COPY_PHASE\=NO
+    export INSTALLHDRS_SCRIPT_PHASE\=NO
+    export INSTALL_DIR\=/tmp/Sparkle.dst/Library/Frameworks
+    export INSTALL_GROUP\=staff
+    export INSTALL_MODE_FLAG\=u+w,go-w,a+rX
+    export INSTALL_OWNER\=runner
+    export INSTALL_PATH\=/Library/Frameworks
+    export INSTALL_ROOT\=/tmp/Sparkle.dst
+    export IOS_UNZIPPERED_TWIN_PREFIX_PATH\=/System/iOSSupport
+    export IS_MACCATALYST\=NO
+    export IS_UNOPTIMIZED_BUILD\=NO
+    export JAVAC_DEFAULT_FLAGS\=-J-Xms64m\ -J-XX:NewSize\=4M\ -J-Dfile.encoding\=UTF8
+    export JAVA_APP_STUB\=/System/Library/Frameworks/JavaVM.framework/Resources/MacOS/JavaApplicationStub
+    export JAVA_ARCHIVE_CLASSES\=YES
+    export JAVA_ARCHIVE_TYPE\=JAR
+    export JAVA_COMPILER\=/usr/bin/javac
+    export JAVA_FOLDER_PATH\=Sparkle.framework/Versions/B/Resources/Java
+    export JAVA_FRAMEWORK_RESOURCES_DIRS\=Resources
+    export JAVA_JAR_FLAGS\=cv
+    export JAVA_SOURCE_SUBDIR\=.
+    export JAVA_USE_DEPENDENCIES\=YES
+    export JAVA_ZIP_FLAGS\=-urg
+    export JIKES_DEFAULT_FLAGS\=+E\ +OLDCSO
+    export KASAN_CFLAGS_CLASSIC\=-DKASAN\=1\ -DKASAN_CLASSIC\=1\ -fsanitize\=address\ -mllvm\ -asan-globals-live-support\ -mllvm\ -asan-force-dynamic-shadow
+    export KASAN_CFLAGS_TBI\=-DKASAN\=1\ -DKASAN_TBI\=1\ -fsanitize\=kernel-hwaddress\ -mllvm\ -hwasan-recover\=0\ -mllvm\ -hwasan-instrument-atomics\=0\ -mllvm\ -hwasan-instrument-stack\=1\ -mllvm\ -hwasan-generate-tags-with-calls\=1\ -mllvm\ -hwasan-instrument-with-calls\=1\ -mllvm\ -hwasan-use-short-granules\=0\ -mllvm\ -hwasan-memory-access-callback-prefix\=__asan_
+    export KASAN_DEFAULT_CFLAGS\=-DKASAN\=1\ -DKASAN_CLASSIC\=1\ -fsanitize\=address\ -mllvm\ -asan-globals-live-support\ -mllvm\ -asan-force-dynamic-shadow
+    export KEEP_PRIVATE_EXTERNS\=NO
+    export LD_DEPENDENCY_INFO_FILE\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Intermediates.noindex/Sparkle.build/Release/Sparkle.build/Objects-normal/undefined_arch/Sparkle_dependency_info.dat
+    export LD_DYLIB_INSTALL_NAME\=@rpath/Sparkle.framework/Versions/B/Sparkle
+    export LD_EXPORT_SYMBOLS\=YES
+    export LD_GENERATE_MAP_FILE\=NO
+    export LD_MAP_FILE_PATH\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Intermediates.noindex/Sparkle.build/Release/Sparkle.build/Sparkle-LinkMap-normal-undefined_arch.txt
+    export LD_NO_PIE\=NO
+    export LD_QUOTE_LINKER_ARGUMENTS_FOR_COMPILER_DRIVER\=YES
+    export LD_SHARED_CACHE_ELIGIBLE\=Automatic
+    export LD_WARN_DUPLICATE_LIBRARIES\=NO
+    export LD_WARN_UNUSED_DYLIBS\=NO
+    export LEGACY_DEVELOPER_DIR\=/Applications/Xcode_16.4.app/Contents/PlugIns/Xcode3Core.ideplugin/Contents/SharedSupport/Developer
+    export LEX\=lex
+    export LIBRARY_DEXT_INSTALL_PATH\=/Library/DriverExtensions
+    export LIBRARY_FLAG_NOSPACE\=YES
+    export LIBRARY_FLAG_PREFIX\=-l
+    export LIBRARY_KEXT_INSTALL_PATH\=/Library/Extensions
+    export LIBRARY_SEARCH_PATHS\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Products/Release\ 
+    export LINKER_DISPLAYS_MANGLED_NAMES\=NO
+    export LINK_FILE_LIST_normal_arm64\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Intermediates.noindex/Sparkle.build/Release/Sparkle.build/Objects-normal/arm64/Sparkle.LinkFileList
+    export LINK_OBJC_RUNTIME\=YES
+    export LINK_WITH_STANDARD_LIBRARIES\=YES
+    export LLVM_TARGET_TRIPLE_OS_VERSION\=macos12.0
+    export LLVM_TARGET_TRIPLE_OS_VERSION_NO\=macos12.0
+    export LLVM_TARGET_TRIPLE_OS_VERSION_YES\=macos15.5
+    export LLVM_TARGET_TRIPLE_VENDOR\=apple
+    export LM_AUX_CONST_METADATA_LIST_PATH_normal_arm64\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Intermediates.noindex/Sparkle.build/Release/Sparkle.build/Objects-normal/arm64/Sparkle.SwiftConstValuesFileList
+    export LOCALIZATION_EXPORT_SUPPORTED\=YES
+    export LOCALIZATION_PREFERS_STRING_CATALOGS\=NO
+    export LOCALIZED_RESOURCES_FOLDER_PATH\=Sparkle.framework/Versions/B/Resources/en.lproj
+    export LOCALIZED_STRING_MACRO_NAMES\=NSLocalizedString\ CFCopyLocalizedString
+    export LOCALIZED_STRING_SWIFTUI_SUPPORT\=YES
+    export LOCAL_ADMIN_APPS_DIR\=/Applications/Utilities
+    export LOCAL_APPS_DIR\=/Applications
+    export LOCAL_DEVELOPER_DIR\=/Library/Developer
+    export LOCAL_LIBRARY_DIR\=/Library
+    export LOCROOT\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-source/Sparkle-2.10.0
+    export LOCSYMROOT\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-source/Sparkle-2.10.0
+    export MACH_O_TYPE\=mh_dylib
+    export MACOSX_DEPLOYMENT_TARGET\=12.0
+    export MAC_OS_X_PRODUCT_BUILD_VERSION\=24G830
+    export MAC_OS_X_VERSION_ACTUAL\=150709
+    export MAC_OS_X_VERSION_MAJOR\=150000
+    export MAC_OS_X_VERSION_MINOR\=150700
+    export MAKE_MERGEABLE\=NO
+    export MARKETING_VERSION\=2.10.0
+    export MERGEABLE_LIBRARY\=NO
+    export MERGED_BINARY_TYPE\=none
+    export MERGE_LINKED_LIBRARIES\=NO
+    export METAL_LIBRARY_FILE_BASE\=default
+    export METAL_LIBRARY_OUTPUT_DIR\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Products/Release/Sparkle.framework/Versions/B/Resources
+    export MODULEMAP_PRIVATE_FILE\=Sparkle/Sparkle.private.modulemap
+    export MODULES_FOLDER_PATH\=Sparkle.framework/Versions/B/Modules
+    export MODULE_CACHE_DIR\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/ModuleCache.noindex
+    export NATIVE_ARCH\=arm64
+    export NATIVE_ARCH_32_BIT\=arm
+    export NATIVE_ARCH_64_BIT\=arm64
+    export NATIVE_ARCH_ACTUAL\=arm64
+    export NO_COMMON\=YES
+    export OBJECT_FILE_DIR\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Intermediates.noindex/Sparkle.build/Release/Sparkle.build/Objects
+    export OBJECT_FILE_DIR_normal\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Intermediates.noindex/Sparkle.build/Release/Sparkle.build/Objects-normal
+    export OBJROOT\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Intermediates.noindex
+    export ONLY_ACTIVE_ARCH\=NO
+    export OS\=MACOS
+    export OSAC\=/usr/bin/osacompile
+    export OTHER_SWIFT_FLAGS\=-DSPARKLE_BUILD_LEGACY_DSA_SUPPORT\ -DGENERATE_APPCAST_BUILD_LEGACY_DSA_SUPPORT\ -DSPARKLE_BUILD_PACKAGE_SUPPORT
+    export OTHER_SWIFT_FLAGS_COMMON\=-DSPARKLE_BUILD_LEGACY_DSA_SUPPORT\ -DGENERATE_APPCAST_BUILD_LEGACY_DSA_SUPPORT\ -DSPARKLE_BUILD_PACKAGE_SUPPORT
+    export PACKAGE_TYPE\=com.apple.package-type.wrapper.framework
+    export PASCAL_STRINGS\=YES
+    export PATH\=/Applications/Xcode_16.4.app/Contents/SharedFrameworks/SwiftBuild.framework/Versions/A/PlugIns/SWBBuildService.bundle/Contents/PlugIns/SWBUniversalPlatformPlugin.bundle/Contents/Frameworks/SWBUniversalPlatform.framework/Resources:/Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin:/Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/local/bin:/Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/libexec:/Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform/usr/bin:/Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform/usr/local/bin:/Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin:/Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/local/bin:/Applications/Xcode_16.4.app/Contents/Developer/usr/bin:/Applications/Xcode_16.4.app/Contents/Developer/usr/local/bin:/opt/homebrew/lib/ruby/gems/3.3.0/bin:/opt/homebrew/opt/ruby@3.3/bin:/Users/runner/.local/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/Users/runner/.cargo/bin:/usr/local/opt/curl/bin:/usr/local/bin:/usr/local/sbin:/Users/runner/bin:/Users/runner/.yarn/bin:/Users/runner/Library/Android/sdk/tools:/Users/runner/Library/Android/sdk/platform-tools:/Library/Frameworks/Python.framework/Versions/Current/bin:/Library/Frameworks/Mono.framework/Versions/Current/Commands:/usr/bin:/bin:/usr/sbin:/sbin:/Users/runner/.dotnet/tools
+    export PATH_PREFIXES_EXCLUDED_FROM_HEADER_DEPENDENCIES\=/usr/include\ /usr/local/include\ /System/Library/Frameworks\ /System/Library/PrivateFrameworks\ /Applications/Xcode_16.4.app/Contents/Developer/Headers\ /Applications/Xcode_16.4.app/Contents/Developer/SDKs\ /Applications/Xcode_16.4.app/Contents/Developer/Platforms
+    export PBDEVELOPMENTPLIST_PATH\=Sparkle.framework/Versions/B/pbdevelopment.plist
+    export PER_ARCH_MODULE_FILE_DIR\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Intermediates.noindex/Sparkle.build/Release/Sparkle.build/Objects-normal/undefined_arch
+    export PER_ARCH_OBJECT_FILE_DIR\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Intermediates.noindex/Sparkle.build/Release/Sparkle.build/Objects-normal/undefined_arch
+    export PER_VARIANT_OBJECT_FILE_DIR\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Intermediates.noindex/Sparkle.build/Release/Sparkle.build/Objects-normal
+    export PKGINFO_FILE_PATH\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Intermediates.noindex/Sparkle.build/Release/Sparkle.build/PkgInfo
+    export PKGINFO_PATH\=Sparkle.framework/PkgInfo
+    export PLATFORM_DEVELOPER_APPLICATIONS_DIR\=/Applications/Xcode_16.4.app/Contents/Developer/Applications
+    export PLATFORM_DEVELOPER_BIN_DIR\=/Applications/Xcode_16.4.app/Contents/Developer/usr/bin
+    export PLATFORM_DEVELOPER_LIBRARY_DIR\=/Applications/Xcode_16.4.app/Contents/Developer/Library
+    export PLATFORM_DEVELOPER_SDK_DIR\=/Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs
+    export PLATFORM_DEVELOPER_TOOLS_DIR\=/Applications/Xcode_16.4.app/Contents/Developer/Tools
+    export PLATFORM_DEVELOPER_USR_DIR\=/Applications/Xcode_16.4.app/Contents/Developer/usr
+    export PLATFORM_DIR\=/Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform
+    export PLATFORM_DISPLAY_NAME\=macOS
+    export PLATFORM_FAMILY_NAME\=macOS
+    export PLATFORM_NAME\=macosx
+    export PLATFORM_PREFERRED_ARCH\=x86_64
+    export PLATFORM_PRODUCT_BUILD_VERSION\=24F74
+    export PLATFORM_REQUIRES_SWIFT_AUTOLINK_EXTRACT\=NO
+    export PLATFORM_REQUIRES_SWIFT_MODULEWRAP\=NO
+    export PLIST_FILE_OUTPUT_FORMAT\=same-as-input
+    export PLUGINS_FOLDER_PATH\=Sparkle.framework/Versions/B/PlugIns
+    export PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR\=YES
+    export PRECOMP_DESTINATION_DIR\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Intermediates.noindex/Sparkle.build/Release/Sparkle.build/PrefixHeaders
+    export PRIVATE_HEADERS_FOLDER_PATH\=Sparkle.framework/Versions/B/PrivateHeaders
+    export PROCESSED_INFOPLIST_PATH\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Intermediates.noindex/Sparkle.build/Release/Sparkle.build/Objects-normal/undefined_arch/Processed-Info.plist
+    export PRODUCT_BUNDLE_IDENTIFIER\=org.sparkle-project.Sparkle
+    export PRODUCT_BUNDLE_PACKAGE_TYPE\=FMWK
+    export PRODUCT_MODULE_NAME\=Sparkle
+    export PRODUCT_NAME\=Sparkle
+    export PRODUCT_SETTINGS_PATH\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-source/Sparkle-2.10.0/Sparkle/Sparkle-Info.plist
+    export PRODUCT_TYPE\=com.apple.product-type.framework
+    export PROFILING_CODE\=NO
+    export PROJECT\=Sparkle
+    export PROJECT_CLASS_PREFIX\=SU
+    export PROJECT_DERIVED_FILE_DIR\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Intermediates.noindex/Sparkle.build/DerivedSources
+    export PROJECT_DIR\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-source/Sparkle-2.10.0
+    export PROJECT_FILE_PATH\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-source/Sparkle-2.10.0/Sparkle.xcodeproj
+    export PROJECT_GUID\=6370c6b61b088c270c7923b1d9fb48ae
+    export PROJECT_NAME\=Sparkle
+    export PROJECT_TEMP_DIR\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Intermediates.noindex/Sparkle.build
+    export PROJECT_TEMP_ROOT\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Intermediates.noindex
+    export PUBLIC_HEADERS_FOLDER_PATH\=Sparkle.framework/Versions/B/Headers
+    export RECOMMENDED_MACOSX_DEPLOYMENT_TARGET\=11.0
+    export RECURSIVE_SEARCH_PATHS_FOLLOW_SYMLINKS\=YES
+    export REMOVE_CVS_FROM_RESOURCES\=YES
+    export REMOVE_GIT_FROM_RESOURCES\=YES
+    export REMOVE_HEADERS_FROM_EMBEDDED_BUNDLES\=YES
+    export REMOVE_HG_FROM_RESOURCES\=YES
+    export REMOVE_STATIC_EXECUTABLES_FROM_EMBEDDED_BUNDLES\=YES
+    export REMOVE_SVN_FROM_RESOURCES\=YES
+    export RESCHEDULE_INDEPENDENT_HEADERS_PHASES\=YES
+    export REZ_COLLECTOR_DIR\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Intermediates.noindex/Sparkle.build/Release/Sparkle.build/ResourceManagerResources
+    export REZ_OBJECTS_DIR\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Intermediates.noindex/Sparkle.build/Release/Sparkle.build/ResourceManagerResources/Objects
+    export REZ_SEARCH_PATHS\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Products/Release\ 
+    export SCAN_ALL_SOURCE_FILES_FOR_INCLUDES\=NO
+    export SCRIPTS_FOLDER_PATH\=Sparkle.framework/Versions/B/Resources/Scripts
+    export SCRIPT_INPUT_FILE_COUNT\=0
+    export SCRIPT_INPUT_FILE_LIST_COUNT\=0
+    export SCRIPT_OUTPUT_FILE_COUNT\=0
+    export SCRIPT_OUTPUT_FILE_LIST_COUNT\=0
+    export SDKROOT\=/Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk
+    export SDK_DIR\=/Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk
+    export SDK_DIR_macosx\=/Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk
+    export SDK_DIR_macosx15_5\=/Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk
+    export SDK_NAME\=macosx15.5
+    export SDK_NAMES\=macosx15.5
+    export SDK_PRODUCT_BUILD_VERSION\=24F74
+    export SDK_STAT_CACHE_DIR\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived
+    export SDK_STAT_CACHE_ENABLE\=YES
+    export SDK_STAT_CACHE_PATH\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/SDKStatCaches.noindex/macosx15.5-24F74-a403186ba963133a54a0e0cacd566b0b.sdkstatcache
+    export SDK_VERSION\=15.5
+    export SDK_VERSION_ACTUAL\=150500
+    export SDK_VERSION_MAJOR\=150000
+    export SDK_VERSION_MINOR\=150500
+    export SED\=/usr/bin/sed
+    export SEPARATE_STRIP\=NO
+    export SEPARATE_SYMBOL_EDIT\=NO
+    export SET_DIR_MODE_OWNER_GROUP\=YES
+    export SET_FILE_MODE_OWNER_GROUP\=NO
+    export SHALLOW_BUNDLE\=NO
+    export SHALLOW_BUNDLE_PLATFORM\=NO
+    export SHALLOW_BUNDLE_TRIPLE\=macos
+    export SHALLOW_BUNDLE_ios_macabi\=NO
+    export SHALLOW_BUNDLE_macos\=NO
+    export SHARED_DERIVED_FILE_DIR\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Products/Release/DerivedSources
+    export SHARED_FRAMEWORKS_FOLDER_PATH\=Sparkle.framework/Versions/B/SharedFrameworks
+    export SHARED_PRECOMPS_DIR\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Intermediates.noindex/PrecompiledHeaders
+    export SHARED_SUPPORT_FOLDER_PATH\=Sparkle.framework/Versions/B/Resources
+    export SKIP_INSTALL\=YES
+    export SOURCE_ROOT\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-source/Sparkle-2.10.0
+    export SPARKLE_BUILD_BZIP2_DELTA_SUPPORT\=1
+    export SPARKLE_BUILD_LEGACY_DELTA_SUPPORT\=1
+    export SPARKLE_BUILD_LEGACY_DSA_SUPPORT\=1
+    export SPARKLE_BUILD_LEGACY_SUUPDATER\=1
+    export SPARKLE_BUILD_PACKAGE_SUPPORT\=1
+    export SPARKLE_BUILD_UI_BITS\=1
+    export SPARKLE_BUNDLE_IDENTIFIER\=org.sparkle-project.Sparkle
+    export SPARKLE_COPY_LOCALIZATIONS\=1
+    export SPARKLE_EMBED_DOWNLOADER_XPC_SERVICE\=1
+    export SPARKLE_EMBED_INSTALLER_CONNECTION_XPC_SERVICE\=0
+    export SPARKLE_EMBED_INSTALLER_LAUNCHER_XPC_SERVICE\=1
+    export SPARKLE_EMBED_INSTALLER_STATUS_XPC_SERVICE\=0
+    export SPARKLE_ICON_NAME\=AppIcon
+    export SPARKLE_INSTALLER_PROGRESS_TOOL_BUNDLE_ID\=org.sparkle-project.Sparkle.Updater
+    export SPARKLE_INSTALLER_PROGRESS_TOOL_NAME\=Updater
+    export SPARKLE_NORMALIZE_INSTALLED_APPLICATION_NAME\=0
+    export SPARKLE_RELAUNCH_TOOL_NAME\=Autoupdate
+    export SPARKLE_VERSION_MAJOR\=2
+    export SPARKLE_VERSION_MINOR\=10
+    export SPARKLE_VERSION_PATCH\=0
+    export SRCROOT\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-source/Sparkle-2.10.0
+    export STRINGSDATA_DIR\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Intermediates.noindex/Sparkle.build/Release/Sparkle.build/Objects-normal/undefined_arch
+    export STRINGSDATA_ROOT\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Intermediates.noindex/Sparkle.build/Release/Sparkle.build
+    export STRINGS_FILE_INFOPLIST_RENAME\=YES
+    export STRINGS_FILE_OUTPUT_ENCODING\=binary
+    export STRIP_BITCODE_FROM_COPIED_FILES\=NO
+    export STRIP_INSTALLED_PRODUCT\=YES
+    export STRIP_PNG_TEXT\=NO
+    export STRIP_STYLE\=non-global
+    export STRIP_SWIFT_SYMBOLS\=YES
+    export SUPPORTED_PLATFORMS\=macosx
+    export SUPPORTS_TEXT_BASED_API\=NO
+    export SUPPRESS_WARNINGS\=NO
+    export SWIFT_EMIT_LOC_STRINGS\=NO
+    export SWIFT_INSTALL_MODULE_FOR_DEPLOYMENT\=YES
+    export SWIFT_PLATFORM_TARGET_PREFIX\=macos
+    export SWIFT_RESPONSE_FILE_PATH_normal_arm64\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Intermediates.noindex/Sparkle.build/Release/Sparkle.build/Objects-normal/arm64/Sparkle.SwiftFileList
+    export SYMROOT\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Products
+    export SYSTEM_ADMIN_APPS_DIR\=/Applications/Utilities
+    export SYSTEM_APPS_DIR\=/Applications
+    export SYSTEM_CORE_SERVICES_DIR\=/System/Library/CoreServices
+    export SYSTEM_DEMOS_DIR\=/Applications/Extras
+    export SYSTEM_DEVELOPER_APPS_DIR\=/Applications/Xcode_16.4.app/Contents/Developer/Applications
+    export SYSTEM_DEVELOPER_BIN_DIR\=/Applications/Xcode_16.4.app/Contents/Developer/usr/bin
+    export SYSTEM_DEVELOPER_DEMOS_DIR\=/Applications/Xcode_16.4.app/Contents/Developer/Applications/Utilities/Built\ Examples
+    export SYSTEM_DEVELOPER_DIR\=/Applications/Xcode_16.4.app/Contents/Developer
+    export SYSTEM_DEVELOPER_DOC_DIR\=/Applications/Xcode_16.4.app/Contents/Developer/ADC\ Reference\ Library
+    export SYSTEM_DEVELOPER_GRAPHICS_TOOLS_DIR\=/Applications/Xcode_16.4.app/Contents/Developer/Applications/Graphics\ Tools
+    export SYSTEM_DEVELOPER_JAVA_TOOLS_DIR\=/Applications/Xcode_16.4.app/Contents/Developer/Applications/Java\ Tools
+    export SYSTEM_DEVELOPER_PERFORMANCE_TOOLS_DIR\=/Applications/Xcode_16.4.app/Contents/Developer/Applications/Performance\ Tools
+    export SYSTEM_DEVELOPER_RELEASENOTES_DIR\=/Applications/Xcode_16.4.app/Contents/Developer/ADC\ Reference\ Library/releasenotes
+    export SYSTEM_DEVELOPER_TOOLS\=/Applications/Xcode_16.4.app/Contents/Developer/Tools
+    export SYSTEM_DEVELOPER_TOOLS_DOC_DIR\=/Applications/Xcode_16.4.app/Contents/Developer/ADC\ Reference\ Library/documentation/DeveloperTools
+    export SYSTEM_DEVELOPER_TOOLS_RELEASENOTES_DIR\=/Applications/Xcode_16.4.app/Contents/Developer/ADC\ Reference\ Library/releasenotes/DeveloperTools
+    export SYSTEM_DEVELOPER_USR_DIR\=/Applications/Xcode_16.4.app/Contents/Developer/usr
+    export SYSTEM_DEVELOPER_UTILITIES_DIR\=/Applications/Xcode_16.4.app/Contents/Developer/Applications/Utilities
+    export SYSTEM_DEXT_INSTALL_PATH\=/System/Library/DriverExtensions
+    export SYSTEM_DOCUMENTATION_DIR\=/Library/Documentation
+    export SYSTEM_EXTENSIONS_FOLDER_PATH\=Sparkle.framework/Versions/B/Library/SystemExtensions
+    export SYSTEM_EXTENSIONS_FOLDER_PATH_SHALLOW_BUNDLE_NO\=Sparkle.framework/Versions/B/Library/SystemExtensions
+    export SYSTEM_EXTENSIONS_FOLDER_PATH_SHALLOW_BUNDLE_YES\=Sparkle.framework/Versions/B/SystemExtensions
+    export SYSTEM_KEXT_INSTALL_PATH\=/System/Library/Extensions
+    export SYSTEM_LIBRARY_DIR\=/System/Library
+    export TAPI_DEMANGLE\=YES
+    export TAPI_ENABLE_PROJECT_HEADERS\=NO
+    export TAPI_LANGUAGE\=objective-c
+    export TAPI_LANGUAGE_STANDARD\=compiler-default
+    export TAPI_USE_SRCROOT\=YES
+    export TAPI_VERIFY_MODE\=Pedantic
+    export TARGETNAME\=Sparkle
+    export TARGET_BUILD_DIR\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Products/Release
+    export TARGET_NAME\=Sparkle
+    export TARGET_TEMP_DIR\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Intermediates.noindex/Sparkle.build/Release/Sparkle.build
+    export TEMP_DIR\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Intermediates.noindex/Sparkle.build/Release/Sparkle.build
+    export TEMP_FILES_DIR\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Intermediates.noindex/Sparkle.build/Release/Sparkle.build
+    export TEMP_FILE_DIR\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Intermediates.noindex/Sparkle.build/Release/Sparkle.build
+    export TEMP_ROOT\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Intermediates.noindex
+    export TEMP_SANDBOX_DIR\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Intermediates.noindex/TemporaryTaskSandboxes
+    export TEST_FRAMEWORK_SEARCH_PATHS\=\ /Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks
+    export TEST_LIBRARY_SEARCH_PATHS\=\ /Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib
+    export TOOLCHAINS\=com.apple.dt.toolchain.XcodeDefault
+    export TOOLCHAIN_DIR\=/Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain
+    export TREAT_MISSING_BASELINES_AS_TEST_FAILURES\=NO
+    export TREAT_MISSING_SCRIPT_PHASE_OUTPUTS_AS_ERRORS\=NO
+    export UID\=501
+    export UNINSTALLED_PRODUCTS_DIR\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Intermediates.noindex/UninstalledProducts
+    export UNLOCALIZED_RESOURCES_FOLDER_PATH\=Sparkle.framework/Versions/B/Resources
+    export UNLOCALIZED_RESOURCES_FOLDER_PATH_SHALLOW_BUNDLE_NO\=Sparkle.framework/Versions/B/Resources
+    export UNLOCALIZED_RESOURCES_FOLDER_PATH_SHALLOW_BUNDLE_YES\=Sparkle.framework/Versions/B
+    export UNSTRIPPED_PRODUCT\=NO
+    export USER\=runner
+    export USER_APPS_DIR\=/Users/runner/Applications
+    export USER_LIBRARY_DIR\=/Users/runner/Library
+    export USE_DYNAMIC_NO_PIC\=YES
+    export USE_HEADERMAP\=YES
+    export USE_HEADER_SYMLINKS\=NO
+    export VALIDATE_DEVELOPMENT_ASSET_PATHS\=YES_ERROR
+    export VALIDATE_PRODUCT\=NO
+    export VALID_ARCHS\=arm64\ arm64e\ i386\ x86_64
+    export VERBOSE_PBXCP\=NO
+    export VERSIONPLIST_PATH\=Sparkle.framework/Versions/B/Resources/version.plist
+    export VERSIONS_FOLDER_PATH\=Sparkle.framework/Versions
+    export VERSIONS_FOLDER_PATH_SHALLOW_BUNDLE_NO\=Sparkle.framework/Versions
+    export VERSIONS_FOLDER_PATH_SHALLOW_BUNDLE_YES\=Sparkle.framework
+    export VERSION_INFO_BUILDER\=runner
+    export VERSION_INFO_FILE\=Sparkle_vers.c
+    export VERSION_INFO_STRING\=\"@\(\#\)PROGRAM:Sparkle\ \ PROJECT:Sparkle-2064\"
+    export WARNING_CFLAGS\=-Wall\ -Weverything\ -Wno-unused-macros\ -Wno-gnu-statement-expression\ -Wno-auto-import\ -Wno-gnu-zero-variadic-macro-arguments\ -Wno-format-non-iso\ -Wno-direct-ivar-access\ -Wno-declaration-after-statement\ -Wno-gnu-conditional-omitted-operand\ -Wno-switch-default\ -Wno-missing-include-dirs\ -Werror\=undef
+    export WORKSPACE_DIR\=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-source/Sparkle-2.10.0/Sparkle.xcodeproj
+    export WRAPPER_EXTENSION\=framework
+    export WRAPPER_NAME\=Sparkle.framework
+    export WRAPPER_SUFFIX\=.framework
+    export WRAP_ASSET_PACKS_IN_SEPARATE_DIRECTORIES\=NO
+    export XCODE_APP_SUPPORT_DIR\=/Applications/Xcode_16.4.app/Contents/Developer/Library/Xcode
+    export XCODE_PRODUCT_BUILD_VERSION\=16F6
+    export XCODE_VERSION_ACTUAL\=1640
+    export XCODE_VERSION_MAJOR\=1600
+    export XCODE_VERSION_MINOR\=1640
+    export XPCSERVICES_FOLDER_PATH\=Sparkle.framework/Versions/B/XPCServices
+    export XPC_SERVICE_BUNDLE_ID_PREFIX\=org.sparkle-project
+    export YACC\=yacc
+    export _BOOL_\=NO
+    export _BOOL_NO\=NO
+    export _BOOL_YES\=YES
+    export _DEVELOPMENT_TEAM_IS_EMPTY\=YES
+    export _DISCOVER_COMMAND_LINE_LINKER_INPUTS\=YES
+    export _DISCOVER_COMMAND_LINE_LINKER_INPUTS_INCLUDE_WL\=YES
+    export _IS_EMPTY_\=YES
+    export _MACOSX_DEPLOYMENT_TARGET_IS_EMPTY\=NO
+    export _WRAPPER_CONTENTS_DIR\=/Contents
+    export _WRAPPER_CONTENTS_DIR_SHALLOW_BUNDLE_NO\=/Contents
+    export _WRAPPER_PARENT_PATH\=/..
+    export _WRAPPER_PARENT_PATH_SHALLOW_BUNDLE_NO\=/..
+    export _WRAPPER_RESOURCES_DIR\=/Resources
+    export _WRAPPER_RESOURCES_DIR_SHALLOW_BUNDLE_NO\=/Resources
+    export __DIAGNOSE_DEPRECATED_ARCHS\=YES
+    export arch\=undefined_arch
+    export variant\=normal
+    /bin/sh -c /Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Intermediates.noindex/Sparkle.build/Release/Sparkle.build/Script-720B4C2125EBFAA5005A0592.sh
+
+VerifyModule /Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Products/Release/Sparkle.framework (in target 'Sparkle' from project 'Sparkle')
+    cd /Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-source/Sparkle-2.10.0
+    /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/modules-verifier /Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Products/Release/Sparkle.framework --clang /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang --diagnostic-filename-map /Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Intermediates.noindex/Sparkle.build/Release/Sparkle.build/Sparkle-diagnostic-filename-map.json --sdk /Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk --intermediates-directory /Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Intermediates.noindex/Sparkle.build/Release/Sparkle.build/VerifyModule --target arm64-apple-macos12.0 --language objective-c
+
+GenerateTAPI /Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Intermediates.noindex/EagerLinkingTBDs/Release/Sparkle.framework/Versions/B/Sparkle.tbd (in target 'Sparkle' from project 'Sparkle')
+    cd /Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-source/Sparkle-2.10.0
+    /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/tapi stubify -isysroot /Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk -F/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Products/Release -L/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Products/Release /Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Products/Release/Sparkle.framework/Versions/B/Sparkle -o /Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Intermediates.noindex/EagerLinkingTBDs/Release/Sparkle.framework/Versions/B/Sparkle.tbd
+
+Strip /Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Products/Release/Sparkle.framework/Versions/B/Sparkle (in target 'Sparkle' from project 'Sparkle')
+    cd /Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-source/Sparkle-2.10.0
+    /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip -D -x -T /Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Products/Release/Sparkle.framework/Versions/B/Sparkle
+
+RegisterExecutionPolicyException /Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Products/Release/Sparkle.framework (in target 'Sparkle' from project 'Sparkle')
+    cd /Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-source/Sparkle-2.10.0
+    builtin-RegisterExecutionPolicyException /Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Products/Release/Sparkle.framework
+
+SymLink /Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Intermediates.noindex/EagerLinkingTBDs/Release/Sparkle.framework/Sparkle.tbd /Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Intermediates.noindex/EagerLinkingTBDs/Release/Sparkle.framework/Versions/B/Sparkle.tbd (in target 'Sparkle' from project 'Sparkle')
+    cd /Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-source/Sparkle-2.10.0
+    /bin/ln -sfh /Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Intermediates.noindex/EagerLinkingTBDs/Release/Sparkle.framework/Versions/B/Sparkle.tbd /Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Intermediates.noindex/EagerLinkingTBDs/Release/Sparkle.framework/Sparkle.tbd
+
+Touch /Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Products/Release/Sparkle.framework (in target 'Sparkle' from project 'Sparkle')
+    cd /Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-source/Sparkle-2.10.0
+    /usr/bin/touch -c /Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Products/Release/Sparkle.framework
+
+note: Run script build phase 'Strip Framework' will be run during every build because the option to run the script phase "Based on dependency analysis" is unchecked. (in target 'Sparkle' from project 'Sparkle')
+note: Run script build phase 'Run Script: Set Git Version Info' will be run during every build because the option to run the script phase "Based on dependency analysis" is unchecked. (in target 'Sparkle' from project 'Sparkle')
+note: Run script build phase 'Run Script: Link Tools' will be run during every build because the option to run the script phase "Based on dependency analysis" is unchecked. (in target 'Sparkle' from project 'Sparkle')
+** BUILD SUCCEEDED **
+
+$ cmake -S /Users/runner/work/Cliptiq/Cliptiq -B /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle -G Ninja -DCMAKE_BUILD_TYPE=MinSizeRel -DBUILD_TESTING=ON -DCLIPTIQ_SPARKLE_FRAMEWORK=/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Products/Release/Sparkle.framework
+-- The C compiler identification is AppleClang 17.0.0.17000013
+-- The CXX compiler identification is AppleClang 17.0.0.17000013
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE
+-- The OBJCXX compiler identification is AppleClang 17.0.0.17000013
+-- Detecting OBJCXX compiler ABI info
+-- Detecting OBJCXX compiler ABI info - done
+-- Check for working OBJCXX compiler: /usr/bin/c++ - skipped
+-- Found Python3: /opt/homebrew/Frameworks/Python.framework/Versions/3.14/bin/python3.14 (found version "3.14.7") found components: Interpreter
+-- Configuring done (4.7s)
+-- Generating done (0.0s)
+-- Build files have been written to: /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle
+$ cmake --build /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle --target cliptiq_app update_test update_native_test --parallel 3
+[1/55] Building C object CMakeFiles/cliptiq_grapheme.dir/third_party/libgrapheme/src/cliptiq-util.c.o
+[2/55] Building C object CMakeFiles/cliptiq_grapheme.dir/third_party/libgrapheme/src/character.c.o
+[3/55] Building C object CMakeFiles/cliptiq_grapheme.dir/third_party/libgrapheme/src/utf8.c.o
+[4/55] Building CXX object CMakeFiles/cliptiq_xml_parser.dir/third_party/tinyxml2/tinyxml2.cpp.o
+[5/55] Linking C static library libcliptiq_grapheme.a
+[6/55] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/storage.cpp.o
+[7/55] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/sha256.cpp.o
+[8/55] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/history.cpp.o
+[9/55] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/policy.cpp.o
+[10/55] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/menu_preview.cpp.o
+[11/55] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/menu.cpp.o
+[12/55] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/paste.cpp.o
+[13/55] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/settings.cpp.o
+[14/55] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/hotkeys.cpp.o
+[15/55] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/snippets.cpp.o
+[16/55] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/editor.cpp.o
+[17/55] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/locale.cpp.o
+[18/55] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/media.cpp.o
+[19/55] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/locale_catalogue.cpp.o
+[20/55] Linking CXX static library libcliptiq_xml_parser.a
+[21/55] Building CXX object CMakeFiles/cliptiq_core.dir/core/src/update.cpp.o
+[22/55] Building CXX object CMakeFiles/cliptiq_xml.dir/core/src/xml_file.cpp.o
+[23/55] Building CXX object CMakeFiles/cliptiq_xml.dir/core/src/xml.cpp.o
+[24/55] Building CXX object CMakeFiles/cliptiq_lifecycle.dir/platform/posix/LifecycleLock.cpp.o
+[25/55] Building CXX object CMakeFiles/cliptiq_lifecycle.dir/platform/Lifecycle.cpp.o
+[26/55] Building OBJCXX object CMakeFiles/cliptiq_lifecycle.dir/platform/macos/Lifecycle.mm.o
+[27/55] Building C object CMakeFiles/cliptiq_sqlite.dir/.toolchains/sqlite/sqlite3.c.o
+[28/55] Linking C static library libcliptiq_sqlite.a
+[29/55] Linking CXX static library libcliptiq_core.a
+[30/55] Building OBJCXX object CMakeFiles/cliptiq_settings_native.dir/platform/macos/Hotkeys.mm.o
+[31/55] Building OBJCXX object CMakeFiles/cliptiq_settings_native.dir/platform/macos/Settings.mm.o
+[32/55] Building OBJCXX object CMakeFiles/cliptiq_menu_native.dir/platform/macos/Menu.mm.o
+[33/55] Building OBJCXX object CMakeFiles/cliptiq_paste_native.dir/platform/macos/Paste.mm.o
+[34/55] Building OBJCXX object CMakeFiles/cliptiq_macos.dir/platform/macos/Clipboard.mm.o
+/Users/runner/work/Cliptiq/Cliptiq/platform/macos/Clipboard.mm:121:62: warning: use of GNU ?: conditional expression extension, omitting middle operand [-Wgnu-conditional-omitted-operand]
+  121 |     NSArray<NSPasteboardItem*>* items=board.pasteboardItems ?: @[];
+      |                                                              ^
+/Users/runner/work/Cliptiq/Cliptiq/platform/macos/Clipboard.mm:122:50: warning: use of GNU ?: conditional expression extension, omitting middle operand [-Wgnu-conditional-omitted-operand]
+  122 |     NSArray<NSPasteboardType>* root=board.types ?: @[];
+      |                                                  ^
+2 warnings generated.
+[35/55] Building OBJCXX object CMakeFiles/cliptiq_macos.dir/platform/macos/Application.mm.o
+[36/55] Linking CXX static library libcliptiq_xml.a
+[37/55] Building CXX object CMakeFiles/cliptiq_media_native.dir/platform/Media.cpp.o
+[38/55] Building CXX object CMakeFiles/cliptiq_updates_native.dir/platform/Updates.cpp.o
+[39/55] Building OBJCXX object CMakeFiles/cliptiq_media_native.dir/platform/macos/Media.mm.o
+[40/55] Linking CXX static library libcliptiq_lifecycle.a
+[41/55] Linking CXX static library libcliptiq_settings_native.a
+[42/55] Linking CXX static library libcliptiq_paste_native.a
+[43/55] Linking CXX static library libcliptiq_menu_native.a
+[44/55] Linking CXX static library libcliptiq_macos.a
+[45/55] Linking CXX static library libcliptiq_media_native.a
+[46/55] Building OBJCXX object CMakeFiles/cliptiq_updates_native.dir/platform/macos/Updates.mm.o
+/Users/runner/work/Cliptiq/Cliptiq/platform/macos/Updates.mm:21:3: warning: 'auto' deduced as 'id' in declaration of 'feed' [-Wauto-var-id]
+   21 |   auto feed=[bundle objectForInfoDictionaryKey:@"SUFeedURL"];
+      |   ^~~~~~~~~
+/Users/runner/work/Cliptiq/Cliptiq/platform/macos/Updates.mm:22:3: warning: 'auto' deduced as 'id' in declaration of 'key' [-Wauto-var-id]
+   22 |   auto key=[bundle objectForInfoDictionaryKey:@"SUPublicEDKey"];
+      |   ^~~~~~~~
+2 warnings generated.
+[47/55] Building OBJCXX object CMakeFiles/cliptiq_editor_xml_native.dir/platform/macos/SnippetEditor.mm.o
+/Users/runner/work/Cliptiq/Cliptiq/platform/macos/SnippetEditor.mm:132:3: warning: 'auto' deduced as 'id' in declaration of 'node' [-Wauto-var-id]
+  132 |   auto node = [view itemAtRow:view.selectedRow];
+      |   ^~~~~~~~~
+/Users/runner/work/Cliptiq/Cliptiq/platform/macos/SnippetEditor.mm:359:11: warning: 'allowedFileTypes' is deprecated: first deprecated in macOS 12.0 - Use -allowedContentTypes instead [-Wdeprecated-declarations]
+  359 |     panel.allowedFileTypes = @[ @"xml" ];
+      |           ^
+/Applications/Xcode_16.4.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/AppKit.framework/Headers/NSSavePanel.h:286:49: note: 'allowedFileTypes' has been explicitly marked deprecated here
+  286 | @property (nullable, copy) NSArray<NSString *> *allowedFileTypes API_DEPRECATED("Use -allowedContentTypes instead", macos(10.3,12.0));
+      |                                                 ^
+2 warnings generated.
+[48/55] Linking CXX static library libcliptiq_editor_xml_native.a
+[49/55] Linking CXX static library libcliptiq_updates_native.a
+[50/55] Building CXX object CMakeFiles/update_test.dir/tests/unit/update_test.cpp.o
+[51/55] Linking CXX executable update_test
+[52/55] Building CXX object CMakeFiles/update_native_test.dir/tests/integration/update_native_test.cpp.o
+[53/55] Linking CXX executable update_native_test
+ld: warning: duplicate -rpath '/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Products/Release' ignored
+[54/55] Building OBJCXX object CMakeFiles/cliptiq_app.dir/platform/MenuHost.cpp.o
+[55/55] Linking CXX executable Cliptiq.app/Contents/MacOS/Cliptiq
+ld: warning: duplicate -rpath '/Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-derived/Build/Products/Release' ignored
+$ ctest --test-dir /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle -R ^update --output-on-failure
+Test project /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle
+    Start 40: update
+1/2 Test #40: update ...........................   Passed    0.01 sec
+    Start 41: update_native
+2/2 Test #41: update_native ....................   Passed    0.01 sec
+
+100% tests passed out of 2
+
+Total Test time (real) =   0.02 sec
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Autoupdate
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Autoupdate: Mach-O 64-bit executable arm64
+$ lipo -archs /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Autoupdate
+arm64
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Sparkle
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Sparkle: Mach-O 64-bit dynamically linked shared library arm64
+$ lipo -archs /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Sparkle
+arm64
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/PrivateHeaders/SPUInstallationType.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/PrivateHeaders/SPUInstallationType.h: c program text, Unicode text, UTF-8 text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/PrivateHeaders/SUInstallerLauncher+Private.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/PrivateHeaders/SUInstallerLauncher+Private.h: Objective-C source text, Unicode text, UTF-8 text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/PrivateHeaders/SPUUserAgent+Private.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/PrivateHeaders/SPUUserAgent+Private.h: Objective-C source text, Unicode text, UTF-8 text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/PrivateHeaders/SPUStandardUserDriver+Private.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/PrivateHeaders/SPUStandardUserDriver+Private.h: Objective-C source text, Unicode text, UTF-8 text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/PrivateHeaders/SUAppcastItem+Private.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/PrivateHeaders/SUAppcastItem+Private.h: Objective-C source text, Unicode text, UTF-8 text, with very long lines (320)
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/PrivateHeaders/SPUAppcastItemStateResolver.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/PrivateHeaders/SPUAppcastItemStateResolver.h: Objective-C source text, Unicode text, UTF-8 text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/PrivateHeaders/SPUGentleUserDriverReminders.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/PrivateHeaders/SPUGentleUserDriverReminders.h: c program text, Unicode text, UTF-8 text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/ReleaseNotesColorStyle.css
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/ReleaseNotesColorStyle.css: ASCII text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/SUUpdatePermissionPrompt.nib
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/SUUpdatePermissionPrompt.nib: data
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/SUUpdateAlert.nib
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/SUUpdateAlert.nib: data
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/Info.plist
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/Info.plist: XML 1.0 document text, ASCII text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUDownloadData.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUDownloadData.h: Objective-C source text, Unicode text, UTF-8 text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUUpdaterDelegate.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUUpdaterDelegate.h: Objective-C source text, Unicode text, UTF-8 text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SUVersionDisplayProtocol.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SUVersionDisplayProtocol.h: Objective-C source text, ASCII text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SUAppcast.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SUAppcast.h: Objective-C source text, ASCII text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUUpdaterSettings.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUUpdaterSettings.h: Objective-C source text, Unicode text, UTF-8 text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUAppcastSigningValidationStatus.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUAppcastSigningValidationStatus.h: c program text, Unicode text, UTF-8 text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SUExport.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SUExport.h: c program text, ASCII text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUStandardUserDriver.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUStandardUserDriver.h: Objective-C source text, Unicode text, UTF-8 text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUUserUpdateState.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUUserUpdateState.h: Objective-C source text, Unicode text, UTF-8 text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SUUpdaterDelegate.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SUUpdaterDelegate.h: Objective-C source text, Unicode text, UTF-8 text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUUserDriver.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUUserDriver.h: Objective-C source text, Unicode text, UTF-8 text, with very long lines (419)
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SUErrors.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SUErrors.h: Objective-C source text, ASCII text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SUAppcastItem.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SUAppcastItem.h: Objective-C source text, ASCII text, with very long lines (450)
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUStandardUserDriverDelegate.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUStandardUserDriverDelegate.h: Objective-C source text, Unicode text, UTF-8 text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/Sparkle.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/Sparkle.h: Objective-C source text, ASCII text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SUStandardVersionComparator.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SUStandardVersionComparator.h: Objective-C source text, ASCII text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUUpdateCheck.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUUpdateCheck.h: c program text, Unicode text, UTF-8 text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUUpdater.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUUpdater.h: Objective-C source text, ASCII text, with very long lines (353)
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SUUpdater.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SUUpdater.h: Objective-C source text, ASCII text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUStandardUpdaterController.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUStandardUpdaterController.h: Objective-C source text, Unicode text, UTF-8 text, with very long lines (332)
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUUpdatePermissionRequest.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUUpdatePermissionRequest.h: Objective-C source text, Unicode text, UTF-8 text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SUVersionComparisonProtocol.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SUVersionComparisonProtocol.h: Objective-C source text, ASCII text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SUUpdatePermissionResponse.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SUUpdatePermissionResponse.h: Objective-C source text, Unicode text, UTF-8 text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Modules/module.private.modulemap
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Modules/module.private.modulemap: Unicode text, UTF-8 text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Modules/module.modulemap
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Modules/module.modulemap: ASCII text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Installer.xpc/Contents/Info.plist
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Installer.xpc/Contents/Info.plist: XML 1.0 document text, Unicode text, UTF-8 text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Installer.xpc/Contents/MacOS/Installer
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Installer.xpc/Contents/MacOS/Installer: Mach-O 64-bit executable arm64
+$ lipo -archs /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Installer.xpc/Contents/MacOS/Installer
+arm64
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Downloader.xpc/Contents/Info.plist
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Downloader.xpc/Contents/Info.plist: XML 1.0 document text, Unicode text, UTF-8 text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Downloader.xpc/Contents/MacOS/Downloader
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Downloader.xpc/Contents/MacOS/Downloader: Mach-O 64-bit executable arm64
+$ lipo -archs /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Downloader.xpc/Contents/MacOS/Downloader
+arm64
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app/Contents/Info.plist
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app/Contents/Info.plist: XML 1.0 document text, ASCII text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app/Contents/PkgInfo
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app/Contents/PkgInfo: ASCII text, with no line terminators
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app/Contents/MacOS/Updater
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app/Contents/MacOS/Updater: Mach-O 64-bit executable arm64
+$ lipo -archs /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app/Contents/MacOS/Updater
+arm64
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/de.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/de.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/he.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/he.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/ar.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/ar.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/el.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/el.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/ja.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/ja.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/fa.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/fa.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/uk.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/uk.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/zh_CN.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/zh_CN.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/nb.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/nb.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/es.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/es.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/is.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/is.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/sl.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/sl.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/da.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/da.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/it.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/it.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/sk.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/sk.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/sv.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/sv.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/cs.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/cs.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/ko.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/ko.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/Base.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/Base.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/hu.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/hu.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/zh_HK.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/zh_HK.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/tr.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/tr.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/pl.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/pl.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/zh_TW.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/zh_TW.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/pt-BR.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/pt-BR.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/vi.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/vi.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/ru.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/ru.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/fr.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/fr.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/fi.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/fi.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/nl.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/nl.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/th.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/th.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/nn.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/nn.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/pt-PT.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/pt-PT.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/ro.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/ro.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/hr.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/hr.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/ca.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/ca.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Installer.xpc/Contents/MacOS/Installer
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Installer.xpc/Contents/MacOS/Installer: Mach-O 64-bit executable arm64
+$ codesign --force --sign - /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Installer.xpc/Contents/MacOS/Installer
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Installer.xpc/Contents/MacOS/Installer: replacing existing signature
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Downloader.xpc/Contents/MacOS/Downloader
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Downloader.xpc/Contents/MacOS/Downloader: Mach-O 64-bit executable arm64
+$ codesign --force --sign - /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Downloader.xpc/Contents/MacOS/Downloader
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Downloader.xpc/Contents/MacOS/Downloader: replacing existing signature
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Installer.xpc/Contents/Info.plist
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Installer.xpc/Contents/Info.plist: XML 1.0 document text, Unicode text, UTF-8 text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Downloader.xpc/Contents/Info.plist
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Downloader.xpc/Contents/Info.plist: XML 1.0 document text, Unicode text, UTF-8 text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app/Contents/MacOS/Updater
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app/Contents/MacOS/Updater: Mach-O 64-bit executable arm64
+$ codesign --force --sign - /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app/Contents/MacOS/Updater
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app/Contents/MacOS/Updater: replacing existing signature
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app/Contents/Info.plist
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app/Contents/Info.plist: XML 1.0 document text, ASCII text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app/Contents/PkgInfo
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app/Contents/PkgInfo: ASCII text, with no line terminators
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/de.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/de.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/he.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/he.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/ar.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/ar.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/el.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/el.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/ja.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/ja.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/fa.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/fa.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/uk.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/uk.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/zh_CN.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/zh_CN.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/nb.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/nb.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/es.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/es.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/is.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/is.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/sl.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/sl.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/da.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/da.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/it.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/it.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/sk.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/sk.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/sv.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/sv.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/cs.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/cs.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/ko.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/ko.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/Base.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/Base.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/hu.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/hu.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/zh_HK.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/zh_HK.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/tr.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/tr.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/pl.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/pl.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/zh_TW.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/zh_TW.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/pt-BR.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/pt-BR.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/vi.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/vi.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/ru.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/ru.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/fr.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/fr.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/fi.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/fi.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/nl.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/nl.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/th.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/th.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/nn.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/nn.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/pt-PT.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/pt-PT.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/ro.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/ro.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/hr.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/hr.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/ca.lproj/Sparkle.strings
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/ca.lproj/Sparkle.strings: Apple binary property list
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/PrivateHeaders/SPUInstallationType.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/PrivateHeaders/SPUInstallationType.h: c program text, Unicode text, UTF-8 text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/PrivateHeaders/SUInstallerLauncher+Private.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/PrivateHeaders/SUInstallerLauncher+Private.h: Objective-C source text, Unicode text, UTF-8 text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/PrivateHeaders/SPUUserAgent+Private.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/PrivateHeaders/SPUUserAgent+Private.h: Objective-C source text, Unicode text, UTF-8 text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/PrivateHeaders/SPUStandardUserDriver+Private.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/PrivateHeaders/SPUStandardUserDriver+Private.h: Objective-C source text, Unicode text, UTF-8 text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/PrivateHeaders/SUAppcastItem+Private.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/PrivateHeaders/SUAppcastItem+Private.h: Objective-C source text, Unicode text, UTF-8 text, with very long lines (320)
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/PrivateHeaders/SPUAppcastItemStateResolver.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/PrivateHeaders/SPUAppcastItemStateResolver.h: Objective-C source text, Unicode text, UTF-8 text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/PrivateHeaders/SPUGentleUserDriverReminders.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/PrivateHeaders/SPUGentleUserDriverReminders.h: c program text, Unicode text, UTF-8 text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/ReleaseNotesColorStyle.css
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/ReleaseNotesColorStyle.css: ASCII text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/SUUpdatePermissionPrompt.nib
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/SUUpdatePermissionPrompt.nib: data
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/SUUpdateAlert.nib
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/SUUpdateAlert.nib: data
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/Info.plist
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Resources/Info.plist: XML 1.0 document text, ASCII text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUDownloadData.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUDownloadData.h: Objective-C source text, Unicode text, UTF-8 text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUUpdaterDelegate.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUUpdaterDelegate.h: Objective-C source text, Unicode text, UTF-8 text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SUVersionDisplayProtocol.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SUVersionDisplayProtocol.h: Objective-C source text, ASCII text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SUAppcast.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SUAppcast.h: Objective-C source text, ASCII text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUUpdaterSettings.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUUpdaterSettings.h: Objective-C source text, Unicode text, UTF-8 text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUAppcastSigningValidationStatus.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUAppcastSigningValidationStatus.h: c program text, Unicode text, UTF-8 text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SUExport.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SUExport.h: c program text, ASCII text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUStandardUserDriver.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUStandardUserDriver.h: Objective-C source text, Unicode text, UTF-8 text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUUserUpdateState.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUUserUpdateState.h: Objective-C source text, Unicode text, UTF-8 text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SUUpdaterDelegate.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SUUpdaterDelegate.h: Objective-C source text, Unicode text, UTF-8 text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUUserDriver.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUUserDriver.h: Objective-C source text, Unicode text, UTF-8 text, with very long lines (419)
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SUErrors.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SUErrors.h: Objective-C source text, ASCII text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SUAppcastItem.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SUAppcastItem.h: Objective-C source text, ASCII text, with very long lines (450)
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUStandardUserDriverDelegate.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUStandardUserDriverDelegate.h: Objective-C source text, Unicode text, UTF-8 text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/Sparkle.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/Sparkle.h: Objective-C source text, ASCII text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SUStandardVersionComparator.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SUStandardVersionComparator.h: Objective-C source text, ASCII text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUUpdateCheck.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUUpdateCheck.h: c program text, Unicode text, UTF-8 text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUUpdater.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUUpdater.h: Objective-C source text, ASCII text, with very long lines (353)
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SUUpdater.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SUUpdater.h: Objective-C source text, ASCII text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUStandardUpdaterController.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUStandardUpdaterController.h: Objective-C source text, Unicode text, UTF-8 text, with very long lines (332)
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUUpdatePermissionRequest.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SPUUpdatePermissionRequest.h: Objective-C source text, Unicode text, UTF-8 text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SUVersionComparisonProtocol.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SUVersionComparisonProtocol.h: Objective-C source text, ASCII text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SUUpdatePermissionResponse.h
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Headers/SUUpdatePermissionResponse.h: Objective-C source text, Unicode text, UTF-8 text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Modules/module.private.modulemap
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Modules/module.private.modulemap: Unicode text, UTF-8 text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Modules/module.modulemap
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Modules/module.modulemap: ASCII text
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Autoupdate
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Autoupdate: Mach-O 64-bit executable arm64
+$ codesign --force --sign - /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Autoupdate
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Autoupdate: replacing existing signature
+$ file /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Sparkle
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Sparkle: Mach-O 64-bit dynamically linked shared library arm64
+$ codesign --force --sign - /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Sparkle
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Sparkle: replacing existing signature
+$ codesign --force --sign - /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Downloader.xpc
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Downloader.xpc: replacing existing signature
+$ codesign --force --sign - /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Installer.xpc
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/XPCServices/Installer.xpc: replacing existing signature
+$ codesign --force --sign - /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework/Versions/B/Updater.app: replacing existing signature
+$ codesign --force --sign - /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/Frameworks/Sparkle.framework: replacing existing signature
+$ codesign --force --sign - /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app
+/Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app: replacing existing signature
+$ codesign --verify --deep --strict /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app
+$ /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app/Contents/MacOS/Cliptiq --about
+Cliptiq 0.1.0
+https://github.com/Hydrock/Cliptiq
+$ ditto -c -k --keepParent /Users/runner/work/Cliptiq/Cliptiq/out/core-Darwin-sparkle/Cliptiq.app /Users/runner/work/Cliptiq/Cliptiq/out/t15-sparkle-app.zip
+$ git rev-parse HEAD
+3ac983131e1a167908f4c11ab43db3a62bbc20e7
+$ git status --porcelain

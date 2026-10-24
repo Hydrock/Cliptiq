@@ -1,0 +1,32 @@
+{
+  "source_commit": "5380462ede50273817be0dbcb4a2e832fabdf93b",
+  "target": "macos",
+  "arch": "aarch64",
+  "variant": "base",
+  "release_ready": false,
+  "manual_acceptance": "open",
+  "package_checks": "native inventory/architecture/dependency validation and relocated --version; Linux DEB extract; Windows MSIX semantic validation",
+  "system_dependencies": [
+    "/System/Library/Frameworks/ApplicationServices.framework/Versions/A/ApplicationServices",
+    "/System/Library/Frameworks/Carbon.framework/Versions/A/Carbon",
+    "/System/Library/Frameworks/ImageIO.framework/Versions/A/ImageIO",
+    "/System/Library/Frameworks/ServiceManagement.framework/Versions/A/ServiceManagement",
+    "/usr/lib/libSystem.B.dylib",
+    "/System/Library/Frameworks/AppKit.framework/Versions/C/AppKit",
+    "/usr/lib/libc++.1.dylib",
+    "/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation",
+    "/System/Library/Frameworks/CoreGraphics.framework/Versions/A/CoreGraphics",
+    "/System/Library/Frameworks/CoreServices.framework/Versions/A/CoreServices",
+    "/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation",
+    "/usr/lib/libobjc.A.dylib"
+  ],
+  "debian_dependencies": null,
+  "rpm_dependencies": null,
+  "packages": [
+    {
+      "path": "cliptiq-0.1.0-macos-aarch64-base.zip",
+      "bytes": 771189,
+      "sha256": "49778a566c0612e436a2ab363e32c6fa63c3e6002559f87b2f04941f46d1e01a"
+    }
+  ]
+}

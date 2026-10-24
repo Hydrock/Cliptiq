@@ -1,0 +1,82 @@
+{
+  "version": 4,
+  "configurePresets": [
+    {
+      "name": "test",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/out/core-${hostSystemName}-test",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "BUILD_TESTING": "ON"
+      }
+    },
+    {
+      "name": "release",
+      "inherits": "test",
+      "binaryDir": "${sourceDir}/out/core-${hostSystemName}-release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "MinSizeRel"
+      }
+    },
+    {
+      "name": "sanitize",
+      "inherits": "test",
+      "binaryDir": "${sourceDir}/out/core-${hostSystemName}-sanitize",
+      "cacheVariables": {
+        "CLIPTIQ_SANITIZE": "ON"
+      }
+    },
+    {
+      "name": "release-test",
+      "inherits": "release"
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "test",
+      "configurePreset": "test"
+    },
+    {
+      "name": "release",
+      "configurePreset": "release"
+    },
+    {
+      "name": "sanitize",
+      "configurePreset": "sanitize"
+    },
+    {
+      "name": "release-test",
+      "configurePreset": "release-test"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "test",
+      "configurePreset": "test",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "release",
+      "configurePreset": "release",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "sanitize",
+      "configurePreset": "sanitize",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "release-test",
+      "configurePreset": "release-test",
+      "output": {
+        "outputOnFailure": true
+      }
+    }
+  ]
+}
