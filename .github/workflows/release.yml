@@ -1,0 +1,25 @@
+name: Release candidate validation
+on:
+  workflow_dispatch:
+    inputs:
+      require_release_ready:
+        description: 'Require actual production readiness (fails while manual/signing gates are OPEN)'
+        type: boolean
+        default: false
+permissions:
+  contents: read
+jobs:
+  candidates:
+    uses: ./.github/workflows/core.yml
+    permissions:
+      contents: read
+  production_gate:
+    if: inputs.require_release_ready
+    needs: candidates
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - run: python3 tools/verify-release.py --checklist docs/support/release-checklist.json
+# This workflow never creates a GitHub release or uploads to package repositories.
+# Signer identities, notarization, clean-system/manual acceptance and authenticated
+# repository configuration must be supplied/reviewed before adding promotion.

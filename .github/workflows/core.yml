@@ -1,9 +1,19 @@
-name: Portable core and native clipboards (T02-T16)
+name: Portable core and native clipboards (T02-T17)
 on:
   workflow_dispatch:
+  workflow_call:
   push:
     paths:
       - 'core/**'
+      - 'tests/tools/**'
+      - 'tools/verify-coverage.py'
+      - 'tools/distribution.py'
+      - 'tools/size-report.py'
+      - 'tools/verify-release.py'
+      - 'tests/integration/package_entry.py'
+      - 'tests/integration/fuzz_smoke.cpp'
+      - 'docs/support/feature-status.json'
+      - 'docs/support/size-baseline.json'
       - 'third_party/libgrapheme/**'
       - 'third_party/tinyxml2/**'
       - 'platform/SnippetXml.hpp'
@@ -77,7 +87,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - name: MSVC environment
         if: runner.os == 'Windows'
         shell: pwsh
@@ -103,9 +113,22 @@ jobs:
         run: cmake --build --preset release
       - name: Release tests
         run: ctest --preset release --output-on-failure
+      - name: Package and validate Base distribution
+        run: python packaging/package.py
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: distribution-base-${{ matrix.os }}
+          path: |
+            out/t17-*/size.json
+            out/t17-*/package-report.json
+            out/t17-*/*.zip
+            out/t17-*/*.deb
+            out/t17-*/*.rpm
+            out/t17-*/*.tar.xz
+            out/t17-*/*.msix
       - name: Collect sizes
         run: python tests/size/report.py
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: core-${{ matrix.os }}
           path: |
@@ -115,13 +138,13 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - run: bash tools/install-linux-backend-deps.sh
       - run: python tools/fetch-footprint-deps.py
       - run: cmake --preset sanitize -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
       - run: cmake --build --preset sanitize
       - run: ctest --preset sanitize --output-on-failure
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
           name: linux-backend-sanitizers
@@ -132,12 +155,12 @@ jobs:
     env:
       ASAN_OPTIONS: detect_leaks=0
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - run: python tools/fetch-footprint-deps.py
       - run: cmake --preset sanitize
       - run: cmake --build --preset sanitize
       - run: ctest --preset sanitize --output-on-failure
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
           name: macos-backend-sanitizers
@@ -146,7 +169,7 @@ jobs:
     runs-on: windows-2025
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - name: MSVC environment
         shell: pwsh
         run: |
@@ -159,7 +182,7 @@ jobs:
         run: cmake -S . -B out/core-Windows-asan -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILD_TESTING=ON -DCMAKE_C_FLAGS=/fsanitize=address "-DCMAKE_CXX_FLAGS=/fsanitize=address /EHsc" -DCMAKE_EXE_LINKER_FLAGS=/INCREMENTAL:NO
       - run: cmake --build out/core-Windows-asan
       - run: ctest --test-dir out/core-Windows-asan --output-on-failure
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
           name: windows-backend-asan
@@ -172,18 +195,18 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - run: python3 tools/fetch-footprint-deps.py
       - run: cmake --preset release -DCLIPTIQ_BUILD_SIZE_PROBE=ON
       - run: cmake --build --preset release --target cliptiq_import cliptiq_import_macos
-      - uses: actions/cache@v4
+      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
         id: realm_cache
         with:
           path: out/legacy-build
           key: realm10546-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('tools/import-clipy/Package.swift') }}
       - name: Build optional isolated Realm helper
         run: swift build --package-path tools/import-clipy --scratch-path out/legacy-build -c release --jobs 3 --disable-sandbox
-      - uses: actions/cache/save@v4
+      - uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830
         if: steps.realm_cache.outputs.cache-hit != 'true'
         with:
           path: out/legacy-build
@@ -192,7 +215,7 @@ jobs:
         run: python3 tests/size/migration_legacy.py out/legacy-build/release
       - name: Real Realm file and archive migration/source preservation
         run: python3 tests/integration/import_macos.py out/t14-legacy-package/cliptiq-import out/t14-legacy-package/cliptiq-import-macos out/t14-legacy-package/cliptiq-legacy
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
           name: legacy-migration-${{ matrix.os }}
@@ -208,11 +231,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 25
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - run: command -v ninja || brew install ninja
       - run: python3 tools/fetch-footprint-deps.py
       - run: python3 tests/size/update_sparkle.py
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
           name: sparkle-update-${{ matrix.os }}
@@ -233,12 +256,27 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - if: runner.os == 'Linux'
         run: bash tools/install-linux-backend-deps.sh
       - run: python tools/fetch-footprint-deps.py
       - run: python tools/test-ocr.py --engine ${{ matrix.engine }}
-      - uses: actions/upload-artifact@v4
+      - name: Package and validate OCR distribution
+        if: runner.os != 'Windows' || matrix.engine == 'tesseract'
+        run: python packaging/package.py --variant ocr
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: runner.os != 'Windows' || matrix.engine == 'tesseract'
+        with:
+          name: distribution-ocr-${{ matrix.os }}
+          path: |
+            out/t17-*/size.json
+            out/t17-*/package-report.json
+            out/t17-*/*.zip
+            out/t17-*/*.deb
+            out/t17-*/*.rpm
+            out/t17-*/*.tar.xz
+            out/t17-*/*.msix
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
           name: ocr-${{ matrix.os }}-${{ matrix.engine }}

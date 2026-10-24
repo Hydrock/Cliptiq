@@ -16,11 +16,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 25
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - run: command -v ninja || brew install ninja
       - run: python3 tools/fetch-footprint-deps.py
       - run: python3 experiments/update-footprint/measure.py
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
           name: update-footprint-${{ matrix.os }}

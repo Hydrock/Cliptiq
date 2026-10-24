@@ -88,5 +88,23 @@ class SizeReportTests(unittest.TestCase):
             self.assertIsNone(report['total_offline_bytes'])
 
 
+class InternalLinkTests(unittest.TestCase):
+    def test_internal_relative_symlink_is_preserved_without_counting_target_twice(self):
+        spec=importlib.util.spec_from_file_location('size_report',TOOL);m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
+        with tempfile.TemporaryDirectory() as folder:
+            root=Path(folder);dist=root/'dist';dist.mkdir();(dist/'real').write_bytes(b'abc')
+            try:(dist/'alias').symlink_to('real')
+            except OSError:self.skipTest('symlink privilege unavailable')
+            r=m.measure(dist,root/'app.zip',target='linux',arch='x86_64');self.assertEqual(r['app_bytes'],7)
+            with zipfile.ZipFile(root/'app.zip') as z:self.assertEqual(z.read('alias'),b'real');self.assertEqual(z.getinfo('alias').external_attr>>28,10)
+
+class DistributionBudgetTests(unittest.TestCase):
+    def test_variant_limits_and_growth_are_enforced(self):
+        spec=importlib.util.spec_from_file_location('size_report',TOOL);module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+        baseline={'limits':{'app_bytes':1000,'archive_bytes':500},'growth_review_fraction':0.1,'variants':{'linux-x86_64-base':{'app_bytes':100,'archive_bytes':50}}}
+        limits=module.selected_budget(baseline,'linux','x86_64','base')
+        self.assertEqual(limits['app_bytes'],110);self.assertTrue(module.budget_violations({'app_bytes':111,'archive_bytes':50},limits))
+        with self.assertRaises(ValueError):module.selected_budget(baseline,'linux','aarch64','base')
+
 if __name__ == '__main__':
     unittest.main()

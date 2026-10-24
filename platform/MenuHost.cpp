@@ -99,7 +99,8 @@ int host(int argc, char **argv) {
 #endif
     for (int i = 1; i < argc; ++i) {
       std::string arg = argv[i];
-      if (arg == "--smoke")
+      if (arg == "--version") { std::cout << "Cliptiq 0.1.0\n"; return 0; }
+      else if (arg == "--smoke")
         smoke = true;
 #ifdef CLIPTIQ_WITH_LIFECYCLE
       else if (arg == "--background")
