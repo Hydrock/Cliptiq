@@ -1,0 +1,115 @@
+Test project /Users/smitevils/Projects/cliptiq/Cliptiq/out/core-Darwin-release
+      Start  1: lan_core
+ 1/55 Test  #1: lan_core .........................   Passed    0.27 sec
+      Start  2: editor_native
+ 2/55 Test  #2: editor_native ....................   Passed    0.63 sec
+      Start  3: snippets_menu_hotkeys
+ 3/55 Test  #3: snippets_menu_hotkeys ............   Passed    0.25 sec
+      Start  4: editor
+ 4/55 Test  #4: editor ...........................   Passed    0.32 sec
+      Start  5: snippets
+ 5/55 Test  #5: snippets .........................   Passed    0.27 sec
+      Start  6: workspace_native
+ 6/55 Test  #6: workspace_native .................   Passed    0.56 sec
+      Start  7: workspace_native_ru
+ 7/55 Test  #7: workspace_native_ru ..............   Passed    0.28 sec
+      Start  8: editor_inline_rename
+ 8/55 Test  #8: editor_inline_rename .............   Passed    0.59 sec
+      Start  9: editor_inline_rename_ru
+ 9/55 Test  #9: editor_inline_rename_ru ..........   Passed    0.34 sec
+      Start 10: settings_native
+10/55 Test #10: settings_native ..................   Passed    0.61 sec
+      Start 11: lifecycle_ui_ru
+11/55 Test #11: lifecycle_ui_ru ..................   Passed    0.31 sec
+      Start 12: hotkeys_native
+12/55 Test #12: hotkeys_native ...................   Passed    0.31 sec
+      Start 13: settings
+13/55 Test #13: settings .........................   Passed    0.26 sec
+      Start 14: hotkeys
+14/55 Test #14: hotkeys ..........................   Passed    0.24 sec
+      Start 15: paste_native
+15/55 Test #15: paste_native .....................   Passed    0.24 sec
+      Start 16: paste_native_boundary
+16/55 Test #16: paste_native_boundary ............   Passed    0.30 sec
+      Start 17: paste
+17/55 Test #17: paste ............................   Passed    0.26 sec
+      Start 18: menu_unicode_conformance
+18/55 Test #18: menu_unicode_conformance .........   Passed    0.00 sec
+      Start 19: menu_regression_context
+19/55 Test #19: menu_regression_context ..........   Passed    0.40 sec
+      Start 20: paste_menu_status_lifecycle
+20/55 Test #20: paste_menu_status_lifecycle ......   Passed    0.21 sec
+      Start 21: menu_native
+21/55 Test #21: menu_native ......................   Passed    0.47 sec
+      Start 22: lifecycle
+22/55 Test #22: lifecycle ........................   Passed    0.44 sec
+      Start 23: lifecycle_process
+23/55 Test #23: lifecycle_process ................   Passed    0.67 sec
+      Start 24: lifecycle_locale_schema
+24/55 Test #24: lifecycle_locale_schema ..........   Passed    0.03 sec
+      Start 25: lifecycle_bundle
+25/55 Test #25: lifecycle_bundle .................   Passed    0.74 sec
+      Start 26: media_review_clear
+26/55 Test #26: media_review_clear ...............   Passed    1.39 sec
+      Start 27: media_review_root
+27/55 Test #27: media_review_root ................   Passed    1.15 sec
+      Start 28: media_review_error
+28/55 Test #28: media_review_error ...............   Passed    0.28 sec
+      Start 29: native_media
+29/55 Test #29: native_media .....................   Passed    8.03 sec
+      Start 30: media
+30/55 Test #30: media ............................   Passed    0.25 sec
+      Start 31: menu_preview
+31/55 Test #31: menu_preview .....................   Passed    0.24 sec
+      Start 32: menu
+32/55 Test #32: menu .............................   Passed    0.30 sec
+      Start 33: macos_clipboard
+33/55 Test #33: macos_clipboard ..................   Passed    9.51 sec
+      Start 34: policy
+34/55 Test #34: policy ...........................   Passed    0.27 sec
+      Start 35: history
+35/55 Test #35: history ..........................   Passed    0.37 sec
+      Start 36: history_crash
+36/55 Test #36: history_crash ....................   Passed    0.06 sec
+      Start 37: update
+37/55 Test #37: update ...........................   Passed    0.26 sec
+      Start 38: update_native
+38/55 Test #38: update_native ....................   Passed    0.24 sec
+      Start 39: ocr
+39/55 Test #39: ocr ..............................   Passed    0.32 sec
+      Start 40: fts
+40/55 Test #40: fts ..............................   Passed    0.26 sec
+      Start 41: ocr_queue
+41/55 Test #41: ocr_queue ........................   Passed    0.76 sec
+      Start 42: distribution_tools
+42/55 Test #42: distribution_tools ...............   Passed    0.11 sec
+      Start 43: feature_coverage
+43/55 Test #43: feature_coverage .................   Passed    0.02 sec
+      Start 44: package_entry
+44/55 Test #44: package_entry ....................   Passed    0.02 sec
+      Start 45: bounded_fuzz_smoke
+45/55 Test #45: bounded_fuzz_smoke ...............   Passed    0.28 sec
+      Start 46: release_blocked
+46/55 Test #46: release_blocked ..................   Passed    0.04 sec
+      Start 47: sound_wave
+47/55 Test #47: sound_wave .......................   Passed    0.00 sec
+      Start 48: workspace
+48/55 Test #48: workspace ........................   Passed    0.33 sec
+      Start 49: idle_media_revision
+49/55 Test #49: idle_media_revision ..............   Passed    1.17 sec
+      Start 50: idle_mailbox_readonly
+50/55 Test #50: idle_mailbox_readonly ............   Passed    0.01 sec
+      Start 51: lan_service
+51/55 Test #51: lan_service ......................   Passed    0.31 sec
+      Start 52: lan_end_to_end
+52/55 Test #52: lan_end_to_end ...................   Passed    0.94 sec
+      Start 53: lan_tls_transport
+53/55 Test #53: lan_tls_transport ................   Passed   14.74 sec
+      Start 54: lan_dns
+54/55 Test #54: lan_dns ..........................   Passed    0.02 sec
+      Start 55: lan_secrets
+55/55 Test #55: lan_secrets ......................   Passed    0.24 sec
+
+100% tests passed out of 55
+
+Total Test time (real) =  50.98 sec

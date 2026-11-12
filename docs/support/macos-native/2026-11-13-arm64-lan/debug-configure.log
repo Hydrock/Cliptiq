@@ -1,0 +1,14 @@
+-- Found Python3: /opt/homebrew/bin/python3 (found version "3.15.2") found components: Interpreter
+CMake Warning (deprecated) at .toolchains/mbedtls-3.6.7/CMakeLists.txt:21 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+This warning is for project developers.  Use -Wno-author or -Wno-deprecated
+to suppress it.
+
+-- Configuring done (1.9s)
+-- Generating done (0.0s)
+-- Build files have been written to: /Users/smitevils/Projects/cliptiq/Cliptiq/out/core-Darwin-test

@@ -1,8 +1,9 @@
 # LAN v1 validation — 2026-11-13
 
 Branch: feature/windows-workspace; Windows 11 build 26200, x64 MSVC 18 Build Tools,
-MinSizeRel, static CRT and IPO. Native macOS/Linux build and runtime acceptance
-remain open; no cross-OS or physical LAN/VPN test is claimed.
+MinSizeRel, static CRT and IPO. The Windows results below predate native Mac validation; see the macOS section
+for current build/test evidence. Linux native acceptance remains open. No cross-OS
+or physical LAN/VPN test is claimed.
 
 ## Checks performed
 
@@ -92,3 +93,55 @@ app 1,867,254). Baseline was intentionally not raised. Packaging stopped before
 MSIX creation. This ZIP is a usable unsigned experiment, not a passing release
 package. Primary added binary cost against the current no-LAN control is 256KiB;
 the historical budget also predates current native workspace changes.
+
+## macOS native continuation — 2026-11-13
+
+Baseline `c82e74e` on `feature/windows-workspace`, with the local macOS fixes
+recorded in `macos-native-parity-verification.md`. Host: macOS 27.2 (26B123),
+arm64, Command Line Tools / AppleClang 21.0.0, CMake 4.4.5, Ninja 1.13.2.
+Python 3.15.2 was installed through Homebrew because the pinned TLS fetcher uses
+`tarfile.extractall(filter="data")`, unavailable in system Python 3.9.6.
+The source pin remains Mbed TLS 3.6.7; neither its version nor hash was changed.
+
+### Link fix and reproduction
+
+The first LAN Debug build compiled the Objective-C++ sources, then failed to link
+both application targets: `ld: library 'dns_sd' not found`. The Mac SDK re-exports
+DNSService APIs from libSystem's `libsystem_dnssd`. A small DNSServiceGetAddrInfo
+C probe linked with the default system libraries. Removed the separate macOS
+`dns_sd` link from `cmake/Lan.cmake`; Windows definitions and Linux GTK linking
+are unchanged. Debug and MinSizeRel all-target builds then completed.
+Independent review found no actionable issue with this incremental change.
+
+Commands (Homebrew binaries first in PATH):
+
+```sh
+python3 tools/fetch-lan-deps.py
+cmake --preset test -DPython3_EXECUTABLE=/opt/homebrew/bin/python3 -DCLIPTIQ_LAN_SYNC=ON
+cmake --build --preset test --parallel 4
+ctest --preset test --output-on-failure
+cmake --preset release -DPython3_EXECUTABLE=/opt/homebrew/bin/python3 -DCLIPTIQ_LAN_SYNC=ON
+cmake --build --preset release --parallel 4
+ctest --preset release --output-on-failure
+CLIPTIQ_TEST_NATIVE_SECRETS=1 out/core-Darwin-test/lan_secrets_test
+python3 tools/fetch-lan-deps.py --verify-only
+```
+
+### Evidence and boundaries
+
+- Debug: **53/53 passed**, no exclusions, 52.20 seconds.
+- MinSizeRel: **53/53 passed**, no exclusions, 50.96 seconds.
+- Native Keychain opt-in CRUD passed using a random temporary reference; the
+  test removed its credential. Existing saved peer keys were not used.
+- Pinned archive and all extracted build inputs passed offline verification.
+- LAN suite includes core migration/wire validation, service behavior, actual
+  loopback TLS/image/history exchange, TLS failure cases, DNS IPv4/IPv6/localhost
+  and cancellation, plus native secret validation.
+- End-to-end tests use synthetic clipboard hooks; they do not prove physical
+  Mac↔Windows clipboard exchange. Cross-OS/VPN/firewall, actual AppKit LAN dialog,
+  locked-Keychain behavior and production consent prompts remain manual gates.
+- Release `.app` file payload is 2,279,011 bytes. `otool -L` lists system libraries
+  and frameworks only; Mbed TLS is static. This is an unsigned local build.
+- No normal application profile was opened or migrated by this validation.
+  Tests use their own temporary databases. No user peer was configured.
+- Logs: `docs/support/macos-native/2026-11-13-arm64-lan/`.

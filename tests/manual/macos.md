@@ -69,3 +69,16 @@ Official API references: [NSPasteboard](https://developer.apple.com/documentatio
 [changeCount](https://developer.apple.com/documentation/appkit/nspasteboard/changecount),
 [access behavior](https://developer.apple.com/documentation/appkit/nspasteboard/accessbehavior-swift.enum),
 [AppKit privacy updates](https://developer.apple.com/documentation/updates/appkit).
+
+
+## Quick menu in another app's fullscreen Space
+
+Use the rebuilt release app, a separate test profile and an assigned available
+hotkey. Put another app in native fullscreen, focus an editable field and position
+the pointer away from it. Invoke the quick menu: it must open at the pointer in
+that same Space, without showing Cliptiq's workspace or switching to its desktop.
+Use arrow keys/Enter to select and Escape to cancel; reopen several times.
+With Accessibility granted, selection must insert into the original field.
+Repeat near screen edges and on each monitor, including a secondary fullscreen
+Space. Closing the menu must leave no visible anchor panel or growing window count.
+These are manual gates; the automated popup-owner test does not claim they passed.

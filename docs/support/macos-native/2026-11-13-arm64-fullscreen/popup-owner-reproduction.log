@@ -1,0 +1,13 @@
+Test project /Users/smitevils/Projects/cliptiq/Cliptiq/out/core-Darwin-test
+    Start 20: menu_fullscreen_owner
+1/1 Test #20: menu_fullscreen_owner ............***Failed    0.47 sec
+FAIL menu_review: owner_is_panel && owner_nonactivating && owner_visible
+
+
+0% tests passed, 1 tests failed out of 1
+
+Total Test time (real) =   0.47 sec
+
+The following tests FAILED:
+	 20 - menu_fullscreen_owner (Failed)
+Errors while running CTest

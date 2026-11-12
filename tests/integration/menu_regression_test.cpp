@@ -14,6 +14,12 @@ extern "C" UINT cliptiq_test_track_popup(HMENU menu, UINT, int, int, HWND,
 #import <AppKit/AppKit.h>
 #import <objc/runtime.h>
 static bool pick_item = false;
+static __weak NSWindow *popup_owner;
+static bool owner_is_panel, owner_nonactivating, owner_visible, owner_key;
+static bool owner_can_become_key, owner_can_become_main;
+static NSWindowCollectionBehavior owner_behavior;
+static NSInteger owner_level;
+static NSPoint popup_screen_point;
 @interface NSMenu (CliptiqPopupBoundary)
 - (BOOL)cliptiq_testPopup:(NSMenuItem *)item
                atLocation:(NSPoint)p
@@ -24,8 +30,16 @@ static bool pick_item = false;
                atLocation:(NSPoint)p
                    inView:(NSView *)view {
   (void)item;
-  (void)p;
-  (void)view;
+  popup_owner = view.window;
+  owner_is_panel = [view.window isKindOfClass:NSPanel.class];
+  owner_nonactivating = bool(view.window.styleMask & NSWindowStyleMaskNonactivatingPanel);
+  owner_visible = view.window.visible;
+  owner_key = view.window.keyWindow;
+  owner_can_become_key = view.window.canBecomeKeyWindow;
+  owner_can_become_main = view.window.canBecomeMainWindow;
+  owner_behavior = view.window.collectionBehavior;
+  owner_level = view.window.level;
+  popup_screen_point = view ? [view.window convertPointToScreen:[view convertPoint:p toView:nil]] : p;
   auto d = self.delegate;
   if ([d respondsToSelector:@selector(menuWillOpen:)])
     [d menuWillOpen:self];
@@ -62,6 +76,14 @@ int run(int argc, char **argv) {
     unsigned calls = 0;
     NativeMenuOptions options;
     options.tray_style = TrayStyle::Hidden;
+#ifdef __APPLE__
+    if(which=="fullscreen"){
+      options.tray_style=TrayStyle::Standard;
+      options.workspace_enabled=true;
+      options.start_hidden=true;
+      options.transient_popup=true;
+    }
+#endif
     NativeMenu ui(options, [&](MenuCommand c) {
       command = std::move(c);
       ++calls;
@@ -152,7 +174,7 @@ int run(int argc, char **argv) {
           << "PASS appkit_close_before_action_retains_target_then_expires\n";
       return 0;
     }
-    CHECK(which == "context");
+    CHECK(which == "context" || which == "fullscreen");
     Method original = class_getInstanceMethod(
         NSMenu.class, @selector(popUpMenuPositioningItem:atLocation:inView:));
     Method seam = class_getInstanceMethod(
@@ -162,6 +184,30 @@ int run(int argc, char **argv) {
       ~Guard() { method_exchangeImplementations(a, b); }
     } guard{original, seam};
     method_exchangeImplementations(original, seam);
+    if(which=="fullscreen"){
+      auto workspace=(__bridge NSWindow *)(void *)handles.window;
+      const bool wasVisible=workspace.visible;
+      const auto frontmost=NSWorkspace.sharedWorkspace.frontmostApplication.processIdentifier;
+      for(unsigned n=0;n<3;++n){
+        pick_item=n!=0;
+        ok(ui.show(ctx));
+        CHECK(owner_is_panel && owner_nonactivating && owner_visible);
+        CHECK(!owner_key && !owner_can_become_key && !owner_can_become_main);
+        CHECK(owner_behavior & NSWindowCollectionBehaviorCanJoinAllSpaces);
+        CHECK(owner_behavior & NSWindowCollectionBehaviorFullScreenAuxiliary);
+        CHECK(owner_behavior & NSWindowCollectionBehaviorCanJoinAllApplications);
+        CHECK(owner_level>=NSStatusWindowLevel);
+        CHECK(NSEqualPoints(popup_screen_point,NSMakePoint(*ctx.x,*ctx.y)));
+        CHECK(!popup_owner || !popup_owner.visible);
+        CHECK(workspace.visible==wasVisible);
+        CHECK(NSWorkspace.sharedWorkspace.frontmostApplication.processIdentifier==frontmost);
+        CHECK(ui.native_handles().menu==0);
+        CHECK(calls==n);
+        if(n)CHECK(command.invocation.target==ctx.target && command.invocation.activation_token==ctx.activation_token);
+      }
+      std::cout<<"PASS nonactivating fullscreen popup owner, coordinates, cleanup and target\n";
+      return 0;
+    }
     pick_item = false;
     ok(ui.show(ctx));
     auto menu = (__bridge NSMenu *)(void *)ui.native_handles().menu;

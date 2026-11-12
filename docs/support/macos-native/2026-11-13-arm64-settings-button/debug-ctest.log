@@ -1,0 +1,13 @@
+Test project /Users/smitevils/Projects/cliptiq/Cliptiq/out/core-Darwin-test
+    Start  6: workspace_native
+1/4 Test  #6: workspace_native .................   Passed    0.74 sec
+    Start  7: workspace_native_ru
+2/4 Test  #7: workspace_native_ru ..............   Passed    0.48 sec
+    Start 10: settings_native
+3/4 Test #10: settings_native ..................   Passed    0.31 sec
+    Start 11: lifecycle_ui_ru
+4/4 Test #11: lifecycle_ui_ru ..................   Passed    0.32 sec
+
+100% tests passed out of 4
+
+Total Test time (real) =   1.87 sec

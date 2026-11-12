@@ -1,0 +1,19 @@
+Test project /Users/smitevils/Projects/cliptiq/Cliptiq/out/core-Darwin-test
+    Start 6: workspace_native
+1/4 Test #6: workspace_native .................***Failed    0.51 sec
+[button(window.contentView,1).title isEqualToString:russian?@"История":@"History"]
+
+    Start 7: workspace_native_ru
+2/4 Test #7: workspace_native_ru ..............   Passed    0.23 sec
+    Start 8: editor_inline_rename
+3/4 Test #8: editor_inline_rename .............   Passed    0.63 sec
+    Start 9: editor_inline_rename_ru
+4/4 Test #9: editor_inline_rename_ru ..........   Passed    0.32 sec
+
+75% tests passed, 1 tests failed out of 4
+
+Total Test time (real) =   1.68 sec
+
+The following tests FAILED:
+	  6 - workspace_native (Failed)
+Errors while running CTest

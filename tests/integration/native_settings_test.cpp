@@ -145,7 +145,9 @@ int run() {
       CHECK([window.title isEqualToString:@"Настройки Cliptiq"]);
     auto tabs = find(window.contentView, @"settings-tabs");
     CHECK([tabs isKindOfClass:NSTabView.class] &&
-          [(NSTabView *)tabs numberOfTabViewItems] == 8);
+          [(NSTabView *)tabs numberOfTabViewItems] == 9);
+    CHECK([[[(NSTabView *)tabs tabViewItemAtIndex:8] label]
+        isEqualToString:russian ? @"Звуки" : @"Sounds"]);
     auto field = (NSTextField *)find(window.contentView, @"history_count");
     CHECK(field);
     field.stringValue = @"5";

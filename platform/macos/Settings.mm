@@ -235,8 +235,8 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
     row.orientation = NSUserInterfaceLayoutOrientationHorizontal;
     row.spacing = 12;
     auto label = [NSTextField wrappingLabelWithString:str(f.label)];
-    [label.widthAnchor constraintEqualToAnchor:row.widthAnchor multiplier:0.48].active = YES;
     [row addArrangedSubview:label];
+    [label.widthAnchor constraintEqualToAnchor:row.widthAnchor multiplier:0.48].active = YES;
     NSView *control = nil;
     bool multiline = f.key == "excluded";
     auto options = choices(f.key);
@@ -277,21 +277,21 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
     control.identifier = str(f.key);
     [control setAccessibilityLabel:str(f.label)];
     control.toolTip = str(f.reason.empty() ? f.label : f.reason);
+    [row addArrangedSubview:control];
     [control.widthAnchor constraintEqualToAnchor:row.widthAnchor multiplier:0.48].active = YES;
     if (multiline)
       [control.heightAnchor constraintEqualToConstant:85].active = YES;
-    [row addArrangedSubview:control];
     [stacks[unsigned(f.group)] addArrangedSubview:row];
     [row.widthAnchor constraintEqualToAnchor:stacks[unsigned(f.group)].widthAnchor constant:-24].active = YES;
     auto help = [NSTextField wrappingLabelWithString:str(f.description)];
     help.font = [NSFont systemFontOfSize:[NSFont smallSystemFontSize]];
     help.textColor = NSColor.secondaryLabelColor;
-    [help.widthAnchor constraintEqualToAnchor:row.widthAnchor].active = YES;
     [stacks[unsigned(f.group)] addArrangedSubview:help];
+    [help.widthAnchor constraintEqualToAnchor:row.widthAnchor].active = YES;
     if (!f.reason.empty()) {
       auto reason = [NSTextField wrappingLabelWithString:str(f.reason)];
-      [reason.widthAnchor constraintEqualToAnchor:row.widthAnchor].active = YES;
       [stacks[unsigned(f.group)] addArrangedSubview:reason];
+      [reason.widthAnchor constraintEqualToAnchor:row.widthAnchor].active = YES;
     }
     s->controls.push_back({f.key, control, boolean, multiline});
   }

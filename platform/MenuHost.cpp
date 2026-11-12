@@ -583,10 +583,10 @@ int host(int argc, char **argv) {
     auto workspace_status_text = [&] {
       auto policy=settings_capture(preferences);
       if(std::none_of(policy.enabled_kinds.begin(),policy.enabled_kinds.end(),[](bool value){return value;}))
-        return std::string("Сохранение новых копий выключено в настройках форматов");
+        return std::string(tr("Saving new copies is disabled in type settings"));
       return capabilities.capture.status==CapabilityStatus::Unavailable
-        ? "Захват буфера недоступен: "+capabilities.capture.reason
-        : std::string("История хранится только на этом компьютере");
+        ? tr("Clipboard capture unavailable: ")+capabilities.capture.reason
+        : std::string(tr("History is stored only on this computer"));
     };
     options.workspace_status=workspace_status_text();
 #endif
@@ -1044,8 +1044,8 @@ int host(int argc, char **argv) {
 #endif
 #if defined(_WIN32) || defined(__APPLE__)
           if(!result)ui.workspace_status(result.error().message);
-          else if(result.value().history_deleted)ui.workspace_status("Запись удалена из истории");
-          else if(result.value().status==SelectionStatus::Copied || result.value().status==SelectionStatus::Dispatched)ui.workspace_status("Скопировано в буфер обмена");
+          else if(result.value().history_deleted)ui.workspace_status(tr("Entry deleted from history"));
+          else if(result.value().status==SelectionStatus::Copied || result.value().status==SelectionStatus::Dispatched)ui.workspace_status(tr("Copied to clipboard"));
           else ui.workspace_status(result.value().reason);
 #endif
           if (!result)

@@ -5,6 +5,14 @@
 #include <map>
 #include <cstring>
 #include <thread>
+// A menu needs an owner in the current Space, without activating Cliptiq or
+// replacing the foreground app that will receive the selected clipboard entry.
+@interface CliptiqPopupPanel : NSPanel
+@end
+@implementation CliptiqPopupPanel
+- (BOOL)canBecomeKeyWindow { return NO; }
+- (BOOL)canBecomeMainWindow { return NO; }
+@end
 @interface CliptiqMenuTarget : NSObject <NSMenuDelegate, NSWindowDelegate, NSApplicationDelegate> {
 @public
   std::function<void(NSMenuItem *)> invoke;
@@ -189,7 +197,10 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
       State *s;
       NSMenu *tracking;
       bool release;
+      NSPanel *anchor = nil;
       ~Reset() {
+        [anchor orderOut:nil];
+        [anchor close];
         s->invocation = {};
         s->explicit_tracking = false;
         if(release && s->menu==tracking) {
@@ -201,8 +212,26 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
     if (!tracking) return;
     NSPoint p = NSEvent.mouseLocation;
     if (ctx.x && ctx.y) p = NSMakePoint(*ctx.x, *ctx.y);
+    auto anchor = [[CliptiqPopupPanel alloc]
+        initWithContentRect:NSMakeRect(p.x, p.y, 1, 1)
+                  styleMask:NSWindowStyleMaskBorderless | NSWindowStyleMaskNonactivatingPanel
+                    backing:NSBackingStoreBuffered defer:NO];
+    reset.anchor = anchor;
+    anchor.releasedWhenClosed = NO;
+    anchor.opaque = NO;
+    anchor.backgroundColor = NSColor.clearColor;
+    anchor.hasShadow = NO;
+    anchor.ignoresMouseEvents = YES;
+    anchor.hidesOnDeactivate = NO;
+    anchor.animationBehavior = NSWindowAnimationBehaviorNone;
+    anchor.level = NSStatusWindowLevel;
+    anchor.collectionBehavior = NSWindowCollectionBehaviorCanJoinAllSpaces |
+        NSWindowCollectionBehaviorFullScreenAuxiliary |
+        NSWindowCollectionBehaviorCanJoinAllApplications |
+        NSWindowCollectionBehaviorTransient | NSWindowCollectionBehaviorIgnoresCycle;
+    [anchor orderFrontRegardless];
     [tracking popUpMenuPositioningItem:tracking.numberOfItems ? [tracking itemAtIndex:0] : nil
-                           atLocation:p inView:nil];
+                           atLocation:NSZeroPoint inView:anchor.contentView];
   }
   void refresh_workspace() {
     if(!workspace)return;

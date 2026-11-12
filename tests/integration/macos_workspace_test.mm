@@ -1,4 +1,6 @@
 #include "cliptiq/native_menu.hpp"
+#include "cliptiq/locale.hpp"
+#include "cliptiq/settings.hpp"
 #import <AppKit/AppKit.h>
 #include <iostream>
 #include <stdexcept>
@@ -14,7 +16,9 @@ static NSButton *button(NSView *root, NSInteger tag) {
  for(NSView *child in root.subviews)if(auto found=button(child,tag))return found;
  return nil;
 }
-int main() { @autoreleasepool { try {
+int main(int argc, char **argv) { @autoreleasepool { try {
+ const bool russian=argc>1 && std::string(argv[1])=="--ru";
+ activate_locale(russian?"ru":"en");
  MenuModel model;model.revision=7;
  MenuItem h;h.label="History entry";h.action=MenuAction::SelectHistory;h.id="history";h.tooltip="history searchable";
  MenuItem snippet;snippet.label="Snippet entry";snippet.action=MenuAction::SelectSnippet;snippet.id="snippet";
@@ -24,18 +28,48 @@ int main() { @autoreleasepool { try {
  options.workspace_model=[&]()->Result<MenuModel>{return model;};
  options.workspace_preview=[&](const MenuCommand &c)->Result<std::string>{++previews;return c.id+" full text\nSecond line";};
  options.workspace_image=[&](std::optional<PreviewRef> ref)->std::optional<MenuImage>{if(!ref)++releases;return std::nullopt;};
- NativeMenu ui(options,[&](MenuCommand c){commands.push_back(std::move(c));});CHECK(ui.initialize());CHECK(ui.update(model));CHECK(ui.native_handles().menu==0);
+ NativeSettings settingsWindow;
+ unsigned settingsOpened=0;
+ NativeMenu ui(options,[&](MenuCommand c){
+  if(c.action==MenuAction::OpenSettings){
+   Capabilities caps;caps.platform=CapturePlatform::MacOS;
+   CHECK(settingsWindow.show(default_settings(CapturePlatform::MacOS),caps,[](Settings)->Result<void>{return {};}));
+   ++settingsOpened;
+  }
+  commands.push_back(std::move(c));
+ });CHECK(ui.initialize());CHECK(ui.update(model));CHECK(ui.native_handles().menu==0);
  auto window=(__bridge NSWindow *)(void *)ui.native_handles().window;
  if(ui.status().tray_available){CHECK(!window.visible);CHECK(!find(window.contentView,@"workspace-list"));CHECK(previews==0);}
  CHECK(ui.show_workspace());CHECK(window.visible);
  auto list=(NSTableView *)find(window.contentView,@"workspace-list");CHECK(list);CHECK(list.numberOfRows==1);
+ CHECK([button(window.contentView,1).title isEqualToString:russian?@"История":@"History"]);
+ CHECK([button(window.contentView,4).title isEqualToString:russian?@"Редактор сниппетов":@"Edit Snippets"]);
+ CHECK([button(window.contentView,5).title isEqualToString:russian?@"Копировать":@"Copy"]);
+ CHECK([list.tableColumns[0].title isEqualToString:russian?@"Содержимое":@"Content"]);
+ CHECK([list.tableColumns[1].title isEqualToString:russian?@"Тип / папка":@"Type / folder"]);
  auto preview=(NSTextView *)find(window.contentView,@"workspace-preview");CHECK(preview&&!preview.editable&&preview.selectable);CHECK([preview.string containsString:@"history full text"]);
  [button(window.contentView,5) performClick:nil];CHECK(commands.size()==1);CHECK(commands.back().id=="history"&&commands.back().invocation.copy_only&&!commands.back().invocation.delete_only);
  auto search=(NSSearchField *)find(window.contentView,@"workspace-filter");search.stringValue=@"absent";
  [search.delegate controlTextDidChange:[NSNotification notificationWithName:NSControlTextDidChangeNotification object:search]];CHECK(list.numberOfRows==0);CHECK(!button(window.contentView,5).enabled);
+ CHECK([preview.string isEqualToString:russian?@"По этому фильтру ничего не найдено.":@"No entries match this filter."]);
  search.stringValue=@"";[search.delegate controlTextDidChange:[NSNotification notificationWithName:NSControlTextDidChangeNotification object:search]];
  [button(window.contentView,2) performClick:nil];CHECK(list.numberOfRows==1);CHECK(!button(window.contentView,6).enabled);CHECK(!button(window.contentView,7).enabled);
  [button(window.contentView,5) performClick:nil];CHECK(commands.back().id=="snippet");
+ // Exercise the actual workspace button with a real settings window, including
+ // AppKit layout and close/reopen; a command-only assertion misses show failures.
+ for(unsigned n=1;n<=2;++n){
+  auto settingsButton=button(window.contentView,3);
+  [settingsButton performClick:nil];
+  CHECK(settingsOpened==n && commands.back().action==MenuAction::OpenSettings);
+  auto settings=(__bridge NSWindow *)(void *)settingsWindow.native_handle();
+  CHECK(settings.visible);
+  [settings.contentView layoutSubtreeIfNeeded];
+  CHECK(ui.process_events(10));
+  CHECK([settings.title isEqualToString:russian?@"Настройки Cliptiq":@"Cliptiq Settings"]);
+  CHECK(!settingsButton.highlighted);
+  [settings performClose:nil];
+  CHECK(!settings.visible);
+ }
  ui.workspace_status("copied");CHECK([((NSTextField *)find(window.contentView,@"workspace-status")).stringValue isEqualToString:@"copied"]);
  [window performClose:nil];CHECK(!window.visible);CHECK(!ui.status().launcher_visible);CHECK(ui.process_events(10));CHECK(!find(window.contentView,@"workspace-list"));CHECK(releases>0);
  CHECK(ui.update(model));CHECK(ui.native_handles().menu==0);CHECK(!window.visible);

@@ -1,0 +1,47 @@
+======================================================================
+Cliptiq [16683]: 64-bit    Footprint: 30 MB (16384 bytes per page)
+======================================================================
+
+  Dirty      Clean  Reclaimable    Regions    Category
+    ---        ---          ---        ---    ---
+  17 MB        0 B          0 B         16    Malloc Small
+2033 KB        0 B          0 B        997    __DATA_DIRTY
+1792 KB        0 B          0 B         13    Malloc Metadata
+1710 KB        0 B          0 B       1012    __DATA
+1072 KB        0 B          0 B         39    CoreAnimation
+1024 KB        0 B          0 B         24    Untagged
+ 912 KB        0 B          0 B          8    CoreUI Image Data
+ 753 KB        0 B          0 B          1    page table
+ 654 KB        0 B          0 B        533    __AUTH
+ 576 KB        0 B          0 B          3    IOSurface
+ 512 KB        0 B        64 KB          2    Dispatch Continuations
+ 288 KB        0 B          0 B          1    Malloc Tiny
+ 288 KB        0 B          0 B         17    CG Image
+ 272 KB      22 MB          0 B         33    mapped file
+ 269 KB        0 B          0 B       2701    unused dyld shared cache area
+ 208 KB        0 B        32 KB         12    Stack
+ 128 KB        0 B          0 B          1    Accelerate Framework
+ 112 KB        0 B          0 B          4    __TPRO_CONST
+  83 KB      48 KB          0 B       1058    __DATA_CONST
+  64 KB        0 B          0 B          2    IOAccelerator
+  48 KB        0 B          0 B          3    IOKit
+  36 KB        0 B          0 B          1    __OBJC_RW
+  32 KB        0 B          0 B          1    Activity Tracing
+  32 KB        0 B          0 B          2    CoreGraphics
+  16 KB        0 B        16 KB          2    Foundation
+  16 KB        0 B          0 B          1    Deferred Reclaim
+  16 KB        0 B          0 B          1    OS Alloc Once
+  16 KB        0 B          0 B          1    IOAccelerator (graphics)
+  16 KB        0 B          0 B          1    ColorSync
+    0 B    1216 KB          0 B       1146    __TEXT
+    0 B      48 KB          0 B          3    __LINKEDIT
+    0 B        0 B          0 B          1    __OBJC_RO
+    0 B        0 B          0 B          1    __FONT_DATA
+    0 B        0 B          0 B          1    __CTF
+    0 B        0 B          0 B       1052    __AUTH_CONST
+    ---        ---          ---        ---    ---
+  30 MB      23 MB       112 KB       8696    TOTAL
+
+Auxiliary data:
+    phys_footprint: 30 MB
+    phys_footprint_peak: 30 MB

@@ -1,4 +1,5 @@
 #include "cliptiq/editor.hpp"
+#include "cliptiq/locale.hpp"
 #import <AppKit/AppKit.h>
 #include <chrono>
 #include <filesystem>
@@ -16,7 +17,9 @@ NSView *find(NSView *view, NSString *identifier) {
   for (NSView *child in view.subviews) if (auto found = find(child, identifier)) return found;
   return nil;
 }
-int main() { @autoreleasepool {
+int main(int argc, char **argv) { @autoreleasepool {
+  const bool russian=argc>1 && std::string(argv[1])=="--ru";
+  activate_locale(russian?"ru":"en");
   struct Temp {
     std::filesystem::path path = std::filesystem::temp_directory_path() /
       ("cliptiq-macos-rename-" + std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()) + ".db");
@@ -33,6 +36,11 @@ int main() { @autoreleasepool {
     auto window = (__bridge NSWindow *)(void *)ui.native_handle();
     auto tree = (NSOutlineView *)find(window.contentView, @"editor-tree");
     CHECK(tree);
+    CHECK([window.title isEqualToString:russian?@"Сниппеты Cliptiq":@"Cliptiq Snippets"]);
+    CHECK([((NSButton *)find(window.contentView,@"editor-add-folder")).title
+        isEqualToString:russian?@"Добавить папку":@"Add Folder"]);
+    CHECK([((NSButton *)find(window.contentView,@"editor-rename")).title
+        isEqualToString:russian?@"Переименовать":@"Rename"]);
     CHECK(!find(window.contentView, @"editor-title"));
     auto settle = [&] {
       for (unsigned n = 0; n < 400 && session->saving(); ++n) {

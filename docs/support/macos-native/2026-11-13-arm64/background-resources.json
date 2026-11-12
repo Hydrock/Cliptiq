@@ -1,0 +1,33 @@
+{
+  "state": "background, demo bypasses existing single instance, capture requested",
+  "samples": [
+    {
+      "elapsed_s": 0.0,
+      "rss_kib_cpu_time_pct": "88672   0:00.22   1.3"
+    },
+    {
+      "elapsed_s": 5.012,
+      "rss_kib_cpu_time_pct": "88368   0:00.32   1.5"
+    },
+    {
+      "elapsed_s": 10.021,
+      "rss_kib_cpu_time_pct": "90656   0:00.45   1.9"
+    },
+    {
+      "elapsed_s": 15.027,
+      "rss_kib_cpu_time_pct": "90480   0:00.55   1.7"
+    },
+    {
+      "elapsed_s": 20.035,
+      "rss_kib_cpu_time_pct": "111024   0:00.74   6.1"
+    },
+    {
+      "elapsed_s": 25.048,
+      "rss_kib_cpu_time_pct": "120064   0:01.06  11.6"
+    },
+    {
+      "elapsed_s": 30.061,
+      "rss_kib_cpu_time_pct": "146576   0:01.92  16.2"
+    }
+  ]
+}

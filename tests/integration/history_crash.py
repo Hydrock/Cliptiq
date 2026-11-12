@@ -22,6 +22,10 @@ for mode in ['--interrupt', '--interrupt-wal']:
         # Read through the production core after hot-journal recovery; add/replace
         # the same content and verify the original entry remains intact.
         subprocess.run([str(exe), '--seed', str(path)], check=True)
-        with closing(sqlite3.connect(f'file:{path.as_posix()}?mode=ro', uri=True)) as db:
+        # A WAL reader may need to recreate SHM even after the last writer
+        # checkpointed and closed. macOS system SQLite rejects mode=ro here.
+        # Keep SQL read-only while allowing SQLite to manage its sidecars.
+        with closing(sqlite3.connect(path)) as db:
+            db.execute('PRAGMA query_only=ON')
             assert db.execute('SELECT count(*) FROM history').fetchone()[0] == 1
 print('PASS process interruption rollback/WAL and reopen')

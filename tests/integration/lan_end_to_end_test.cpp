@@ -1,5 +1,6 @@
 #include "platform/lan/Service.hpp"
 #include "platform/lan/Secrets.hpp"
+#include <algorithm>
 #include <chrono>
 #include <cstdlib>
 #include <filesystem>
@@ -85,9 +86,12 @@ int main(){try{Device a,b;if(a.port==b.port)b.port=free_port();CHECK(!a.service-
  lan::Peer cpa;cpa.id=lan::new_id();cpa.name="A";cpa.host="localhost";cpa.port=a.port;
  lan::Peer cpb=cpa;cpb.id=lan::new_id();cpb.name="B";cpb.port=b.port;cc.device_name="C";cc.port=c.port;cc.peers={cpa,cpb};
  ok(a.service->save(ca,{{ac.id,std::string(64,'b')}}));ok(b.service->save(cb,{{bc.id,std::string(64,'c')}}));ok(c.service->save(cc,{{cpa.id,std::string(64,'b')},{cpb.id,std::string(64,'c')}}));
- auto connected=[](const std::string&s){size_t at=0;unsigned n=0;while((at=s.find("Connected",at))!=std::string::npos){++n;at+=9;}return n;};
+ // Receiving a queued event can replace the peer's UI status immediately
+ // after handshake. Wait on the durable HELLO identity bindings instead of
+ // requiring all six temporary "Connected" labels in the same poll.
+ auto paired=[](Device& device){auto cfg=take(device.service->config());return cfg.peers.size()==2&&std::all_of(cfg.peers.begin(),cfg.peers.end(),[](const lan::Peer& peer){return !peer.remote_device_id.empty();});};
  auto mesh=[&](auto predicate){auto deadline=std::chrono::steady_clock::now()+std::chrono::seconds(15);while(!predicate()){a.service->poll();b.service->poll();c.service->poll();if(std::chrono::steady_clock::now()>=deadline)throw std::runtime_error(stage+" A="+a.service->status()+" B="+b.service->status()+" C="+c.service->status());std::this_thread::sleep_for(std::chrono::milliseconds(2));}};
- mesh([&]{return connected(a.service->status())==2&&connected(b.service->status())==2&&connected(c.service->status())==2;});
+ mesh([&]{return paired(a)&&paired(b)&&paired(c);});
  auto an=a.count(),bn=b.count();std::string third="copy from C";c.send({{0,"portable","text/plain",CanonicalKind::Text,Bytes(third.begin(),third.end())}});
  mesh([&]{return a.count()==an+1&&b.count()==bn+1&&a.writes.size()==2;});
  CHECK(take(lan::entry_origin(*a.store,take(list_history(*a.store))[0].id))=="C");CHECK(c.count()==1);CHECK(b.writes.size()==1);
