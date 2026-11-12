@@ -65,3 +65,17 @@ failed before the fix and passed afterwards. Targeted CTest: 5/5 (native_media,
 media, workspace and two idle services checks). Interactive Windows verification
 confirmed a large preview from the existing history and after maximizing the window.
 No fresh total idle-memory benchmark was taken for this patch.
+
+
+## Copy cue drop fix
+
+NativeSound used a 120ms drop throttle and SND_NOSTOP, silently discarding rapid
+confirmed copy/paste events. Each enabled nonzero-volume event now submits an
+asynchronous cue; a newer cue replaces the previous cue in the same process.
+No delayed queue, additional worker or polling timer is introduced.
+A separate test target substitutes only the WinMM playback entry point, without
+loading an audio device. Rapid copy/copy/paste failed the calls==3 assertion before
+the fix and passed afterwards. Four targeted CTests passed: sound_wave,
+sound_playback, settings and paste. Independent source review found no important
+issues. Actual audibility depends on the Windows audio device/mixer and was not
+recorded. Duplicate captures which are not retained still do not emit a cue.

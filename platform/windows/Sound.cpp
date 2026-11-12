@@ -8,6 +8,9 @@
 #endif
 #include <windows.h>
 #include <mmsystem.h>
+#ifdef CLIPTIQ_TEST_SOUND_PLAYBACK
+extern "C" BOOL WINAPI cliptiq_test_play_sound(LPCWSTR, HMODULE, DWORD);
+#endif
 #endif
 
 namespace cliptiq::windows {
@@ -53,7 +56,6 @@ struct NativeSound::State {
   using Play = BOOL (WINAPI*)(LPCWSTR, HMODULE, DWORD);
   HMODULE library = nullptr;
   Play play = nullptr;
-  ULONGLONG last = 0;
   bool started = false;
   bool attempted = false;
   unsigned cached_volume = 101;
@@ -82,13 +84,14 @@ void NativeSound::play(bool paste, unsigned volume) {
   if (!volume) return;
   if (!state_) state_ = std::make_unique<State>();
   auto& s = *state_;
-  const auto now = GetTickCount64();
-  // The longest cue is 110 ms. Drop bursts without cutting off a cue.
-  if (s.started && now - s.last < 120) return;
   if (!s.attempted) {
     s.attempted = true;
+#ifdef CLIPTIQ_TEST_SOUND_PLAYBACK
+    s.play = cliptiq_test_play_sound;
+#else
     s.library = LoadLibraryExW(L"winmm.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
     if (s.library) s.play = reinterpret_cast<State::Play>(GetProcAddress(s.library, "PlaySoundW"));
+#endif
   }
   if (!s.play) return;
   if (s.cached_volume != volume) {
@@ -102,9 +105,8 @@ void NativeSound::play(bool paste, unsigned volume) {
   }
   const auto& wave = paste ? s.paste : s.copy;
   if (s.play(reinterpret_cast<LPCWSTR>(wave.data()), nullptr,
-             SND_MEMORY | SND_ASYNC | SND_NODEFAULT | SND_NOSTOP)) {
+             SND_MEMORY | SND_ASYNC | SND_NODEFAULT)) {
     s.started = true;
-    s.last = now;
   }
   } catch (...) {
     // Audio is optional: allocation failures must never escape a UI callback.
