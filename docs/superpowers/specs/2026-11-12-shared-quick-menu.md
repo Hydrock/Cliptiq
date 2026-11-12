@@ -8,7 +8,7 @@ choice. Preserve native rendering and the current Windows workspace design.
   the same tree. Default order: History, Snippets. Existing snippets_above preference
   can reverse these branches. Empty branches are disabled, not omitted.
 - Existing history grouping, snippet folder order, filtering, IDs, limits and
-  paste-target validation remain unchanged. Existing global service actions remain.
+  paste-target validation remain unchanged. Service actions belong to the application window, not this popup.
 - Standard main/history/snippets hotkeys open the unified model, retaining saved
   bindings as aliases. Settings identifies one Quick menu plus alternate bindings.
   Specific folder shortcuts keep their direct-folder purpose.
@@ -29,3 +29,7 @@ Verification: root structure and locale tests observed failing before implementa
 and passing afterwards; complete Windows available suite and packaging recorded
 in the implementation report. AppKit source change requires build and manual
 validation on a Mac; no claim of full macOS UI parity is made.
+
+Scope correction: the quick Main menu contains exactly two section items. No
+clear/settings/editor/update/download/diagnostics/quit commands or status rows
+are appended. Existing workspace controls are independent of this projection.

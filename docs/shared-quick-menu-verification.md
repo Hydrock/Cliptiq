@@ -28,3 +28,9 @@ excluded, not weakened. Log: out/windows-unified-menu/ctest-final.log.
 
 Started Windows app --background with the existing history/settings profile.
 No full new resource benchmark was performed for the extra submenu level.
+
+
+Scope corrected after user review: Main now contains only History and Snippets.
+All service commands and diagnostic rows were removed from this quick projection.
+Regression asserts exactly two roots and absence of all service actions. It failed
+before the correction and passed afterwards. Targeted menu/workspace/paste: 3/3.

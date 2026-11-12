@@ -470,10 +470,11 @@ int host(int argc, char **argv) {
     capabilities.ocr={CapabilityStatus::Available,"Optional offline OCR build"};
 #endif
 
-    auto decorate_media=[&](MenuModel& menu){auto status=media.observation_status();if(status.status==CapabilityStatus::Unavailable){MenuItem item;item.label="Screenshots: "+tr(status.reason);item.enabled=false;menu.items.push_back(std::move(item));}};
+    auto decorate_media=[&](MenuModel& menu){if(menu.kind==MenuKind::Main)return;auto status=media.observation_status();if(status.status==CapabilityStatus::Unavailable){MenuItem item;item.label="Screenshots: "+tr(status.reason);item.enabled=false;menu.items.push_back(std::move(item));}};
 #endif
 #ifdef CLIPTIQ_WITH_LIFECYCLE
     auto decorate_lifecycle = [&](MenuModel &menu) {
+      if(menu.kind==MenuKind::Main)return;
       if (startup_problem) {
         MenuItem item;
         item.label = tr(startup.status().reason);

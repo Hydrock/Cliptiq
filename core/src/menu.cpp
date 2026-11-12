@@ -334,25 +334,13 @@ Result<MenuModel> build_menu(Store &store, MenuKind kind,
       m.items = std::move(history);
       append(m.items, std::move(snippets));
     }
-    if (!m.items.empty())
-      m.items.push_back(separator());
-    MenuItem clear;
-    clear.label = lc("Clear History");
-    clear.action = MenuAction::ClearHistory;
-    clear.enabled = any_history;
-    m.items.push_back(std::move(clear));
-    if (kind == MenuKind::Main) {
-      for (auto pair : {std::pair{lc("Edit Snippets"), MenuAction::OpenEditor},
-                        std::pair{lc("Settings"), MenuAction::OpenSettings},
-                        std::pair{lc("Check for Updates"), MenuAction::CheckUpdates},
-                        std::pair{lc("Download / Installation Instructions"), MenuAction::DownloadUpdates},
-                        std::pair{lc("Export Local Diagnostics"), MenuAction::ExportDiagnostics},
-                        std::pair{lc("Quit"), MenuAction::Quit}}) {
-        MenuItem i;
-        i.label = pair.first;
-        i.action = pair.second;
-        m.items.push_back(std::move(i));
-      }
+    if (kind != MenuKind::Main) {
+      if (!m.items.empty())m.items.push_back(separator());
+      MenuItem clear;
+      clear.label = lc("Clear History");
+      clear.action = MenuAction::ClearHistory;
+      clear.enabled = any_history;
+      m.items.push_back(std::move(clear));
     }
     auto valid = validate_menu_model(m);
     if (!valid)

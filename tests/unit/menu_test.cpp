@@ -58,7 +58,12 @@ int main() {
   test("empty_clear_disabled", [] {
     auto db = take(open_store(":memory:"));
     auto m = take(build_menu(db, MenuKind::Main));
-    auto a = leaves(m, MenuAction::ClearHistory);
+    CHECK(m.items.size()==2);
+    for(auto action:{MenuAction::ClearHistory,MenuAction::OpenEditor,MenuAction::OpenSettings,
+                     MenuAction::CheckUpdates,MenuAction::DownloadUpdates,MenuAction::ExportDiagnostics,MenuAction::Quit})
+      CHECK(leaves(m,action).empty());
+    auto history_menu=take(build_menu(db,MenuKind::History));
+    auto a = leaves(history_menu, MenuAction::ClearHistory);
     CHECK(a.size() == 1 && !a[0]->enabled);
     CHECK(m.items[0].label=="History" && !m.items[0].enabled);
     CHECK(m.items[1].label=="Snippets" && !m.items[1].enabled);
