@@ -7,7 +7,7 @@ struct NativeSettings::State : std::enable_shared_from_this<State> {
   std::thread::id owner = std::this_thread::get_id();
   GtkWidget *window = nullptr, *message = nullptr;
   Settings settings;
-  std::function<void()> advanced;
+  std::function<void(void*)> advanced;
   std::function<Result<void>(Settings)> apply;
   std::function<Result<void>(const HotkeyMap &)> authorize;
   std::map<std::string, GtkWidget *> controls;
@@ -92,14 +92,7 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
     gtk_notebook_append_page(GTK_NOTEBOOK(tabs), scroll,
                              gtk_label_new(names[i]));
   }
-  if(s->advanced) {
-    auto help=gtk_label_new(lc("Share new clipboard copies with your devices on a local network or VPN. Off until you add a device."));
-    gtk_label_set_line_wrap(GTK_LABEL(help),TRUE);gtk_label_set_max_width_chars(GTK_LABEL(help),70);gtk_label_set_xalign(GTK_LABEL(help),0);
-    gtk_grid_attach(GTK_GRID(grids[9]),help,0,rows[9]++,2,1);
-    auto network=gtk_button_new_with_label(lc("Open network settings"));
-    g_signal_connect(network,"clicked",G_CALLBACK(+[](GtkButton*,gpointer data){auto s=static_cast<State*>(data);if(s->advanced)s->advanced();}),s.get());
-    gtk_grid_attach(GTK_GRID(grids[9]),network,0,rows[9]++,2,1);
-  }
+  if(s->advanced) s->advanced(grids[9]);
   for (auto &f : settings_fields(s->settings, caps)) {
     auto label = gtk_label_new(f.label.c_str());
     gtk_label_set_xalign(GTK_LABEL(label), 0);
@@ -234,7 +227,7 @@ bool NativeSettings::confirm_clear() const {
   gtk_widget_destroy(dialog);
   return confirmed;
 }
-void NativeSettings::advanced(std::function<void()> cb) { state_->advanced=std::move(cb); }
+void NativeSettings::advanced(std::function<void(void*)> cb) { state_->advanced=std::move(cb); }
 void NativeSettings::sound_preview(std::function<void(bool, int)>) {}
 void NativeSettings::status(const std::string &value) {
   if (state_->message)

@@ -251,3 +251,14 @@ stalled system resolver on supported distributions before release.
 
 History schema is now 3. Back up before migration: the old executable rejects
 schema 3, so rollback requires the pre-migration database.
+
+
+### Inline Network settings (Windows follow-up)
+
+Network fields now mount directly in the Network tab through the native parent
+view callback. No launcher button or additional top-level window is used by the
+application. Embedded Save retains the panel and refreshes the config revision;
+Cancel restores the last saved draft. The Windows native test covers repeated
+Save, Cancel, child-window ownership and destruction with its parent. Rebuild and
+check the changed AppKit embedding on Mac; the earlier Mac acceptance predates
+this UI change. Linux embedding also needs a native build/runtime check.

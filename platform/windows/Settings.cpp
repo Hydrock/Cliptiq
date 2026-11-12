@@ -46,7 +46,7 @@ struct NativeSettings::State : std::enable_shared_from_this<State> {
   DWORD owner = GetCurrentThreadId();
   HWND window = nullptr, tabs = nullptr, message = nullptr;
   Settings settings;
-  std::function<void()> advanced;
+  std::function<void(void*)> advanced;
   HFONT font = nullptr, help_font = nullptr;
   std::function<void(bool, int)> preview;
   HWND preview_copy = nullptr, preview_paste = nullptr;
@@ -144,9 +144,10 @@ struct NativeSettings::State : std::enable_shared_from_this<State> {
         return reinterpret_cast<LRESULT>(GetStockObject(WHITE_BRUSH));
       }
 
-        if (msg == WM_COMMAND && LOWORD(wp) == 302) { if(p->state->advanced) p->state->advanced(); return 0; }
+        if (msg == WM_COMMAND && LOWORD(wp) == 302) { if(p->state->advanced) p->state->advanced(w); return 0; }
         if (msg == WM_COMMAND && (LOWORD(wp) == 300 || LOWORD(wp) == 301)) { p->state->test_sound(LOWORD(wp) == 301); return 0; }
         if (msg == WM_SIZE) {
+          if(auto child=GetDlgItem(w,303)){RECT r{};GetClientRect(w,&r);MoveWindow(child,0,0,r.right,r.bottom,TRUE);ShowScrollBar(w,SB_VERT,FALSE);return 0;}
           p->arrange();
           p->scroll(p->offset);
           return 0;
@@ -499,13 +500,7 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
     s->pages[p].height = rows[p] + 12;
     s->pages[p].rows_bottom=rows[p];
   }
-  if(s->advanced) {
-    auto help=CreateWindowExW(0,L"STATIC",lw(L"Share new clipboard copies with your devices on a local network or VPN. Off until you add a device."),WS_CHILD|WS_VISIBLE,24,12,800,70,s->pages[9].window,nullptr,wc.hInstance,nullptr);
-    SendMessageW(help,WM_SETFONT,reinterpret_cast<WPARAM>(s->help_font),TRUE);
-    auto network=CreateWindowExW(0,L"BUTTON",lw(L"Open network settings"),WS_CHILD|WS_VISIBLE|WS_TABSTOP,24,96,600,36,s->pages[9].window,reinterpret_cast<HMENU>(302),wc.hInstance,nullptr);
-    SendMessageW(network,WM_SETFONT,reinterpret_cast<WPARAM>(font),TRUE);
-    s->pages[9].height=150;
-  }
+  if(s->advanced) s->advanced(s->pages[9].window);
   auto version=std::wstring(L"Cliptiq ")+wide(CLIPTIQ_APP_VERSION);
   auto about=CreateWindowExW(0,L"STATIC",version.c_str(),WS_CHILD|WS_VISIBLE,
     24,rows[7]+12,800,30,s->pages[7].window,nullptr,wc.hInstance,nullptr);
@@ -534,6 +529,7 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
   SendMessageW(s->message, WM_SETFONT, reinterpret_cast<WPARAM>(font), TRUE);
   for (auto &p : s->pages) {
     for (auto child = GetWindow(p.window, GW_CHILD); child; child = GetWindow(child, GW_HWNDNEXT)) {
+      if(GetDlgCtrlID(child)==303)continue;
       bool field=false;for(auto &row:p.rows)if(child==row.label||child==row.control||child==row.help||child==row.reason)field=true;
       if(field)continue;
       RECT r{}; GetWindowRect(child, &r); MapWindowPoints(nullptr, p.window, reinterpret_cast<POINT *>(&r), 2);
@@ -572,7 +568,7 @@ bool NativeSettings::confirm_clear() const {
                      L"clipboard remain.",
                      L"Cliptiq", MB_OKCANCEL | MB_ICONQUESTION) == IDOK;
 }
-void NativeSettings::advanced(std::function<void()> cb) { state_->advanced=std::move(cb); }
+void NativeSettings::advanced(std::function<void(void*)> cb) { state_->advanced=std::move(cb); }
 void NativeSettings::sound_preview(std::function<void(bool, int)> callback) {
   state_->preview = std::move(callback);
   if (state_->preview_copy) EnableWindow(state_->preview_copy, bool(state_->preview));

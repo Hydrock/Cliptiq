@@ -55,7 +55,7 @@ public:
   Result<void> process_events();
   std::uintptr_t native_handle() const;
   bool confirm_clear() const;
-  void advanced(std::function<void()>);
+  void advanced(std::function<void(void*)>);
   void sound_preview(std::function<void(bool, int)>);
   void status(const std::string &);
   bool record_chord(const KeyChord &);

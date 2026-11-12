@@ -450,11 +450,11 @@ int host(int argc, char **argv) {
       network_service->history_policy(settings_history(preferences));
       auto started=network_service->initialize();if(!started)std::cerr<<started.error().message<<'\n';
       network=network_service.get();
-      settings_window.advanced([&]{
+      settings_window.advanced([&](void* parent){
         auto config=network_service->config();if(!config){settings_window.status(config.error().message);return;}
         auto shown=network_window.show(std::move(config.value()),
-          [&](lan::Config draft,std::map<std::string,std::string> keys){return network_service->save(std::move(draft),std::move(keys));},
-          []{return lan::generate_key();},[&](std::string key){return network_service->copy_secret(key);});
+          [&](lan::Config& draft,std::map<std::string,std::string> keys)->Result<void>{auto saved=network_service->save(draft,std::move(keys));if(!saved)return saved;auto current=network_service->config();if(!current)return current.error();draft=std::move(current.value());return {};},
+          []{return lan::generate_key();},[&](std::string key){return network_service->copy_secret(key);},parent);
         if(!shown)settings_window.status(shown.error().message);
         else {last_network_status=network_service->status();network_window.status(last_network_status);}
       });
