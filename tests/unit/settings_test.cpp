@@ -45,6 +45,9 @@ int main() {
       if(field.key=="hotkey:folder:internal-id"){CHECK(field.label=="Folder: Work");folder=true;}
       if(field.key=="hotkey:clear"){CHECK(field.label=="Clear History");clear=true;}
       if(field.key=="hotkey:editor"){CHECK(field.label=="Edit Snippets");editor=true;}
+      if(field.key=="hotkey:main")CHECK(field.label=="Quick menu");
+      if(field.key=="hotkey:history")CHECK(field.label=="Quick menu - alternate 1");
+      if(field.key=="hotkey:snippets")CHECK(field.label=="Quick menu - alternate 2");
     }
     CHECK(folder&&clear&&editor);
   });

@@ -319,7 +319,15 @@ Result<MenuModel> build_menu(Store &store, MenuKind kind,
         snippets.push_back(std::move(folder));
       }
     }
-    if (s.snippets_above) {
+    if(kind==MenuKind::Main){
+      MenuItem history_section;history_section.label=lc("History");
+      history_section.enabled=!history.empty();history_section.children=std::move(history);
+      MenuItem snippet_section;snippet_section.label=lc("Snippets");
+      snippet_section.enabled=std::any_of(snippets.begin(),snippets.end(),[](const auto& folder){return folder.enabled;});
+      snippet_section.children=std::move(snippets);
+      if(s.snippets_above){m.items.push_back(std::move(snippet_section));m.items.push_back(std::move(history_section));}
+      else {m.items.push_back(std::move(history_section));m.items.push_back(std::move(snippet_section));}
+    } else if (s.snippets_above) {
       m.items = std::move(snippets);
       append(m.items, std::move(history));
     } else {

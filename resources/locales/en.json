@@ -138,5 +138,8 @@
   "Cannot register shortcut": "Cannot register shortcut",
   "The combination is reserved or used by another application. Check other Cliptiq instances.": "The combination is reserved or used by another application. Check other Cliptiq instances.",
   "Windows error": "Windows error",
-  "Previous shortcuts have been kept.": "Previous shortcuts have been kept."
+  "Previous shortcuts have been kept.": "Previous shortcuts have been kept.",
+  "Quick menu": "Quick menu",
+  "Quick menu - alternate 1": "Quick menu - alternate 1",
+  "Quick menu - alternate 2": "Quick menu - alternate 2"
 }

@@ -138,5 +138,8 @@
   "Cannot register shortcut": "Не удалось назначить сочетание",
   "The combination is reserved or used by another application. Check other Cliptiq instances.": "Оно зарезервировано системой или занято другим приложением. Проверьте другие экземпляры Cliptiq.",
   "Windows error": "Ошибка Windows",
-  "Previous shortcuts have been kept.": "Прежние сочетания сохранены."
+  "Previous shortcuts have been kept.": "Прежние сочетания сохранены.",
+  "Quick menu": "Быстрое меню",
+  "Quick menu - alternate 1": "Быстрое меню — доп. сочетание 1",
+  "Quick menu - alternate 2": "Быстрое меню — доп. сочетание 2"
 }

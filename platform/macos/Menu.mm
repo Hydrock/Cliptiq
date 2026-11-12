@@ -169,9 +169,8 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
     auto keep = shared_from_this();
     if (!menu)
       return;
-    [window makeKeyAndOrderFront:nil];
-    NSPoint p = NSMakePoint(0, NSHeight(window.contentView.bounds));
-    NSView *view = button;
+    NSPoint p = NSEvent.mouseLocation;
+    NSView *view = nil;
     if (ctx.x && ctx.y) {
       p = NSMakePoint(*ctx.x, *ctx.y);
       view = nil;

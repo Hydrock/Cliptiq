@@ -1,4 +1,5 @@
 #include "cliptiq/menu.hpp"
+#include "cliptiq/locale.hpp"
 #include "sqlite3.h"
 #include <iostream>
 #include <stdexcept>
@@ -59,6 +60,8 @@ int main() {
     auto m = take(build_menu(db, MenuKind::Main));
     auto a = leaves(m, MenuAction::ClearHistory);
     CHECK(a.size() == 1 && !a[0]->enabled);
+    CHECK(m.items[0].label=="History" && !m.items[0].enabled);
+    CHECK(m.items[1].label=="Snippets" && !m.items[1].enabled);
   });
   for (unsigned in : {0u, 1u, 100u})
     for (unsigned group : {1u, 10u, 100u})
@@ -146,7 +149,10 @@ int main() {
       s.snippets_above = above;
       auto m = take(build_menu(db, MenuKind::Main, s));
       CHECK(leaves(m, MenuAction::SelectSnippet).size() == 1);
-      CHECK((m.items[0].label == "Folder") == above);
+      CHECK(m.items[0].label==(above?"Snippets":"History"));
+      CHECK(m.items[1].label==(above?"History":"Snippets"));
+      CHECK(m.items[above?0:1].children[0].label=="Folder");
+      CHECK(leaves(m,MenuAction::SelectHistory).size()==1);
     }
     CHECK(leaves(take(build_menu(db, MenuKind::History)),
                  MenuAction::SelectSnippet)
@@ -253,6 +259,14 @@ int main() {
     auto menu = take(build_menu(store, MenuKind::History, settings));
     CHECK(leaves(menu, MenuAction::SelectHistory).size() == 3);
     CHECK(take(list_history(store, SortOrder::LastUsed, 1000)).size() == 20);
+  });
+  test("unified_sections_follow_locale", [] {
+    auto store=take(open_store(":memory:"));
+    activate_locale("ru");
+    auto menu=take(build_menu(store,MenuKind::Main));
+    activate_locale("en");
+    CHECK(menu.items[0].label=="История");
+    CHECK(menu.items[1].label=="Сниппеты");
   });
   return failed ? 1 : 0;
 }

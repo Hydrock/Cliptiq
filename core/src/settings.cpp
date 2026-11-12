@@ -532,7 +532,10 @@ std::vector<SettingField> settings_fields(const Settings &s,
   }
   for (auto &p : s.hotkeys) {
     auto label=tr(p.first);
-    if(p.first=="clear")label=tr("Clear History");
+    if(p.first=="main")label=tr("Quick menu");
+    else if(p.first=="history")label=tr("Quick menu - alternate 1");
+    else if(p.first=="snippets")label=tr("Quick menu - alternate 2");
+    else if(p.first=="clear")label=tr("Clear History");
     else if(p.first=="editor")label=tr("Edit Snippets");
     else if(p.first.rfind("folder:",0)==0){
       auto title=s.folder_titles.find(p.first.substr(7));

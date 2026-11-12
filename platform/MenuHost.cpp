@@ -825,9 +825,7 @@ int host(int argc, char **argv) {
 #endif
             else {
               active_folder.clear();
-              kind = action == LaunchAction::History    ? MenuKind::History
-                     : action == LaunchAction::Snippets ? MenuKind::Snippets
-                                                        : MenuKind::Main;
+              kind = MenuKind::Main;
               ok(rebuild());
 #ifdef _WIN32
               if(action==LaunchAction::Main)ok(ui.show_workspace());else
@@ -899,9 +897,7 @@ int host(int argc, char **argv) {
             }
           } else {
             active_folder.clear();
-            kind = action.first == "history"    ? MenuKind::History
-                   : action.first == "snippets" ? MenuKind::Snippets
-                                                : MenuKind::Main;
+            kind = MenuKind::Main;
           }
           if (action.second.target.empty())
             action.second.target = paste.capture_target();
@@ -910,6 +906,11 @@ int host(int argc, char **argv) {
           if(action.first=="main" && !action.second.keyboard)ok(ui.show_workspace());else
 #endif
           ok(ui.show(action.second));
+          // A folder-specific shortcut is a one-shot projection. The tray must
+          // return to the common menu after it closes on every native backend.
+          if(!active_folder.empty()){
+            active_folder.clear();kind=MenuKind::Main;refresh=true;
+          }
         }
       }
       auto cleanup_now = std::chrono::steady_clock::now();

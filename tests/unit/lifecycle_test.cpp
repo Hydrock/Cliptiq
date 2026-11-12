@@ -82,7 +82,8 @@ int main(int argc, char **argv) {
       menu.inline_count = 1;
       auto model = take(build_menu(store, MenuKind::Main, menu));
       bool retained = false;
-      for (const auto &item : model.items)
+      CHECK(model.items[0].label==u8"История");
+      for (const auto &item : model.items[0].children)
         if (item.action == MenuAction::SelectHistory) {
           CHECK(item.label.find("Settings") != std::string::npos);
           retained = true;
