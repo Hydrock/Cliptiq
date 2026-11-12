@@ -224,7 +224,7 @@ CPU за достаточно длинный интервал и размер .a
 не добавляй Raven/WebView и не считай исходники доказательством работающей Mac-сборки».
 
 
-## LAN v1 handoff: feature/lan-clipboard
+## LAN v1 handoff: feature/windows-workspace
 
 See [LAN_CLIPBOARD.md](LAN_CLIPBOARD.md) for configuration and limitations.
 Run `python3 tools/fetch-lan-deps.py` before CMake. Static Mbed TLS 3.6.7 is pinned;

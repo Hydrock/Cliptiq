@@ -1,6 +1,6 @@
 # LAN v1 validation — 2026-11-13
 
-Branch: feature/lan-clipboard; Windows 11 build 26200, x64 MSVC 18 Build Tools,
+Branch: feature/windows-workspace; Windows 11 build 26200, x64 MSVC 18 Build Tools,
 MinSizeRel, static CRT and IPO. Native macOS/Linux build and runtime acceptance
 remain open; no cross-OS or physical LAN/VPN test is claimed.
 
