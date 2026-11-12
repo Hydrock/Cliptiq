@@ -262,3 +262,14 @@ Cancel restores the last saved draft. The Windows native test covers repeated
 Save, Cancel, child-window ownership and destruction with its parent. Rebuild and
 check the changed AppKit embedding on Mac; the earlier Mac acceptance predates
 this UI change. Linux embedding also needs a native build/runtime check.
+
+
+### Network form explanations and grouping
+
+All network fields now use shared human-readable explanations from
+LanSettingsDraft::explanation. Native renderers place them below each field in
+smaller secondary text. Sections separate this computer, sharing behavior,
+formats and each numbered peer. AppKit uses native separators, bold headings and
+secondaryLabelColor; GTK uses themed dim-label styling. Windows wrapping and
+scrolling plus existing native settings tests were verified. Recheck the updated
+AppKit layout on Mac, including long Russian explanations and multiple peers.

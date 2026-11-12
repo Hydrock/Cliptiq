@@ -26,6 +26,33 @@ struct LanSettingsDraft {
     }
     return f;
   }
+  // Shared explanations keep the native settings consistent on all platforms.
+  std::string section(const Field& f) const {
+    if(f.key=="name")return tr("This computer");
+    if(f.key=="paused")return tr("Clipboard sharing");
+    if(f.key=="text")return tr("Shared formats");
+    for(size_t i=0;i<config.peers.size();++i)if(f.key==config.peers[i].id+":name")return tr("Device")+" "+std::to_string(i+1)+" — "+config.peers[i].name;
+    return {};
+  }
+  static std::string explanation(const Field& f) {
+    auto at=f.key.find(':');auto key=at==std::string::npos?f.key:"peer:"+f.key.substr(at+1);
+    if(key=="name")return tr("A name for this computer, for example Home PC or Laptop. It helps you recognize this device when configuring the other computers.");
+    if(key=="bind")return tr("The IP address of THIS computer on your local network or VPN. For example 192.168.1.10. 127.0.0.1 works only on this computer; do not enter the other device address here.");
+    if(key=="port")return tr("The TCP port on which this computer accepts connections. Keep 49731 unless it is in use. Enter this same number as the peer port on the other computer.");
+    if(key=="paused")return tr("Temporarily stops sending and receiving for all devices without deleting their addresses or keys. Clear this checkbox to resume after saving.");
+    if(key=="history")return tr("When checked, received copies appear only in Cliptiq history. When unchecked, they also become the current system clipboard so you can paste with Ctrl+V or Cmd+V.");
+    if(key=="text")return tr("Allows sending and receiving plain text. Only new copies are shared; your existing clipboard history is not sent.");
+    if(key=="urls")return tr("Allows sending and receiving links recognized by the clipboard as URLs. A link copied as plain text also depends on the text setting.");
+    if(key=="images")return tr("Allows sending and receiving images, converted to PNG. Maximum 8 MiB per transfer and 8 million pixels per image. Files and folders are not transferred.");
+    if(key=="peer:name")return tr("A friendly name for the OTHER device, for example Work Mac. This name labels copies received from it in your history. It does not have to match its system name.");
+    if(key=="peer:host")return tr("The IP address or DNS name of the OTHER computer, reachable from here over LAN or VPN, for example 192.168.1.20 or its Tailscale name.");
+    if(key=="peer:port")return tr("Enter the listen port configured on the OTHER computer. Usually 49731. This is its port, not necessarily the listen port of this computer.");
+    if(key=="peer:enabled")return tr("Enables this device after saving. Disable it to disconnect only this device while keeping its address and key for later.");
+    if(key=="peer:send")return tr("Sends new copies from THIS computer to this device. Configure the matching receive permission on the other computer.");
+    if(key=="peer:receive")return tr("Accepts new copies from this device. Where they appear is controlled by Receive into history only above. The other computer must allow sending.");
+    if(key=="peer:key")return tr("The same secret key must be entered at both ends of this pair. Generate it on one computer and securely copy it to the other. Leave blank to keep a saved key. Use a different key for each pair.");
+    return {};
+  }
   Result<void> collect(const std::map<std::string,std::string>& values) {
     auto candidate=config; auto next=keys;
     auto get=[&](std::string k){auto i=values.find(k);return i==values.end()?std::string():i->second;};
