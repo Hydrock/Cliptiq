@@ -1,7 +1,8 @@
 """Fail-closed release gate, separate from passing unsigned candidate CI."""
 import argparse,hashlib,json,os,pathlib,platform,re,subprocess,tempfile
 from distribution import signature_errors
-REQUIRED={f'T{n:02d}' for n in range(4,17)}|{'clean-install','signing','notarization','publisher-identity','project-license','desktop-support-matrix','offline-closure'}
+# Clipy XML (T11) and migration (T14) were explicitly retired on 2026-11-12.
+REQUIRED={f'T{n:02d}' for n in range(4,17) if n not in (11,14)}|{'clean-install','signing','notarization','publisher-identity','project-license','desktop-support-matrix','offline-closure'}
 def checklist_errors(data):
  if data.get('schema_version')!=1 or not isinstance(data.get('gates'),list):return ['invalid release checklist']
  gates={};errors=[]

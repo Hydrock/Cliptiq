@@ -224,7 +224,13 @@ struct NativeSettings::State : std::enable_shared_from_this<State> {
         return 0;
       }
       if (msg == WM_CLOSE) {
-        ShowWindow(w, SW_HIDE);
+        // show() already reloads the committed snapshot on each opening.
+        // Keeping a hidden tree of controls serves no draft-preservation role.
+        DestroyWindow(w);
+        s->window = s->tabs = s->message = s->apply_button = nullptr;
+        s->controls.clear();
+        for (auto &page : s->pages)
+          page = {};
         return 0;
       }
     }

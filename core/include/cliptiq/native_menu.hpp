@@ -12,6 +12,9 @@ struct NativeMenuOptions {
   TrayStyle tray_style = TrayStyle::Standard;
   unsigned preview_width = 100, preview_height = 32;
   bool icons = true;
+  // Windows background startup: retain the launcher as an IPC/tray owner,
+  // but show it as a recovery route if the tray is unavailable/disabled.
+  bool start_hidden = false;
   // Called on the GUI thread before a native popup takes focus. Empty means
   // copy/manual paste only. External DBusMenu events cannot invent a target.
   std::function<InvocationContext()> invocation_provider;

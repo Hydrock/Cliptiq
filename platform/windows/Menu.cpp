@@ -204,6 +204,8 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
   void tray() {
     remove_icon();
     if (options.tray_style == TrayStyle::Hidden) {
+      ShowWindow(window, SW_SHOWNOACTIVATE);
+      status.launcher_visible = true;
       status.tray_reason = "Tray hidden; launcher visible";
       return;
     }
@@ -237,6 +239,10 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
     if (status.tray_available) {
       n.uVersion = NOTIFYICON_VERSION_4;
       Shell_NotifyIconW(NIM_SETVERSION, &n);
+    }
+    if (!status.tray_available) {
+      ShowWindow(window, SW_SHOWNOACTIVATE);
+      status.launcher_visible = true;
     }
     status.tray_reason = status.tray_available
                              ? "Shell_NotifyIcon registered"
@@ -403,7 +409,7 @@ Result<void> NativeMenu::initialize() {
   if (!RegisterClassW(&type) && GetLastError() != ERROR_CLASS_ALREADY_EXISTS)
     return Error{ErrorCode::Io, "Cannot register menu window"};
   s->window = CreateWindowExW(0, type.lpszClassName, L"Cliptiq",
-                              WS_OVERLAPPEDWINDOW | WS_VISIBLE, CW_USEDEFAULT,
+                              WS_OVERLAPPEDWINDOW | (s->options.start_hidden ? 0 : WS_VISIBLE), CW_USEDEFAULT,
                               CW_USEDEFAULT, 300, 150, nullptr, nullptr,
                               type.hInstance, s.get());
   if (!s->window)
@@ -417,8 +423,9 @@ Result<void> NativeMenu::initialize() {
                client.bottom - client.top,
                SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
   s->layout();
-  SetFocus(GetDlgItem(s->window, 1));
-  s->status.launcher_visible = true;
+  if (!s->options.start_hidden)
+    SetFocus(GetDlgItem(s->window, 1));
+  s->status.launcher_visible = !s->options.start_hidden;
   s->taskbar_created = RegisterWindowMessageW(L"TaskbarCreated");
   s->tip = CreateWindowExW(WS_EX_TOPMOST, TOOLTIPS_CLASSW, nullptr,
                            WS_POPUP | TTS_ALWAYSTIP, CW_USEDEFAULT,
@@ -479,8 +486,10 @@ Result<void> NativeMenu::process_events(unsigned wait) {
     return Error{ErrorCode::InvalidArgument,
                  "Win32 menu requires owner thread"};
   MSG message;
+  bool dispatched = false;
   for (unsigned i = 0;
        i < 64 && PeekMessageW(&message, nullptr, 0, 0, PM_REMOVE); ++i) {
+    dispatched = true;
     if (message.message == WM_KEYDOWN &&
         (message.hwnd == s->window || IsChild(s->window, message.hwnd))) {
       auto button = GetDlgItem(s->window, 1);
@@ -499,9 +508,11 @@ Result<void> NativeMenu::process_events(unsigned wait) {
       DispatchMessageW(&message);
     }
   }
-  if (wait)
-    MsgWaitForMultipleObjects(0, nullptr, FALSE, std::min(wait, 10u),
-                              QS_ALLINPUT);
+  // Return to the controller immediately after callbacks (selection/hotkeys).
+  // INPUTAVAILABLE also covers old messages left by the bounded dispatch pass.
+  if (wait && !dispatched)
+    MsgWaitForMultipleObjectsEx(0, nullptr, std::min(wait, 100u),
+                               QS_ALLINPUT, MWMO_INPUTAVAILABLE);
   return {};
 }
 NativeMenuStatus NativeMenu::status() const { return state_->status; }

@@ -10,4 +10,7 @@ class ReleaseGateTests(unittest.TestCase):
   m=self.tool();self.assertTrue(m.checklist_errors({'schema_version':1,'gates':[]}));self.assertTrue(m.checklist_errors({'schema_version':1,'gates':[{'id':'T04','status':'closed'}]}))
  def test_unsigned_and_wrong_signer_proof_fails(self):
   m=self.tool();self.assertTrue(m.signature_errors({'trusted':False},'1'*64));self.assertTrue(m.signature_errors({'trusted':True,'signer_sha256':'0'*64},'1'*64))
+ def test_retired_clipy_features_do_not_block_current_scope(self):
+  m=self.tool();self.assertNotIn('T11',m.REQUIRED);self.assertNotIn('T14',m.REQUIRED)
+  self.assertTrue({'T10','T12','T13','T15','T16','signing','clean-install'} <= m.REQUIRED)
 if __name__=='__main__':unittest.main()

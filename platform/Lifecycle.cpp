@@ -172,6 +172,13 @@ Result<std::vector<LaunchAction>> SessionInstance::receive() {
           return Error{ErrorCode::InvalidArgument,
                        "Only the primary instance receives actions"};
         auto db = impl_->db;
+        // Empty polls are read-only. Acquire a writer only when there is work;
+        // re-read in that transaction so concurrent appends cannot be lost.
+        {
+          detail::Statement pending(db, "SELECT 1 FROM mailbox LIMIT 1");
+          if (!pending.row())
+            return std::vector<LaunchAction>{};
+        }
         detail::Transaction tx(db);
         detail::Statement q(db,
                             "SELECT action FROM mailbox ORDER BY id LIMIT 17");

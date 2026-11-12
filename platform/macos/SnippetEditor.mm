@@ -1,8 +1,5 @@
 #include "../LocaleNative.hpp"
 #include "cliptiq/editor.hpp"
-#ifdef CLIPTIQ_EDITOR_XML
-#include "../SnippetXml.hpp"
-#endif
 #import <AppKit/AppKit.h>
 #include <algorithm>
 #include <thread>
@@ -36,10 +33,6 @@ using namespace cliptiq;
 - (void)reload:(id)sender;
 - (void)enable:(id)sender;
 - (void)bind:(id)sender;
-#ifdef CLIPTIQ_EDITOR_XML
-- (void)importXML:(id)sender;
-- (void)exportXML:(id)sender;
-#endif
 @end
 @interface CliptiqSnippetText : NSTextView
 @property(nonatomic, weak) CliptiqSnippetBridge *bridge;
@@ -142,18 +135,6 @@ using namespace cliptiq;
   if (edit)
     edit(1, [(NSTextView *)notification.object string]);
 }
-#ifdef CLIPTIQ_EDITOR_XML
-- (void)importXML:(id)sender {
-  (void)sender;
-  if (action)
-    action(513);
-}
-- (void)exportXML:(id)sender {
-  (void)sender;
-  if (action)
-    action(514);
-}
-#endif
 - (void)addFolder:(id)sender {
   (void)sender;
   if (action)
@@ -273,9 +254,6 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
            *bind = nil;
   CliptiqSnippetBridge *bridge = nil;
   std::shared_ptr<SnippetEditorSession> model;
-#ifdef CLIPTIQ_EDITOR_XML
-  SnippetXmlTransfer xml;
-#endif
   bool updating = false;
   std::uint64_t drag = 0;
   std::optional<SnippetItemId> dragged;
@@ -291,13 +269,6 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
     }
     [window close];
   }
-  bool transfer_locked() const {
-#ifdef CLIPTIQ_EDITOR_XML
-    return xml.busy();
-#else
-    return false;
-#endif
-  }
   void status(Result<void> r) {
     message.stringValue =
         r ? str((model->saving()
@@ -305,75 +276,8 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
                      : lc("Saved locally. ") + model->binding_status()))
           : str(r.error().message);
   }
-#ifdef CLIPTIQ_EDITOR_XML
-  void xml_sensitive(bool value) {
-    std::function<void(NSView *)> set = [&](NSView *view) {
-      if ([view isKindOfClass:[NSControl class]])
-        [(NSControl *)view setEnabled:value];
-      for (NSView *child in view.subviews)
-        set(child);
-    };
-    set(window.contentView);
-    body.editable = value;
-  }
-  Result<void> start_xml(const std::string &path, bool importing) {
-    if (!window || !model)
-      return Error{ErrorCode::InvalidArgument, "Open the snippet editor first"};
-    auto result = xml.start(*model, path, importing);
-    if (result) {
-      xml_sensitive(false);
-      status(Error{ErrorCode::Busy, importing ? lc("Importing XML...")
-                                              : lc("Exporting XML...")});
-    }
-    return result;
-  }
-  bool poll_xml() {
-    if (!xml.busy())
-      return false;
-    auto result = xml.poll(*model);
-    if (xml.busy())
-      return true;
-    xml_sensitive(true);
-    if (result) {
-      if (xml.importing())
-        rebuild();
-      else
-        detail();
-      message.stringValue = str(xml.message());
-    } else {
-      detail();
-      status(result.error());
-    }
-    return true;
-  }
-  void xml_picker(bool importing) {
-    auto keep = shared_from_this();
-    if (xml.busy() || model->has_unsaved()) {
-      status(Error{
-          ErrorCode::Busy,
-          "Save or Reload the draft and finish the current transfer first"});
-      return;
-    }
-    NSSavePanel *panel =
-        importing ? [NSOpenPanel openPanel] : [NSSavePanel savePanel];
-    panel.allowedFileTypes = @[ @"xml" ];
-    panel.allowsOtherFileTypes = NO;
-    if (importing) {
-      auto open = (NSOpenPanel *)panel;
-      open.allowsMultipleSelection = NO;
-      open.canChooseDirectories = NO;
-    } else
-      panel.nameFieldStringValue = @"snippets.xml";
-    if ([panel runModal] == NSModalResponseOK && panel.URL)
-      status(start_xml(utf8(panel.URL.path), importing));
-  }
-#endif
   void poll() {
     if(!model || !window) return;
-#ifdef CLIPTIQ_EDITOR_XML
-    if (poll_xml())
-      return;
-#endif
     auto result=model->poll_saves();
     if(!result) status(result.error());
     else if(result.value()) {status({});selected_label();}
@@ -398,13 +302,6 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
     }
   }
   bool confirm_close() {
-#ifdef CLIPTIQ_EDITOR_XML
-    if (xml.busy()) {
-      status(
-          Error{ErrorCode::Busy, "XML transfer pending; wait before closing"});
-      return false;
-    }
-#endif
     if(model && model->saving()) {status(Error{ErrorCode::Busy,"Save pending; wait before closing"});return false;}
 
     if (!model || !model->has_unsaved())
@@ -424,8 +321,7 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
     return bool(loaded);
   }
   void detail() {
-    if (transfer_locked())
-      return;
+
     updating = true;
     auto selected = model->selected();
     bool folder = selected && selected->kind == SnippetItemKind::Folder;
@@ -518,17 +414,8 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
     detail();
   }
   void perform(int command) {
-    if (transfer_locked()) {
-      status(Error{ErrorCode::Busy, "XML transfer pending"});
-      return;
-    }
+
     auto keep = shared_from_this();
-#ifdef CLIPTIQ_EDITOR_XML
-    if (command == 513 || command == 514) {
-      xml_picker(command == 513);
-      return;
-    }
-#endif
     Result<void> r;
     if (command == 507 || command == 508) {
       auto added = command == 507 ? model->add_folder() : model->add_snippet();
@@ -588,10 +475,6 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
   auto s = state_;
   if (s->owner != std::this_thread::get_id() || !NSThread.isMainThread)
     return Error{ErrorCode::InvalidArgument, "Editor requires main thread"};
-#ifdef CLIPTIQ_EDITOR_XML
-  if (s->xml.busy())
-    return Error{ErrorCode::Busy, "XML transfer pending in existing editor"};
-#endif
   if (!model)
     return Error{ErrorCode::InvalidArgument, "No editor session"};
   if (s->window && s->model && s->model->has_unsaved())
@@ -639,10 +522,6 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
   s->undo = button(loc(@"Undo"), @"editor-undo", @selector(undo:));
   s->redo = button(loc(@"Redo"), @"editor-redo", @selector(redo:));
   button(loc(@"Reload"), @"editor-reload", @selector(reload:));
-#ifdef CLIPTIQ_EDITOR_XML
-  button(loc(@"Import XML…"), @"editor-import", @selector(importXML:));
-  button(loc(@"Export XML…"), @"editor-export", @selector(exportXML:));
-#endif
   auto split = [[NSSplitView alloc] initWithFrame:NSMakeRect(12, 64, 876, 528)];
   split.vertical = YES;
   split.dividerStyle = NSSplitViewDividerStyleThin;
@@ -735,10 +614,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
     if (auto s = weak.lock()) {
       if (s->updating)
         return;
-      if (s->transfer_locked()) {
-        s->restore_selection();
-        return;
-      }
+
       std::optional<SnippetItemId> item;
       if (n && n.itemID.length)
         item = SnippetItemId{n.folder ? SnippetItemKind::Folder
@@ -754,7 +630,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
   };
   s->bridge->edit = [weak](int field, NSString *value) {
     if (auto s = weak.lock()) {
-      if (s->updating || s->transfer_locked())
+      if (s->updating)
         return;
       auto r = field ? s->model->queue_content(utf8(value))
                      : s->model->queue_title(utf8(value));
@@ -767,7 +643,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
   [s->tree setDraggingSourceOperationMask:NSDragOperationMove forLocal:YES];
   s->bridge->drag = [weak](CliptiqSnippetNode *n) -> NSPasteboardItem * {
     auto s = weak.lock();
-    if (!s || s->transfer_locked() || !n.itemID.length)
+    if (!s || !n.itemID.length)
       return nil;
     s->dragged = SnippetItemId{n.folder ? SnippetItemKind::Folder
                                         : SnippetItemKind::Snippet,
@@ -786,7 +662,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
   s->bridge->drop = [weak](id<NSDraggingInfo> info, id target,
                            NSInteger proposed, BOOL commit) -> NSDragOperation {
     auto s = weak.lock();
-    if (!s || s->transfer_locked() || !s->drag || !s->dragged ||
+    if (!s || !s->drag || !s->dragged ||
         info.draggingSource != s->tree)
       return NSDragOperationNone;
     auto value =
@@ -867,8 +743,7 @@ std::uintptr_t NativeSnippetEditor::native_handle() const {
 }
 bool NativeSnippetEditor::record_chord(const KeyChord &chord) {
   auto s = state_;
-  if (s->transfer_locked())
-    return false;
+
   if (!s->window.isVisible || !s->window.isKeyWindow)
     return false;
   auto responder = s->window.firstResponder;
@@ -883,34 +758,5 @@ bool NativeSnippetEditor::record_chord(const KeyChord &chord) {
   if ([responder isKindOfClass:NSTextView.class])
     [(NSTextView *)responder setString:field.stringValue];
   return true;
-}
-Result<void> NativeSnippetEditor::import_xml_path(const std::string &path) {
-#ifdef CLIPTIQ_EDITOR_XML
-  auto s = state_;
-  if (s->owner != std::this_thread::get_id())
-    return Error{ErrorCode::InvalidArgument, "Editor requires owner thread"};
-  return s->start_xml(path, true);
-#else
-  (void)path;
-  return Error{ErrorCode::Unsupported, "XML disabled in baseline probe"};
-#endif
-}
-Result<void> NativeSnippetEditor::export_xml_path(const std::string &path) {
-#ifdef CLIPTIQ_EDITOR_XML
-  auto s = state_;
-  if (s->owner != std::this_thread::get_id())
-    return Error{ErrorCode::InvalidArgument, "Editor requires owner thread"};
-  return s->start_xml(path, false);
-#else
-  (void)path;
-  return Error{ErrorCode::Unsupported, "XML disabled in baseline probe"};
-#endif
-}
-bool NativeSnippetEditor::xml_transfer_busy() const {
-#ifdef CLIPTIQ_EDITOR_XML
-  return state_->xml.busy();
-#else
-  return false;
-#endif
 }
 } // namespace cliptiq

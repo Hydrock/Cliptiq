@@ -1,3 +1,5 @@
+> Обновление 12.11.2026: XML-совместимость и миграция Clipy удалены из продукта. Этот материал о них является историческим. См. `docs/support/clipy-compatibility-retired.md`.
+
 # Cliptiq: исследование и план
 
 Рабочий репозиторий: [Hydrock/Cliptiq](https://github.com/Hydrock/Cliptiq). Дата: 23 октября 2026. Исследован Clipy `develop` на ревизии `71b0e82623d5c73b4b717d81233eb78db8bbe258`.

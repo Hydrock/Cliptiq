@@ -1,0 +1,34 @@
+{
+  "available_ctest": {
+    "passed": 35,
+    "failed": 0
+  },
+  "policy_unittest": {
+    "total": 26,
+    "skipped": 3,
+    "failed": 0
+  },
+  "full_suite_not_green": true,
+  "windowstation_failures": [
+    "editor_native",
+    "hotkeys_native_boundary",
+    "settings_native",
+    "lifecycle_ui_ru",
+    "hotkeys_native",
+    "paste_native",
+    "menu_regression_keyboard",
+    "menu_regression_dpi",
+    "menu_regression_context",
+    "menu_native",
+    "windows_clipboard"
+  ],
+  "other_unresolved": [
+    "update_authenticode: positive system CRT trust fixture failed; update verifier code unchanged"
+  ],
+  "red_green": [
+    "MediaService unchanged history scan: RED 1 scan, GREEN 0",
+    "SessionInstance empty mailbox under concurrent write lock: RED Busy, GREEN empty",
+    "--background: RED visible launcher, GREEN no visible windows",
+    "Settings close: RED retained HWND, GREEN destroyed and reopened through IPC"
+  ]
+}

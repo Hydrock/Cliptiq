@@ -38,22 +38,12 @@
       "reason": "User explicitly keeps manual acceptance OPEN; automated tests do not replace native desktop acceptance."
     },
     {
-      "id": "T11",
-      "status": "open",
-      "reason": "User explicitly keeps manual acceptance OPEN; automated tests do not replace native desktop acceptance."
-    },
-    {
       "id": "T12",
       "status": "open",
       "reason": "User explicitly keeps manual acceptance OPEN; automated tests do not replace native desktop acceptance."
     },
     {
       "id": "T13",
-      "status": "open",
-      "reason": "User explicitly keeps manual acceptance OPEN; automated tests do not replace native desktop acceptance."
-    },
-    {
-      "id": "T14",
       "status": "open",
       "reason": "User explicitly keeps manual acceptance OPEN; automated tests do not replace native desktop acceptance."
     },

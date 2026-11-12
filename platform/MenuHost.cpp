@@ -416,6 +416,9 @@ int host(int argc, char **argv) {
     filter_model(model);
 #endif
     NativeMenuOptions options;
+#if defined(_WIN32) && defined(CLIPTIQ_WITH_LIFECYCLE)
+    options.start_hidden = background && !smoke;
+#endif
     options.tray_style = tray;
 #ifdef CLIPTIQ_WITH_SETTINGS
     options.preview_width = settings.preview_width;
@@ -791,7 +794,13 @@ int host(int argc, char **argv) {
 #endif
       ok(settings_window.process_events());
 #endif
+#ifdef _WIN32
+      // Messages (clipboard, hotkeys, tray, worker completions) wake this wait
+      // immediately. A 100 ms ceiling retains the existing IPC deadline.
+      ok(ui.process_events(smoke ? 1 : 100));
+#else
       ok(ui.process_events(smoke ? 1 : 5));
+#endif
 #ifdef CLIPTIQ_WITH_SETTINGS
       auto dispatched = hotkeys.dispatch();
       if (!dispatched)

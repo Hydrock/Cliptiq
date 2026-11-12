@@ -1,3 +1,5 @@
+> Обновление 12.11.2026: XML-совместимость и миграция Clipy удалены из продукта. Этот материал о них является историческим. См. `docs/support/clipy-compatibility-retired.md`.
+
 # Optional Clipy migration contract (T14)
 
 `export_clipy_sqlite(source, interchange, optional_settings)` and `import_clipy(Store&, interchange, ImportOptions)` live in the separate cliptiq_migration library. No application target links the converter/Realm. The main app adds only portable replay adaptation in its existing paste path.

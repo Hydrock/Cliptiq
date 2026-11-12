@@ -1,3 +1,5 @@
+> Обновление 12.11.2026: XML-совместимость и миграция Clipy удалены из продукта. Этот материал о них является историческим. См. `docs/support/clipy-compatibility-retired.md`.
+
 # Clipy XML interchange (T11)
 
 API: `include/cliptiq/xml.hpp`; UI: AppKit/Win32/GTK editor Import XML / Export XML. Default export name `snippets.xml`. Files are UTF-8/XML1.0 plain text. T11 does not implement SQLite/Realm migration (T14) or previews/screenshots (T12).

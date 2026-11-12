@@ -1,0 +1,707 @@
+Start testing: Nov 12 20:55 West Asia Standard Time
+----------------------------------------------------------
+14/35 Testing: media_review_root
+14/35 Test: media_review_root
+Command: "C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final/media_review_test.exe" "root"
+Directory: C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final
+"media_review_root" start time: Nov 12 20:55 West Asia Standard Time
+Output:
+----------------------------------------------------------
+PASS root
+<end of output>
+Test time =   1.42 sec
+----------------------------------------------------------
+Test Passed.
+"media_review_root" end time: Nov 12 20:55 West Asia Standard Time
+"media_review_root" time elapsed: 00:00:01
+----------------------------------------------------------
+
+13/35 Testing: media_review_clear
+13/35 Test: media_review_clear
+Command: "C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final/media_review_test.exe" "clear"
+Directory: C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final
+"media_review_clear" start time: Nov 12 20:55 West Asia Standard Time
+Output:
+----------------------------------------------------------
+PASS clear
+<end of output>
+Test time =   1.43 sec
+----------------------------------------------------------
+Test Passed.
+"media_review_clear" end time: Nov 12 20:55 West Asia Standard Time
+"media_review_clear" time elapsed: 00:00:01
+----------------------------------------------------------
+
+10/35 Testing: lifecycle_process
+10/35 Test: lifecycle_process
+Command: "C:/Python314/python.exe" "C:/Users/SmiteVils/Documents/Projects/cliptiq/tests/integration/lifecycle_process.py" "C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final/lifecycle_test.exe"
+Directory: C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final
+"lifecycle_process" start time: Nov 12 20:55 West Asia Standard Time
+Output:
+----------------------------------------------------------
+PASS separate processes, four fixed routes, settings recovery, crash/restart lock release
+<end of output>
+Test time =   0.89 sec
+----------------------------------------------------------
+Test Passed.
+"lifecycle_process" end time: Nov 12 20:55 West Asia Standard Time
+"lifecycle_process" time elapsed: 00:00:00
+----------------------------------------------------------
+
+1/35 Testing: snippets_menu_hotkeys
+1/35 Test: snippets_menu_hotkeys
+Command: "C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final/snippet_integration_test.exe"
+Directory: C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final
+"snippets_menu_hotkeys" start time: Nov 12 20:55 West Asia Standard Time
+Output:
+----------------------------------------------------------
+PASS disabled_folder_preferences_never_register_and_reenable_restores
+PASS menu_selection_and_paste_cannot_replay_disabled_or_deleted_snippets
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"snippets_menu_hotkeys" end time: Nov 12 20:55 West Asia Standard Time
+"snippets_menu_hotkeys" time elapsed: 00:00:00
+----------------------------------------------------------
+
+34/35 Testing: idle_media_revision
+34/35 Test: idle_media_revision
+Command: "C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final/idle_test.exe" "media"
+Directory: C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final
+"idle_media_revision" start time: Nov 12 20:55 West Asia Standard Time
+Output:
+----------------------------------------------------------
+PASS media
+<end of output>
+Test time =   0.98 sec
+----------------------------------------------------------
+Test Passed.
+"idle_media_revision" end time: Nov 12 20:55 West Asia Standard Time
+"idle_media_revision" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/35 Testing: editor
+2/35 Test: editor
+Command: "C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final/editor_test.exe"
+Directory: C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final
+"editor" start time: Nov 12 20:55 West Asia Standard Time
+Output:
+----------------------------------------------------------
+PASS autosave_undo_redo_resets_at_selection_boundary
+PASS cancelled_drag_and_stale_drag_do_not_mutate
+PASS delete_confirmation_empty_folder_and_binding_conflicts
+PASS failed_edit_preserves_document_and_undo
+PASS failed_autosave_blocks_navigation_until_corrected_or_explicit_reload
+PASS drag_revision_is_checked_inside_write_transaction
+PASS folder_drop_does_not_overwrite_concurrent_other_folder_reorder
+PASS committed_snapshot_does_not_adopt_peer_revision
+PASS background_autosave_keeps_event_loop_responsive_under_write_contention
+<end of output>
+Test time =   0.36 sec
+----------------------------------------------------------
+Test Passed.
+"editor" end time: Nov 12 20:55 West Asia Standard Time
+"editor" time elapsed: 00:00:00
+----------------------------------------------------------
+
+5/35 Testing: hotkeys
+5/35 Test: hotkeys
+Command: "C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final/hotkeys_test.exe"
+Directory: C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final
+"hotkeys" start time: Nov 12 20:55 West Asia Standard Time
+Output:
+----------------------------------------------------------
+PASS chord_roundtrip_meaning_and_reserved
+PASS conflict_keeps_previous_and_settings_protected
+PASS batch_os_or_persistence_failure_rolls_back
+PASS throwing_persistence_releases_candidates_preserves_old
+PASS disabled_deleted_folders_release_routes
+PASS registry_lifetime_releases_and_unknown_actions_rejected
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"hotkeys" end time: Nov 12 20:55 West Asia Standard Time
+"hotkeys" time elapsed: 00:00:00
+----------------------------------------------------------
+
+20/35 Testing: windows_formats
+20/35 Test: windows_formats
+Command: "C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final/windows_clipboard_test.exe" "--formats"
+Directory: C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final
+"windows_formats" start time: Nov 12 20:55 West Asia Standard Time
+Output:
+----------------------------------------------------------
+PASS native_format_validation
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"windows_formats" end time: Nov 12 20:55 West Asia Standard Time
+"windows_formats" time elapsed: 00:00:00
+----------------------------------------------------------
+
+6/35 Testing: paste_native_boundary
+6/35 Test: paste_native_boundary
+Command: "C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final/paste_boundary_test.exe"
+Directory: C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final
+"paste_native_boundary" start time: Nov 12 20:55 West Asia Standard Time
+Output:
+----------------------------------------------------------
+PASS issued_target_success_and_chords
+PASS closed_replaced_process_and_reused_hwnd_rejected
+PASS uipi_unknown_and_held_modifiers_no_input
+PASS unrelated_focus_and_denied_restore_no_input
+PASS normal_self_restore_then_dispatch
+PASS every_partial_prefix_releases_only_injected_keys
+PASS native_denial_preserves_paste_delete_history
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"paste_native_boundary" end time: Nov 12 20:55 West Asia Standard Time
+"paste_native_boundary" time elapsed: 00:00:00
+----------------------------------------------------------
+
+26/35 Testing: ocr
+26/35 Test: ocr
+Command: "C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final/ocr_test.exe"
+Directory: C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final
+"ocr" start time: Nov 12 20:55 West Asia Standard Time
+Output:
+----------------------------------------------------------
+OCR Unicode, empty Done, limits, cancel, supersession, privacy and deletion passed
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"ocr" end time: Nov 12 20:55 West Asia Standard Time
+"ocr" time elapsed: 00:00:00
+----------------------------------------------------------
+
+29/35 Testing: distribution_tools
+29/35 Test: distribution_tools
+Command: "C:/Python314/python.exe" "-m" "unittest" "discover" "-s" "C:/Users/SmiteVils/Documents/Projects/cliptiq/tests/tools"
+Directory: C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final
+"distribution_tools" start time: Nov 12 20:55 West Asia Standard Time
+Output:
+----------------------------------------------------------
+...........s......s...s..
+----------------------------------------------------------------------
+Ran 25 tests in 0.278s
+
+OK (skipped=3)
+<end of output>
+Test time =   0.40 sec
+----------------------------------------------------------
+Test Passed.
+"distribution_tools" end time: Nov 12 20:55 West Asia Standard Time
+"distribution_tools" time elapsed: 00:00:00
+----------------------------------------------------------
+
+22/35 Testing: history
+22/35 Test: history
+Command: "C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final/history_test.exe"
+Directory: C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final
+"history" start time: Nov 12 20:55 West Asia Standard Time
+Output:
+----------------------------------------------------------
+PASS preserves_all_representations
+PASS duplicate_mode_switch_keeps_digest
+PASS duplicate_flags
+PASS blank_text_ignored
+PASS last_used_preserves_created
+PASS limit_three
+PASS periodic_clear_is_not_ttl
+PASS clear_preserves_snippets
+PASS oversize_is_atomic
+PASS quota_prunes_by_current_sort
+PASS reopen_and_periodic_state
+PASS transaction_failure_rolls_back
+PASS read_only_and_full_are_errors
+PASS corrupt_db_not_replaced
+PASS digest_has_unambiguous_boundaries
+PASS invalid_policy_and_empty_snapshot
+PASS revision_clear_compact
+PASS sha256_standard_vectors
+PASS collision_is_not_equality
+PASS source_changes_do_not_create_new_content
+PASS rtf_blank_and_primary_order
+PASS metadata_and_representation_limits
+PASS cleanup_disable_change_and_clock_rewind
+PASS foreign_and_future_db_preserved
+PASS load_rechecks_persisted_limits
+PASS duplicate_candidate_limits_checked
+PASS returned_id_survives_pruning
+PASS native_utf16_blank_text_ignored
+PASS utf16_roundtrip_and_big_endian_blank
+<end of output>
+Test time =   0.15 sec
+----------------------------------------------------------
+Test Passed.
+"history" end time: Nov 12 20:55 West Asia Standard Time
+"history" time elapsed: 00:00:00
+----------------------------------------------------------
+
+4/35 Testing: settings
+4/35 Test: settings
+Command: "C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final/settings_test.exe"
+Directory: C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final
+"settings" start time: Nov 12 20:55 West Asia Standard Time
+Output:
+----------------------------------------------------------
+PASS defaults_audit_and_platform_shortcuts
+PASS atomic_roundtrip_and_privacy_projection
+PASS ranges_rejected_without_partial_write
+PASS settings_cannot_unbind_or_duplicate_and_invalid_values
+PASS eight_groups_and_unknown_capability_disabled_reason
+PASS corrupt_and_future_settings_not_silently_defaulted
+PASS future_schema_save_does_not_overwrite_and_physical_meaning_roundtrip
+PASS count_prunes_now_types_do_not_erase_old_and_folder_route
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"settings" end time: Nov 12 20:55 West Asia Standard Time
+"settings" time elapsed: 00:00:00
+----------------------------------------------------------
+
+21/35 Testing: policy
+21/35 Test: policy
+Command: "C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final/policy_test.exe"
+Directory: C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final
+"policy" start time: Nov 12 20:55 West Asia Standard Time
+Output:
+----------------------------------------------------------
+PASS transient_always_rejected
+PASS concealed_option
+PASS remote_primary_file_rejected
+PASS remote_secondary_file_removed
+PASS marker_prefix_exclusion
+PASS unknown_source_is_not_known_safe
+PASS screenshot_uses_same_policy
+PASS html_off_keeps_text_rtf_only
+PASS unknown_type_is_not_persisted
+PASS unknown_source_with_exclusions_is_rejected
+PASS foreground_exclusion_and_best_effort
+PASS capabilities_default_unavailable
+PASS unavailable_source_overrides_claimed_identity
+PASS limited_source_downgrades_known
+PASS missing_id_is_unknown
+PASS remote_macos_option_and_platform_scope
+PASS remote_marker_and_original_primary_before_filter
+PASS marker_representation_is_never_payload
+PASS all_kinds_can_be_disabled
+PASS each_supported_kind_and_item_order
+PASS spoofed_registered_kind_is_filtered
+PASS rejected_inputs_call_no_consumers
+PASS filtered_snapshot_only_reaches_consumers
+PASS store_error_or_no_retained_id_skips_derivatives
+PASS ocr_requires_request_and_capability
+PASS invalid_inputs_fail_closed
+PASS reason_messages_are_stable_non_sensitive
+PASS each_kind_toggle_filters_only_its_class
+PASS native_encoding_and_platform_must_match_registration
+PASS all_source_policy_modes
+PASS unknown_flags_remain_unknown
+PASS remote_secondary_pruning_keeps_item_indices
+PASS unsupported_primary_does_not_promote_remote_file
+PASS limited_capture_does_not_enable_other_capabilities
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"policy" end time: Nov 12 20:55 West Asia Standard Time
+"policy" time elapsed: 00:00:00
+----------------------------------------------------------
+
+27/35 Testing: fts
+27/35 Test: fts
+Command: "C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final/fts_test.exe"
+Directory: C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final
+"fts" start time: Nov 12 20:55 West Asia Standard Time
+Output:
+----------------------------------------------------------
+companion index isolation, invalidation, recovery and Base compatibility passed
+<end of output>
+Test time =   0.15 sec
+----------------------------------------------------------
+Test Passed.
+"fts" end time: Nov 12 20:55 West Asia Standard Time
+"fts" time elapsed: 00:00:00
+----------------------------------------------------------
+
+28/35 Testing: ocr_queue
+28/35 Test: ocr_queue
+Command: "C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final/ocr_queue_test.exe"
+Directory: C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final
+"ocr_queue" start time: Nov 12 20:55 West Asia Standard Time
+Output:
+----------------------------------------------------------
+async privacy revocation prevents publication
+<end of output>
+Test time =   3.12 sec
+----------------------------------------------------------
+Test Passed.
+"ocr_queue" end time: Nov 12 20:55 West Asia Standard Time
+"ocr_queue" time elapsed: 00:00:03
+----------------------------------------------------------
+
+18/35 Testing: menu_preview
+18/35 Test: menu_preview
+Command: "C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final/menu_preview_test.exe"
+Directory: C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final
+"menu_preview" start time: Nov 12 20:55 West Asia Standard Time
+Output:
+----------------------------------------------------------
+PASS swatch_rgba
+PASS aspect_fit_32
+PASS invalid_provider_dimensions_rejected
+PASS short_provider_buffer_rejected
+PASS empty_reference_no_provider
+PASS preview_dpi_96
+PASS preview_dpi_144
+PASS preview_dpi_192
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"menu_preview" end time: Nov 12 20:55 West Asia Standard Time
+"menu_preview" time elapsed: 00:00:00
+----------------------------------------------------------
+
+25/35 Testing: update_native
+25/35 Test: update_native
+Command: "C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final/update_native_test.exe"
+Directory: C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final
+"update_native" start time: Nov 12 20:55 West Asia Standard Time
+Output:
+----------------------------------------------------------
+unconfigured native route fails closed without side effects
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"update_native" end time: Nov 12 20:55 West Asia Standard Time
+"update_native" time elapsed: 00:00:00
+----------------------------------------------------------
+
+12/35 Testing: lifecycle_gui
+12/35 Test: lifecycle_gui
+Command: "C:/Python314/python.exe" "C:/Users/SmiteVils/Documents/Projects/cliptiq/tests/integration/lifecycle_windows_app.py" "C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final/Cliptiq.exe"
+Directory: C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final
+"lifecycle_gui" start time: Nov 12 20:55 West Asia Standard Time
+Output:
+----------------------------------------------------------
+PASS native Windows GUI subsystem; no console on login
+<end of output>
+Test time =   0.05 sec
+----------------------------------------------------------
+Test Passed.
+"lifecycle_gui" end time: Nov 12 20:55 West Asia Standard Time
+"lifecycle_gui" time elapsed: 00:00:00
+----------------------------------------------------------
+
+23/35 Testing: history_crash
+23/35 Test: history_crash
+Command: "C:/Python314/python.exe" "C:/Users/SmiteVils/Documents/Projects/cliptiq/tests/integration/history_crash.py" "C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final/history_test.exe"
+Directory: C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final
+"history_crash" start time: Nov 12 20:55 West Asia Standard Time
+Output:
+----------------------------------------------------------
+PASS process interruption rollback/WAL and reopen
+<end of output>
+Test time =   0.38 sec
+----------------------------------------------------------
+Test Passed.
+"history_crash" end time: Nov 12 20:55 West Asia Standard Time
+"history_crash" time elapsed: 00:00:00
+----------------------------------------------------------
+
+9/35 Testing: lifecycle
+9/35 Test: lifecycle
+Command: "C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final/lifecycle_test.exe"
+Directory: C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final
+"lifecycle" start time: Nov 12 20:55 West Asia Standard Time
+Output:
+----------------------------------------------------------
+PASS fixed routes, second-instance forwarding, settings recovery, bounded IPC, restart, locale fallback and visible startup failure
+<end of output>
+Test time =   0.43 sec
+----------------------------------------------------------
+Test Passed.
+"lifecycle" end time: Nov 12 20:55 West Asia Standard Time
+"lifecycle" time elapsed: 00:00:00
+----------------------------------------------------------
+
+3/35 Testing: snippets
+3/35 Test: snippets
+Command: "C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final/snippets_test.exe"
+Directory: C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final
+"snippets" start time: Nov 12 20:55 West Asia Standard Time
+Output:
+----------------------------------------------------------
+PASS folder_snippet_crud_unicode_multiline_and_entity_cas
+PASS reorder_move_normalizes_duplicates_atomically
+PASS disabled_menu_and_folder_hotkeys_cleanup
+PASS limits_invalid_utf8_and_no_partial_revision
+PASS restart_and_v1_migration_preserve_old_data
+legacy snippet edit=1 folder rename=1
+PASS legacy_sparse_positions_allow_content_edits_and_repair_order
+<end of output>
+Test time =   0.27 sec
+----------------------------------------------------------
+Test Passed.
+"snippets" end time: Nov 12 20:55 West Asia Standard Time
+"snippets" time elapsed: 00:00:00
+----------------------------------------------------------
+
+15/35 Testing: media_review_error
+15/35 Test: media_review_error
+Command: "C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final/media_review_test.exe" "error"
+Directory: C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final
+"media_review_error" start time: Nov 12 20:55 West Asia Standard Time
+Output:
+----------------------------------------------------------
+PASS error
+<end of output>
+Test time =   0.33 sec
+----------------------------------------------------------
+Test Passed.
+"media_review_error" end time: Nov 12 20:55 West Asia Standard Time
+"media_review_error" time elapsed: 00:00:00
+----------------------------------------------------------
+
+7/35 Testing: paste
+7/35 Test: paste
+Command: "C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final/paste_test.exe"
+Directory: C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final
+"paste" start time: Nov 12 20:55 West Asia Standard Time
+Output:
+----------------------------------------------------------
+PASS auto_off_copies_original_all_formats_and_touches
+PASS plain_keeps_only_text_without_rich_formats
+PASS image_only_plain_never_overwrites_clipboard
+PASS delete_only_removes_history_without_write_or_input
+PASS paste_delete_removes_only_after_backend_acceptance
+PASS denied_paste_delete_keeps_sole_record_and_manual_copy
+PASS auto_off_paste_delete_does_not_delete
+PASS failed_write_never_dispatches_or_deletes
+PASS stale_menu_revision_has_no_side_effect
+PASS concurrent_revision_after_dispatch_does_not_delete
+PASS terminal_shortcut_and_missing_target_manual
+PASS snippets_copied_without_history_deletion
+PASS destructive_modifier_never_deletes_snippet
+PASS modifier_binding_unique_single_and_conflicting_held_cancel
+PASS invalid_action_shortcut_or_clock_rejected_before_write
+PASS snippet_encoded_and_entry_limits_before_writer
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"paste" end time: Nov 12 20:55 West Asia Standard Time
+"paste" time elapsed: 00:00:00
+----------------------------------------------------------
+
+24/35 Testing: update
+24/35 Test: update
+Command: "C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final/update_test.exe"
+Directory: C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final
+"update" start time: Nov 12 20:55 West Asia Standard Time
+Output:
+----------------------------------------------------------
+update policy, authentication boundaries, schedule, settings and redacted diagnostics passed
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"update" end time: Nov 12 20:55 West Asia Standard Time
+"update" time elapsed: 00:00:00
+----------------------------------------------------------
+
+17/35 Testing: media
+17/35 Test: media
+Command: "C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final/media_test.exe"
+Directory: C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final
+"media" start time: Nov 12 20:55 West Asia Standard Time
+Output:
+----------------------------------------------------------
+PASS privacy, aspect-fit, bounds, dimensions, stale generation, deletion race, malformed image
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"media" end time: Nov 12 20:55 West Asia Standard Time
+"media" time elapsed: 00:00:00
+----------------------------------------------------------
+
+19/35 Testing: menu
+19/35 Test: menu
+Command: "C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final/menu_test.exe"
+Directory: C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final
+"menu" start time: Nov 12 20:55 West Asia Standard Time
+Output:
+----------------------------------------------------------
+PASS empty_clear_disabled
+PASS grouping_0_1
+PASS grouping_0_10
+PASS grouping_0_100
+PASS grouping_1_1
+PASS grouping_1_10
+PASS grouping_1_100
+PASS grouping_100_1
+PASS grouping_100_10
+PASS grouping_100_100
+PASS zero_one_numbering_and_ten_shortcuts
+PASS numbering_and_shortcuts_independent
+PASS graphemes_first_line_trim_and_ellipsis
+PASS invalid_utf8_controls_are_sanitized
+PASS utf16_history_title_and_tooltip
+PASS snippet_order_above_below_and_kinds
+PASS tooltip_and_title_limits
+PASS hex_swatches_and_image_reference
+PASS revision_and_deleted_ids_reject_stale_commands
+PASS build_does_not_mutate_history
+PASS clear_command_checks_revision_before_deleting
+PASS native_model_depth_and_text_budget
+PASS global_commands_survive_history_refresh
+PASS native_model_rejects_invalid_utf8_and_nul
+PASS settings_history_limit_applies_without_erasing_store
+<end of output>
+Test time =   0.06 sec
+----------------------------------------------------------
+Test Passed.
+"menu" end time: Nov 12 20:55 West Asia Standard Time
+"menu" time elapsed: 00:00:00
+----------------------------------------------------------
+
+11/35 Testing: lifecycle_locale_schema
+11/35 Test: lifecycle_locale_schema
+Command: "C:/Python314/python.exe" "C:/Users/SmiteVils/Documents/Projects/cliptiq/tools/generate-locales.py" "--check"
+Directory: C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final
+"lifecycle_locale_schema" start time: Nov 12 20:55 West Asia Standard Time
+Output:
+----------------------------------------------------------
+Locale schema: 136 keys; 9 languages; 426 compiled rows
+<end of output>
+Test time =   0.06 sec
+----------------------------------------------------------
+Test Passed.
+"lifecycle_locale_schema" end time: Nov 12 20:55 West Asia Standard Time
+"lifecycle_locale_schema" time elapsed: 00:00:00
+----------------------------------------------------------
+
+8/35 Testing: menu_unicode_conformance
+8/35 Test: menu_unicode_conformance
+Command: "C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final/grapheme_test.exe" "C:/Users/SmiteVils/Documents/Projects/cliptiq/third_party/libgrapheme/data/GraphemeBreakTest.txt"
+Directory: C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final
+"menu_unicode_conformance" start time: Nov 12 20:55 West Asia Standard Time
+Output:
+----------------------------------------------------------
+PASS Unicode17_grapheme_conformance 766 cases
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"menu_unicode_conformance" end time: Nov 12 20:55 West Asia Standard Time
+"menu_unicode_conformance" time elapsed: 00:00:00
+----------------------------------------------------------
+
+33/35 Testing: release_blocked
+33/35 Test: release_blocked
+Command: "C:/Python314/python.exe" "C:/Users/SmiteVils/Documents/Projects/cliptiq/tools/verify-release.py" "--checklist" "C:/Users/SmiteVils/Documents/Projects/cliptiq/docs/support/release-checklist.json" "--expect-blocked"
+Directory: C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final
+"release_blocked" start time: Nov 12 20:55 West Asia Standard Time
+Output:
+----------------------------------------------------------
+BLOCKED AS EXPECTED: production release remains unavailable; T04: OPEN or missing, T05: OPEN or missing, T06: OPEN or missing, T07: OPEN or missing, T08: OPEN or missing, T09: OPEN or missing, T10: OPEN or missing, T11: OPEN or missing, T12: OPEN or missing, T13: OPEN or missing, T14: OPEN or missing, T15: OPEN or missing, T16: OPEN or missing, clean-install: OPEN or missing, desktop-support-matrix: OPEN or missing, notarization: OPEN or missing, offline-closure: OPEN or missing, project-license: OPEN or missing, publisher-identity: OPEN or missing, signing: OPEN or missing
+<end of output>
+Test time =   0.10 sec
+----------------------------------------------------------
+Test Passed.
+"release_blocked" end time: Nov 12 20:55 West Asia Standard Time
+"release_blocked" time elapsed: 00:00:00
+----------------------------------------------------------
+
+32/35 Testing: bounded_fuzz_smoke
+32/35 Test: bounded_fuzz_smoke
+Command: "C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final/fuzz_smoke.exe" "C:/Users/SmiteVils/Documents/Projects/cliptiq/tests/fixtures/media/red.png"
+Directory: C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final
+"bounded_fuzz_smoke" start time: Nov 12 20:55 West Asia Standard Time
+Output:
+----------------------------------------------------------
+PASS512 deterministic bounded PNG/UTF8 mutations and native codec control
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"bounded_fuzz_smoke" end time: Nov 12 20:55 West Asia Standard Time
+"bounded_fuzz_smoke" time elapsed: 00:00:00
+----------------------------------------------------------
+
+30/35 Testing: feature_coverage
+30/35 Test: feature_coverage
+Command: "C:/Python314/python.exe" "C:/Users/SmiteVils/Documents/Projects/cliptiq/tools/verify-coverage.py" "--audit" "C:/Users/SmiteVils/Documents/Projects/cliptiq/docs/research/2026-10-23-clipy-audit.md" "--status" "C:/Users/SmiteVils/Documents/Projects/cliptiq/docs/support/feature-status.json"
+Directory: C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final
+"feature_coverage" start time: Nov 12 20:55 West Asia Standard Time
+Output:
+----------------------------------------------------------
+PASS: all audited IDs classified on all four platform backends; manual gates OPEN
+<end of output>
+Test time =   0.10 sec
+----------------------------------------------------------
+Test Passed.
+"feature_coverage" end time: Nov 12 20:55 West Asia Standard Time
+"feature_coverage" time elapsed: 00:00:00
+----------------------------------------------------------
+
+31/35 Testing: package_entry
+31/35 Test: package_entry
+Command: "C:/Python314/python.exe" "C:/Users/SmiteVils/Documents/Projects/cliptiq/tests/integration/package_entry.py" "C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final/Cliptiq.exe"
+Directory: C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final
+"package_entry" start time: Nov 12 20:55 West Asia Standard Time
+Output:
+----------------------------------------------------------
+PASS noninteractive --version
+<end of output>
+Test time =   0.07 sec
+----------------------------------------------------------
+Test Passed.
+"package_entry" end time: Nov 12 20:55 West Asia Standard Time
+"package_entry" time elapsed: 00:00:00
+----------------------------------------------------------
+
+35/35 Testing: idle_mailbox_readonly
+35/35 Test: idle_mailbox_readonly
+Command: "C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final/idle_test.exe" "mailbox"
+Directory: C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final
+"idle_mailbox_readonly" start time: Nov 12 20:55 West Asia Standard Time
+Output:
+----------------------------------------------------------
+PASS mailbox
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"idle_mailbox_readonly" end time: Nov 12 20:55 West Asia Standard Time
+"idle_mailbox_readonly" time elapsed: 00:00:00
+----------------------------------------------------------
+
+16/35 Testing: native_media
+16/35 Test: native_media
+Command: "C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final/native_media_test.exe"
+Directory: C:/Users/SmiteVils/Documents/Projects/cliptiq/out/windows-idle-final
+"native_media" start time: Nov 12 20:55 West Asia Standard Time
+Output:
+----------------------------------------------------------
+PASS native codec, malformed/40MP, partial write, event coalescing, pixel dedup both orders, privacy exclusions/types, stop, deletion race
+<end of output>
+Test time =   7.86 sec
+----------------------------------------------------------
+Test Passed.
+"native_media" end time: Nov 12 20:55 West Asia Standard Time
+"native_media" time elapsed: 00:00:07
+----------------------------------------------------------
+
+End testing: Nov 12 20:55 West Asia Standard Time

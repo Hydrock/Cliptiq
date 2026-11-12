@@ -153,25 +153,11 @@ if system == 'Windows':
     import os
     rich = pathlib.Path(os.environ['WINDIR']) / 'System32' / 'Msftedit.dll'
     report['snippets']['dynamic_system_component'] = {'name': 'Msftedit.dll', 'bytes': rich.stat().st_size, 'sha256': hashlib.sha256(rich.read_bytes()).hexdigest(), 'scope': 'existing OS RichEdit component loaded from System32, not bundled; not full system dependency closure'}
-# Offline converter is a separate delivery, never part of the app executable.
-migration_binary=folder/'tools'/'import-clipy'/('cliptiq-import.exe' if system=='Windows' else 'cliptiq-import')
-b=migration_binary.read_bytes();archive=io.BytesIO()
-with zipfile.ZipFile(archive,'w',compression=zipfile.ZIP_DEFLATED,compresslevel=9) as z:
- item=zipfile.ZipInfo(migration_binary.name,date_time=(2026,1,1,0,0,0));item.compress_type=zipfile.ZIP_DEFLATED;z.writestr(item,b)
-report['migration']={'optional_converter_bytes':len(b),'optional_converter_zip_bytes':len(archive.getvalue()),'sha256':hashlib.sha256(b).hexdigest(),'app_linked_migration_bytes':0,'scope':'separate C++ offline converter; Realm helper measured separately, no app linkage'}
 production=(folder/'Cliptiq.app/Contents/MacOS/Cliptiq' if system=='Darwin' else folder/('Cliptiq.exe' if system=='Windows' else 'cliptiq_menu_host'))
 production_bytes=production.read_bytes();production_zip=io.BytesIO()
 with zipfile.ZipFile(production_zip,'w',compression=zipfile.ZIP_DEFLATED,compresslevel=9) as z:
  item=zipfile.ZipInfo(production.name,date_time=(2026,1,1,0,0,0));item.compress_type=zipfile.ZIP_DEFLATED;z.writestr(item,production_bytes)
-report['migration']['production_executable']={'bytes':len(production_bytes),'zip_bytes':len(production_zip.getvalue()),'sha256':hashlib.sha256(production_bytes).hexdigest(),'scope':'production entry executable only, not bundle/resources/installer/system closure'}
-if system=='Darwin':
- preferences_binary=folder/'tools/import-clipy/cliptiq-import-macos'
- report['migration']['macos_preferences_executable_bytes']=preferences_binary.stat().st_size
-for p in sorted((root/'tools/import-clipy').rglob('*')):
- if p.is_file() and '.build' not in p.parts:report['source_files_sha256'][p.relative_to(root).as_posix()]=hashlib.sha256(p.read_bytes()).hexdigest()
-(root / 'out' / 't02-size.json').write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
-
-snippet_xml = menu_variant('snippet_xml_probe')
+report['production_executable']={'bytes':len(production_bytes),'zip_bytes':len(production_zip.getvalue()),'sha256':hashlib.sha256(production_bytes).hexdigest(),'scope':'production entry executable only, not bundle/resources/installer/system closure'}
 media = menu_variant('media_native_probe')
 lifecycle = menu_variant('lifecycle_native_probe')
 report['lifecycle'] = {'baseline': media, 'with_lifecycle': lifecycle, 'added_bytes': lifecycle['executable_bytes']-media['executable_bytes'], 'added_zip_bytes': lifecycle['zip_bytes']-media['zip_bytes'], 'scope': 'paired media host without/with single-instance lock/mailbox, autostart, shared translation catalogues and native lifecycle integration; smoke creates no real IPC/registration/capture; not installer'}
@@ -180,16 +166,14 @@ for directory in ('resources', 'platform/posix'):
         if p.is_file(): report['source_files_sha256'][p.relative_to(root).as_posix()] = hashlib.sha256(p.read_bytes()).hexdigest()
 for name in ('platform/Lifecycle.cpp', 'platform/LifecycleNative.hpp', 'platform/LocaleNative.hpp'):
     report['source_files_sha256'][name] = hashlib.sha256((root/name).read_bytes()).hexdigest()
-report['media'] = {'baseline': snippet_xml, 'with_media': media, 'added_bytes': media['executable_bytes']-snippet_xml['executable_bytes'], 'added_zip_bytes': media['zip_bytes']-snippet_xml['zip_bytes'], 'scope': 'paired XML host with/without native media codecs, bounded worker, cache and screenshot file monitor; no watcher/clipboard/input in smoke; not installer'}
+report['media'] = {'baseline': snippet_editor, 'with_media': media, 'added_bytes': media['executable_bytes']-snippet_editor['executable_bytes'], 'added_zip_bytes': media['zip_bytes']-snippet_editor['zip_bytes'], 'scope': 'paired snippet editor host with/without native media codecs, bounded worker, cache and screenshot file monitor; no watcher/clipboard/input in smoke; not installer'}
 for name in ['platform/Media.cpp', 'platform/Media.hpp']:
     report['source_files_sha256'][name] = hashlib.sha256((root/name).read_bytes()).hexdigest()
-report['xml'] = {'baseline': snippet_editor, 'with_xml': snippet_xml, 'added_bytes': snippet_xml['executable_bytes']-snippet_editor['executable_bytes'], 'added_zip_bytes': snippet_xml['zip_bytes']-snippet_editor['zip_bytes'], 'scope': 'paired same native snippet editor host with XML disabled/enabled; pinned static TinyXML2 + bounded codec, atomic append/file IO, native file pickers and worker; no clipboard/input/global grabs in smoke; not installer/full product'}
 report['source_files_sha256'].update({p.relative_to(root).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted((root/'third_party/tinyxml2').rglob('*')) if p.is_file()})
-report['source_files_sha256']['platform/SnippetXml.hpp']=hashlib.sha256((root/'platform/SnippetXml.hpp').read_bytes()).hexdigest()
 (root / 'out' / 't02-size.json').write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
 print(json.dumps(report, indent=2))
 
-report['updates']={'production_executable':report['migration']['production_executable'],'base_network_runtime':'OS WinHTTP/GIO; Sparkle optional; no OpenSSL/Firebase/new bundled runtime','portable_auto_install':False}
+report['updates']={'production_executable':report['production_executable'],'base_network_runtime':'OS WinHTTP/GIO; Sparkle optional; no OpenSSL/Firebase/new bundled runtime','portable_auto_install':False}
 if system=='Windows':
  helper=folder/'cliptiq_verify_update.exe'
  report['updates']['optional_authenticode_verifier_bytes']=helper.stat().st_size

@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "target": "windows",
+  "arch": "x86_64",
+  "toolchain": null,
+  "flags": null,
+  "app_bytes": 1659099,
+  "archive_bytes": 841445,
+  "dependency_delta_bytes": null,
+  "ocr_bytes": 0,
+  "total_offline_bytes": null,
+  "idle_memory_bytes": null,
+  "startup_ms": null,
+  "measurement_scope": "candidate app-owned files; included models counted once; clean-consumer system delta unverified",
+  "archive_sha256": "8816878e1163a28611b2e7665195b083df8288e14c752bf6073e3fa73a6adb3c",
+  "files": [
+    {
+      "path": "cliptiq-package.json",
+      "bytes": 2299,
+      "sha256": "4371df8160245b1f55f6dde4b09f2fcabe677c3e702baf14d5e4631267cfd284"
+    },
+    {
+      "path": "Cliptiq.exe",
+      "bytes": 1649152,
+      "sha256": "0056a93483831ac97d57029028ae2df4630937df208d2a48fd3f2835e92d7eef"
+    },
+    {
+      "path": "licenses/libgrapheme-ISC.txt",
+      "bytes": 760,
+      "sha256": "2665f9170b28064c14a31c1c7a0fa27f3689eaad5498d0adce8781d502425073"
+    },
+    {
+      "path": "licenses/THIRD_PARTY_NOTICES.md",
+      "bytes": 4085,
+      "sha256": "c03b282f239ca2c46c583d56aaa8c8c55befd07d00e23b844cabb9b49dfd1219"
+    },
+    {
+      "path": "licenses/TinyXML2-zlib.txt",
+      "bytes": 808,
+      "sha256": "9332252e9b9e46db8285d4a3f0bf25f139bf1dca6781b956d57f2302efca6432"
+    },
+    {
+      "path": "licenses/Unicode.txt",
+      "bytes": 1995,
+      "sha256": "abf84f74dea2812799e1dbef7f0581adf7db244881e4febb8684f441568da0ad"
+    }
+  ],
+  "symlinks": [],
+  "runtime": {},
+  "budget_violations": [],
+  "variant": "base",
+  "included_ocr_bytes": 0,
+  "distribution_manifest": {
+    "schema_version": 1,
+    "target": "windows",
+    "arch": "x86_64",
+    "variant": "base",
+    "version": "0.1.0",
+    "source_commit": "a9fe3bacffefed179cbfaa96024014bb7f9a3f08",
+    "source_dirty": true,
+    "manual_acceptance": "open",
+    "release_ready": false,
+    "signature": "unsigned candidate",
+    "project_license": "OPEN: no new project license selected by packaging",
+    "clean_machine_dependency_delta_bytes": null,
+    "toolchain": {
+      "cmake": "cmake version 4.3.1-msvc1",
+      "platform": "Windows-11-10.0.26200-SP0",
+      "configuration": [
+        "CLIPTIQ_OCR_ENGINE:STRING=none",
+        "CMAKE_CXX_COMPILER:FILEPATH=C:/Program Files (x86)/Microsoft Visual Studio/18/BuildTools/VC/Tools/MSVC/14.51.36231/bin/Hostx64/x64/cl.exe",
+        "CMAKE_CXX_FLAGS_MINSIZEREL:STRING=/O1 /Ob1 /DNDEBUG",
+        "ocr_index:BOOL=OFF"
+      ]
+    },
+    "files": [
+      {
+        "path": "Cliptiq.exe",
+        "bytes": 1649152,
+        "sha256": "0056a93483831ac97d57029028ae2df4630937df208d2a48fd3f2835e92d7eef"
+      },
+      {
+        "path": "licenses/libgrapheme-ISC.txt",
+        "bytes": 760,
+        "sha256": "2665f9170b28064c14a31c1c7a0fa27f3689eaad5498d0adce8781d502425073"
+      },
+      {
+        "path": "licenses/THIRD_PARTY_NOTICES.md",
+        "bytes": 4085,
+        "sha256": "c03b282f239ca2c46c583d56aaa8c8c55befd07d00e23b844cabb9b49dfd1219"
+      },
+      {
+        "path": "licenses/TinyXML2-zlib.txt",
+        "bytes": 808,
+        "sha256": "9332252e9b9e46db8285d4a3f0bf25f139bf1dca6781b956d57f2302efca6432"
+      },
+      {
+        "path": "licenses/Unicode.txt",
+        "bytes": 1995,
+        "sha256": "abf84f74dea2812799e1dbef7f0581adf7db244881e4febb8684f441568da0ad"
+      }
+    ],
+    "symlinks": [],
+    "binaries": [
+      {
+        "path": "Cliptiq.exe",
+        "format": "pe",
+        "arch": "x86_64",
+        "imports": [
+          "GDI32.dll",
+          "COMCTL32.dll",
+          "USER32.dll",
+          "ole32.dll",
+          "ADVAPI32.dll",
+          "SHELL32.dll",
+          "COMDLG32.dll",
+          "WINHTTP.dll",
+          "KERNEL32.dll"
+        ],
+        "rpaths": []
+      }
+    ],
+    "system_dependencies": [
+      "GDI32.dll",
+      "COMCTL32.dll",
+      "USER32.dll",
+      "ole32.dll",
+      "ADVAPI32.dll",
+      "SHELL32.dll",
+      "COMDLG32.dll",
+      "WINHTTP.dll",
+      "KERNEL32.dll"
+    ]
+  }
+}

@@ -189,6 +189,8 @@ struct MediaService::Impl {
   bool error_reported = false;
   std::string root, watch_error;
   Clock::time_point scanned{};
+  std::uint64_t scanned_revision = UINT64_MAX;
+  bool scan_pending = true;
   std::map<EntryId, MenuImage> ready;
   std::map<EntryId, std::string> attempted;
   std::set<std::string> pending_files;
@@ -306,6 +308,8 @@ void MediaService::stop() {
   s.wake.notify_all();
   s.ready.clear();
   s.attempted.clear();
+  s.scanned_revision = UINT64_MAX;
+  s.scan_pending = true;
   s.last_bytes.clear();
   s.last_file.clear();
   s.directory.reset();
@@ -402,10 +406,6 @@ Result<void> MediaService::on_screenshot_file(const std::string &name) {
 }
 Result<bool> MediaService::poll() {
   auto &s = *impl_;
-  auto generation = history_erase_generation(s.store);
-  if (!generation)
-    return generation.error();
-  s.erased = generation.value();
   bool changed = false;
   std::optional<Impl::Done> result;
   {
@@ -419,7 +419,16 @@ Result<bool> MediaService::poll() {
       s.done.pop_front();
     }
   }
-  s.wake.notify_all();
+  // Only wake the decoder when a completion slot was actually released.
+  if (result)
+    s.wake.notify_all();
+  const bool scan_due = Clock::now() - s.scanned >= std::chrono::milliseconds(250);
+  if (!result && !scan_due)
+    return false;
+  auto generation = history_erase_generation(s.store);
+  if (!generation)
+    return generation.error();
+  s.erased = generation.value();
   if (result) {
     auto &r = *result;
     std::uint64_t epoch;
@@ -495,17 +504,26 @@ Result<bool> MediaService::poll() {
   if (!changed && Clock::now() - s.scanned < std::chrono::milliseconds(250))
     return changed;
   s.scanned = Clock::now();
+  auto revision = data_revision(s.store);
+  if (!revision)
+    return revision.error();
+  if (!changed && !s.scan_pending && revision.value() == s.scanned_revision)
+    return false;
   auto entries = list_history(s.store, SortOrder::LastUsed, 1000);
   if (!entries)
     return entries.error();
+  s.scanned_revision = revision.value();
+  s.scan_pending = false;
   std::set<EntryId> live;
   unsigned scheduled = 0;
   for (const auto &e : entries.value()) {
     live.insert(e.id);
     if (s.attempted[e.id] == e.digest)
       continue;
-    if (scheduled >= 4)
+    if (scheduled >= 4) {
+      s.scan_pending = true;
       continue;
+    }
     auto cached = load_preview(s.store, e.id, s.size);
     if (!cached)
       return cached.error();
@@ -527,8 +545,10 @@ Result<bool> MediaService::poll() {
       if (r.kind == CanonicalKind::Image) {
         image = true;
         std::lock_guard<std::mutex> lock(s.mutex);
-        if (s.jobs.size() >= 64 || s.queued + r.data.size() > 64 * 1024 * 1024)
+        if (s.jobs.size() >= 64 || s.queued + r.data.size() > 64 * 1024 * 1024) {
+          s.scan_pending = true;
           break;
+        }
         auto ticket = request_preview(s.store, e.id, s.size, 1);
         if (!ticket)
           return ticket.error();
