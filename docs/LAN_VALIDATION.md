@@ -79,3 +79,16 @@ check cross-OS clipboard and local-copy races (best effort CAS outside Windows),
 VPN/DNS/firewall, high-DPI UI, realistic large-image memory and throughput.
 Windows build is an unsigned experiment, not a production release.
 History migration is schema 3; preserve a pre-migration backup for rollback.
+
+
+## Windows experimental archive
+
+Packaging staged the native dependency inventory and license files, and generated
+`out/t17-windows-x86_64-base/cliptiq-0.1.0-windows-x86_64-base.zip`.
+ZIP integrity, embedded EXE hash and extracted executable `--version` passed.
+Archive: 1,038,777 bytes; app-owned payload: 2,077,835 bytes.
+The existing historical 10%-growth gates **failed** (limits: archive 957,588;
+app 1,867,254). Baseline was intentionally not raised. Packaging stopped before
+MSIX creation. This ZIP is a usable unsigned experiment, not a passing release
+package. Primary added binary cost against the current no-LAN control is 256KiB;
+the historical budget also predates current native workspace changes.
