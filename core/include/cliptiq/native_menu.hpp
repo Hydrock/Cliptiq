@@ -50,7 +50,7 @@ public:
   Result<void> process_events(unsigned wait_ms = 0);
   NativeMenuStatus status() const;
   NativeMenuHandles native_handles() const;
-#ifdef _WIN32
+#if defined(_WIN32) || defined(__APPLE__)
   Result<void> show_workspace();
   void workspace_status(const std::string &);
 #endif

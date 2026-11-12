@@ -1,5 +1,6 @@
 #include "../LocaleNative.hpp"
 #include "cliptiq/editor.hpp"
+#include "ApplicationIcon.hpp"
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 // clang-format off
@@ -167,9 +168,10 @@ struct DragSource final : IDropSource {
 } // namespace
 struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
   DWORD owner = GetCurrentThreadId();
-  HWND window = nullptr, tree = nullptr, title = nullptr, body = nullptr,
+  HWND window = nullptr, tree = nullptr, body = nullptr,
        enabled = nullptr, shortcut = nullptr, bind = nullptr, message = nullptr,
        undo = nullptr, redo = nullptr, addSnippet = nullptr;
+  HFONT font = nullptr;
   HMODULE rich = nullptr;
   HRESULT ole = E_FAIL;
   std::shared_ptr<SnippetEditorSession> model;
@@ -296,6 +298,7 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
   }
   ~State() {
     close();
+    if(font)DeleteObject(font);
     if (rich)
       FreeLibrary(rich);
     if (SUCCEEDED(ole))
@@ -309,7 +312,8 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
                         ? std::string(lc("Saving locally..."))
                         : lc("Saved locally. ") + model->binding_status()))
                   .c_str()
-            : wide(r.error().message).c_str());
+            : wide(tr(r.error().message)).c_str());
+    layout();
   }
   void poll() {
     if(!model || !window) return;
@@ -342,9 +346,7 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
     updating = true;
     auto selected = model->selected();
     bool folder = selected && selected->kind == SnippetItemKind::Folder;
-    EnableWindow(title, bool(selected));
     EnableWindow(enabled, bool(selected));
-    SetWindowTextW(title, wide(model->title()).c_str());
     SendMessageW(enabled, BM_SETCHECK,
                  model->enabled() ? BST_CHECKED : BST_UNCHECKED, 0);
     EnableWindow(body, selected && !folder);
@@ -429,6 +431,10 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
       if(pair.second.kind==selected->kind && pair.second.value==selected->value) {item=pair.first;break;}
     updating=true;TreeView_SelectItem(tree,item);updating=false;
   }
+  void rename_selected() {
+    auto item=TreeView_GetSelection(tree);
+    if(item){SetFocus(tree);TreeView_EditLabel(tree,item);}
+  }
   void perform(int command) {
 
     auto keep = shared_from_this();
@@ -439,7 +445,7 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
         r = added.error();
       else {
         rebuild();
-        SetFocus(command == 507 ? title : body);
+        rename_selected();
       }
     } else if (command == 509) {
       bool yes =
@@ -486,16 +492,38 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
       return;
     RECT area{};
     GetClientRect(window, &area);
-    int width = int(area.right), height = int(area.bottom),
-        left = std::min(300, width / 3);
-    MoveWindow(tree, 12, 58, left - 18, height - 120, TRUE);
-    int x = left + 6, right = width - x - 12;
-    MoveWindow(title, x, 58, right, 26, TRUE);
-    MoveWindow(enabled, x, 92, right, 24, TRUE);
-    MoveWindow(shortcut, x, 126, right - 124, 26, TRUE);
-    MoveWindow(bind, width - 124, 126, 112, 26, TRUE);
-    MoveWindow(body, x, 164, right, height - 226, TRUE);
-    MoveWindow(message, 12, height - 54, width - 24, 44, TRUE);
+    auto dpi=GetDpiForWindow(window);if(!dpi)dpi=96;
+    auto px=[&](int n){return MulDiv(n,dpi,96);};
+    int width=int(area.right),height=int(area.bottom),margin=px(12),gap=px(8);
+    auto dc=GetDC(window);auto previous=SelectObject(dc,font);
+    auto text_size=[&](HWND child){
+      std::wstring value(GetWindowTextLengthW(child)+1,L'\0');
+      int length=GetWindowTextW(child,value.data(),int(value.size()));
+      RECT bounds{0,0,0,0};DrawTextW(dc,value.c_str(),length,&bounds,DT_CALCRECT|DT_SINGLELINE|DT_NOPREFIX);
+      return SIZE{bounds.right,bounds.bottom};
+    };
+    int top=margin,x=margin,row_height=px(34);
+    for(int id=507;id<=512;++id){
+      auto button=GetDlgItem(window,id);auto size=text_size(button);
+      int w=std::max(px(80),int(size.cx)+px(28));
+      if(x>margin && x+w>width-margin){x=margin;top+=row_height+gap;}
+      MoveWindow(button,x,top,w,row_height,TRUE);x+=w+gap;
+    }
+    int content_top=top+row_height+px(16),left=std::min(px(300),width/3);
+    RECT note{0,0,std::max(1,width-2*margin),0};
+    std::wstring status(GetWindowTextLengthW(message)+1,L'\0');int n=GetWindowTextW(message,status.data(),int(status.size()));
+    DrawTextW(dc,status.c_str(),n,&note,DT_CALCRECT|DT_WORDBREAK|DT_NOPREFIX);
+    int footer=std::max(px(36),int(note.bottom))+2*margin;
+    int bottom=std::max(content_top+px(82),height-footer);
+    MoveWindow(tree,margin,content_top,left-margin-gap,bottom-content_top,TRUE);
+    x=left+gap;int right=width-x-margin;
+    MoveWindow(enabled,x,content_top,right,px(28),TRUE);
+    int bind_width=std::max(px(120),int(text_size(bind).cx)+px(28));
+    MoveWindow(shortcut,x,content_top+px(38),std::max(1,right-bind_width-gap),px(32),TRUE);
+    MoveWindow(bind,width-margin-bind_width,content_top+px(38),bind_width,px(32),TRUE);
+    MoveWindow(body,x,content_top+px(82),right,std::max(1,bottom-content_top-px(82)),TRUE);
+    MoveWindow(message,margin,height-footer+margin,width-2*margin,footer-2*margin,TRUE);
+    SelectObject(dc,previous);ReleaseDC(window,dc);
   }
   std::optional<std::pair<FolderId, std::size_t>> location(POINTL point) {
 
@@ -640,7 +668,7 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
           return 0;
         }
         if (key == VK_F2) {
-          SetFocus(s->title);
+          s->rename_selected();
           return 0;
         }
         if (control && key == 'N') {
@@ -674,7 +702,8 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
       }
       if (msg == WM_GETMINMAXINFO) {
         auto info = reinterpret_cast<MINMAXINFO *>(lp);
-        info->ptMinTrackSize = {700, 420};
+        auto dpi=GetDpiForWindow(w);if(!dpi)dpi=96;
+        info->ptMinTrackSize = {MulDiv(700,dpi,96),MulDiv(500,dpi,96)};
         return 0;
       }
       if (msg == WM_CLOSE) {
@@ -691,9 +720,8 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
 
         if (msg == WM_COMMAND) {
           int id = LOWORD(wp);
-          if ((id == 502 || id == 504) && HIWORD(wp) == EN_CHANGE) {
-            auto r = id == 502 ? s->model->queue_title(text(s->title))
-                               : s->model->queue_content(text(s->body, true));
+          if (id == 504 && HIWORD(wp) == EN_CHANGE) {
+            auto r = s->model->queue_content(text(s->body, true));
             s->status(r);
             if (r)
               s->selected_label();
@@ -708,6 +736,30 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
         if (msg == WM_NOTIFY) {
           auto header = reinterpret_cast<NMHDR *>(lp);
           if (header->hwndFrom == s->tree) {
+            if(header->code==TVN_BEGINLABELEDITW){
+              auto info=reinterpret_cast<NMTVDISPINFOW*>(lp);
+              auto found=s->nodes.find(info->item.hItem);
+              auto selected=s->model->selected();
+              if(found==s->nodes.end()||found->second.value.empty()||!selected||
+                found->second.value!=selected->value||found->second.kind!=selected->kind)return TRUE;
+              auto edit=TreeView_GetEditControl(s->tree);
+              SendMessageW(edit,EM_SETLIMITTEXT,4096,0);
+              return FALSE;
+            }
+            if(header->code==TVN_ENDLABELEDITW){
+              auto info=reinterpret_cast<NMTVDISPINFOW*>(lp);
+              if(!info->item.pszText||!info->item.pszText[0])return FALSE;
+              auto edit=TreeView_GetEditControl(s->tree);
+              auto result=s->model->queue_title(text(edit));
+              s->status(result);s->history();return result?TRUE:FALSE;
+            }
+            if(header->code==NM_DBLCLK){
+              auto position=GetMessagePos();POINT point{GET_X_LPARAM(position),GET_Y_LPARAM(position)};
+              ScreenToClient(s->tree,&point);TVHITTESTINFO hit{};hit.pt=point;
+              auto item=TreeView_HitTest(s->tree,&hit);
+              if(item && (hit.flags&TVHT_ONITEMLABEL)){s->rename_selected();return TRUE;}
+            }
+
             if (header->code == TVN_SELCHANGINGW && s->model->has_unsaved()) {
               s->status(Error{
                   ErrorCode::Busy,
@@ -778,8 +830,6 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
       }
     } catch (const std::exception &) {
       if (msg == WM_COMMAND && HIWORD(wp) == EN_CHANGE) {
-        if (LOWORD(wp) == 502)
-          s->model->queue_title(std::string("\xc0\x80", 2));
         if (LOWORD(wp) == 504)
           s->model->queue_content(std::string("\xc0\x80", 2));
       }
@@ -828,7 +878,10 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
                               nullptr, wc.hInstance, s.get());
   if (!s->window)
     return Error{ErrorCode::Io, "Cannot create editor window"};
-  auto font = GetStockObject(DEFAULT_GUI_FONT);
+  windows::set_application_icons(s->window);
+  if(s->font)DeleteObject(s->font);
+  s->font=CreateFontW(-MulDiv(10,GetDpiForWindow(s->window),72),0,0,0,FW_NORMAL,FALSE,FALSE,FALSE,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,CLEARTYPE_QUALITY,DEFAULT_PITCH,L"Segoe UI");
+  auto font=s->font;
   auto control = [&](const wchar_t *type, const wchar_t *text, int id,
                      DWORD style, DWORD extra = 0) -> HWND {
     auto w = CreateWindowExW(
@@ -856,27 +909,24 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
       s->redo = button;
   }
   s->tree = control(WC_TREEVIEWW, L"", 501,
-                    TVS_HASBUTTONS | TVS_HASLINES | TVS_LINESATROOT |
+                    TVS_EDITLABELS | TVS_HASBUTTONS | TVS_HASLINES | TVS_LINESATROOT |
                         TVS_SHOWSELALWAYS | TVS_CHECKBOXES,
                     WS_EX_CLIENTEDGE);
-  s->title = control(L"EDIT", L"", 502, ES_AUTOHSCROLL, WS_EX_CLIENTEDGE);
-  SendMessageW(s->title, EM_SETLIMITTEXT, 4096, 0);
   s->enabled = control(L"BUTTON", lw(L"Enabled in menu"), 503, BS_AUTOCHECKBOX);
   s->shortcut = control(L"EDIT", L"", 505, ES_AUTOHSCROLL, WS_EX_CLIENTEDGE);
   SendMessageW(s->shortcut, EM_SETLIMITTEXT, 128, 0);
-  s->bind = control(L"BUTTON", L"Bind / Clear", 506, BS_PUSHBUTTON);
+  s->bind = control(L"BUTTON", lw(L"Bind / Clear"), 506, BS_PUSHBUTTON);
   s->body = control(MSFTEDIT_CLASS, L"", 504,
                     ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN | WS_VSCROLL,
                     WS_EX_CLIENTEDGE);
-  if (!s->tree || !s->title || !s->body)
+  if (!s->tree || !s->body)
     return Error{ErrorCode::Io, "Cannot create editor controls"};
   SendMessageW(s->body, EM_SETTEXTMODE, TM_PLAINTEXT, 0);
   SendMessageW(s->body, EM_SETUNDOLIMIT, 0, 0);
   SendMessageW(s->body, EM_EXLIMITTEXT, 0, 16 * 1024 * 1024);
   SendMessageW(s->body, EM_SETEVENTMASK, 0, ENM_CHANGE);
   s->message = control(L"STATIC",
-                       L"Changes save locally. Undo history resets when you "
-                       L"change selected item.",
+                       lw(L"Changes save locally. Undo history resets when you change selected item."),
                        513, 0);
   SetWindowSubclass(s->tree, State::edit_proc, 1,
                     reinterpret_cast<DWORD_PTR>(s.get()));
@@ -908,6 +958,10 @@ Result<void> NativeSnippetEditor::process_events() {
   for (unsigned n = 0;
        n < 64 && s->window && PeekMessageW(&msg, s->window, 0, 0, PM_REMOVE);
        ++n) {
+    auto edit=TreeView_GetEditControl(s->tree);
+    if(edit && msg.hwnd==edit && msg.message==WM_KEYDOWN && (msg.wParam==VK_RETURN||msg.wParam==VK_ESCAPE)) {
+      TreeView_EndEditLabelNow(s->tree,msg.wParam==VK_ESCAPE);continue;
+    }
     if (!IsDialogMessageW(s->window, &msg)) {
       TranslateMessage(&msg);
       DispatchMessageW(&msg);

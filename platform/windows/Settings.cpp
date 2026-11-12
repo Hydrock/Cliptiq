@@ -5,6 +5,7 @@
 // clang-format off
 #include <windows.h>
 #include <commctrl.h>
+#include "ApplicationIcon.hpp"
 #include <algorithm>
 // clang-format on
 namespace cliptiq {
@@ -45,7 +46,7 @@ struct NativeSettings::State : std::enable_shared_from_this<State> {
   DWORD owner = GetCurrentThreadId();
   HWND window = nullptr, tabs = nullptr, message = nullptr;
   Settings settings;
-  HFONT font = nullptr;
+  HFONT font = nullptr, help_font = nullptr;
   std::function<void(bool, int)> preview;
   HWND preview_copy = nullptr, preview_paste = nullptr;
   void test_sound(bool paste) {
@@ -70,15 +71,44 @@ struct NativeSettings::State : std::enable_shared_from_this<State> {
     State *state = nullptr;
     struct Placement { HWND child; RECT rect; };
     std::vector<Placement> placements;
+    struct Row { HWND label, control, help, reason; int control_height; bool combo; };
+    std::vector<Row> rows;
+    int rows_bottom = 0;
     void arrange() {
       RECT area{}; GetClientRect(window, &area);
-      for (auto &v : placements) {
-        int left = MulDiv(v.rect.left, area.right, 868);
-        int right = MulDiv(v.rect.right, area.right, 868);
-        auto dc = GetDC(window); int dpi = GetDeviceCaps(dc, LOGPIXELSY); ReleaseDC(window, dc);
-        MoveWindow(v.child, left, MulDiv(v.rect.top, dpi, 96) - offset, right - left,
-                   MulDiv(v.rect.bottom - v.rect.top, dpi, 96), TRUE);
+      auto dpi=GetDpiForWindow(window);if(!dpi)dpi=96;
+      auto px=[&](int n){return MulDiv(n,dpi,96);};
+      auto dc=GetDC(window);
+      auto measure=[&](HWND child,int width){
+        std::wstring value(GetWindowTextLengthW(child)+1,L'\0');
+        int length=GetWindowTextW(child,value.data(),int(value.size()));
+        auto previous=SelectObject(dc,reinterpret_cast<HFONT>(SendMessageW(child,WM_GETFONT,0,0)));
+        RECT text{0,0,std::max(1,width),0};
+        DrawTextW(dc,value.c_str(),length,&text,DT_CALCRECT|DT_WORDBREAK|DT_NOPREFIX);
+        SelectObject(dc,previous);return int(text.bottom);
+      };
+      int left=px(24),right=std::max(left+1,int(area.right)-px(24));
+      int control_left=MulDiv(area.right,470,868),label_width=std::max(1,control_left-left-px(20));
+      int y=px(12);
+      for(auto &row:rows){
+        int label_height=std::max(px(30),measure(row.label,label_width));
+        MoveWindow(row.label,left,y-offset,label_width,label_height,TRUE);
+        MoveWindow(row.control,control_left,y-offset,std::max(1,right-control_left),px(row.combo?300:row.control_height),TRUE);
+        y+=std::max(label_height,px(row.control_height))+px(5);
+        for(auto child:{row.help,row.reason})if(child){
+          int h=measure(child,right-left);
+          MoveWindow(child,left,y-offset,right-left,h,TRUE);y+=h+px(5);
+        }
+        y+=px(16);
       }
+      for(auto &v:placements){
+        int x=MulDiv(v.rect.left,area.right,868),r=MulDiv(v.rect.right,area.right,868);
+        MoveWindow(v.child,x,y+px(v.rect.top-rows_bottom)-offset,r-x,px(v.rect.bottom-v.rect.top),TRUE);
+      }
+      ReleaseDC(window,dc);
+      int extra=12;for(auto &v:placements)extra=std::max(extra,int(v.rect.bottom)-rows_bottom+12);
+      height=y+px(extra);
+      RedrawWindow(window,nullptr,nullptr,RDW_INVALIDATE|RDW_ERASE|RDW_ALLCHILDREN);
     }
     void scroll(int position) {
       RECT area{};
@@ -107,14 +137,16 @@ struct NativeSettings::State : std::enable_shared_from_this<State> {
       if (msg == WM_CTLCOLORSTATIC || msg == WM_CTLCOLOREDIT) {
         auto dc = reinterpret_cast<HDC>(wp);
         SetBkColor(dc, RGB(255, 255, 255));
-        SetTextColor(dc, IsWindowEnabled(reinterpret_cast<HWND>(lp)) ? RGB(32, 34, 38) : GetSysColor(COLOR_GRAYTEXT));
+        auto child=reinterpret_cast<HWND>(lp);
+        bool help=GetPropW(child,L"Cliptiq.Help")!=nullptr;
+        SetTextColor(dc, help ? (GetSysColor(COLOR_WINDOW)==RGB(255,255,255)?RGB(100,105,112):GetSysColor(COLOR_GRAYTEXT)) : (IsWindowEnabled(child) ? RGB(32,34,38) : GetSysColor(COLOR_GRAYTEXT)));
         return reinterpret_cast<LRESULT>(GetStockObject(WHITE_BRUSH));
       }
 
         if (msg == WM_COMMAND && (LOWORD(wp) == 300 || LOWORD(wp) == 301)) { p->state->test_sound(LOWORD(wp) == 301); return 0; }
         if (msg == WM_SIZE) {
-          p->scroll(p->offset);
           p->arrange();
+          p->scroll(p->offset);
           return 0;
         }
         if (msg == WM_VSCROLL) {
@@ -210,6 +242,7 @@ struct NativeSettings::State : std::enable_shared_from_this<State> {
     if (window)
       DestroyWindow(window);
     if (font) DeleteObject(font);
+    if (help_font) DeleteObject(help_font);
   }
   static LRESULT CALLBACK recorder(HWND w, UINT msg, WPARAM key, LPARAM lp,
                                    UINT_PTR, DWORD_PTR) {
@@ -282,7 +315,9 @@ struct NativeSettings::State : std::enable_shared_from_this<State> {
       if (msg == WM_CTLCOLORSTATIC || msg == WM_CTLCOLOREDIT) {
         auto dc = reinterpret_cast<HDC>(wp);
         SetBkColor(dc, RGB(255, 255, 255));
-        SetTextColor(dc, IsWindowEnabled(reinterpret_cast<HWND>(lp)) ? RGB(32, 34, 38) : GetSysColor(COLOR_GRAYTEXT));
+        auto child=reinterpret_cast<HWND>(lp);
+        bool help=GetPropW(child,L"Cliptiq.Help")!=nullptr;
+        SetTextColor(dc, help ? (GetSysColor(COLOR_WINDOW)==RGB(255,255,255)?RGB(100,105,112):GetSysColor(COLOR_GRAYTEXT)) : (IsWindowEnabled(child) ? RGB(32,34,38) : GetSysColor(COLOR_GRAYTEXT)));
         return reinterpret_cast<LRESULT>(GetStockObject(WHITE_BRUSH));
       }
 
@@ -360,6 +395,7 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
                       800, nullptr, nullptr, wc.hInstance, s.get());
   if (!s->window)
     return Error{ErrorCode::Io, "Cannot create settings window"};
+  windows::set_application_icons(s->window);
   s->tabs = CreateWindowExW(
       0, WC_TABCONTROLW, L"", WS_CHILD | WS_VISIBLE | WS_TABSTOP | TCS_MULTILINE, 8, 8, 884,
       690, s->window, reinterpret_cast<HMENU>(200), wc.hInstance, nullptr);
@@ -383,6 +419,8 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
   auto dc_font = GetDC(s->window);
   s->font = CreateFontW(-MulDiv(11, GetDeviceCaps(dc_font, LOGPIXELSY), 72), 0, 0, 0, FW_NORMAL, FALSE, FALSE, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH, L"Segoe UI");
   ReleaseDC(s->window, dc_font);
+  if(s->help_font)DeleteObject(s->help_font);
+  s->help_font=CreateFontW(-MulDiv(9,GetDpiForWindow(s->window),72),0,0,0,FW_NORMAL,FALSE,FALSE,FALSE,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,CLEARTYPE_QUALITY,DEFAULT_PITCH,L"Segoe UI");
   auto font = s->font;
   SendMessageW(s->tabs, WM_SETFONT, reinterpret_cast<WPARAM>(font), TRUE);
   for (auto &f : settings_fields(s->settings, caps)) {
@@ -437,18 +475,28 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
       SetWindowSubclass(control, State::recorder, 1, 0);
     s->controls.push_back({f.key, control, boolean, options});
     rows[p] += std::max(label_height, multi ? 90 : 30) + 14;
+    auto help=CreateWindowExW(0,L"STATIC",wide(f.description).c_str(),WS_CHILD|WS_VISIBLE|SS_NOPREFIX,
+      24,6+rows[p],820,40,s->pages[p].window,nullptr,wc.hInstance,nullptr);
+    SetPropW(help,L"Cliptiq.Help",reinterpret_cast<HANDLE>(1));
+    SendMessageW(help,WM_SETFONT,reinterpret_cast<WPARAM>(s->help_font),TRUE);
+    HWND reason_control=nullptr;
+    rows[p]+=48;
     if (!f.reason.empty()) {
       auto reason = CreateWindowExW(
           0, L"STATIC", wide(f.reason).c_str(), WS_CHILD, 24, 6 + rows[p], 820,
           40, s->pages[p].window, nullptr, wc.hInstance, nullptr);
       SendMessageW(reason, WM_SETFONT, reinterpret_cast<WPARAM>(font), TRUE);
 
+      reason_control=reason;
       ShowWindow(reason, SW_SHOW);
       rows[p] += 42;
     }
+    s->pages[p].rows.push_back({label,control,help,reason_control,multi?90:30,!options.empty()});
   }
-  for (int p = 0; p < 9; ++p)
+  for (int p = 0; p < 9; ++p) {
     s->pages[p].height = rows[p] + 12;
+    s->pages[p].rows_bottom=rows[p];
+  }
   auto version=std::wstring(L"Cliptiq ")+wide(CLIPTIQ_APP_VERSION);
   auto about=CreateWindowExW(0,L"STATIC",version.c_str(),WS_CHILD|WS_VISIBLE,
     24,rows[7]+12,800,30,s->pages[7].window,nullptr,wc.hInstance,nullptr);
@@ -477,6 +525,8 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
   SendMessageW(s->message, WM_SETFONT, reinterpret_cast<WPARAM>(font), TRUE);
   for (auto &p : s->pages) {
     for (auto child = GetWindow(p.window, GW_CHILD); child; child = GetWindow(child, GW_HWNDNEXT)) {
+      bool field=false;for(auto &row:p.rows)if(child==row.label||child==row.control||child==row.help||child==row.reason)field=true;
+      if(field)continue;
       RECT r{}; GetWindowRect(child, &r); MapWindowPoints(nullptr, p.window, reinterpret_cast<POINT *>(&r), 2);
       wchar_t kind[32]{}; GetClassNameW(child, kind, 32);
       if (std::wstring(kind) == L"ComboBox") r.bottom = r.top + 300;

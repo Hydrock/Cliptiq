@@ -20,8 +20,8 @@ public:
 private:
   struct State;
   std::unique_ptr<State> state_;
-  bool copy_ = true;
-  bool paste_ = true;
+  bool copy_ = false;
+  bool paste_ = false;
   unsigned volume_ = 25;
   void play(bool paste, unsigned volume);
 };

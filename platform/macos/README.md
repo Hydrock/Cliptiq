@@ -37,7 +37,7 @@ item so root readers can retrieve them. Sparse normal indices replay as ordered
 native items, preserving grouping, not numeric gaps. Clipboard replay is not a
 transaction: validation/preparation occurs before clearContents, but a native
 server/write failure afterward can leave the clipboard replaced or incomplete.
-No auto-paste or OS focus/permission automation is implemented.
+This clipboard adapter only replays data. Active-target paste and Accessibility checks are implemented separately in Paste.mm.
 
 ## Privacy and permissions
 
@@ -97,3 +97,21 @@ See [manual checklist](../../tests/manual/macos.md), [fixture attribution](../..
 and [T04 results](../../docs/support/t04-results.md). Automated tests use only
 unique named pasteboards and generated fixtures; they never read/replace General.
 Provider wrappers are explicit fault injection, not proof of actual OS consent UI.
+
+## Native workspace parity (2026-11-13)
+
+The application host now enables the same workspace controller routes on Windows
+and macOS. AppKit provides the main History/Snippets workspace, stable-ID filtered
+list, selectable read-only text and fitted image previews, local actions,
+settings with wrapped field help and typed choices, and inline outline renaming.
+The status item opens the workspace on left click and a service menu on right
+click; keyboard shortcuts open only the two-section quick menu at the pointer.
+Closing the workspace hides it and releases its views; transient quick menus
+release native items and previews after tracking. Dock reopening shows the
+workspace. Optional copy/paste sounds use lazy NSSound with shared short PCM
+and remain off by default.
+
+New AppKit CTest cases: `workspace_native` and `editor_inline_rename`. Existing
+macOS ARM64/Intel CI builds these targets through the test preset. These source
+changes have not been compiled or exercised on macOS from the Windows development
+host. Do not treat Windows regression results as Mac runtime or resource evidence.

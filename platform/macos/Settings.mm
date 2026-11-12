@@ -48,11 +48,14 @@ using namespace cliptiq;
 @interface CliptiqSettingsActions : NSObject <NSWindowDelegate> {
 @public
   std::function<void()> save;
+  std::function<void(bool)> preview;
   CliptiqShortcutEditor *editor;
 }
 - (void)apply:(id)sender;
+- (void)preview:(id)sender;
 @end
 @implementation CliptiqSettingsActions
+- (void)preview:(id)sender { if (preview) preview([sender tag] != 0); }
 - (void)apply:(id)sender {
   (void)sender;
   if (save)
@@ -79,6 +82,16 @@ NSString *str(const std::string &s) {
                                 encoding:NSUTF8StringEncoding]
              ?: @"Invalid UTF-8";
 }
+using Choices = std::vector<std::pair<std::string, NSString *>>;
+Choices choices(const std::string &key) {
+  if (key == "sort") return {{"0", loc(@"Copy time")}, {"1", loc(@"Last used")}};
+  if (key == "unknown_source") return {{"0", loc(@"Reject when exclusions exist")}, {"1", loc(@"Allow")}, {"2", loc(@"Reject")}};
+  if (key.find("modifier") != std::string::npos) return {{"0", loc(@"None")}, {"1", @"Control"}, {"2", @"Shift"}, {"4", @"Option"}, {"8", @"Command"}};
+  if (key == "cleanup_seconds") return {{"300", loc(@"5 minutes")}, {"1800", loc(@"30 minutes")}, {"3600", loc(@"1 hour")}, {"14400", loc(@"4 hours")}, {"28800", loc(@"8 hours")}, {"86400", loc(@"1 day")}, {"259200", loc(@"3 days")}, {"604800", loc(@"1 week")}};
+  if (key == "updates_interval") return {{"86400", loc(@"Every day")}, {"604800", loc(@"Every week")}, {"2592000", loc(@"Every 30 days")}};
+  if (key == "locale") return {{"auto", loc(@"System language")}, {"ru", @"\u0420\u0443\u0441\u0441\u043a\u0438\u0439"}, {"en", @"English"}};
+  return {};
+}
 } // namespace
 struct NativeSettings::State : std::enable_shared_from_this<State> {
   std::thread::id owner = std::this_thread::get_id();
@@ -86,6 +99,8 @@ struct NativeSettings::State : std::enable_shared_from_this<State> {
   NSTextField *message = nil;
   CliptiqSettingsActions *target = nil;
   Settings settings;
+  std::function<void(bool, int)> preview;
+  NSButton *previewCopy = nil, *previewPaste = nil;
   std::function<Result<void>(Settings)> apply;
   std::function<Result<void>(const HotkeyMap &)> authorize;
   struct Control {
@@ -97,6 +112,7 @@ struct NativeSettings::State : std::enable_shared_from_this<State> {
   ~State() {
     if (target)
       target->save = {};
+    if (target) target->preview = {};
     [window close];
   }
   void save() {
@@ -107,6 +123,10 @@ struct NativeSettings::State : std::enable_shared_from_this<State> {
       if (c.boolean)
         values[c.key] =
             [(NSButton *)c.view state] == NSControlStateValueOn ? "1" : "0";
+      else if ([c.view isKindOfClass:NSPopUpButton.class]) {
+        NSString *value = [[(NSPopUpButton *)c.view selectedItem] representedObject];
+        values[c.key] = value.UTF8String ?: "";
+      }
       else if (c.multiline)
         values[c.key] = [(NSTextView *)c.view string].UTF8String ?: "";
       else
@@ -133,6 +153,7 @@ Result<void>
 NativeSettings::show(Settings settings, const Capabilities &caps,
                      std::function<Result<void>(Settings)> callback,
                      std::function<Result<void>(const HotkeyMap &)> authorize) {
+  @autoreleasepool {
   auto s = state_;
   if (s->owner != std::this_thread::get_id() || !NSThread.isMainThread)
     return Error{ErrorCode::InvalidArgument, "Settings require main thread"};
@@ -155,12 +176,24 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
                     defer:NO];
   s->window.releasedWhenClosed = NO;
   s->window.title = loc(@"Cliptiq Settings");
+  s->window.minSize = NSMakeSize(720, 480);
   s->target = [CliptiqSettingsActions new];
   s->window.delegate = s->target;
   std::weak_ptr<State> weak = s;
   s->target->save = [weak] {
     if (auto state = weak.lock())
       state->save();
+  };
+  s->target->preview = [weak](bool paste) {
+    if (auto state = weak.lock()) {
+      [state->window makeFirstResponder:nil];
+      for (const auto &c : state->controls) if (c.key == "sound_volume") {
+        auto value = [(NSTextField *)c.view stringValue].UTF8String ?: "";
+        auto draft = edit_settings(state->settings, {{"sound_volume", value}});
+        if (!draft) { state->message.stringValue = str(draft.error().message); return; }
+        if (state->preview) state->preview(paste, std::stoi(draft.value().values.at("sound_volume")));
+      }
+    }
   };
   auto tabs = [[NSTabView alloc] initWithFrame:NSMakeRect(12, 80, 876, 608)];
   tabs.identifier = @"settings-tabs";
@@ -182,8 +215,13 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
     stack.alignment = NSLayoutAttributeLeading;
     stack.spacing = 10;
     stack.edgeInsets = NSEdgeInsetsMake(12, 12, 12, 12);
-    stack.frame = NSMakeRect(0, 0, 830, 570);
+    stack.translatesAutoresizingMaskIntoConstraints = NO;
     scroll.documentView = stack;
+    [NSLayoutConstraint activateConstraints:@[
+      [stack.leadingAnchor constraintEqualToAnchor:scroll.contentView.leadingAnchor],
+      [stack.topAnchor constraintEqualToAnchor:scroll.contentView.topAnchor],
+      [stack.widthAnchor constraintEqualToAnchor:scroll.contentView.widthAnchor]
+    ]];
     item.view = scroll;
     stacks[g] = stack;
     [tabs addTabViewItem:item];
@@ -193,17 +231,33 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
     row.orientation = NSUserInterfaceLayoutOrientationHorizontal;
     row.spacing = 12;
     auto label = [NSTextField wrappingLabelWithString:str(f.label)];
-    label.preferredMaxLayoutWidth = 430;
-    [label.widthAnchor constraintEqualToConstant:430].active = YES;
+    [label.widthAnchor constraintEqualToAnchor:row.widthAnchor multiplier:0.48].active = YES;
     [row addArrangedSubview:label];
     NSView *control = nil;
     bool multiline = f.key == "excluded";
-    if (f.boolean) {
+    auto options = choices(f.key);
+    bool boolean = f.boolean && options.empty();
+    if (boolean) {
       auto button = [NSButton checkboxWithTitle:@"" target:nil action:nullptr];
       button.state =
           f.value == "1" ? NSControlStateValueOn : NSControlStateValueOff;
       button.enabled = f.enabled;
       control = button;
+    } else if (!options.empty()) {
+      auto popup = [NSPopUpButton new];
+      bool matched = false;
+      for (const auto &option : options) {
+        [popup addItemWithTitle:option.second];
+        popup.lastItem.representedObject = str(option.first);
+        if (option.first == f.value) { [popup selectItem:popup.lastItem]; matched = true; }
+      }
+      if (!matched) {
+        [popup addItemWithTitle:str(f.value)];
+        popup.lastItem.representedObject = str(f.value);
+        [popup selectItem:popup.lastItem];
+      }
+      popup.enabled = f.enabled;
+      control = popup;
     } else if (multiline) {
       auto text = [[NSTextView alloc] initWithFrame:NSMakeRect(0, 0, 300, 85)];
       text.string = str(f.value);
@@ -219,37 +273,50 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
     control.identifier = str(f.key);
     [control setAccessibilityLabel:str(f.label)];
     control.toolTip = str(f.reason.empty() ? f.label : f.reason);
-    [control.widthAnchor constraintEqualToConstant:320].active = YES;
+    [control.widthAnchor constraintEqualToAnchor:row.widthAnchor multiplier:0.48].active = YES;
     if (multiline)
       [control.heightAnchor constraintEqualToConstant:85].active = YES;
     [row addArrangedSubview:control];
     [stacks[unsigned(f.group)] addArrangedSubview:row];
+    [row.widthAnchor constraintEqualToAnchor:stacks[unsigned(f.group)].widthAnchor constant:-24].active = YES;
+    auto help = [NSTextField wrappingLabelWithString:str(f.description)];
+    help.font = [NSFont systemFontOfSize:[NSFont smallSystemFontSize]];
+    help.textColor = NSColor.secondaryLabelColor;
+    [help.widthAnchor constraintEqualToAnchor:row.widthAnchor].active = YES;
+    [stacks[unsigned(f.group)] addArrangedSubview:help];
     if (!f.reason.empty()) {
       auto reason = [NSTextField wrappingLabelWithString:str(f.reason)];
-      [reason.widthAnchor constraintEqualToConstant:780].active = YES;
+      [reason.widthAnchor constraintEqualToAnchor:row.widthAnchor].active = YES;
       [stacks[unsigned(f.group)] addArrangedSubview:reason];
     }
-    s->controls.push_back({f.key, control, f.boolean, multiline});
+    s->controls.push_back({f.key, control, boolean, multiline});
   }
-  for (unsigned g = 0; g < 9; ++g) {
-    auto size = stacks[g].fittingSize;
-    stacks[g].frame =
-        NSMakeRect(0, 0, 830, std::max(570.0, double(size.height)));
+  auto previews = [NSStackView new];
+  previews.orientation = NSUserInterfaceLayoutOrientationVertical;
+  for (int n = 0; n < 2; ++n) {
+    auto button = [NSButton buttonWithTitle:n ? loc(@"Test paste sound") : loc(@"Test copy sound") target:s->target action:@selector(preview:)];
+    button.tag = n;
+    button.enabled = bool(s->preview);
+    [previews addArrangedSubview:button];
+    if (n) s->previewPaste = button; else s->previewCopy = button;
   }
+  [stacks[unsigned(SettingsGroup::Sounds)] addArrangedSubview:previews];
   auto apply = [NSButton buttonWithTitle:loc(@"Apply")
                                   target:s->target
                                   action:@selector(apply:)];
   apply.identifier = @"apply";
-  apply.frame = NSMakeRect(780, 20, 100, 32);
+  [apply sizeToFit];
+  apply.frame = NSMakeRect(884 - apply.frame.size.width, 20, apply.frame.size.width, 32);
+  apply.autoresizingMask = NSViewMinXMargin;
   [s->window.contentView addSubview:apply];
   s->message =
-      [NSTextField wrappingLabelWithString:
-                       @"Shortcut fields record chords. Backspace clears "
-                       @"optional bindings; conflicts retain old settings."];
-  s->message.frame = NSMakeRect(16, 12, 740, 52);
+      [NSTextField wrappingLabelWithString:loc(@"Shortcut fields record chords. Backspace clears optional bindings; conflicts retain old settings.")];
+  s->message.frame = NSMakeRect(16, 12, apply.frame.origin.x - 28, 52);
+  s->message.autoresizingMask = NSViewWidthSizable;
   [s->window.contentView addSubview:s->message];
   [s->window makeKeyAndOrderFront:nil];
   return {};
+  }
 }
 Result<void> NativeSettings::process_events() {
   if (state_->owner != std::this_thread::get_id() || !NSThread.isMainThread)
@@ -267,7 +334,11 @@ bool NativeSettings::confirm_clear() const {
   [alert addButtonWithTitle:loc(@"Cancel")];
   return [alert runModal] == NSAlertFirstButtonReturn;
 }
-void NativeSettings::sound_preview(std::function<void(bool, int)>) {}
+void NativeSettings::sound_preview(std::function<void(bool, int)> callback) {
+  state_->preview = std::move(callback);
+  state_->previewCopy.enabled = bool(state_->preview);
+  state_->previewPaste.enabled = bool(state_->preview);
+}
 void NativeSettings::status(const std::string &value) {
   if (state_->message)
     state_->message.stringValue = str(value);

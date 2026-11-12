@@ -1,0 +1,96 @@
+#include "cliptiq/editor.hpp"
+#import <AppKit/AppKit.h>
+#include <chrono>
+#include <filesystem>
+#include <iostream>
+#include <stdexcept>
+#include <thread>
+using namespace cliptiq;
+#define CHECK(x) do { if (!(x)) throw std::runtime_error(#x); } while (false)
+template<class T> T take(Result<T> result) {
+  if (!result) throw std::runtime_error(result.error().message);
+  return std::move(result.value());
+}
+NSView *find(NSView *view, NSString *identifier) {
+  if ([view.identifier isEqualToString:identifier]) return view;
+  for (NSView *child in view.subviews) if (auto found = find(child, identifier)) return found;
+  return nil;
+}
+int main() { @autoreleasepool {
+  struct Temp {
+    std::filesystem::path path = std::filesystem::temp_directory_path() /
+      ("cliptiq-macos-rename-" + std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()) + ".db");
+    ~Temp() { std::error_code error; std::filesystem::remove(path, error); }
+  } temp;
+  try {
+    auto store = take(open_store(temp.path.u8string()));
+    auto folder = take(create_folder(store, "Original folder"));
+    auto session = std::make_shared<SnippetEditorSession>(store, SnippetEditorCallbacks{});
+    CHECK(session->reload());
+    CHECK(session->select(SnippetItemId{SnippetItemKind::Folder, folder}));
+    NativeSnippetEditor ui;
+    CHECK(ui.show(session));
+    auto window = (__bridge NSWindow *)(void *)ui.native_handle();
+    auto tree = (NSOutlineView *)find(window.contentView, @"editor-tree");
+    CHECK(tree);
+    CHECK(!find(window.contentView, @"editor-title"));
+    auto settle = [&] {
+      for (unsigned n = 0; n < 400 && session->saving(); ++n) {
+        CHECK(ui.process_events());
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+      }
+      CHECK(!session->saving());
+      CHECK(ui.process_events());
+    };
+    auto rename = [&](NSString *value, SEL command) {
+      auto button = (NSButton *)find(window.contentView, @"editor-rename");
+      CHECK(button); [button performClick:nil];
+      auto cell = (NSTableCellView *)[tree viewAtColumn:0 row:tree.selectedRow makeIfNecessary:YES];
+      CHECK(cell.textField.editable);
+      auto editor = (NSTextView *)[window fieldEditor:NO forObject:cell.textField];
+      CHECK(editor); editor.string = value; cell.textField.stringValue = value;
+      CHECK([cell.textField.delegate control:cell.textField textView:editor doCommandBySelector:command]);
+      settle();
+    };
+    rename(@"Renamed folder", @selector(insertNewline:));
+    CHECK(session->title() == "Renamed folder");
+    rename(@"Cancelled folder", @selector(cancelOperation:));
+    CHECK(session->title() == "Renamed folder");
+    auto beginTyping = [&](NSString *value) {
+      auto renameButton = (NSButton *)find(window.contentView, @"editor-rename");
+      [renameButton performClick:nil];
+      auto field = ((NSTableCellView *)[tree viewAtColumn:0 row:tree.selectedRow makeIfNecessary:YES]).textField;
+      auto editor = (NSTextView *)[window fieldEditor:NO forObject:field];
+      CHECK(field.editable && editor);
+      editor.string = value;
+      field.stringValue = value;
+    };
+    beginTyping(@"Folder committed by Add");
+    auto add = (NSButton *)find(window.contentView, @"editor-add-snippet");
+    [add performClick:nil];
+    settle();
+    CHECK(session->selected()->kind == SnippetItemKind::Snippet);
+    CHECK(session->folders().front().title == "Folder committed by Add");
+    auto cell = (NSTableCellView *)[tree viewAtColumn:0 row:tree.selectedRow makeIfNecessary:YES];
+    CHECK(cell.textField.editable);
+    [window makeFirstResponder:tree]; settle();
+    rename(@"Renamed snippet", @selector(insertNewline:));
+    CHECK(session->title() == "Renamed snippet");
+    beginTyping(@"Snippet committed by Reload");
+    auto reloadButton = (NSButton *)find(window.contentView, @"editor-reload");
+    [reloadButton performClick:nil];
+    settle();
+    CHECK(session->title() == "Snippet committed by Reload");
+    // A rebuild must release the old field editor so another rename can start.
+    rename(@"Renamed snippet", @selector(insertNewline:));
+    CHECK(session->title() == "Renamed snippet");
+    rename(@"", @selector(insertNewline:));
+    CHECK(session->title() == "Renamed snippet");
+    CHECK(session->reload());
+    CHECK(ui.request_close());
+    std::cout << "macOS inline rename passed\n";
+    return 0;
+  } catch (const std::exception &error) {
+    std::cerr << error.what() << '\n'; return 1;
+  }
+} }

@@ -8,7 +8,11 @@
 #include "Updates.hpp"
 #endif
 #ifdef CLIPTIQ_WITH_SOUND
+#ifdef __APPLE__
+#include "macos/Sound.hpp"
+#else
 #include "windows/Sound.hpp"
+#endif
 #endif
 #include "Application.hpp"
 #include "cliptiq/menu.hpp"
@@ -65,7 +69,11 @@ int host(int argc, char **argv) {
   try {
     bool smoke = false, capture = false, demo = false;
 #ifdef CLIPTIQ_WITH_SOUND
+#ifdef __APPLE__
+    macos::NativeSound sound;
+#else
     windows::NativeSound sound;
+#endif
     bool initial_capture_sound = true;
 #endif
 #ifdef CLIPTIQ_WITH_UPDATES
@@ -435,7 +443,7 @@ int host(int argc, char **argv) {
     filter_model(model);
 #endif
     NativeMenuOptions options;
-#if defined(_WIN32) && defined(CLIPTIQ_WITH_LIFECYCLE)
+#if (defined(_WIN32) || defined(__APPLE__)) && defined(CLIPTIQ_WITH_LIFECYCLE)
     options.start_hidden = background && !smoke;
 #endif
     options.tray_style = tray;
@@ -483,8 +491,8 @@ int host(int argc, char **argv) {
       }
     };
 #endif
-// Windows workspace reuses the existing stable-ID model and controller.
-#if defined(_WIN32) && defined(CLIPTIQ_WITH_LIFECYCLE) && defined(CLIPTIQ_WITH_SETTINGS)
+// Native workspace reuses the existing stable-ID model and controller.
+#if (defined(_WIN32) || defined(__APPLE__)) && defined(CLIPTIQ_WITH_LIFECYCLE) && defined(CLIPTIQ_WITH_SETTINGS)
     options.workspace_enabled = !smoke;
     options.transient_popup = !smoke;
     options.workspace_model = [&]() -> Result<MenuModel> {
@@ -694,7 +702,7 @@ int host(int argc, char **argv) {
             options.preview_width = settings.preview_width;
             options.preview_height = settings.preview_height;
             options.icons = settings.icons;
-#if defined(_WIN32) && defined(CLIPTIQ_WITH_LIFECYCLE)
+#if (defined(_WIN32) || defined(__APPLE__)) && defined(CLIPTIQ_WITH_LIFECYCLE)
             options.workspace_status=workspace_status_text();
 #endif
             auto result = ui.set_options(options);
@@ -808,6 +816,9 @@ int host(int argc, char **argv) {
     auto ipc_checked = std::chrono::steady_clock::now();
 #endif
     while (!quit) {
+#ifdef __APPLE__
+      @autoreleasepool {
+#endif
 #ifdef CLIPTIQ_WITH_LIFECYCLE
       if (!smoke && !demo &&
           std::chrono::steady_clock::now() - ipc_checked >=
@@ -827,7 +838,7 @@ int host(int argc, char **argv) {
               active_folder.clear();
               kind = MenuKind::Main;
               ok(rebuild());
-#ifdef _WIN32
+#if defined(_WIN32) || defined(__APPLE__)
               if(action==LaunchAction::Main)ok(ui.show_workspace());else
 #endif
               ok(ui.show());
@@ -902,7 +913,7 @@ int host(int argc, char **argv) {
           if (action.second.target.empty())
             action.second.target = paste.capture_target();
           ok(rebuild());
-#if defined(_WIN32) && defined(CLIPTIQ_WITH_LIFECYCLE)
+#if (defined(_WIN32) || defined(__APPLE__)) && defined(CLIPTIQ_WITH_LIFECYCLE)
           if(action.first=="main" && !action.second.keyboard)ok(ui.show_workspace());else
 #endif
           ok(ui.show(action.second));
@@ -953,7 +964,7 @@ int host(int argc, char **argv) {
             else if(result.value().status==SelectionStatus::Copied || result.value().status==SelectionStatus::NeedsManualPaste)sound.play_copy();
           }
 #endif
-#ifdef _WIN32
+#if defined(_WIN32) || defined(__APPLE__)
           if(!result)ui.workspace_status(result.error().message);
           else if(result.value().history_deleted)ui.workspace_status("Запись удалена из истории");
           else if(result.value().status==SelectionStatus::Copied || result.value().status==SelectionStatus::Dispatched)ui.workspace_status("Скопировано в буфер обмена");
@@ -1032,6 +1043,9 @@ int host(int argc, char **argv) {
       }
       if (smoke && ++iterations >= 3)
         break;
+#ifdef __APPLE__
+      }
+#endif
     }
 #else
     (void)kind;

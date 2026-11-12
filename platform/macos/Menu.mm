@@ -1,18 +1,26 @@
 #include "../LocaleNative.hpp"
 #include "cliptiq/native_menu.hpp"
+#include "Workspace.hpp"
 #import <AppKit/AppKit.h>
 #include <map>
+#include <cstring>
 #include <thread>
-@interface CliptiqMenuTarget : NSObject <NSMenuDelegate> {
+@interface CliptiqMenuTarget : NSObject <NSMenuDelegate, NSWindowDelegate, NSApplicationDelegate> {
 @public
   std::function<void(NSMenuItem *)> invoke;
-  std::function<void()> popup;
+  std::function<void()> popup, tray_click, close_workspace, reopen;
   std::function<void(NSMenu *)> will_open, did_close;
 }
 - (void)selected:(NSMenuItem *)sender;
 - (void)open:(id)sender;
+- (void)trayClick:(id)sender;
 @end
 @implementation CliptiqMenuTarget
+- (BOOL)applicationShouldHandleReopen:(NSApplication *)application hasVisibleWindows:(BOOL)visible {
+  (void)application;(void)visible;if(reopen)reopen();return NO;
+}
+- (BOOL)windowShouldClose:(NSWindow *)sender { (void)sender; if(close_workspace){close_workspace();return NO;}return YES;}
+- (void)trayClick:(id)sender { (void)sender;if(tray_click)tray_click(); }
 - (void)menuWillOpen:(NSMenu *)menu {
   if (will_open)
     will_open(menu);
@@ -66,7 +74,8 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
   std::thread::id owner = std::this_thread::get_id();
   NSWindow *window = nil;
   NSButton *button = nil;
-  NSMenu *menu = nil;
+  NSMenu *menu = nil, *tray_menu = nil;
+  std::unique_ptr<macos::Workspace> workspace;
   NSStatusItem *status_item = nil;
   CliptiqMenuTarget *target = nil;
   std::map<unsigned, MenuItem> commands;
@@ -86,9 +95,14 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
     if (target) {
       target->invoke = {};
       target->popup = {};
+      target->tray_click = {};
+      target->close_workspace = {};
+      target->reopen = {};
+      if(NSApp.delegate==target)NSApp.delegate=nil;
       target->will_open = {};
       target->did_close = {};
     }
+    workspace.reset();window.delegate=nil;
     [window orderOut:nil];
     [window close];
   }
@@ -97,6 +111,11 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
   }
   void invoke(NSMenuItem *sender) {
     auto keep = shared_from_this();
+    if([sender.representedObject isKindOfClass:NSString.class]) {
+      if(sender.tag==1)open_workspace();
+      else if(callback)callback({sender.tag==2?MenuAction::OpenSettings:MenuAction::Quit,"",model.revision});
+      return;
+    }
     auto values = (NSArray *)sender.representedObject;
     if (values.count != 2 || [values[0] unsignedLongLongValue] != generation)
       return;
@@ -154,31 +173,63 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
     return result;
   }
   void popup(const InvocationContext &ctx = {}) {
+    // Keep State alive through the cleanup guard, even if a command closes UI.
+    auto keep = shared_from_this();
     ++opening;
     invocation = ctx;
     if (invocation.target.empty() && options.invocation_provider)
       invocation = options.invocation_provider();
+    if(options.transient_popup) {
+      ++generation;commands.clear();next=100;
+      menu=build(model.items);
+    }
+    NSMenu *tracking=menu;
     explicit_tracking = true;
     struct Reset {
       State *s;
+      NSMenu *tracking;
+      bool release;
       ~Reset() {
         s->invocation = {};
         s->explicit_tracking = false;
+        if(release && s->menu==tracking) {
+          s->status_item.menu=nil;s->menu=nil;
+          s->commands.clear();++s->generation;
+        }
       }
-    } reset{this};
-    auto keep = shared_from_this();
-    if (!menu)
-      return;
+    } reset{this,tracking,options.transient_popup};
+    if (!tracking) return;
     NSPoint p = NSEvent.mouseLocation;
-    NSView *view = nil;
-    if (ctx.x && ctx.y) {
-      p = NSMakePoint(*ctx.x, *ctx.y);
-      view = nil;
+    if (ctx.x && ctx.y) p = NSMakePoint(*ctx.x, *ctx.y);
+    [tracking popUpMenuPositioningItem:tracking.numberOfItems ? [tracking itemAtIndex:0] : nil
+                           atLocation:p inView:nil];
+  }
+  void refresh_workspace() {
+    if(!workspace)return;
+    auto full=options.workspace_model?options.workspace_model():Result<MenuModel>(model);
+    if(full)workspace->update(std::move(full.value()));else workspace->status(full.error().message);
+  }
+  void open_workspace() {
+    if(options.workspace_enabled&&!workspace){
+      std::weak_ptr<State> weak=shared_from_this();
+      workspace=std::make_unique<macos::Workspace>(window,options,[weak](MenuCommand c){if(auto s=weak.lock())if(s->callback)s->callback(std::move(c));},provider);
+      refresh_workspace();
     }
-    [menu
-        popUpMenuPositioningItem:menu.numberOfItems ? [menu itemAtIndex:0] : nil
-                      atLocation:p
-                          inView:view];
+    [window makeKeyAndOrderFront:nil];[NSApp activateIgnoringOtherApps:YES];status.launcher_visible=true;
+  }
+  void hide_workspace() {
+    [window orderOut:nil];status.launcher_visible=false;
+    std::weak_ptr<State> weak=shared_from_this();
+    dispatch_async(dispatch_get_main_queue(), ^{if(auto s=weak.lock())if(!s->window.visible&&s->options.workspace_enabled){s->workspace.reset();s->window.contentView=[NSView new];}});
+  }
+  void tray_click() {
+    if(!options.workspace_enabled){popup();return;}
+    if(NSApp.currentEvent.type==NSEventTypeRightMouseUp){
+      tray_menu=[[NSMenu alloc] initWithTitle:@"Cliptiq"];
+      NSArray *titles=@[@"Открыть Cliptiq",@"Настройки",@"Выйти из Cliptiq"];
+      for(NSUInteger i=0;i<titles.count;++i){auto item=[[NSMenuItem alloc] initWithTitle:titles[i] action:@selector(selected:) keyEquivalent:@""];item.target=target;item.tag=i+1;item.representedObject=titles[i];[tray_menu addItem:item];}
+      [status_item popUpStatusItemMenu:tray_menu];
+    }else open_workspace();
   }
   void tray() {
     if (status_item) {
@@ -198,7 +249,7 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
     status_item.button.image = icon;
     status_item.button.toolTip = @"Cliptiq";
     [status_item.button setAccessibilityLabel:@"Cliptiq"];
-    status_item.menu = menu;
+    if(options.workspace_enabled||options.transient_popup){status_item.menu=nil;status_item.button.target=target;status_item.button.action=@selector(trayClick:);[status_item.button sendActionOn:NSEventMaskLeftMouseUp|NSEventMaskRightMouseUp];}else status_item.menu=menu;
     status.tray_available = status_item != nil && status_item.visible;
     status.tray_reason = status.tray_available
                              ? "NSStatusItem visible"
@@ -210,6 +261,7 @@ NativeMenu::NativeMenu(NativeMenuOptions o, std::function<void(MenuCommand)> c,
     : state_(std::make_shared<State>(o, std::move(c), std::move(p))) {}
 NativeMenu::~NativeMenu() = default;
 Result<void> NativeMenu::initialize() {
+  @autoreleasepool {
   auto s = state_;
   if (!s->thread() || s->window)
     return Error{ErrorCode::InvalidArgument,
@@ -242,29 +294,37 @@ Result<void> NativeMenu::initialize() {
         });
       }
   };
+  s->target->reopen=[weak]{if(auto s=weak.lock())s->open_workspace();};
+  if(!NSApp.delegate)NSApp.delegate=s->target;
+  s->target->tray_click=[weak]{if(auto s=weak.lock())s->tray_click();};
+  s->target->close_workspace=[weak]{if(auto s=weak.lock())s->hide_workspace();};
   s->target->popup = [weak] {
     if (auto s = weak.lock())
       s->popup();
   };
   s->window =
-      [[NSWindow alloc] initWithContentRect:NSMakeRect(100, 100, 300, 110)
+      [[NSWindow alloc] initWithContentRect:NSMakeRect(100, 100, s->options.workspace_enabled?1040:300, s->options.workspace_enabled?680:110)
                                   styleMask:NSWindowStyleMaskTitled |
-                                            NSWindowStyleMaskMiniaturizable
+                                            NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable
                                     backing:NSBackingStoreBuffered
                                       defer:NO];
   s->window.releasedWhenClosed = NO;
   s->window.title = @"Cliptiq";
+  s->window.delegate=s->target;
+  if(s->options.workspace_enabled)s->window.minSize=NSMakeSize(880,580);
+  if(!s->options.workspace_enabled){
   s->button = [[NSButton alloc] initWithFrame:NSMakeRect(24, 32, 250, 40)];
   s->button.title = loc(@"Clipboard History");
   s->button.bezelStyle = NSBezelStyleRounded;
   s->button.target = s->target;
   s->button.action = @selector(open:);
   [s->window.contentView addSubview:s->button];
-  [s->window makeKeyAndOrderFront:nil];
-  s->status.launcher_visible = true;
+  }
   auto r = update({});
   s->tray();
+  if(!s->options.start_hidden||!s->status.tray_available)s->open_workspace();
   return r;
+  }
 }
 Result<void> NativeMenu::update(MenuModel m) {
   auto valid = validate_menu_model(m);
@@ -277,8 +337,10 @@ Result<void> NativeMenu::update(MenuModel m) {
   s->model = std::move(m);
   ++s->generation;
   s->commands.clear();
-  s->menu = s->build(s->model.items);
-  s->status_item.menu = s->menu;
+  s->next=100;
+  s->menu = s->options.transient_popup ? nil : s->build(s->model.items);
+  if(!s->options.workspace_enabled)s->status_item.menu = s->menu;
+  s->refresh_workspace();
   return {};
 }
 Result<void> NativeMenu::show(const InvocationContext &c) {
@@ -294,7 +356,9 @@ Result<void> NativeMenu::set_options(NativeMenuOptions options) {
       !options.preview_width || !options.preview_height ||
       options.preview_width > 512 || options.preview_height > 512)
     return Error{ErrorCode::InvalidArgument, "Invalid live menu options"};
+  s->workspace.reset();
   s->options = std::move(options);
+  if(s->window.visible&&s->options.workspace_enabled)s->open_workspace();
   auto result = update(s->model);
   if (!result)
     return result;
@@ -306,6 +370,7 @@ Result<void> NativeMenu::set_tray_style(TrayStyle style) {
     return Error{ErrorCode::InvalidArgument, "Invalid tray style"};
   s->options.tray_style = style;
   s->tray();
+  if(!s->status.tray_available)s->open_workspace();
   return {};
 }
 Result<void> NativeMenu::process_events(unsigned wait) {
@@ -330,6 +395,8 @@ Result<void> NativeMenu::process_events(unsigned wait) {
   }
   return {};
 }
+Result<void> NativeMenu::show_workspace(){auto s=state_;if(!s->thread()||!s->window)return Error{ErrorCode::InvalidArgument,"Workspace requires AppKit owner"};s->open_workspace();return {};}
+void NativeMenu::workspace_status(const std::string &value){auto s=state_;if(s->thread()&&s->workspace)s->workspace->status(value);}
 NativeMenuStatus NativeMenu::status() const { return state_->status; }
 NativeMenuHandles NativeMenu::native_handles() const {
   return {reinterpret_cast<uintptr_t>((__bridge void *)state_->window),

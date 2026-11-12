@@ -23,6 +23,7 @@ struct SettingField {
   SettingsGroup group;
   std::string key, label, value, reason;
   bool enabled = true, boolean = false, shortcut = false;
+  std::string description;
 };
 Settings default_settings(CapturePlatform);
 Result<Settings> load_settings(Store &,

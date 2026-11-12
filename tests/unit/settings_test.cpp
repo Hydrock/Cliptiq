@@ -1,4 +1,5 @@
 #include "cliptiq/settings.hpp"
+#include "cliptiq/locale.hpp"
 #include "sqlite3.h"
 #include <iostream>
 #include <stdexcept>
@@ -24,6 +25,25 @@ int main() {
       std::cerr << "FAIL " << n << ": " << e.what() << '\n';
     }
   };
+  test("every_setting_has_plain_language_help", [] {
+    auto settings=default_settings(CapturePlatform::Windows);
+    settings.hotkeys["folder:test"]={};
+    for(auto platform:{CapturePlatform::Windows,CapturePlatform::MacOS,CapturePlatform::X11}) {
+      Capabilities caps;caps.platform=platform;
+      activate_locale("en");
+      auto fields=settings_fields(settings,caps);
+      activate_locale("ru");
+      auto translated=settings_fields(settings,caps);
+      activate_locale("en");
+      CHECK(fields.size()==translated.size());
+      for(std::size_t i=0;i<fields.size();++i)CHECK(fields[i].description!=translated[i].description);
+      for(const auto &field:fields) {
+        CHECK(!field.description.empty());
+        CHECK(field.description!=field.label);
+        if(field.group==SettingsGroup::Sounds)CHECK(field.enabled==(platform==CapturePlatform::Windows||platform==CapturePlatform::MacOS));
+      }
+    }
+  });
   test("defaults_audit_and_platform_shortcuts", [] {
     auto s = default_settings(CapturePlatform::Windows);
     CHECK(settings_history(s).max_count == 30 &&
@@ -60,15 +80,31 @@ int main() {
       if(field.key=="hotkey:editor"){CHECK(field.label=="Edit Snippets");editor=true;}
       if(field.key=="hotkey:main")CHECK(field.label=="Quick menu");
       if(field.key=="hotkey:history")CHECK(field.label=="Quick menu - alternate 1");
-      if(field.key=="hotkey:snippets")CHECK(field.label=="Quick menu - alternate 2");
+      CHECK(field.key!="hotkey:snippets");
     }
     CHECK(folder&&clear&&editor);
+  });
+  test("second_quick_shortcut_migrates_to_empty_primary", [] {
+    auto store=take(open_store(":memory:"));auto settings=default_settings(CapturePlatform::Windows);
+    CHECK(!settings.hotkeys.count("snippets"));
+    settings.hotkeys["main"].reset();settings.hotkeys["snippets"]=take(parse_chord("Ctrl+B"));
+    CHECK(save_settings(store,settings));
+    auto loaded=take(load_settings(store,CapturePlatform::Windows));
+    CHECK(!loaded.hotkeys.count("snippets"));
+    CHECK(loaded.hotkeys.at("main")&&format_chord(*loaded.hotkeys.at("main"))=="Ctrl+B");
+    CHECK(save_settings(store,loaded));
+    loaded=take(load_settings(store,CapturePlatform::Windows));
+    loaded.hotkeys["snippets"]=take(parse_chord("Ctrl+M"));
+    CHECK(save_settings(store,loaded));
+    auto preserved=take(load_settings(store,CapturePlatform::Windows));
+    CHECK(format_chord(*preserved.hotkeys.at("main"))=="Ctrl+B");
+    CHECK(!preserved.hotkeys.count("snippets"));
   });
   test("sound_defaults_ranges_and_legacy_profile", [] {
     auto store = take(open_store(":memory:"));
     auto s = default_settings(CapturePlatform::Windows);
-    CHECK(s.values.at("sound_copy") == "1");
-    CHECK(s.values.at("sound_paste") == "1");
+    CHECK(s.values.at("sound_copy") == "0");
+    CHECK(s.values.at("sound_paste") == "0");
     CHECK(s.values.at("sound_volume") == "25");
     s.values["history_count"] = "47";
     CHECK(save_settings(store, s));

@@ -6,8 +6,9 @@
 static HWND popup_owner=nullptr;
 static POINT anchor{};
 static bool choose=false;
+static int selection=0, menu_count=0;
 extern "C" UINT cliptiq_test_track_popup(HMENU menu,UINT,int x,int y,HWND owner,LPTPMPARAMS){
- popup_owner=owner;anchor={x,y};return choose?GetMenuItemID(menu,0):0;
+ popup_owner=owner;anchor={x,y};menu_count=GetMenuItemCount(menu);if(selection)return GetMenuItemID(menu,selection-1);return choose?GetMenuItemID(menu,0):0;
 }
 int main(){try{
  using namespace cliptiq;
@@ -37,5 +38,13 @@ int main(){try{
  model.revision=2;model.items[0].id="new-entry";
  if(!ui.update(model)||!ui.show(ctx)||selected.id!="new-entry"||selected.revision!=2)
    throw std::runtime_error("Transient popup used stale model");
+ choose=false;selection=2;
+ SendMessageW(main,WM_APP+1,0,MAKELPARAM(WM_CONTEXTMENU,1));
+ if(menu_count!=3||selected.action!=MenuAction::OpenSettings||IsWindowVisible(main))
+   throw std::runtime_error("Tray settings raised workspace or wrong menu");
+ selection=3;SendMessageW(main,WM_APP+1,0,MAKELPARAM(WM_CONTEXTMENU,1));
+ if(selected.action!=MenuAction::Quit)throw std::runtime_error("Tray exit missing");
+ selection=1;SendMessageW(main,WM_APP+1,0,MAKELPARAM(WM_CONTEXTMENU,1));
+ if(!IsWindowVisible(main))throw std::runtime_error("Tray open failed");
  std::cout<<"PASS independent popup owner, hidden workspace and screen anchor\n";
 }catch(const std::exception& e){std::cerr<<e.what()<<'\n';return 1;}}

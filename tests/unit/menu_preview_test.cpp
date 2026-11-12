@@ -3,6 +3,11 @@
 #include <fstream>
 using namespace cliptiq;
 int main(int argc,char** argv) {
+  if(argc==3&&std::string(argv[1])=="--tray-rgba"){
+    auto icon=tray_icon(64);std::ofstream out(argv[2],std::ios::binary);
+    out.write(reinterpret_cast<const char*>(icon.rgba.data()),icon.rgba.size());
+    return out?0:1;
+  }
   if(argc==3&&std::string(argv[1])=="--tray-sheet"){
     std::ofstream out(argv[2],std::ios::binary);out<<"P6\n320 240\n255\n";
     for(unsigned y=0;y<240;++y){

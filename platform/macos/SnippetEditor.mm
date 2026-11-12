@@ -24,7 +24,14 @@ using namespace cliptiq;
   std::function<void()> cancel;
   std::function<bool()> can_close;
   NSTextView *shortcutEditor;
+  NSOutlineView *outline;
+  NSTextField *renaming;
+  NSString *originalTitle;
+  CliptiqSnippetNode *renamedNode;
+  std::function<void(CliptiqSnippetNode *, NSString *)> renameTitle;
 }
+- (void)rename:(id)sender;
+- (void)cancelRename;
 - (void)addFolder:(id)sender;
 - (void)addSnippet:(id)sender;
 - (void)remove:(id)sender;
@@ -33,6 +40,15 @@ using namespace cliptiq;
 - (void)reload:(id)sender;
 - (void)enable:(id)sender;
 - (void)bind:(id)sender;
+@end
+@interface CliptiqSnippetOutline : NSOutlineView
+@property(nonatomic, weak) CliptiqSnippetBridge *bridge;
+@end
+@implementation CliptiqSnippetOutline
+- (void)keyDown:(NSEvent *)event {
+  if (event.keyCode == 120) { [self.bridge rename:nil]; return; }
+  [super keyDown:event];
+}
 @end
 @interface CliptiqSnippetText : NSTextView
 @property(nonatomic, weak) CliptiqSnippetBridge *bridge;
@@ -113,12 +129,22 @@ using namespace cliptiq;
   (void)view;
   (void)column;
   auto node = (CliptiqSnippetNode *)item;
-  auto text = [NSTextField
-      labelWithString:node.enabled ? node.title
-                                   : [@"[disabled] "
-                                         stringByAppendingString:node.title]];
+  auto cell = [[NSTableCellView alloc] initWithFrame:NSMakeRect(0, 0, column.width, 24)];
+  auto text = [NSTextField labelWithString:node.title];
+  text.frame = cell.bounds;
+  text.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
+  text.delegate = self;
+  text.selectable = YES;
+  text.textColor = node.enabled ? NSColor.labelColor : NSColor.secondaryLabelColor;
   text.lineBreakMode = NSLineBreakByTruncatingTail;
-  return text;
+  [cell addSubview:text];
+  cell.textField = text;
+  return cell;
+}
+- (BOOL)outlineView:(NSOutlineView *)view shouldSelectItem:(id)item {
+  (void)item;
+  if (renaming) [view.window makeFirstResponder:view];
+  return YES;
 }
 - (void)outlineViewSelectionDidChange:(NSNotification *)notification {
   auto view = (NSOutlineView *)notification.object;
@@ -126,10 +152,57 @@ using namespace cliptiq;
   if (select)
     select(node);
 }
-- (void)controlTextDidChange:(NSNotification *)notification {
+- (void)rename:(id)sender {
+  (void)sender;
+  if (renaming || outline.selectedRow < 0) return;
+  auto node = (CliptiqSnippetNode *)[outline itemAtRow:outline.selectedRow];
+  if (!node.itemID.length) return;
+  auto cell = (NSTableCellView *)[outline viewAtColumn:0 row:outline.selectedRow makeIfNecessary:YES];
+  renaming = cell.textField;
+  originalTitle = node.title;
+  renamedNode = node;
+  renaming.editable = YES;
+  [renaming selectText:nil];
+}
+- (void)cancelRename {
+  if (!renaming) return;
+  auto field = renaming;
+  auto original = originalTitle;
+  // Drop the identity before ending editing, so stale field-editor callbacks
+  // cannot write into a rebuilt outline or the newly selected item.
+  renaming = nil;
+  renamedNode = nil;
+  originalTitle = nil;
+  auto editor = (NSTextView *)[outline.window fieldEditor:NO forObject:field];
+  editor.string = original;
+  field.stringValue = original;
+  field.editable = NO;
+  [outline.window makeFirstResponder:outline];
+}
+- (void)controlTextDidEndEditing:(NSNotification *)notification {
   auto text = (NSTextField *)notification.object;
-  if ([text.identifier isEqualToString:@"editor-title"] && edit)
-    edit(0, text.stringValue);
+  if (text != renaming) return;
+  auto value = text.stringValue;
+  text.editable = NO;
+  renaming = nil;
+  if (renameTitle && ![value isEqualToString:originalTitle]) renameTitle(renamedNode, value);
+  renamedNode = nil;
+  originalTitle = nil;
+}
+- (BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)selector {
+  (void)textView;
+  if (control != renaming) return NO;
+  if (selector == @selector(cancelOperation:)) {
+    textView.string = originalTitle;
+    renaming.stringValue = originalTitle;
+    [outline.window makeFirstResponder:outline];
+    return YES;
+  }
+  if (selector == @selector(insertNewline:)) {
+    [outline.window makeFirstResponder:outline];
+    return YES;
+  }
+  return NO;
 }
 - (void)textDidChange:(NSNotification *)notification {
   if (edit)
@@ -248,13 +321,14 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
   std::thread::id owner = std::this_thread::get_id();
   NSWindow *window = nil;
   NSOutlineView *tree = nil;
-  NSTextField *title = nil, *shortcut = nil, *message = nil;
+  NSTextField *shortcut = nil, *message = nil;
   CliptiqSnippetText *body = nil;
   NSButton *enabled = nil, *undo = nil, *redo = nil, *addSnippet = nil,
            *bind = nil;
   CliptiqSnippetBridge *bridge = nil;
   std::shared_ptr<SnippetEditorSession> model;
   bool updating = false;
+  int pending_command = 0;
   std::uint64_t drag = 0;
   std::optional<SnippetItemId> dragged;
   ~State() {
@@ -262,6 +336,7 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
       bridge->action = {};
       bridge->select = {};
       bridge->edit = {};
+      bridge->renameTitle = {};
       bridge->drag = {};
       bridge->drop = {};
       bridge->cancel = {};
@@ -279,9 +354,14 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
   void poll() {
     if(!model || !window) return;
     auto result=model->poll_saves();
-    if(!result) status(result.error());
+    if(!result) { pending_command = 0; status(result.error()); }
     else if(result.value()) {status({});selected_label();}
     history();
+    if (pending_command && !model->saving()) {
+      auto command = pending_command;
+      pending_command = 0;
+      if (!model->has_unsaved()) perform(command);
+    }
   }
   void history() {
     undo.enabled = model->can_undo();
@@ -302,16 +382,17 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
     }
   }
   bool confirm_close() {
+    [window makeFirstResponder:nil];
     if(model && model->saving()) {status(Error{ErrorCode::Busy,"Save pending; wait before closing"});return false;}
 
     if (!model || !model->has_unsaved())
       return true;
     auto alert = [NSAlert new];
-    alert.messageText = @"Discard unsaved draft?";
+    alert.messageText = loc(@"Discard unsaved draft?");
     alert.informativeText =
-        @"Keep editing to correct the error, or discard the local draft.";
-    [alert addButtonWithTitle:@"Keep Editing"];
-    [alert addButtonWithTitle:@"Discard Draft"];
+        loc(@"Keep editing to correct the error, or discard the local draft.");
+    [alert addButtonWithTitle:loc(@"Keep Editing")];
+    [alert addButtonWithTitle:loc(@"Discard Draft")];
     if ([alert runModal] != NSAlertSecondButtonReturn)
       return false;
     auto loaded = model->reload();
@@ -325,8 +406,6 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
     updating = true;
     auto selected = model->selected();
     bool folder = selected && selected->kind == SnippetItemKind::Folder;
-    title.enabled = bool(selected);
-    title.stringValue = str(model->title());
     enabled.enabled = bool(selected);
     enabled.state =
         model->enabled() ? NSControlStateValueOn : NSControlStateValueOff;
@@ -355,9 +434,9 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
   }
   void selected_label() {
     auto selected = model->selected();
-    if (selected) {
+    if (selected && !bridge->renaming) {
       auto item = node(*selected);
-      item.title = str(model->title().empty() ? "Untitled" : model->title());
+      item.title = str(model->title().empty() ? std::string(lc("Untitled")) : model->title());
       item.enabled = model->enabled();
       updating = true;
       [tree reloadItem:item];
@@ -366,13 +445,14 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
     history();
   }
   void rebuild() {
+    [bridge cancelRename];
     updating = true;
     auto roots = [NSMutableArray<CliptiqSnippetNode *> new];
     auto parents = [NSMutableDictionary<NSString *, CliptiqSnippetNode *> new];
     for (auto &f : model->folders()) {
       auto n = [CliptiqSnippetNode new];
       n.itemID = str(f.id);
-      n.title = str(f.title.empty() ? "Untitled folder" : f.title);
+      n.title = str(f.title.empty() ? std::string(lc("Untitled folder")) : f.title);
       n.folder = YES;
       n.enabled = f.enabled;
       n.children = [NSMutableArray new];
@@ -384,7 +464,7 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
       if (!parent) {
         parent = [CliptiqSnippetNode new];
         parent.itemID = @"";
-        parent.title = @"Unfiled legacy items: move to a folder";
+        parent.title = loc(@"Unfiled legacy items: move to a folder");
         parent.folder = YES;
         parent.children = [NSMutableArray new];
         [roots addObject:parent];
@@ -392,7 +472,7 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
       }
       auto n = [CliptiqSnippetNode new];
       n.itemID = str(s.id);
-      n.title = str(s.title.empty() ? "Untitled snippet" : s.title);
+      n.title = str(s.title.empty() ? std::string(lc("Untitled snippet")) : s.title);
       n.enabled = s.enabled;
       n.children = [NSMutableArray new];
       [parent.children addObject:n];
@@ -416,6 +496,17 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
   void perform(int command) {
 
     auto keep = shared_from_this();
+    if (bridge->renaming) {
+      // Toolbar buttons need not take first-responder status themselves.
+      // Commit the field editor while its original node is still selected.
+      if (![window makeFirstResponder:tree]) return;
+      if (command >= 507 && command <= 512 && model->saving()) {
+        // Finish structural actions after asynchronous title persistence.
+        pending_command = command;
+        status({});
+        return;
+      }
+    }
     Result<void> r;
     if (command == 507 || command == 508) {
       auto added = command == 507 ? model->add_folder() : model->add_snippet();
@@ -423,13 +514,12 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
         r = added.error();
       else {
         rebuild();
-        [window makeFirstResponder:command == 507 ? (NSResponder *)title
-                                                  : (NSResponder *)body];
+        [bridge rename:nil];
       }
     } else if (command == 509) {
       auto alert = [NSAlert new];
       alert.messageText = loc(@"Delete selected item?");
-      alert.informativeText = @"A folder also deletes its snippets.";
+      alert.informativeText = loc(@"A folder also deletes its snippets.");
       [alert addButtonWithTitle:loc(@"Cancel")];
       [alert addButtonWithTitle:loc(@"Delete")];
       bool confirmed = [alert runModal] == NSAlertSecondButtonReturn;
@@ -438,8 +528,10 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
         rebuild();
     } else if (command == 510 || command == 511) {
       r = command == 510 ? model->undo() : model->redo();
-      if (r)
+      if (r) {
         detail();
+        selected_label();
+      }
     } else if (command == 512) {
       r = model->reload();
       if (r)
@@ -472,6 +564,7 @@ NativeSnippetEditor::NativeSnippetEditor()
 NativeSnippetEditor::~NativeSnippetEditor() = default;
 Result<void>
 NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
+  @autoreleasepool {
   auto s = state_;
   if (s->owner != std::this_thread::get_id() || !NSThread.isMainThread)
     return Error{ErrorCode::InvalidArgument, "Editor requires main thread"};
@@ -484,6 +577,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
     s->bridge->action = {};
     s->bridge->select = {};
     s->bridge->edit = {};
+    s->bridge->renameTitle = {};
     s->bridge->drag = {};
     s->bridge->drop = {};
     s->bridge->cancel = {};
@@ -508,7 +602,14 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
   tools.orientation = NSUserInterfaceLayoutOrientationHorizontal;
   tools.spacing = 6;
   tools.autoresizingMask = NSViewWidthSizable | NSViewMinYMargin;
-  [root addSubview:tools];
+  auto toolbarScroll = [[NSScrollView alloc] initWithFrame:tools.frame];
+  toolbarScroll.autoresizingMask = tools.autoresizingMask;
+  toolbarScroll.hasHorizontalScroller = YES;
+  toolbarScroll.autohidesScrollers = YES;
+  toolbarScroll.drawsBackground = NO;
+  tools.autoresizingMask = NSViewNotSizable;
+  toolbarScroll.documentView = tools;
+  [root addSubview:toolbarScroll];
   auto button = [&](NSString *label, NSString *name, SEL action) {
     auto b = [NSButton buttonWithTitle:label target:s->bridge action:action];
     b.identifier = name;
@@ -521,7 +622,10 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
   button(loc(@"Delete…"), @"editor-delete", @selector(remove:));
   s->undo = button(loc(@"Undo"), @"editor-undo", @selector(undo:));
   s->redo = button(loc(@"Redo"), @"editor-redo", @selector(redo:));
+  button(loc(@"Rename"), @"editor-rename", @selector(rename:));
   button(loc(@"Reload"), @"editor-reload", @selector(reload:));
+  [tools layoutSubtreeIfNeeded];
+  tools.frame = NSMakeRect(0, 0, tools.fittingSize.width, 36);
   auto split = [[NSSplitView alloc] initWithFrame:NSMakeRect(12, 64, 876, 528)];
   split.vertical = YES;
   split.dividerStyle = NSSplitViewDividerStyleThin;
@@ -529,7 +633,11 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
   [root addSubview:split];
   auto left = [[NSScrollView alloc] initWithFrame:NSMakeRect(0, 0, 280, 528)];
   left.hasVerticalScroller = YES;
-  s->tree = [[NSOutlineView alloc] initWithFrame:left.bounds];
+  s->tree = [[CliptiqSnippetOutline alloc] initWithFrame:left.bounds];
+  [(CliptiqSnippetOutline *)s->tree setBridge:s->bridge];
+  s->bridge->outline = s->tree;
+  s->tree.target = s->bridge;
+  s->tree.doubleAction = @selector(rename:);
   s->tree.identifier = @"editor-tree";
   auto column = [[NSTableColumn alloc] initWithIdentifier:@"item"];
   column.width = 260;
@@ -543,20 +651,13 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
   auto right = [[NSView alloc] initWithFrame:NSMakeRect(281, 0, 595, 528)];
   [split addSubview:right];
   [split setPosition:280 ofDividerAtIndex:0];
-  s->title = [[NSTextField alloc] initWithFrame:NSMakeRect(12, 488, 571, 26)];
-  s->title.identifier = @"editor-title";
-  s->title.placeholderString = loc(@"Title");
-  s->title.accessibilityLabel = loc(@"Title");
-  s->title.delegate = s->bridge;
-  s->title.autoresizingMask = NSViewWidthSizable | NSViewMinYMargin;
-  [right addSubview:s->title];
   s->enabled = [NSButton checkboxWithTitle:loc(@"Enabled in menu")
                                     target:s->bridge
                                     action:@selector(enable:)];
   s->enabled.identifier = @"editor-enabled";
   s->enabled.frame = NSMakeRect(12, 454, 571, 24);
   s->enabled.autoresizingMask = NSViewWidthSizable | NSViewMinYMargin;
-  [right addSubview:s->enabled];
+
   s->shortcut = [[CliptiqFolderShortcutField alloc]
       initWithFrame:NSMakeRect(12, 418, 441, 26)];
   s->shortcut.identifier = @"editor-shortcut";
@@ -564,14 +665,14 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
       loc(@"Folder shortcut: press chord, then Bind");
   s->shortcut.accessibilityLabel = loc(@"Folder shortcut");
   s->shortcut.autoresizingMask = NSViewWidthSizable | NSViewMinYMargin;
-  [right addSubview:s->shortcut];
-  s->bind = [NSButton buttonWithTitle:@"Bind / Clear"
+
+  s->bind = [NSButton buttonWithTitle:loc(@"Bind / Clear")
                                target:s->bridge
                                action:@selector(bind:)];
   s->bind.identifier = @"editor-bind";
   s->bind.frame = NSMakeRect(465, 418, 118, 26);
   s->bind.autoresizingMask = NSViewMinXMargin | NSViewMinYMargin;
-  [right addSubview:s->bind];
+
   auto scroll =
       [[NSScrollView alloc] initWithFrame:NSMakeRect(12, 12, 571, 394)];
   scroll.hasVerticalScroller = YES;
@@ -591,12 +692,28 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
   s->body.horizontallyResizable = NO;
   s->body.autoresizingMask = NSViewWidthSizable;
   s->body.textContainer.widthTracksTextView = YES;
-  s->body.accessibilityLabel = @"Snippet text";
+  s->body.accessibilityLabel = loc(@"Snippet text");
   scroll.documentView = s->body;
-  [right addSubview:scroll];
+  auto inspector = [NSStackView new];
+  inspector.orientation = NSUserInterfaceLayoutOrientationVertical;
+  inspector.alignment = NSLayoutAttributeLeading;
+  inspector.spacing = 10;
+  inspector.translatesAutoresizingMaskIntoConstraints = NO;
+  [right addSubview:inspector];
+  for (NSView *view in @[s->enabled, s->shortcut, s->bind, scroll]) {
+    view.translatesAutoresizingMaskIntoConstraints = NO;
+    [inspector addArrangedSubview:view];
+    [view.widthAnchor constraintEqualToAnchor:inspector.widthAnchor].active = YES;
+  }
+  [NSLayoutConstraint activateConstraints:@[
+    [inspector.leadingAnchor constraintEqualToAnchor:right.leadingAnchor constant:12],
+    [inspector.trailingAnchor constraintEqualToAnchor:right.trailingAnchor constant:-12],
+    [inspector.topAnchor constraintEqualToAnchor:right.topAnchor constant:12],
+    [inspector.bottomAnchor constraintEqualToAnchor:right.bottomAnchor constant:-12],
+    [scroll.heightAnchor constraintGreaterThanOrEqualToConstant:80]
+  ]];
   s->message = [NSTextField
-      wrappingLabelWithString:@"Changes save locally. Undo history resets when "
-                              @"you change the selected item."];
+      wrappingLabelWithString:loc(@"Changes save locally. Undo history resets when you change the selected item.")];
   s->message.identifier = @"editor-status";
   s->message.frame = NSMakeRect(12, 12, 876, 44);
   s->message.autoresizingMask = NSViewWidthSizable;
@@ -626,6 +743,21 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
         s->detail();
       else
         s->restore_selection();
+    }
+  };
+  s->bridge->renameTitle = [weak](CliptiqSnippetNode *node, NSString *value) {
+    if (auto state = weak.lock()) {
+      auto selected = state->model->selected();
+      if (!selected || selected->value != utf8(node.itemID) ||
+          (selected->kind == SnippetItemKind::Folder) != bool(node.folder)) return;
+      if (![value stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet].length) {
+        state->status(Error{ErrorCode::InvalidArgument, std::string(lc("Title cannot be empty"))});
+        state->selected_label();
+        return;
+      }
+      auto result = state->model->queue_title(utf8(value));
+      state->status(result);
+      state->selected_label();
     }
   };
   s->bridge->edit = [weak](int field, NSString *value) {
@@ -722,6 +854,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
   s->rebuild();
   [s->window makeKeyAndOrderFront:nil];
   return {};
+  }
 }
 Result<void> NativeSnippetEditor::process_events() {
   if (state_->owner != std::this_thread::get_id())

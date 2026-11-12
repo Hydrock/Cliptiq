@@ -8,6 +8,7 @@
 // clang-format on
 #include "cliptiq/native_menu.hpp"
 #include "Workspace.hpp"
+#include "ApplicationIcon.hpp"
 #include <algorithm>
 #include <map>
 #include <stdexcept>
@@ -273,6 +274,41 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
       return SendMessageW(s->window,message,wp,lp);
     return DefWindowProcW(w,message,wp,lp);
   }
+  bool ensure_popup_owner() {
+    if(!popup_window){
+      WNDCLASSW type{};type.lpfnWndProc=popup_procedure;type.hInstance=GetModuleHandleW(nullptr);type.lpszClassName=L"Cliptiq.PopupOwner";
+      RegisterClassW(&type);
+      // Independent, undecorated zero-size window: never activate the workspace.
+      popup_window=CreateWindowExW(WS_EX_TOOLWINDOW,type.lpszClassName,L"",WS_POPUP,
+        0,0,0,0,nullptr,nullptr,type.hInstance,this);
+      if(!popup_window)return false;
+    }
+    return true;
+  }
+  void tray_context_menu() {
+    auto keep=shared_from_this();
+    if(!ensure_popup_owner())return;
+    auto context=CreatePopupMenu();
+    if(!context)return;
+    AppendMenuW(context,MF_STRING,1,lw(L"Open Cliptiq"));
+    AppendMenuW(context,MF_STRING,2,lw(L"Settings"));
+    AppendMenuW(context,MF_STRING,3,lw(L"Quit"));
+    POINT point{};GetCursorPos(&point);
+    auto previous=GetForegroundWindow();
+    ShowWindow(popup_window,SW_SHOWNOACTIVATE);
+    SetForegroundWindow(popup_window);
+    auto id=TrackPopupMenuEx(context,TPM_RETURNCMD|TPM_NONOTIFY|TPM_RIGHTBUTTON,
+      point.x,point.y,popup_window,nullptr);
+    bool restore=GetForegroundWindow()==popup_window;
+    ShowWindow(popup_window,SW_HIDE);
+    if(restore && previous && IsWindow(previous))SetForegroundWindow(previous);
+    PostMessageW(popup_window,WM_NULL,0,0);
+    DestroyMenu(context);
+    if(id==1){open_workspace();ShowWindow(window,SW_SHOWNORMAL);SetForegroundWindow(window);status.launcher_visible=true;}
+    else if((id==2||id==3) && callback){
+      auto cb=callback;cb({id==2?MenuAction::OpenSettings:MenuAction::Quit,"",model.revision});
+    }
+  }
   void popup(const InvocationContext &ctx = {}) {
     invocation = ctx;
     if (invocation.target.empty() && options.invocation_provider)
@@ -289,14 +325,7 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
       State* s;
       ~Release(){if(s->options.transient_popup)s->release_popup();}
     } release{this};
-    if(!popup_window){
-      WNDCLASSW type{};type.lpfnWndProc=popup_procedure;type.hInstance=GetModuleHandleW(nullptr);type.lpszClassName=L"Cliptiq.PopupOwner";
-      RegisterClassW(&type);
-      // Independent, undecorated zero-size window: never activate the workspace.
-      popup_window=CreateWindowExW(WS_EX_TOOLWINDOW,type.lpszClassName,L"",WS_POPUP,
-        0,0,0,0,nullptr,nullptr,type.hInstance,this);
-      if(!popup_window)return;
-    }
+    if(!ensure_popup_owner())return;
     auto previous=GetForegroundWindow();
     POINT p{};
     GetCursorPos(&p);
@@ -398,11 +427,11 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
         break;
       }
       case WM_APP + 1:
+        if(LOWORD(lp)==WM_CONTEXTMENU){s->tray_context_menu();return 0;}
         if(s->options.workspace_enabled && (LOWORD(lp)==NIN_SELECT||LOWORD(lp)==NIN_KEYSELECT)){
           s->open_workspace();ShowWindow(w,SW_SHOWNORMAL);SetForegroundWindow(w);s->status.launcher_visible=true;return 0;
         }
-        if (LOWORD(lp) == NIN_SELECT || LOWORD(lp) == NIN_KEYSELECT ||
-            LOWORD(lp) == WM_CONTEXTMENU)
+        if (LOWORD(lp) == NIN_SELECT || LOWORD(lp) == NIN_KEYSELECT)
           s->popup();
         return 0;
       case WM_DPICHANGED: {
@@ -476,6 +505,7 @@ Result<void> NativeMenu::initialize() {
                               type.hInstance, s.get());
   if (!s->window)
     return Error{ErrorCode::ReadOnly, "Cannot create native launcher window"};
+  windows::set_application_icons(s->window);
   s->dpi = GetDpiForWindow(s->window);
   if (!s->dpi)
     s->dpi = 96;

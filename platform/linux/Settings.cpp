@@ -146,6 +146,15 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
     gtk_grid_attach(GTK_GRID(grids[group]), label, 0, row, 1, 1);
     gtk_grid_attach(GTK_GRID(grids[group]), control, 1, row, 1, 1);
     gtk_widget_set_hexpand(control, TRUE);
+    auto help=gtk_label_new(f.description.c_str());
+    gtk_label_set_line_wrap(GTK_LABEL(help),TRUE);
+    gtk_label_set_max_width_chars(GTK_LABEL(help),90);
+    gtk_label_set_xalign(GTK_LABEL(help),0);
+    auto attributes=pango_attr_list_new();
+    pango_attr_list_insert(attributes,pango_attr_scale_new(0.85));
+    gtk_label_set_attributes(GTK_LABEL(help),attributes);pango_attr_list_unref(attributes);
+    gtk_style_context_add_class(gtk_widget_get_style_context(help),"dim-label");
+    gtk_grid_attach(GTK_GRID(grids[group]),help,0,rows[group]++,2,1);
     if (!f.reason.empty()) {
       auto reason = gtk_label_new(f.reason.c_str());
       gtk_label_set_line_wrap(GTK_LABEL(reason), TRUE);

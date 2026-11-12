@@ -85,8 +85,8 @@ const std::vector<Spec> &specs() {
        "Screenshot directory (absolute path)", "", -1, -1},
       {SettingsGroup::Donate, "support", "Project support",
        "https://github.com/Hydrock/Cliptiq", -1, -1},
-      {SettingsGroup::Sounds, "sound_copy", "Sound on copy", "1", 0, 1},
-      {SettingsGroup::Sounds, "sound_paste", "Sound on paste", "1", 0, 1},
+      {SettingsGroup::Sounds, "sound_copy", "Sound on copy", "0", 0, 1},
+      {SettingsGroup::Sounds, "sound_paste", "Sound on paste", "0", 0, 1},
       {SettingsGroup::Sounds, "sound_volume", "Sound volume (%)", "25", 0, 100}};
   return s;
 }
@@ -126,6 +126,68 @@ CapturePlatform native_platform() {
   return CapturePlatform::X11;
 #endif
 }
+std::string setting_description(const std::string &key) {
+  static const std::map<std::string, const char *> help = {
+    {"history_count", "How many recent copies to keep. Older entries are removed when this limit is reached."},
+    {"sort", "Show the newest copies first, or move recently used entries to the top."},
+    {"auto_paste", "Selecting an item in the quick menu inserts it into the previously active app. When off, paste it yourself."},
+    {"duplicates", "Accept content that is already in history. When off, repeated copies are ignored."},
+    {"replace_duplicates", "When repeated copies are allowed, update the existing entry instead of creating another copy."},
+    {"confirm_clear", "Ask before deleting the entire clipboard history."},
+    {"clear_quit", "Delete clipboard history when you exit Cliptiq. Closing the main window only hides it."},
+    {"periodic", "Clear the entire history at the selected interval, rather than removing entries by age."},
+    {"cleanup_seconds", "How often to clear history when periodic cleanup is enabled."},
+    {"login", "Start Cliptiq when you sign in so it can collect clipboard history."},
+    {"locale", "Choose the interface language, or follow the system language."},
+    {"inline_count", "How many history entries to show directly before grouping the rest into submenus."},
+    {"folder_count", "How many history entries to put in each numbered submenu. This does not limit snippet folders."},
+    {"title_characters", "Limit the length of item names in the quick menu. Full content is kept."},
+    {"snippets_above", "Place Snippets before History in the quick menu."},
+    {"numbered", "Add numbers to history entries in the quick menu."},
+    {"zero_start", "Start numbering history entries at 0 instead of 1."},
+    {"numeric_selection", "Use number keys to select numbered items while the quick menu is open."},
+    {"icons", "Show an icon for the content type beside menu entries, where supported."},
+    {"tooltips", "Show a longer text preview when you pause over a quick-menu item."},
+    {"tooltip_characters", "Maximum amount of text shown in a tooltip. Full content is kept."},
+    {"image_previews", "Show small image previews in the quick menu. This does not change the main-window preview size."},
+    {"preview_width", "Maximum width of image thumbnails in the quick menu, in pixels."},
+    {"preview_height", "Maximum height of image thumbnails in the quick menu, in pixels."},
+    {"hex_swatches", "Show a color sample for copied codes such as #FF8800."},
+    {"show_clear", "Controls the clear-history item in menus that expose it. The compact quick menu has no service commands."},
+    {"type_text", "Save plain text, without fonts, colors or other formatting."},
+    {"type_rtf", "Keep formatted text, including fonts and colors, when the source app provides RTF."},
+    {"type_rtfd", "Keep formatted text with attachments when the source app provides RTFD, mainly on macOS."},
+    {"type_html", "Keep the HTML version of copied content so compatible apps can preserve its formatting."},
+    {"type_pdf", "Keep PDF data supplied by the source app. Copying a PDF file itself is a file reference."},
+    {"type_files", "Remember references to copied files and folders. Their contents are not backed up."},
+    {"type_url", "Keep links supplied in the clipboard as a URL format. A link may also be available as plain text."},
+    {"type_image", "Save copied images and screenshots when image data is available in the clipboard."},
+    {"concealed", "Skip content marked as private by the source app. Not every app supplies this marker."},
+    {"remote_macos", "Skip copies received from another Apple device through Universal Clipboard."},
+    {"excluded", "Do not save copies from these apps. Enter one application identifier per line."},
+    {"unknown_source", "Choose whether to save a copy when Cliptiq cannot identify the app it came from."},
+    {"updates_auto", "Check for new releases on a schedule. On Windows, this does not automatically download or install them."},
+    {"updates_interval", "How often to check for a new version when automatic checks are enabled."},
+    {"diagnostics", "Network diagnostics are disabled. Diagnostic information can only be exported locally."},
+    {"plain_modifier", "Hold this key when selecting a quick-menu item to paste plain text without formatting."},
+    {"delete_modifier", "Hold this key when selecting a history item to delete it instead of pasting it."},
+    {"paste_delete_modifier", "Hold this key when selecting a history item to paste it and then remove it from history."},
+    {"screenshots", "Watch the selected folder for new screenshot files and add supported images to history."},
+    {"screenshot_directory", "Full path to the folder to watch when screenshot monitoring is enabled."},
+    {"support", "Project page with source code, releases and information about Cliptiq."},
+    {"sound_copy", "Play a short sound after a copy is saved to history or content is copied through Cliptiq."},
+    {"sound_paste", "Play a short sound when Cliptiq sends a paste command. It does not monitor pastes in other apps."},
+    {"sound_volume", "Volume of Cliptiq sounds from 0 to 100%. Test buttons let you hear them before saving."},
+    {"hotkey:main", "Open History and Snippets at the mouse pointer. Click the field and press a shortcut; Backspace clears it."},
+    {"hotkey:history", "Another shortcut for the same quick menu. Click the field and press the keys; Backspace clears it."},
+    {"hotkey:settings", "Open settings from any app. Click the field and press a shortcut; Backspace clears it."},
+    {"hotkey:clear", "Clear clipboard history. Confirmation follows the general setting. Backspace clears this shortcut."},
+    {"hotkey:editor", "Open the snippet editor to create folders and reusable texts. Backspace clears this shortcut."},
+    {"hotkey:folder:", "Open the snippets in this folder at the mouse pointer. Backspace clears this shortcut."},
+  };
+  auto found=help.find(key.rfind("hotkey:folder:",0)==0?"hotkey:folder:":key);
+  return found==help.end()?std::string{}:tr(found->second);
+}
 } // namespace
 Settings default_settings(CapturePlatform platform) {
   if (platform == CapturePlatform::Unknown)
@@ -139,14 +201,12 @@ Settings default_settings(CapturePlatform platform) {
   if (platform == CapturePlatform::MacOS)
     s.hotkeys = {{"main", chord("Shift+Super+V")},
                  {"history", chord("Ctrl+Super+V")},
-                 {"snippets", chord("Shift+Super+B")},
                  {"settings", chord("Ctrl+Shift+Alt+Super+V")},
                  {"editor", {}},
                  {"clear", {}}};
   else
     s.hotkeys = {{"main", chord("Ctrl+Alt+V")},
                  {"history", chord("Ctrl+Alt+H")},
-                 {"snippets", chord("Ctrl+Alt+B")},
                  {"settings", chord("Ctrl+Shift+Alt+V")},
                  {"editor", {}},
                  {"clear", {}}};
@@ -310,6 +370,11 @@ Result<Settings> load_settings(Store &store, CapturePlatform platform) {
         result.values[key] = value;
       else
         return Error{ErrorCode::Unsupported, "Unknown stored setting"};
+    }
+    auto retired=result.hotkeys.find("snippets");
+    if(retired!=result.hotkeys.end()){
+      if(!result.hotkeys["main"]&&retired->second)result.hotkeys["main"]=retired->second;
+      result.hotkeys.erase(retired);
     }
     auto folders = settings_folders(store);
     if (!folders)
@@ -503,9 +568,9 @@ std::vector<SettingField> settings_fields(const Settings &s,
                    false};
     if (!f.reason.empty())
       f.enabled = false;
-    if (f.group == SettingsGroup::Sounds && caps.platform != CapturePlatform::Windows) {
+    if (f.group == SettingsGroup::Sounds && caps.platform != CapturePlatform::Windows && caps.platform != CapturePlatform::MacOS) {
       f.enabled = false;
-      f.reason = "Sound playback is currently available on Windows only";
+      f.reason = "Sound playback is currently available on Windows and macOS";
     }
     if (f.key == "support") {
       f.enabled = false;
@@ -529,13 +594,14 @@ std::vector<SettingField> settings_fields(const Settings &s,
       f.reason =
           "Generic Windows type icons deferred since T07; RGBA previews work";
     }
+    f.description=setting_description(f.key);
     out.push_back(std::move(f));
   }
   for (auto &p : s.hotkeys) {
+    if(p.first=="snippets")continue;
     auto label=tr(p.first);
     if(p.first=="main")label=tr("Quick menu");
     else if(p.first=="history")label=tr("Quick menu - alternate 1");
-    else if(p.first=="snippets")label=tr("Quick menu - alternate 2");
     else if(p.first=="clear")label=tr("Clear History");
     else if(p.first=="editor")label=tr("Edit Snippets");
     else if(p.first.rfind("folder:",0)==0){
@@ -551,6 +617,7 @@ std::vector<SettingField> settings_fields(const Settings &s,
              : "",
          true, false, true});
   }
+  for(auto &field:out)if(field.description.empty())field.description=setting_description(field.key);
   return out;
 }
 } // namespace cliptiq
