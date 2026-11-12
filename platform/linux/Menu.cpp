@@ -16,7 +16,7 @@ std::string caption(const MenuItem &i) {
   std::string s;
   if (i.number)
     s = std::to_string(*i.number) + ". ";
-  s += i.label;
+  s += i.label+(i.source_device.empty()?"":"  ["+i.source_device+"]");
   return s;
 }
 GdkPixbuf *pixbuf(const MenuImage &i) {

@@ -226,7 +226,9 @@ Result<void> MacClipboardBackend::set_capture_policy(CapturePolicy p) {
  if(decision.reason==CaptureReason::InvalidInput)return Error{ErrorCode::InvalidArgument,"Invalid capture policy"};
  state_->options.policy=std::move(p);return {};
 }
-Result<std::string> MacClipboardBackend::write_snapshot(const ClipboardSnapshot& snapshot) {
+Result<std::string> MacClipboardBackend::write_snapshot(const ClipboardSnapshot& snapshot) {return write_checked(snapshot,{});}
+Result<std::string> MacClipboardBackend::write_snapshot_if_unchanged(const ClipboardSnapshot& snapshot,const std::string& expected) {return write_checked(snapshot,expected);}
+Result<std::string> MacClipboardBackend::write_checked(const ClipboardSnapshot& snapshot,const std::optional<std::string>& expected) {
  return guarded<std::string>([&]()->Result<std::string>{
   if(![NSThread isMainThread])return thread_error();
   auto& state=*state_;auto board=state.board;const auto& limits=state.options.limits;
@@ -267,6 +269,8 @@ Result<std::string> MacClipboardBackend::write_snapshot(const ClipboardSnapshot&
   auto first=objects.firstObject;
   for(const auto& flag:std::vector<std::pair<Flag,NSString*>>{{snapshot.flags.transient,@"org.nspasteboard.TransientType"},{snapshot.flags.concealed,@"org.nspasteboard.ConcealedType"},{snapshot.flags.remote,@"com.apple.is-remote-clipboard"}})
    if(flag.first==Flag::Yes&&![first setData:[NSData data] forType:flag.second])return Error{ErrorCode::Io,"Unable to prepare replay metadata"};
+  if(expected && *expected!=utf8(board.name)+":"+std::to_string(board.changeCount))return Error{ErrorCode::Busy,"Newer local clipboard kept"};
+  // NSPasteboard has no public atomic compare-and-write primitive.
   const NSInteger owned=[board clearContents];
   // NSPasteboardItem rejects NSFilenamesPboardType. It must stay on the root,
   // as in the original Clipy compatibility path, before writing modern items.

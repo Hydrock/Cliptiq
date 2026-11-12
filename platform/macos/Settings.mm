@@ -48,13 +48,16 @@ using namespace cliptiq;
 @interface CliptiqSettingsActions : NSObject <NSWindowDelegate> {
 @public
   std::function<void()> save;
+  std::function<void()> advanced;
   std::function<void(bool)> preview;
   CliptiqShortcutEditor *editor;
 }
+- (void)advanced:(id)sender;
 - (void)apply:(id)sender;
 - (void)preview:(id)sender;
 @end
 @implementation CliptiqSettingsActions
+- (void)advanced:(id)sender { (void)sender;if(advanced)advanced(); }
 - (void)preview:(id)sender { if (preview) preview([sender tag] != 0); }
 - (void)apply:(id)sender {
   (void)sender;
@@ -99,6 +102,7 @@ struct NativeSettings::State : std::enable_shared_from_this<State> {
   NSTextField *message = nil;
   CliptiqSettingsActions *target = nil;
   Settings settings;
+  std::function<void()> advanced;
   std::function<void(bool, int)> preview;
   NSButton *previewCopy = nil, *previewPaste = nil;
   std::function<Result<void>(Settings)> apply;
@@ -301,6 +305,8 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
     if (n) s->previewPaste = button; else s->previewCopy = button;
   }
   [stacks[unsigned(SettingsGroup::Sounds)] addArrangedSubview:previews];
+  s->target->advanced = [weak] { if(auto s=weak.lock())if(s->advanced)s->advanced(); };
+  [stacks[unsigned(SettingsGroup::Beta)] addArrangedSubview:[NSButton buttonWithTitle:loc(@"Advanced LAN settings") target:s->target action:@selector(advanced:)]];
   auto apply = [NSButton buttonWithTitle:loc(@"Apply")
                                   target:s->target
                                   action:@selector(apply:)];
@@ -334,6 +340,7 @@ bool NativeSettings::confirm_clear() const {
   [alert addButtonWithTitle:loc(@"Cancel")];
   return [alert runModal] == NSAlertFirstButtonReturn;
 }
+void NativeSettings::advanced(std::function<void()> cb) { state_->advanced=std::move(cb); }
 void NativeSettings::sound_preview(std::function<void(bool, int)> callback) {
   state_->preview = std::move(callback);
   state_->previewCopy.enabled = bool(state_->preview);

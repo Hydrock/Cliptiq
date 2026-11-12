@@ -36,6 +36,10 @@ on:
       - 'tests/integration/lifecycle*'
       - 'tests/integration/native_media_test.cpp'
       - 'tests/fixtures/media/**'
+      - 'platform/lan/**'
+      - 'platform/LanSettings*'
+      - 'tests/integration/lan*'
+      - 'tools/fetch-lan-deps.py'
       - 'platform/MenuHost.cpp'
       - 'platform/macos/**'
       - 'platform/windows/**'
@@ -93,6 +97,8 @@ jobs:
         run: bash tools/install-linux-backend-deps.sh
       - name: Fetch pinned SQLite
         run: python tools/fetch-footprint-deps.py
+      - name: Fetch pinned LAN TLS
+        run: python tools/fetch-lan-deps.py
       - name: Configure tests
         run: cmake --preset test
       - name: Build tests

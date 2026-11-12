@@ -15,6 +15,20 @@
 #endif
 #endif
 #include "Application.hpp"
+#ifdef CLIPTIQ_WITH_LAN
+#ifdef _WIN32
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <windows.h>
+#endif
+#include "lan/Service.hpp"
+#include "lan/Secrets.hpp"
+#include "LanSettings.hpp"
+#endif
 #include "cliptiq/menu.hpp"
 #include "cliptiq/locale.hpp"
 #ifdef CLIPTIQ_WITH_LIFECYCLE
@@ -68,6 +82,9 @@ void ok(Result<void> r) {
 int host(int argc, char **argv) {
   try {
     bool smoke = false, capture = false, demo = false;
+#ifdef CLIPTIQ_WITH_LAN
+    lan::Service *network=nullptr;
+#endif
 #ifdef CLIPTIQ_WITH_SOUND
 #ifdef __APPLE__
     macos::NativeSound sound;
@@ -329,9 +346,17 @@ int host(int argc, char **argv) {
 #endif
     auto capture_feedback = [&](auto event) {
       if(!event){std::cerr<<event.error().message<<'\n';return;}
+#ifdef __APPLE__
+      const auto disposition=event.value().decision.disposition;
+#else
+      const auto disposition=event.value().disposition;
+#endif
+#ifdef CLIPTIQ_WITH_LAN
+      if(network && disposition==CaptureDisposition::Accept && event.value().entry_id)network->captured(*event.value().entry_id);
+#endif
 #ifdef CLIPTIQ_WITH_SOUND
       const bool initial=initial_capture_sound;initial_capture_sound=false;
-      if(!smoke && !initial && event.value().disposition==CaptureDisposition::Accept && event.value().entry_id)sound.play_copy();
+      if(!smoke && !initial && disposition==CaptureDisposition::Accept && event.value().entry_id)sound.play_copy();
 #endif
     };
     if (capture) {
@@ -392,6 +417,49 @@ int host(int argc, char **argv) {
 #endif
 #ifdef CLIPTIQ_WITH_SETTINGS
     NativeSettings settings_window;
+#ifdef CLIPTIQ_WITH_LAN
+    std::unique_ptr<lan::Service> network_service;
+    NativeLanSettings network_window;
+    std::string last_network_status;
+    if(!smoke && clipboard && path!=":memory:") {
+      lan::ClipboardHooks hooks;
+      hooks.token=[&]()->Result<std::string>{
+#ifdef _WIN32
+        return "windows:"+std::to_string(GetClipboardSequenceNumber());
+#elif defined(__APPLE__)
+        auto board=NSPasteboard.generalPasteboard;
+        return std::string(board.name.UTF8String)+":"+std::to_string(board.changeCount);
+#else
+        auto snapshot=clipboard->read_snapshot();if(!snapshot)return snapshot.error();return snapshot.value().sequence_token;
+#endif
+      };
+      hooks.write=[&](const ClipboardSnapshot& value){return clipboard->write_snapshot(value);};
+      hooks.compare_write=[&](const ClipboardSnapshot& value,const std::string& expected)->Result<std::string>{
+#ifdef _WIN32
+        return static_cast<windows::WindowsClipboardBackend*>(clipboard)->write_snapshot_if_unchanged(value,expected);
+#elif defined(__APPLE__)
+        return static_cast<macos::MacClipboardBackend*>(clipboard)->write_snapshot_if_unchanged(value,expected);
+#else
+        // Selection/pasteboard APIs without native CAS provide a best-effort check.
+        auto current=clipboard->read_snapshot();if(!current)return current.error();
+        if(current.value().sequence_token!=expected)return Error{ErrorCode::Busy,"Newer local clipboard kept"};
+        return clipboard->write_snapshot(value);
+#endif
+      };
+      network_service=std::make_unique<lan::Service>(store,path,clipboard->capabilities().platform,std::move(hooks));
+      network_service->history_policy(settings_history(preferences));
+      auto started=network_service->initialize();if(!started)std::cerr<<started.error().message<<'\n';
+      network=network_service.get();
+      settings_window.advanced([&]{
+        auto config=network_service->config();if(!config){settings_window.status(config.error().message);return;}
+        auto shown=network_window.show(std::move(config.value()),
+          [&](lan::Config draft,std::map<std::string,std::string> keys){return network_service->save(std::move(draft),std::move(keys));},
+          []{return lan::generate_key();},[&](std::string key){return network_service->copy_secret(key);});
+        if(!shown)settings_window.status(shown.error().message);
+        else {last_network_status=network_service->status();network_window.status(last_network_status);}
+      });
+    }
+#endif
 #ifdef CLIPTIQ_WITH_SOUND
     if(!smoke)settings_window.sound_preview([&](bool paste,int volume){sound.preview(paste,unsigned(volume<0?0:volume));});
 #endif
@@ -632,6 +700,9 @@ int host(int argc, char **argv) {
       return ui.update(model);
     };
     auto restart_capture = [&] {
+#ifdef CLIPTIQ_WITH_LAN
+      if(network_service)network_service->history_policy(settings_history(preferences));
+#endif
       if (!session)
         return;
       auto result =
@@ -852,6 +923,13 @@ int host(int argc, char **argv) {
       ok(editor_window.process_events());
 #endif
       ok(settings_window.process_events());
+#ifdef CLIPTIQ_WITH_LAN
+      ok(network_window.process_events());
+      if(network_service){
+        if(network_service->poll())refresh=true;
+        auto status=network_service->status();if(status!=last_network_status){last_network_status=status;network_window.status(std::move(status));}
+      }
+#endif
 #endif
 #ifdef _WIN32
       // Messages (clipboard, hotkeys, tray, worker completions) wake this wait
@@ -1050,6 +1128,9 @@ int host(int argc, char **argv) {
 #else
     (void)kind;
     (void)tray;
+#endif
+#ifdef CLIPTIQ_WITH_LAN
+    network=nullptr;if(network_service)network_service->stop();
 #endif
     if (session)
       session->stop();

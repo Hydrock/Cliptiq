@@ -81,7 +81,7 @@ void Workspace::filter(){
  changing_=true;rows_=workspace_rows(model_,page_);visible_.clear();SendMessageW(list_,WM_SETREDRAW,FALSE,0);ListView_DeleteAllItems(list_);
  wchar_t buffer[257]{};GetWindowTextW(filter_,buffer,257);auto query=lower(buffer);int selected_index=-1;
  for(size_t i=0;i<rows_.size();++i){const auto& row=rows_[i];if(!query.empty()&&lower(wide(row.item.label+" "+row.item.tooltip+" "+row.group)).find(query)==std::wstring::npos)continue;
-  auto label=wide(row.item.label);LVITEMW item{};item.mask=LVIF_TEXT;item.iItem=int(visible_.size());item.pszText=label.data();ListView_InsertItem(list_,&item);
+  auto label=wide((row.item.source_device.empty()?"":"["+row.item.source_device+"] ")+row.item.label);LVITEMW item{};item.mask=LVIF_TEXT;item.iItem=int(visible_.size());item.pszText=label.data();ListView_InsertItem(list_,&item);
   auto group=page_==MenuKind::Snippets?wide(row.group):std::wstring(type(row.item.kind));ListView_SetItemText(list_,item.iItem,1,group.data());if(row.item.id==id)selected_index=item.iItem;visible_.push_back(i);
  }
  if(selected_index<0&&!visible_.empty())selected_index=0;if(selected_index>=0)ListView_SetItemState(list_,selected_index,LVIS_SELECTED|LVIS_FOCUSED,LVIS_SELECTED|LVIS_FOCUSED);

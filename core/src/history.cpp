@@ -53,12 +53,12 @@ void prune(sqlite3* db,const Limits& l,HistoryPolicy p){
  while(rows.size()>p.max_count||total>l.history_bytes){total-=rows.back().second;erase(db,rows.back().first);rows.pop_back();}
 }
 }
-Result<std::optional<EntryId>> ingest(Store& s,ClipboardSnapshot v,HistoryPolicy p,std::int64_t now,std::optional<std::uint64_t> expected_erase_generation){return detail::guarded<std::optional<EntryId>>([&]()->Result<std::optional<EntryId>>{
+static Result<std::optional<EntryId>> ingest_impl(Store& s,ClipboardSnapshot v,HistoryPolicy p,std::int64_t now,std::optional<std::uint64_t> expected_erase_generation,bool remote){return detail::guarded<std::optional<EntryId>>([&]()->Result<std::optional<EntryId>>{
  if(!p.max_count||p.max_count>1000||now<0||static_cast<unsigned>(p.sort_order)>1)detail::invalid("invalid history policy or clock");
  auto bytes=validate(v,s.limits());if(blank_primary(v))return std::optional<EntryId>{};
- auto db=s.connection();detail::Transaction tx(db);if(expected_erase_generation&&*expected_erase_generation!=detail::erase_generation(db)){tx.commit();return std::optional<EntryId>{};}auto hash=digest(v);std::optional<EntryId> existing;
- {detail::Statement q(db,"SELECT id FROM history WHERE digest=? ORDER BY used_ms DESC,rowid DESC");q.bind(1,hash);while(q.row()){auto id=q.text(0);if(equal(v,load(db,id,s.limits()))){existing=id;break;}}}
- if(existing&&!p.allow_duplicates){tx.commit();return std::optional<EntryId>{};}
+ auto db=s.connection();std::unique_ptr<detail::Transaction> tx;if(!remote)tx=std::make_unique<detail::Transaction>(db);auto commit=[&]{if(tx)tx->commit();};if(expected_erase_generation&&*expected_erase_generation!=detail::erase_generation(db)){commit();return std::optional<EntryId>{};}auto hash=digest(v);std::optional<EntryId> existing;
+ {detail::Statement q(db,"SELECT id FROM history WHERE digest=? AND id NOT IN(SELECT entry_id FROM lan_entry_origins) ORDER BY used_ms DESC,rowid DESC");q.bind(1,hash);while(q.row()){auto id=q.text(0);if(equal(v,load(db,id,s.limits()))){existing=id;break;}}}
+ if(existing&&!p.allow_duplicates){commit();return std::optional<EntryId>{};}
  EntryId id=existing&&p.replace_duplicate?*existing:uuid();
  if(existing&&p.replace_duplicate){
   detail::Statement q(db,"UPDATE history SET used_ms=?,sequence_token=?,source_app=?,source_confidence=?,transient=?,concealed=?,remote=? WHERE id=?");q.bind(1,now);q.bind(2,v.sequence_token);if(v.source.app_id)q.bind(3,*v.source.app_id);else q.null(3);q.bind(4,static_cast<std::int64_t>(v.source.confidence));q.bind(5,static_cast<std::int64_t>(v.flags.transient));q.bind(6,static_cast<std::int64_t>(v.flags.concealed));q.bind(7,static_cast<std::int64_t>(v.flags.remote));q.bind(8,id);q.done();
@@ -69,8 +69,10 @@ Result<std::optional<EntryId>> ingest(Store& s,ClipboardSnapshot v,HistoryPolicy
  }
  prune(db,s.limits(),p);detail::revision(db);bool retained;
  {detail::Statement q(db,"SELECT 1 FROM history WHERE id=?");q.bind(1,id);retained=q.row();}
- tx.commit();return retained?std::optional<EntryId>{id}:std::optional<EntryId>{};
+ commit();return retained?std::optional<EntryId>{id}:std::optional<EntryId>{};
 });}
+Result<std::optional<EntryId>> ingest(Store&s,ClipboardSnapshot v,HistoryPolicy p,std::int64_t now,std::optional<std::uint64_t> generation){return ingest_impl(s,std::move(v),p,now,generation,false);}
+namespace detail { Result<std::optional<EntryId>> ingest_remote(Store&s,ClipboardSnapshot v,HistoryPolicy p,std::int64_t now){return ingest_impl(s,std::move(v),p,now,{},true);} }
 Result<std::vector<HistoryEntry>> list_history(Store& s,SortOrder order,std::size_t limit){return detail::guarded<std::vector<HistoryEntry>>([&]()->Result<std::vector<HistoryEntry>>{
  if(static_cast<unsigned>(order)>1||limit>1000)detail::invalid("invalid list order or limit");
  detail::Statement q(s.connection(),order==SortOrder::Created?"SELECT id,digest,created_ms,used_ms,payload_bytes FROM history ORDER BY created_ms DESC,rowid DESC LIMIT ?":"SELECT id,digest,created_ms,used_ms,payload_bytes FROM history ORDER BY used_ms DESC,rowid DESC LIMIT ?");q.bind(1,static_cast<std::int64_t>(limit));std::vector<HistoryEntry> out;while(q.row())out.push_back({q.text(0),q.text(1),q.number(2),q.number(3),static_cast<std::uint64_t>(q.number(4))});return out;

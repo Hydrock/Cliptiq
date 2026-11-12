@@ -15,6 +15,7 @@ struct ClipboardOptions {
 class MacClipboardBackend final : public ClipboardBackend {
     struct State;
     std::shared_ptr<State> state_;
+    Result<std::string> write_checked(const ClipboardSnapshot&,const std::optional<std::string>&);
 public:
     explicit MacClipboardBackend(std::string pasteboard_name = {}, ClipboardOptions = {});
 #ifdef __OBJC__
@@ -28,6 +29,7 @@ public:
     // Only an explicit UI action may opt in to a system access prompt.
     Result<ClipboardSnapshot> read_snapshot(bool user_initiated);
     Result<std::string> write_snapshot(const ClipboardSnapshot&) override;
+    Result<std::string> write_snapshot_if_unchanged(const ClipboardSnapshot&,const std::string&);
     Result<void> start(CaptureCallback) override;
     void stop() override;
     Result<void> set_capture_policy(CapturePolicy);

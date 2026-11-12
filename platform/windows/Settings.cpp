@@ -46,6 +46,7 @@ struct NativeSettings::State : std::enable_shared_from_this<State> {
   DWORD owner = GetCurrentThreadId();
   HWND window = nullptr, tabs = nullptr, message = nullptr;
   Settings settings;
+  std::function<void()> advanced;
   HFONT font = nullptr, help_font = nullptr;
   std::function<void(bool, int)> preview;
   HWND preview_copy = nullptr, preview_paste = nullptr;
@@ -143,6 +144,7 @@ struct NativeSettings::State : std::enable_shared_from_this<State> {
         return reinterpret_cast<LRESULT>(GetStockObject(WHITE_BRUSH));
       }
 
+        if (msg == WM_COMMAND && LOWORD(wp) == 302) { if(p->state->advanced) p->state->advanced(); return 0; }
         if (msg == WM_COMMAND && (LOWORD(wp) == 300 || LOWORD(wp) == 301)) { p->state->test_sound(LOWORD(wp) == 301); return 0; }
         if (msg == WM_SIZE) {
           p->arrange();
@@ -497,6 +499,9 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
     s->pages[p].height = rows[p] + 12;
     s->pages[p].rows_bottom=rows[p];
   }
+  auto network=CreateWindowExW(0,L"BUTTON",lw(L"Advanced LAN settings"),WS_CHILD|WS_VISIBLE|WS_TABSTOP,24,rows[6]+12,600,36,s->pages[6].window,reinterpret_cast<HMENU>(302),wc.hInstance,nullptr);
+  SendMessageW(network,WM_SETFONT,reinterpret_cast<WPARAM>(font),TRUE);
+  s->pages[6].height=rows[6]+64;
   auto version=std::wstring(L"Cliptiq ")+wide(CLIPTIQ_APP_VERSION);
   auto about=CreateWindowExW(0,L"STATIC",version.c_str(),WS_CHILD|WS_VISIBLE,
     24,rows[7]+12,800,30,s->pages[7].window,nullptr,wc.hInstance,nullptr);
@@ -563,6 +568,7 @@ bool NativeSettings::confirm_clear() const {
                      L"clipboard remain.",
                      L"Cliptiq", MB_OKCANCEL | MB_ICONQUESTION) == IDOK;
 }
+void NativeSettings::advanced(std::function<void()> cb) { state_->advanced=std::move(cb); }
 void NativeSettings::sound_preview(std::function<void(bool, int)> callback) {
   state_->preview = std::move(callback);
   if (state_->preview_copy) EnableWindow(state_->preview_copy, bool(state_->preview));

@@ -25,6 +25,10 @@ if target=='linux':
 elif target=='windows':binary=payload/'Cliptiq.exe';licenses=payload/'licenses'
 else:binary=payload/'Cliptiq.app/Contents/MacOS/Cliptiq';licenses=payload/'licenses'
 licenses.mkdir(parents=True)
+if 'CLIPTIQ_LAN_SYNC:BOOL=ON' in (build/'CMakeCache.txt').read_text(encoding='utf-8-sig'):
+ shutil.copy2(ROOT/'.toolchains/mbedtls-3.6.7/LICENSE',licenses/'MbedTLS-Apache-2.0.txt')
+ shutil.copy2(ROOT/'cmake/lan-dependencies.json',licenses/'MbedTLS-pins.json')
+
 for source,name in [('THIRD_PARTY_NOTICES.md','THIRD_PARTY_NOTICES.md'),('third_party/libgrapheme/LICENSE','libgrapheme-ISC.txt'),('third_party/libgrapheme/data/LICENSE','Unicode.txt'),('third_party/tinyxml2/LICENSE.txt','TinyXML2-zlib.txt')]:shutil.copy2(ROOT/source,licenses/name)
 installed_notice=prefix/'share/cliptiq/THIRD_PARTY_NOTICES.md'
 if installed_notice.is_file():installed_notice.unlink()

@@ -129,7 +129,8 @@ int main() {
       CHECK(take(get_snippet(db, id)).content == "saved\ntext" &&
             !take(get_snippet(db, id)).enabled);
       sql(db, "DROP TABLE snippet_states;DROP TABLE "
-              "snippet_folder_states;PRAGMA user_version=1");
+              "snippet_folder_states;DROP TABLE lan_entry_origins;DROP TABLE lan_seen;"
+              "DROP TABLE lan_origins;DROP TABLE lan_state;PRAGMA user_version=1");
     }
     {
       auto db = take(open_store(path.u8string()));

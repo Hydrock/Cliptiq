@@ -1,4 +1,4 @@
-param([string]$BuildDir='out/windows-idle', [string[]]$Targets=@('cliptiq_app','idle_profile'), [switch]$Tests)
+param([string]$BuildDir='out/windows-idle', [string[]]$Targets=@('cliptiq_app','idle_profile'), [switch]$Tests, [switch]$WithoutLan)
 $ErrorActionPreference='Stop'
 $projectRoot=(Resolve-Path "$PSScriptRoot\..\..").Path
 Set-Location $projectRoot
@@ -10,8 +10,9 @@ cmd /c "`"$devcmd`" -arch=x64 -host_arch=x64 >nul && set" | ForEach-Object {
 }
 $cmake=Join-Path $vs 'Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe'
 $ninja=Join-Path $vs 'Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja\ninja.exe'
+$lan=if($WithoutLan){'OFF'}else{'ON'}
 $testing=if($Tests){'ON'}else{'OFF'}
-& $cmake -S . -B $BuildDir -G Ninja "-DCMAKE_MAKE_PROGRAM=$ninja" -DCMAKE_BUILD_TYPE=MinSizeRel "-DBUILD_TESTING=$testing" -DCLIPTIQ_RAVEN_EXPERIMENT=OFF -DCLIPTIQ_BUILD_IDLE_PROBE=ON
+& $cmake -S . -B $BuildDir -G Ninja "-DCMAKE_MAKE_PROGRAM=$ninja" -DCMAKE_BUILD_TYPE=MinSizeRel "-DBUILD_TESTING=$testing" -DCLIPTIQ_RAVEN_EXPERIMENT=OFF -DCLIPTIQ_BUILD_IDLE_PROBE=ON "-DCLIPTIQ_LAN_SYNC=$lan"
 if($LASTEXITCODE){throw 'Configure failed'}
 $targetNames=@($Targets | ForEach-Object { $_ -split ',' })
 & $cmake --build $BuildDir --target @targetNames --parallel 6

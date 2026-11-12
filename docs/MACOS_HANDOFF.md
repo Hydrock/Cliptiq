@@ -222,3 +222,30 @@ CPU за достаточно длинный интервал и размер .a
 исправь ошибки, проверь новые AppKit workspace и inline rename, затем визуально сравни
 с описанным Windows-поведением и измерь фоновые ресурсы. Береги существующую историю,
 не добавляй Raven/WebView и не считай исходники доказательством работающей Mac-сборки».
+
+
+## LAN v1 handoff: feature/lan-clipboard
+
+See [LAN_CLIPBOARD.md](LAN_CLIPBOARD.md) for configuration and limitations.
+Run `python3 tools/fetch-lan-deps.py` before CMake. Static Mbed TLS 3.6.7 is pinned;
+AppKit/ImageIO/Keychain and dns_sd remain system dependencies. Build with
+`CLIPTIQ_LAN_SYNC=OFF` for a control without networking.
+
+Windows native build and loopback tests passed; macOS/Linux native builds are
+not verified in this environment. On Mac, compile all Objective-C++ first, then:
+
+- Check More → LAN draft/cancel, key masking, scrolling, save, source labels.
+- Check Keychain CRUD and locked-keychain errors without background prompts.
+- Check DNSServiceGetAddrInfo IPv4/IPv6, MagicDNS, cancellation on LAN shutdown.
+- Run `ctest -R lan`, then Mac↔Windows text/URL/PNG, history-only, local-copy race,
+  disabling the last peer, pause, restart and no echo.
+- NSPasteboard changeCount is checked immediately before clear; no public atomic
+  compare-and-set exists. Test races with simultaneous local copies.
+- Measure memory/CPU with no peers and while connected. Raven is not used.
+
+On Linux, validate GTK/Secret Service/GResolver. DNS cancellation drains a private
+GMainContext callback after GCancellable; validate shutdown latency against a
+stalled system resolver on supported distributions before release.
+
+History schema is now 3. Back up before migration: the old executable rejects
+schema 3, so rollback requires the pre-migration database.

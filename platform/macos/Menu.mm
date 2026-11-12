@@ -145,7 +145,7 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
         continue;
       }
       std::string caption =
-          (i.number ? std::to_string(*i.number) + ". " : "") + i.label;
+          (i.number ? std::to_string(*i.number) + ". " : "") + i.label + (i.source_device.empty()?"":"  ["+i.source_device+"]");
       auto item = [[NSMenuItem alloc] initWithTitle:string(caption)
                                              action:@selector(selected:)
                                       keyEquivalent:string(i.shortcut)];

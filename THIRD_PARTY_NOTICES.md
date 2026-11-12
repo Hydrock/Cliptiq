@@ -67,3 +67,13 @@ packaging/ocr/licenses/. These components are excluded from Base.
 Native Vision / Windows.Media.Ocr use installed OS frameworks; available
 languages and correction behavior depend on the OS. No language downloads
 are performed by Cliptiq.
+
+## Optional LAN sharing: Mbed TLS
+
+LAN-enabled builds statically link Mbed TLS 3.6.7 (Apache-2.0), pinned by
+`cmake/lan-dependencies.json`. The official archive and extracted build inputs
+are verified offline before configuration. Packaged LAN builds include the
+upstream LICENSE and dependency pin in licenses/. Only TLS 1.3 external-PSK
+with ephemeral P-256, AES-128-GCM and SHA-256 is enabled; no certificate bundle
+or third-party network service is shipped. Native credential stores and image
+codecs remain system dependencies.

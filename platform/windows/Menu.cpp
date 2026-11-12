@@ -33,7 +33,7 @@ std::wstring wide(const std::string &s) {
 }
 std::wstring caption(const MenuItem &i) {
   std::string label;
-  for (char c : i.label) {
+  for (char c : (i.label + (i.source_device.empty()?"":"  ["+i.source_device+"]"))) {
     label += c;
     if (c == '&')
       label += '&';

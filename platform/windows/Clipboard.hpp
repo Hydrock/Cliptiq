@@ -15,6 +15,7 @@ Result<DecodedImage> decode_image(const Representation&, std::uint64_t max_pixel
 class WindowsClipboardBackend final:public ClipboardBackend {
  struct State;
  std::shared_ptr<State> state_;
+ Result<std::string> write_checked(const ClipboardSnapshot&,const std::optional<std::string>&);
 public:
  explicit WindowsClipboardBackend(ClipboardOptions = {});
  ~WindowsClipboardBackend() override;
@@ -23,6 +24,7 @@ public:
  Capabilities capabilities()const override;
  Result<ClipboardSnapshot> read_snapshot()override;
  Result<std::string> write_snapshot(const ClipboardSnapshot&)override;
+ Result<std::string> write_snapshot_if_unchanged(const ClipboardSnapshot&,const std::string& expected_token);
  Result<void> start(CaptureCallback)override;
  void stop()override;
  Result<void> set_capture_policy(CapturePolicy);

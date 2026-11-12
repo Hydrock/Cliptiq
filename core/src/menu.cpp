@@ -1,3 +1,4 @@
+#include "cliptiq/lan.hpp"
 #include "cliptiq/menu.hpp"
 #include "cliptiq/locale.hpp"
 #include "db.hpp"
@@ -205,6 +206,7 @@ Result<MenuModel> build_menu(Store &store, MenuKind kind,
       for (const auto &row : rows.value()) {
         MenuItem item;
         item.action = MenuAction::SelectHistory;
+        auto origin = lan::entry_origin(store, row.id); if(origin) item.source_device=origin.value();
         item.id = row.id;
         if (s.numbered)
           item.number = unsigned(index + (s.zero_start ? 0 : 1));

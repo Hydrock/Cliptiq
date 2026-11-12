@@ -30,6 +30,7 @@ struct MenuItem {
   std::optional<PreviewRef> preview;
   bool enabled = true, separator = false;
   CanonicalKind kind = CanonicalKind::Text;
+  std::string source_device;
 };
 struct MenuModel {
   std::vector<MenuItem> items;

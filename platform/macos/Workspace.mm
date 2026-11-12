@@ -57,7 +57,7 @@ NSImage *wsImage(const cliptiq::MenuImage &i) {
 - (NSView *)tableView:(NSTableView *)view viewForTableColumn:(NSTableColumn *)column row:(NSInteger)n {
  (void)view;auto &r=rows[visible[n]];
  NSString *value;
- if([column.identifier isEqualToString:@"content"])value=wsString(r.item.label);
+ if([column.identifier isEqualToString:@"content"])value=wsString((r.item.source_device.empty()?"":"["+r.item.source_device+"] ")+r.item.label);
  else if(page==cliptiq::MenuKind::Snippets)value=wsString(r.group);
  else {switch(r.item.kind){case cliptiq::CanonicalKind::Image:value=@"Изображение";break;case cliptiq::CanonicalKind::Files:value=@"Файлы";break;case cliptiq::CanonicalKind::Url:value=@"Ссылка";break;case cliptiq::CanonicalKind::Rtf:value=@"RTF";break;case cliptiq::CanonicalKind::Html:value=@"HTML";break;case cliptiq::CanonicalKind::Pdf:value=@"PDF";break;default:value=@"Текст";}}
  auto cell=label(value,13);cell.lineBreakMode=NSLineBreakByTruncatingTail;cell.toolTip=wsString(r.item.tooltip);return cell;
