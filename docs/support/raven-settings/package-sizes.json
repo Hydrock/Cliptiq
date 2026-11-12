@@ -1,0 +1,14 @@
+{
+  "native": {
+    "exe_bytes": 1067008,
+    "package_bytes": 1081055,
+    "zip_bytes": 594241,
+    "zip_sha256": "e98e6b9dbb18344c73065fed329268f344b8531a92e395e16e9f79e370e6f66d"
+  },
+  "raven": {
+    "exe_bytes": 2250240,
+    "package_bytes": 2300590,
+    "zip_bytes": 1221635,
+    "zip_sha256": "9d72e8bcb082445867a487efb66cf29c8a1ab40f60d38231f1a3dafa2f417622"
+  }
+}

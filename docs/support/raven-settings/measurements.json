@@ -1,0 +1,223 @@
+{
+  "method": "first UI dispatch/submission; not first displayed pixel; process-cold, OS cache uncontrolled",
+  "cpu_definition": "100% = one logical core",
+  "memory_scope": "process working set/private commit; excludes GPU and external services",
+  "environment": {
+    "os": "Windows-11-10.0.26200-SP0",
+    "logical_cpus": 32,
+    "python": "3.14.6",
+    "raven_commit": "9f0cfa6fe3da33022a577e06a6ea843a5ef3f76e"
+  },
+  "parameters": {
+    "bin_dir": "out\\raven-settings\\settings-bin",
+    "output": "out\\raven-settings\\final-measurements.json",
+    "trials": 5,
+    "settle": 3.0,
+    "idle": 10.0,
+    "reopens": 3
+  },
+  "sizes": {
+    "native": {
+      "exe_bytes": 1067008,
+      "exe_zip_bytes": 587268,
+      "sha256": "8f5bfb0f1ce96e3af16d6ea7dcbe835549ed857b50b8c5bba0d2e6e46f2b8ca9"
+    },
+    "raven": {
+      "exe_bytes": 2250240,
+      "exe_zip_bytes": 1199963,
+      "sha256": "30eb7915cabb5b903c6270d04decb3991adf31979835d70c371cb1b43183b817"
+    }
+  },
+  "summary_medians": {
+    "native": {
+      "launch_to_ready_ms": 167.58439998375252,
+      "entry_to_ready_ms": 135.808,
+      "first_open_dispatch_ms": 132.791,
+      "idle_cpu_percent_one_core": 9.218261339974655,
+      "working_set_bytes": 20312064,
+      "private_bytes": 3571712,
+      "reopen_dispatch_ms": 199.628
+    },
+    "raven": {
+      "launch_to_ready_ms": 417.89650000282563,
+      "entry_to_ready_ms": 401.341,
+      "first_open_dispatch_ms": 398.769,
+      "idle_cpu_percent_one_core": 1.2499936375348695,
+      "working_set_bytes": 155410432,
+      "private_bytes": 190242816,
+      "reopen_dispatch_ms": 90.4498
+    }
+  },
+  "trials": [
+    {
+      "variant": "native",
+      "field_count": 54,
+      "launch_to_ready_ms": 167.58439998375252,
+      "entry_to_ready_ms": 122.95,
+      "first_open_dispatch_ms": 120.632,
+      "reopen_dispatch_ms": [
+        173.988,
+        218.522,
+        194.068
+      ],
+      "idle_seconds": 10.00053009999101,
+      "idle_cpu_percent_one_core": 9.218261339974655,
+      "working_set_bytes": 20312064,
+      "private_bytes": 3571712,
+      "peak_working_set_bytes": 20316160
+    },
+    {
+      "variant": "raven",
+      "field_count": 54,
+      "launch_to_ready_ms": 498.54640002013184,
+      "entry_to_ready_ms": 442.755,
+      "first_open_dispatch_ms": 440.301,
+      "reopen_dispatch_ms": [
+        81.6939,
+        93.4147,
+        85.4923
+      ],
+      "idle_seconds": 10.000050899980124,
+      "idle_cpu_percent_one_core": 1.2499936375348695,
+      "working_set_bytes": 155475968,
+      "private_bytes": 191180800,
+      "peak_working_set_bytes": 155475968
+    },
+    {
+      "variant": "raven",
+      "field_count": 54,
+      "launch_to_ready_ms": 405.6001999997534,
+      "entry_to_ready_ms": 389.462,
+      "first_open_dispatch_ms": 386.225,
+      "reopen_dispatch_ms": [
+        82.3357,
+        88.8409,
+        74.8989
+      ],
+      "idle_seconds": 10.000354899995727,
+      "idle_cpu_percent_one_core": 1.5624445488436292,
+      "working_set_bytes": 155410432,
+      "private_bytes": 190021632,
+      "peak_working_set_bytes": 155410432
+    },
+    {
+      "variant": "native",
+      "field_count": 54,
+      "launch_to_ready_ms": 134.59649999276735,
+      "entry_to_ready_ms": 118.772,
+      "first_open_dispatch_ms": 116.386,
+      "reopen_dispatch_ms": [
+        184.156,
+        184.367,
+        231.649
+      ],
+      "idle_seconds": 10.000126200000523,
+      "idle_cpu_percent_one_core": 7.812401407493829,
+      "working_set_bytes": 20238336,
+      "private_bytes": 3506176,
+      "peak_working_set_bytes": 20312064
+    },
+    {
+      "variant": "native",
+      "field_count": 54,
+      "launch_to_ready_ms": 168.35079999873415,
+      "entry_to_ready_ms": 152.042,
+      "first_open_dispatch_ms": 149.464,
+      "reopen_dispatch_ms": [
+        204.625,
+        217.744,
+        186.267
+      ],
+      "idle_seconds": 10.000429699983215,
+      "idle_cpu_percent_one_core": 17.811734629792856,
+      "working_set_bytes": 20283392,
+      "private_bytes": 3563520,
+      "peak_working_set_bytes": 20287488
+    },
+    {
+      "variant": "raven",
+      "field_count": 54,
+      "launch_to_ready_ms": 417.89650000282563,
+      "entry_to_ready_ms": 400.025,
+      "first_open_dispatch_ms": 397.165,
+      "reopen_dispatch_ms": [
+        91.1662,
+        95.895,
+        98.8668
+      ],
+      "idle_seconds": 10.000517500011483,
+      "idle_cpu_percent_one_core": 0.6249676579229848,
+      "working_set_bytes": 155324416,
+      "private_bytes": 191381504,
+      "peak_working_set_bytes": 155324416
+    },
+    {
+      "variant": "raven",
+      "field_count": 54,
+      "launch_to_ready_ms": 432.92900000233203,
+      "entry_to_ready_ms": 415.275,
+      "first_open_dispatch_ms": 412.129,
+      "reopen_dispatch_ms": [
+        90.4498,
+        80.7281,
+        84.3094
+      ],
+      "idle_seconds": 10.00029130000621,
+      "idle_cpu_percent_one_core": 1.8749453828398335,
+      "working_set_bytes": 155385856,
+      "private_bytes": 190107648,
+      "peak_working_set_bytes": 155385856
+    },
+    {
+      "variant": "native",
+      "field_count": 54,
+      "launch_to_ready_ms": 150.9449000004679,
+      "entry_to_ready_ms": 135.808,
+      "first_open_dispatch_ms": 132.791,
+      "reopen_dispatch_ms": [
+        191.385,
+        208.838,
+        199.628
+      ],
+      "idle_seconds": 10.000235199986491,
+      "idle_cpu_percent_one_core": 7.812316254332251,
+      "working_set_bytes": 20336640,
+      "private_bytes": 3579904,
+      "peak_working_set_bytes": 20340736
+    },
+    {
+      "variant": "native",
+      "field_count": 54,
+      "launch_to_ready_ms": 191.25929998699576,
+      "entry_to_ready_ms": 174.246,
+      "first_open_dispatch_ms": 171.974,
+      "reopen_dispatch_ms": [
+        195.022,
+        212.888,
+        205.323
+      ],
+      "idle_seconds": 10.000390699977288,
+      "idle_cpu_percent_one_core": 14.374438390724722,
+      "working_set_bytes": 20332544,
+      "private_bytes": 3584000,
+      "peak_working_set_bytes": 20332544
+    },
+    {
+      "variant": "raven",
+      "field_count": 54,
+      "launch_to_ready_ms": 417.23439999623224,
+      "entry_to_ready_ms": 401.341,
+      "first_open_dispatch_ms": 398.769,
+      "reopen_dispatch_ms": [
+        90.7606,
+        91.7727,
+        92.0372
+      ],
+      "idle_seconds": 10.000378600001568,
+      "idle_cpu_percent_one_core": 0.7812204229946629,
+      "working_set_bytes": 155447296,
+      "private_bytes": 190242816,
+      "peak_working_set_bytes": 155447296
+    }
+  ]
+}

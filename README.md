@@ -1,5 +1,7 @@
 # Cliptiq
 
+Эксперимент в отдельной ветке: [сравнение Windows-настроек Raven / Win32](experiments/raven-settings/README.md).
+
 Планируемый компактный менеджер буфера обмена для macOS, Windows и Linux на основе поведения [Clipy](https://github.com/Clipy/Clipy).
 
 Реализовано C++17 ядро постоянной истории и privacy/capability gate (T02–T03). Добавлены macOS, Windows и Linux X11/Wayland clipboard backends (T04–T06). Добавлены модель меню и нативные popup/tray/launcher (T07); добавлена безопасная вставка и modifier actions (T08). Добавлены постоянные настройки и нативные глобальные горячие клавиши (T09). Добавлены сниппеты и нативный редактор (T10). Добавлена XML-совместимость с Clipy (T11). Пользовательский production-выпуск пока заблокирован ручной приёмкой и подписью.
