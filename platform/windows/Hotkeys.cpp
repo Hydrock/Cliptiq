@@ -1,4 +1,5 @@
 #include "cliptiq/hotkeys.hpp"
+#include "cliptiq/locale.hpp"
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <atomic>
@@ -112,11 +113,15 @@ Result<unsigned> NativeHotkeys::acquire(const ActionId &a, const KeyChord &c) {
                   ((c.modifiers & Shift) ? MOD_SHIFT : 0) |
                   ((c.modifiers & Alt) ? MOD_ALT : 0) |
                   ((c.modifiers & Super) ? MOD_WIN : 0);
-  if (!register_key(s.window, int(id), mods, key))
+  if (!register_key(s.window, int(id), mods, key)) {
+    auto error=GetLastError();
     return Error{ErrorCode::Busy,
-                 "Windows shortcut is reserved or owned by "
-                 "another app; previous binding retained (Win32 " +
-                     std::to_string(GetLastError()) + ")"};
+                 tr("Cannot register shortcut")+": "+format_chord(c)+". "+
+                 (error==ERROR_HOTKEY_ALREADY_REGISTERED
+                   ?tr("The combination is reserved or used by another application. Check other Cliptiq instances.")
+                   :tr("Windows error")+": "+std::to_string(error))+" "+
+                 tr("Previous shortcuts have been kept.")};
+  }
   s.actions[id] = a;
   return id;
 }

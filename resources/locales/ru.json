@@ -134,5 +134,9 @@
   "Check for Updates": "Проверить обновления",
   "Download / Installation Instructions": "Загрузка и установка",
   "Export Local Diagnostics": "Экспорт локальной диагностики",
-  "Update interval seconds": "Интервал проверки, секунды"
+  "Update interval seconds": "Интервал проверки, секунды",
+  "Cannot register shortcut": "Не удалось назначить сочетание",
+  "The combination is reserved or used by another application. Check other Cliptiq instances.": "Оно зарезервировано системой или занято другим приложением. Проверьте другие экземпляры Cliptiq.",
+  "Windows error": "Ошибка Windows",
+  "Previous shortcuts have been kept.": "Прежние сочетания сохранены."
 }

@@ -52,7 +52,7 @@ struct NativeSettings::State : std::enable_shared_from_this<State> {
   void test_sound(bool paste) {
     for (const auto &c : controls) if (c.key == "sound_volume") {
       auto draft = edit_settings(settings, {{"sound_volume", text(c.window)}});
-      if (!draft) { SetWindowTextW(message, wide(draft.error().message).c_str()); return; }
+      if (!draft) { set_message(wide(draft.error().message)); return; }
       if (preview) preview(paste, std::stoi(draft.value().values.at("sound_volume")));
     }
   }
@@ -167,23 +167,45 @@ struct NativeSettings::State : std::enable_shared_from_this<State> {
     }
   } pages[9];
   HWND apply_button = nullptr;
+  void set_message(const std::wstring& value) {
+    SetWindowTextW(message,value.c_str());
+    layout();
+  }
   void layout() {
     RECT area{};
     GetClientRect(window, &area);
     int width = std::max(320, int(area.right)),
         height = std::max(200, int(area.bottom));
-    MoveWindow(tabs, 8, 8, width - 16, height - 76, TRUE);
+    auto dpi=GetDpiForWindow(window);if(!dpi)dpi=96;
+    auto px=[&](int n){return MulDiv(n,dpi,96);};
+    const int margin=px(16),gap=px(16);
+    auto dc=GetDC(window);auto previous=SelectObject(dc,font?font:GetStockObject(DEFAULT_GUI_FONT));
+    RECT button_text{0,0,0,0};
+    auto caption=std::wstring(lw(L"Apply"));
+    DrawTextW(dc,caption.c_str(),int(caption.size()),&button_text,DT_CALCRECT|DT_SINGLELINE|DT_NOPREFIX);
+    int button_width=std::max(px(120),int(button_text.right)+px(32));
+    int button_height=std::max(px(36),int(button_text.bottom)+px(16));
+    RECT message_text{0,0,std::max(1,width-2*margin-gap-button_width),0};
+    if(message){
+      std::wstring value(GetWindowTextLengthW(message)+1,L'\0');
+      int length=GetWindowTextW(message,value.data(),int(value.size()));
+      DrawTextW(dc,value.c_str(),length,&message_text,DT_CALCRECT|DT_WORDBREAK|DT_NOPREFIX);
+    }
+    SelectObject(dc,previous);ReleaseDC(window,dc);
+    int footer_height=std::max(button_height,int(message_text.bottom))+2*margin;
+    int tabs_height=std::max(px(80),height-footer_height-px(8));
+    MoveWindow(tabs, px(8), px(8), width-px(16), tabs_height, TRUE);
     for (auto &p : pages)
       if (p.window)
         {
-          RECT content{0, 0, width - 16, height - 76};
+          RECT content{0, 0, width-px(16), tabs_height};
           TabCtrl_AdjustRect(tabs, FALSE, &content);
-          MoveWindow(p.window, 8 + content.left, 8 + content.top, content.right - content.left, content.bottom - content.top, TRUE);
+          MoveWindow(p.window, px(8)+content.left, px(8)+content.top, content.right-content.left, content.bottom-content.top, TRUE);
         }
     if (message)
-      MoveWindow(message, 16, height - 60, width - 150, 48, TRUE);
+      MoveWindow(message,margin,height-footer_height+margin,message_text.right,std::max(1,int(message_text.bottom)),TRUE);
     if (apply_button)
-      MoveWindow(apply_button, width - 120, height - 52, 100, 30, TRUE);
+      MoveWindow(apply_button,width-margin-button_width,height-footer_height+margin,button_width,button_height,TRUE);
   }
   ~State() {
     if (window)
@@ -233,18 +255,17 @@ struct NativeSettings::State : std::enable_shared_from_this<State> {
               : (!c.options.empty() ? c.options.at(std::size_t(SendMessageW(c.window, CB_GETCURSEL, 0, 0))).first : text(c.window));
     auto draft = edit_settings(settings, values);
     if (!draft) {
-      SetWindowTextW(message, wide(draft.error().message).c_str());
+      set_message(wide(draft.error().message));
       return;
     }
     auto result = apply(draft.value());
     if (!result) {
-      SetWindowTextW(message, wide(result.error().message).c_str());
+      set_message(wide(result.error().message));
       return;
     }
     settings = std::move(draft.value());
     ++settings.revision;
-    SetWindowTextW(message,
-                   lw(L"Saved. Unsupported functions remain disabled."));
+    set_message(lw(L"Saved. Unsupported functions remain disabled."));
   }
   void page() {
     int selected = TabCtrl_GetCurSel(tabs);
@@ -496,7 +517,7 @@ void NativeSettings::sound_preview(std::function<void(bool, int)> callback) {
 }
 void NativeSettings::status(const std::string &value) {
   if (state_->message)
-    SetWindowTextW(state_->message, wide(value).c_str());
+    state_->set_message(wide(value));
 }
 bool NativeSettings::record_chord(const KeyChord &chord) {
   auto focus = GetFocus();

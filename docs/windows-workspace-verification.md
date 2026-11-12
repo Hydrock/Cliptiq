@@ -79,3 +79,19 @@ the fix and passed afterwards. Four targeted CTests passed: sound_wave,
 sound_playback, settings and paste. Independent source review found no important
 issues. Actual audibility depends on the Windows audio device/mixer and was not
 recorded. Duplicate captures which are not retained still do not emit a cue.
+
+
+## Settings footer and shortcut conflict diagnostics
+
+The Apply button now measures its translated caption with the active font;
+DPI-scaled padding and wrapped status measurement determine the footer size.
+All status updates relayout the footer. Windows registration errors identify the
+actual chord, localize the explanation and retain previous registrations.
+
+The reported Ctrl+B failure was caused by a leftover test process holding the
+mandatory settings chord. That specific old process was terminated; Ctrl+B was
+then recorded and successfully applied to the Snippets menu in the active profile.
+MSVC build and five targeted CTests passed (settings, hotkeys, locale schema and
+both sound checks). Interactive verification confirmed the full Apply caption
+and saved Ctrl+B after restart. Hotkey invocation through the automation input
+was not confirmed; registration and persistence were confirmed.
