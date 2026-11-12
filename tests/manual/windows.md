@@ -41,3 +41,21 @@ Official API sources: [Win32 clipboard operations](https://learn.microsoft.com/e
 [CF_HTML](https://learn.microsoft.com/en-us/windows/win32/dataxchg/html-clipboard-format),
 [window station clipboard isolation](https://learn.microsoft.com/en-us/windows/win32/winstation/window-stations),
 [clipboard formats/privacy hints](https://learn.microsoft.com/en-us/windows/win32/dataxchg/clipboard-formats).
+
+
+## PNG history replay to Chromium / Excalidraw
+
+Copy a PNG image, select its history entry in Cliptiq and use Copy. Paste into
+Excalidraw (or an isolated local paste-event fixture in Chrome). The paste event
+must expose an image/png File; it must not have an empty types/files list. Repeat
+with an image received from a Mac over LAN. Original PNG bytes remain unchanged;
+a bounded CF_DIB fallback is added only at Windows replay. Legacy DIB-only readers
+receive alpha composited on white, while PNG-aware readers retain the original
+transparency. An oversized/undecodable fallback must fail before EmptyClipboard.
+
+Windows verification: native --formats conversion/pixel/bounds tests and real TLS
+Service integration passed. The isolated-window-station clipboard suite requires
+permissions unavailable here (CreateWindowStation error 5). Interactive Chrome
+paste was checked on the installed build: a local history image exposed image/png
+(908962 bytes) after the fix, versus empty types/files before. The local fixture
+made no network requests. Excalidraw-specific canvas acceptance remains manual.

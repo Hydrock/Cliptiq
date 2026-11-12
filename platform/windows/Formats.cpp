@@ -83,6 +83,23 @@ Result<void> validate_native_payload(Representation& r) {
  }
  return {};
 }
+Result<Bytes> png_clipboard_dib(const Representation& r,std::uint64_t max_bytes) {
+ try {
+  if(r.native_type!="PNG")return Error{ErrorCode::Unsupported,"DIB fallback requires PNG"};
+  if(max_bytes<sizeof(BITMAPINFOHEADER)+4)return Error{ErrorCode::TooLarge,"DIB fallback exceeds replay limit"};
+  auto decoded=decode_image(r,std::min<std::uint64_t>(40000000,(max_bytes-sizeof(BITMAPINFOHEADER))/4));
+  if(!decoded)return decoded.error();auto& image=decoded.value();
+  const auto size=std::uint64_t(image.stride)*image.height;
+  if(size>max_bytes-sizeof(BITMAPINFOHEADER))return Error{ErrorCode::TooLarge,"DIB fallback exceeds replay limit"};
+  BITMAPINFOHEADER header{};header.biSize=sizeof(header);header.biWidth=LONG(image.width);header.biHeight=-LONG(image.height);header.biPlanes=1;header.biBitCount=32;header.biCompression=BI_RGB;header.biSizeImage=DWORD(size);
+  Bytes result(sizeof(header)+size);memcpy(result.data(),&header,sizeof(header));
+  // Legacy DIB readers have no reliable alpha convention. Composite on white;
+  // PNG-aware readers still receive the unchanged, lossless original PNG.
+  auto pixels=result.data()+sizeof(header);
+  for(size_t i=0;i<image.bgra.size();i+=4){auto alpha=image.bgra[i+3];for(unsigned c=0;c<3;++c)pixels[i+c]=std::uint8_t((unsigned(image.bgra[i+c])*alpha+255u*(255-alpha)+127)/255);pixels[i+3]=255;}
+  return result;
+ }catch(const std::bad_alloc&){return Error{ErrorCode::TooLarge,"DIB fallback allocation failed"};}
+}
 Result<DecodedImage> decode_image(const Representation& r,std::uint64_t max_pixels) {
  try{
   if(r.platform!="windows"||r.kind!=CanonicalKind::Image||r.data.empty()||r.data.size()>Limits{}.representation_bytes)return invalid();

@@ -85,6 +85,13 @@ Result<std::string> WindowsClipboardBackend::write_checked(const ClipboardSnapsh
  std::set<UINT> seen;std::vector<std::pair<UINT,Memory>> prepared;std::uint64_t total=0;bool files=false;
  auto prepare=[&](UINT f,const Bytes& bytes)->bool{if(!f)return false;Memory m;m.handle=GlobalAlloc(GMEM_MOVEABLE|GMEM_ZEROINIT,std::max<std::size_t>(1,bytes.size()));if(!m.handle)return false;auto p=GlobalLock(m.handle);if(!p)return false;if(!bytes.empty())memcpy(p,bytes.data(),bytes.size());GlobalUnlock(m.handle);prepared.emplace_back(f,std::move(m));return true;};
  for(auto r:snapshot.representations){auto t=lookup(r.native_type);if(r.platform!="windows"||r.item_index||!t||r.kind!=t->kind||r.text_encoding!=t->encoding)return Error{ErrorCode::Unsupported,"Replay requires transferable Windows formats at item zero"};auto f=id(*t);if(!f||!seen.insert(f).second)return Error{ErrorCode::InvalidArgument,"Duplicate/unavailable replay format"};if(r.data.size()>s->options.limits.representation_bytes||r.data.size()>s->options.limits.entry_bytes-total)return Error{ErrorCode::TooLarge,"Replay exceeds configured limits"};total+=r.data.size();auto valid=validate_native_payload(r);if(!valid)return valid.error();if(r.native_type=="CF_HDROP")files=true;if(r.native_type!="Preferred DropEffect"&&!prepare(f,r.data))return Error{ErrorCode::Io,"Replay memory preparation failed"};}
+ // Web paste discovery in Chromium requires CF_DIB, even when PNG is present.
+ // Generate the fallback before opening/clearing the clipboard, for local and LAN replay alike.
+ if(!seen.count(CF_DIB))for(const auto& r:snapshot.representations)if(r.native_type=="PNG"){
+  auto dib=png_clipboard_dib(r,std::min(s->options.limits.representation_bytes,s->options.limits.entry_bytes-total));
+  if(!dib)return dib.error();total+=dib.value().size();
+  if(!prepare(CF_DIB,dib.value()))return Error{ErrorCode::Io,"DIB fallback memory preparation failed"};break;
+ }
  if(files&&!prepare(RegisterClipboardFormatW(L"Preferred DropEffect"),Bytes{1,0,0,0}))return Error{ErrorCode::Io,"Replay file effect preparation failed"};if(prepared.empty())return Error{ErrorCode::InvalidArgument,"No replay content"};
  // History replay must never silently remove a producer cloud prohibition.
  if(!prepare(RegisterClipboardFormatW(L"CanUploadToCloudClipboard"),Bytes{0,0,0,0}))return Error{ErrorCode::Io,"Replay cloud prohibition allocation failed"};
