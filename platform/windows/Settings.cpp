@@ -426,6 +426,9 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
   s->help_font=CreateFontW(-MulDiv(9,GetDpiForWindow(s->window),72),0,0,0,FW_NORMAL,FALSE,FALSE,FALSE,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,CLEARTYPE_QUALITY,DEFAULT_PITCH,L"Segoe UI");
   auto font = s->font;
   SendMessageW(s->tabs, WM_SETFONT, reinterpret_cast<WPARAM>(font), TRUE);
+  // Give each native tab a comfortable hit area; TCS_MULTILINE wraps on narrow windows.
+  const auto tab_dpi=GetDpiForWindow(s->window);
+  TabCtrl_SetPadding(s->tabs,MulDiv(18,tab_dpi,96),MulDiv(6,tab_dpi,96));
   for (auto &f : settings_fields(s->settings, caps)) {
     unsigned p = unsigned(f.group);
     int y = 6 + rows[p];
