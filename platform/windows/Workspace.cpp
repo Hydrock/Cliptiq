@@ -5,6 +5,14 @@
 namespace cliptiq::windows {
 namespace {
 constexpr int History=7101,Snippets=7102,Settings=7103,Editor=7104,Copy=7105,Erase=7106,Clear=7107,Filter=7109,List=7110;
+LRESULT CALLBACK preview_proc(HWND window,UINT message,WPARAM wp,LPARAM lp,UINT_PTR id,DWORD_PTR){
+ // Retain native focus, selection, scrolling and copying. The read-only EDIT
+ // creates its caret during default focus handling; hide that caret once.
+ auto result=DefSubclassProc(window,message,wp,lp);
+ if(message==WM_SETFOCUS)HideCaret(window);
+ if(message==WM_NCDESTROY)RemoveWindowSubclass(window,preview_proc,id);
+ return result;
+}
 std::wstring wide(const std::string& s){int n=MultiByteToWideChar(CP_UTF8,MB_ERR_INVALID_CHARS,s.data(),int(s.size()),nullptr,0);std::wstring r(n,L'\0');MultiByteToWideChar(CP_UTF8,MB_ERR_INVALID_CHARS,s.data(),int(s.size()),r.data(),n);return r;}
 std::wstring lower(std::wstring s){int n=LCMapStringEx(LOCALE_NAME_INVARIANT,LCMAP_LOWERCASE,s.data(),int(s.size()),nullptr,0,nullptr,nullptr,0);if(n>0){std::wstring r(n,L'\0');LCMapStringEx(LOCALE_NAME_INVARIANT,LCMAP_LOWERCASE,s.data(),int(s.size()),r.data(),n,nullptr,nullptr,0);return r;}return s;}
 std::wstring multiline(const std::string& text){auto source=wide(text);std::wstring out;for(auto c:source){if(c==L'\n'&&(out.empty()||out.back()!=L'\r'))out+=L'\r';out+=c;}return out;}
@@ -40,6 +48,7 @@ Workspace::Workspace(HWND owner,const NativeMenuOptions& options,std::function<v
  LVCOLUMNW col{};col.mask=LVCF_TEXT|LVCF_WIDTH;col.pszText=const_cast<wchar_t*>(L"Содержимое");col.cx=px(300);ListView_InsertColumn(list_,0,&col);col.pszText=const_cast<wchar_t*>(L"Тип / папка");col.cx=px(110);ListView_InsertColumn(list_,1,&col);
  preview_heading_=control(L"STATIC",L"ПРЕДПРОСМОТР",0,7194);
  preview_=control(L"EDIT",L"Выберите запись слева.",ES_MULTILINE|ES_READONLY|ES_AUTOVSCROLL|WS_VSCROLL|WS_TABSTOP,7195);
+ if(!SetWindowSubclass(preview_,preview_proc,1,0))throw std::runtime_error("Cannot configure workspace preview");
  image_=control(L"STATIC",L"",SS_OWNERDRAW,7196);ShowWindow(image_,SW_HIDE);
  copy_=control(L"BUTTON",L"Копировать",WS_TABSTOP|BS_DEFPUSHBUTTON,Copy);
  erase_=control(L"BUTTON",L"Удалить запись",WS_TABSTOP,Erase);

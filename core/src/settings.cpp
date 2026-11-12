@@ -323,6 +323,8 @@ Result<Settings> load_settings(Store &store, CapturePlatform platform) {
     for (auto &p : folders.value())
       if (!result.hotkeys.count("folder:" + p.first))
         result.hotkeys["folder:" + p.first] = {};
+    detail::Statement titles(store.connection(),"SELECT id,substr(title,1,65536) FROM snippet_folders");
+    while(titles.row())result.folder_titles[titles.text(0)]=titles.text(1);
     auto valid = validate_settings(result);
     if (!valid)
       return valid.error();
@@ -528,14 +530,23 @@ std::vector<SettingField> settings_fields(const Settings &s,
     }
     out.push_back(std::move(f));
   }
-  for (auto &p : s.hotkeys)
+  for (auto &p : s.hotkeys) {
+    auto label=tr(p.first);
+    if(p.first=="clear")label=tr("Clear History");
+    else if(p.first=="editor")label=tr("Edit Snippets");
+    else if(p.first.rfind("folder:",0)==0){
+      auto title=s.folder_titles.find(p.first.substr(7));
+      label=tr("Folder");
+      if(title!=s.folder_titles.end())label+=": "+title->second;
+    }
     out.push_back(
-        {SettingsGroup::Shortcuts, "hotkey:" + p.first, tr(p.first),
+        {SettingsGroup::Shortcuts, "hotkey:" + p.first, label,
          p.second ? format_chord(*p.second) : "",
          caps.hotkeys.status == CapabilityStatus::Unavailable
              ? caps.hotkeys.reason + "; preference only, not registered"
              : "",
          true, false, true});
+  }
   return out;
 }
 } // namespace cliptiq

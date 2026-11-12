@@ -16,6 +16,8 @@ struct Settings {
   std::map<std::string, std::string> values;
   HotkeyMap hotkeys;
   std::uint64_t revision = 0;
+  // Display metadata loaded with settings, never persisted as preferences.
+  std::map<FolderId,std::string> folder_titles;
 };
 struct SettingField {
   SettingsGroup group;

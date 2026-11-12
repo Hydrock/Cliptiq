@@ -35,6 +35,19 @@ int main() {
               *default_settings(CapturePlatform::MacOS).hotkeys.at("main")) ==
           "Shift+Super+V");
   });
+  test("shortcut_labels_hide_internal_folder_ids", [] {
+    auto store=take(open_store(":memory:"));
+    CHECK(sqlite3_exec(store.connection(),"INSERT INTO snippet_folders VALUES('internal-id','Work',0)",nullptr,nullptr,nullptr)==SQLITE_OK);
+    auto settings=take(load_settings(store,CapturePlatform::Windows));
+    auto fields=settings_fields(settings,{});
+    bool folder=false,clear=false,editor=false;
+    for(auto& field:fields){
+      if(field.key=="hotkey:folder:internal-id"){CHECK(field.label=="Folder: Work");folder=true;}
+      if(field.key=="hotkey:clear"){CHECK(field.label=="Clear History");clear=true;}
+      if(field.key=="hotkey:editor"){CHECK(field.label=="Edit Snippets");editor=true;}
+    }
+    CHECK(folder&&clear&&editor);
+  });
   test("sound_defaults_ranges_and_legacy_profile", [] {
     auto store = take(open_store(":memory:"));
     auto s = default_settings(CapturePlatform::Windows);
