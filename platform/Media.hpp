@@ -30,6 +30,8 @@ public:
   // worker.
   Result<bool> poll();
   std::optional<MenuImage> preview(const PreviewRef &) const;
+  // GUI thread. Only the selected image is decoded; null releases/cancels it.
+  std::optional<MenuImage> workspace_preview(std::optional<PreviewRef>);
   Capability observation_status() const;
   Result<void> on_screenshot_file(const std::string &basename);
 };

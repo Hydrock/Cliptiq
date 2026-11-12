@@ -505,6 +505,9 @@ int host(int argc, char **argv) {
       return std::move(full.value());
     };
     options.workspace_preview = [&](const MenuCommand& command){return workspace_text(store,command);};
+#ifdef CLIPTIQ_WITH_MEDIA
+    options.workspace_image = [&](std::optional<PreviewRef> ref){return media.workspace_preview(std::move(ref));};
+#endif
     auto workspace_status_text = [&] {
       auto policy=settings_capture(preferences);
       if(std::none_of(policy.enabled_kinds.begin(),policy.enabled_kinds.end(),[](bool value){return value;}))

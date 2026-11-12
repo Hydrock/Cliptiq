@@ -46,3 +46,22 @@ post-workspace working set and the existing 100ms controller wake-up.
 Executable: 1,706,496 bytes (1.63 MiB). Raw measurements are under
 out/windows-workspace/idle-empty.json and idle-1000.json (generated artifacts).
 No macOS/Linux build or DPI/high-contrast sweep performed.
+
+
+## Larger workspace image preview
+
+The workspace previously displayed the 100x32 menu thumbnail at native size.
+It now requests only the selected image from the existing decoder worker, capped
+at 512x512, independently of menu thumbnail settings. Win32 HALFTONE drawing fits
+it to the preview panel with preserved aspect ratio and no cropping, including
+window resizing. One transient selected-image buffer is retained; closing the
+workspace cancels pending selected-image jobs and releases the cache. The original
+clipboard payload and the small menu cache are unchanged.
+
+Verification: MSVC build passed. Native media regression exercises an independent
+workspace decode with menu thumbnails set to 1x1, cancellation/release and rejection
+of stale completions, plus deletion of an unrelated entry during decode. The latter
+failed before the fix and passed afterwards. Targeted CTest: 5/5 (native_media,
+media, workspace and two idle services checks). Interactive Windows verification
+confirmed a large preview from the existing history and after maximizing the window.
+No fresh total idle-memory benchmark was taken for this patch.

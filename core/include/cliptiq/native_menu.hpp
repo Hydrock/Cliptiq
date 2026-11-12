@@ -18,6 +18,7 @@ struct NativeMenuOptions {
   bool workspace_enabled = false;
   std::function<Result<MenuModel>()> workspace_model;
   std::function<Result<std::string>(const MenuCommand &)> workspace_preview;
+  std::function<std::optional<MenuImage>(std::optional<PreviewRef>)> workspace_image;
   std::string workspace_status;
   // Called on the GUI thread before a native popup takes focus. Empty means
   // copy/manual paste only. External DBusMenu events cannot invent a target.

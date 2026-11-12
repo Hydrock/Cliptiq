@@ -162,6 +162,7 @@ struct MediaService::Impl {
     std::string file;
     std::shared_ptr<Directory> directory;
     std::uint64_t erased = 0;
+    std::uint64_t detail = 0;
   };
   struct Done {
     std::uint64_t epoch;
@@ -170,6 +171,7 @@ struct MediaService::Impl {
     std::string fingerprint, file;
     Bytes bytes;
     std::uint64_t erased = 0;
+    std::uint64_t detail = 0;
   };
   std::mutex mutex;
   std::condition_variable wake;
@@ -192,6 +194,9 @@ struct MediaService::Impl {
   std::uint64_t scanned_revision = UINT64_MAX;
   bool scan_pending = true;
   std::map<EntryId, MenuImage> ready;
+  std::uint64_t detail_generation = 0;
+  EntryId detail_id;
+  std::optional<MenuImage> detail_image;
   std::map<EntryId, std::string> attempted;
   std::set<std::string> pending_files;
   std::string last_file;
@@ -215,6 +220,7 @@ struct MediaService::Impl {
       result.ticket = job.ticket;
       result.file = job.file;
       result.erased = job.erased;
+      result.detail = job.detail;
       if (!job.file.empty()) {
         auto deadline = Clock::now() + std::chrono::seconds(10);
         Bytes previous;
@@ -307,6 +313,7 @@ void MediaService::stop() {
   }
   s.wake.notify_all();
   s.ready.clear();
+  workspace_preview(std::nullopt);
   s.attempted.clear();
   s.scanned_revision = UINT64_MAX;
   s.scan_pending = true;
@@ -485,6 +492,16 @@ Result<bool> MediaService::poll() {
         changed = accepted.value().disposition == CaptureDisposition::Accept;
         s.last_file = r.file;
         s.last_bytes = std::move(r.bytes);
+      } else if (r.detail) {
+        if(r.detail == s.detail_generation && r.ticket.id == s.detail_id) {
+          auto snapshot = load_snapshot(s.store, r.ticket.id);
+          // History IDs identify immutable payloads. Deleting a different
+          // entry must not invalidate this image; only its own existence does.
+          if(snapshot) {
+            s.detail_image = std::move(r.image);
+            changed = true;
+          }
+        }
       } else if (r.image) {
         auto stored = store_preview_if_present(s.store, r.ticket, *r.image);
         if (!stored)
@@ -596,5 +613,36 @@ Result<bool> MediaService::poll() {
 std::optional<MenuImage> MediaService::preview(const PreviewRef &r) const {
   auto i = impl_->ready.find(r.entry_id);
   return i == impl_->ready.end() ? std::optional<MenuImage>{} : i->second;
+}
+std::optional<MenuImage> MediaService::workspace_preview(std::optional<PreviewRef> ref) {
+  auto& s=*impl_;
+  if(ref && ref->entry_id == s.detail_id) return s.detail_image;
+  ++s.detail_generation;
+  s.detail_id.clear();
+  s.detail_image.reset();
+  {
+    std::lock_guard<std::mutex> lock(s.mutex);
+    for(auto i=s.jobs.begin();i!=s.jobs.end();) {
+      if(i->detail){s.queued-=i->rep.data.size();i=s.jobs.erase(i);}else ++i;
+    }
+    for(auto i=s.done.begin();i!=s.done.end();) {
+      if(i->detail)i=s.done.erase(i);else ++i;
+    }
+  }
+  s.wake.notify_all();
+  if(!ref || s.isolated || !s.previews) return {};
+  s.detail_id=ref->entry_id;
+  auto snapshot=load_snapshot(s.store,s.detail_id);
+  if(!snapshot)return {};
+  for(auto& r:snapshot.value().representations)if(r.kind==CanonicalKind::Image){
+    std::lock_guard<std::mutex> lock(s.mutex);
+    if(s.jobs.size()>=64 || s.queued+r.data.size()>64*1024*1024){s.detail_id.clear();return {};}
+    Impl::Job job;
+    job.epoch=s.epoch;job.ticket.id=s.detail_id;job.ticket.size={512,512};
+    job.rep=std::move(r);job.erased=s.erased.load();job.detail=s.detail_generation;
+    s.queued+=job.rep.data.size();s.jobs.push_front(std::move(job));
+    s.wake.notify_all();break;
+  }
+  return {};
 }
 } // namespace cliptiq

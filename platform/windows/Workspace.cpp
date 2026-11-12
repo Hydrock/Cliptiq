@@ -40,7 +40,7 @@ Workspace::Workspace(HWND owner,const NativeMenuOptions& options,std::function<v
  LVCOLUMNW col{};col.mask=LVCF_TEXT|LVCF_WIDTH;col.pszText=const_cast<wchar_t*>(L"Содержимое");col.cx=px(300);ListView_InsertColumn(list_,0,&col);col.pszText=const_cast<wchar_t*>(L"Тип / папка");col.cx=px(110);ListView_InsertColumn(list_,1,&col);
  preview_heading_=control(L"STATIC",L"ПРЕДПРОСМОТР",0,7194);
  preview_=control(L"EDIT",L"Выберите запись слева.",ES_MULTILINE|ES_READONLY|ES_AUTOVSCROLL|WS_VSCROLL|WS_TABSTOP,7195);
- image_=control(L"STATIC",L"",SS_BITMAP|SS_CENTERIMAGE,7196);ShowWindow(image_,SW_HIDE);
+ image_=control(L"STATIC",L"",SS_OWNERDRAW,7196);ShowWindow(image_,SW_HIDE);
  copy_=control(L"BUTTON",L"Копировать",WS_TABSTOP|BS_DEFPUSHBUTTON,Copy);
  erase_=control(L"BUTTON",L"Удалить запись",WS_TABSTOP,Erase);
  clear_=control(L"BUTTON",L"Очистить историю…",WS_TABSTOP,Clear);
@@ -48,6 +48,7 @@ Workspace::Workspace(HWND owner,const NativeMenuOptions& options,std::function<v
  layout(dpi_);
 }
 Workspace::~Workspace(){
+ if(options_.workspace_image)options_.workspace_image(std::nullopt);
  for(auto w:children_)if(IsWindow(w))DestroyWindow(w);
  if(bitmap_)DeleteObject(bitmap_);if(row_images_)ImageList_Destroy(row_images_);
  if(font_)DeleteObject(font_);if(title_font_)DeleteObject(title_font_);if(bold_font_)DeleteObject(bold_font_);
@@ -82,14 +83,15 @@ void Workspace::filter(){
 }
 void Workspace::selected(){
  if(changing_)return;const auto* row=selection();EnableWindow(copy_,row!=nullptr);EnableWindow(erase_,row&&page_==MenuKind::History);
- SendMessageW(image_,STM_SETIMAGE,IMAGE_BITMAP,0);if(bitmap_){DeleteObject(bitmap_);bitmap_=nullptr;}ShowWindow(image_,SW_HIDE);ShowWindow(preview_,SW_SHOW);
+ if(bitmap_){DeleteObject(bitmap_);bitmap_=nullptr;}ShowWindow(image_,SW_HIDE);ShowWindow(preview_,SW_SHOW);
+ if(options_.workspace_image&&(!row||!row->item.preview))options_.workspace_image(std::nullopt);
  if(!row){SetWindowTextW(preview_,rows_.empty()?(page_==MenuKind::History?L"История пока пуста.\r\n\r\nСкопируйте текст, ссылку или изображение — запись появится здесь, если её тип разрешён в настройках.":L"Здесь будут ваши текстовые заготовки.\r\n\r\nОткройте редактор сниппетов, чтобы создать папку и первую заготовку."):L"По этому фильтру ничего не найдено.");return;}
  MenuCommand command{row->item.action,row->item.id,model_.revision};
  auto text=options_.workspace_preview?options_.workspace_preview(command):Result<std::string>(row->item.tooltip);
  SetWindowTextW(preview_,text?multiline(text.value().empty()?"У записи нет текстового представления. Кнопка копирования сохраняет доступные форматы.":text.value()).c_str():wide(text.error().message).c_str());
- if(row->item.preview&&provider_){auto image=provider_(*row->item.preview);if(image&&image->width&&image->height&&image->width<=512&&image->height<=512&&image->rgba.size()==size_t(image->width)*image->height*4){
+ if(row->item.preview&&(options_.workspace_image||provider_)){auto image=options_.workspace_image?options_.workspace_image(row->item.preview):provider_(*row->item.preview);if(image&&image->width&&image->height&&image->width<=512&&image->height<=512&&image->rgba.size()==size_t(image->width)*image->height*4){
   BITMAPINFO info{};info.bmiHeader.biSize=sizeof(BITMAPINFOHEADER);info.bmiHeader.biWidth=image->width;info.bmiHeader.biHeight=-LONG(image->height);info.bmiHeader.biPlanes=1;info.bmiHeader.biBitCount=32;info.bmiHeader.biCompression=BI_RGB;void* pixels=nullptr;
-  bitmap_=CreateDIBSection(nullptr,&info,DIB_RGB_COLORS,&pixels,nullptr,0);if(bitmap_){auto out=static_cast<unsigned char*>(pixels);for(size_t i=0;i<image->rgba.size();i+=4){unsigned a=image->rgba[i+3];out[i]=(image->rgba[i+2]*a+255*(255-a))/255;out[i+1]=(image->rgba[i+1]*a+255*(255-a))/255;out[i+2]=(image->rgba[i]*a+255*(255-a))/255;out[i+3]=255;}SendMessageW(image_,STM_SETIMAGE,IMAGE_BITMAP,reinterpret_cast<LPARAM>(bitmap_));ShowWindow(preview_,SW_HIDE);ShowWindow(image_,SW_SHOW);}
+  bitmap_=CreateDIBSection(nullptr,&info,DIB_RGB_COLORS,&pixels,nullptr,0);if(bitmap_){auto out=static_cast<unsigned char*>(pixels);for(size_t i=0;i<image->rgba.size();i+=4){unsigned a=image->rgba[i+3];out[i]=(image->rgba[i+2]*a+255*(255-a))/255;out[i+1]=(image->rgba[i+1]*a+255*(255-a))/255;out[i+2]=(image->rgba[i]*a+255*(255-a))/255;out[i+3]=255;}ShowWindow(preview_,SW_HIDE);ShowWindow(image_,SW_SHOW);InvalidateRect(image_,nullptr,TRUE);}
  }}
 }
 void Workspace::status(const std::string& s){SetWindowTextW(status_,wide(s).c_str());}
@@ -115,7 +117,20 @@ bool Workspace::message(UINT msg,WPARAM wp,LPARAM lp,LRESULT& result){
   else return false;result=0;return true;
  }
  if(msg==WM_NOTIFY&&reinterpret_cast<NMHDR*>(lp)->hwndFrom==list_){auto h=reinterpret_cast<NMHDR*>(lp);if(h->code==LVN_ITEMCHANGED)selected();else if(h->code==NM_DBLCLK)execute(false);result=0;return true;}
- if(msg==WM_DRAWITEM){auto d=reinterpret_cast<DRAWITEMSTRUCT*>(lp);if(d->CtlID!=History&&d->CtlID!=Snippets)return false;
+ if(msg==WM_DRAWITEM){auto d=reinterpret_cast<DRAWITEMSTRUCT*>(lp);
+  if(d->CtlID==7196){
+   FillRect(d->hDC,&d->rcItem,reinterpret_cast<HBRUSH>(GetStockObject(WHITE_BRUSH)));
+   BITMAP b{};if(bitmap_&&GetObjectW(bitmap_,sizeof(b),&b)){
+    int cw=d->rcItem.right-d->rcItem.left,ch=d->rcItem.bottom-d->rcItem.top;
+    double scale=std::min(double(cw)/b.bmWidth,double(ch)/b.bmHeight);
+    int w=std::max(1,int(b.bmWidth*scale)),h=std::max(1,int(b.bmHeight*scale));
+    auto source=CreateCompatibleDC(d->hDC);auto old=SelectObject(source,bitmap_);
+    int saved=SaveDC(d->hDC);SetStretchBltMode(d->hDC,HALFTONE);SetBrushOrgEx(d->hDC,0,0,nullptr);
+    StretchBlt(d->hDC,d->rcItem.left+(cw-w)/2,d->rcItem.top+(ch-h)/2,w,h,source,0,0,b.bmWidth,b.bmHeight,SRCCOPY);
+    RestoreDC(d->hDC,saved);SelectObject(source,old);DeleteDC(source);
+   }result=TRUE;return true;
+  }
+  if(d->CtlID!=History&&d->CtlID!=Snippets)return false;
   bool active=(d->CtlID==History)==(page_==MenuKind::History);auto brush=CreateSolidBrush(active?RGB(224,237,255):RGB(246,247,249));FillRect(d->hDC,&d->rcItem,brush);DeleteObject(brush);SetBkMode(d->hDC,TRANSPARENT);SetTextColor(d->hDC,active?RGB(0,86,180):RGB(45,55,65));auto old=SelectObject(d->hDC,bold_font_);RECT r=d->rcItem;r.left+=px(14);DrawTextW(d->hDC,d->CtlID==History?L"История":L"Сниппеты",-1,&r,DT_SINGLELINE|DT_VCENTER);SelectObject(d->hDC,old);if(d->itemState&ODS_FOCUS)DrawFocusRect(d->hDC,&d->rcItem);result=TRUE;return true;}
  if(msg==WM_CTLCOLORSTATIC){SetTextColor(reinterpret_cast<HDC>(wp),RGB(45,55,65));SetBkColor(reinterpret_cast<HDC>(wp),RGB(255,255,255));result=reinterpret_cast<LRESULT>(GetStockObject(WHITE_BRUSH));return true;}
  if(msg==WM_PAINT){PAINTSTRUCT ps;auto dc=BeginPaint(owner_,&ps);RECT r{};GetClientRect(owner_,&r);FillRect(dc,&r,reinterpret_cast<HBRUSH>(GetStockObject(WHITE_BRUSH)));RECT nav{0,px(96),px(190),r.bottom};auto b=CreateSolidBrush(RGB(246,247,249));FillRect(dc,&nav,b);DeleteObject(b);auto pen=CreatePen(PS_SOLID,1,RGB(225,229,235));auto old=SelectObject(dc,pen);MoveToEx(dc,0,px(95),nullptr);LineTo(dc,r.right,px(95));SelectObject(dc,old);DeleteObject(pen);EndPaint(owner_,&ps);result=0;return true;}

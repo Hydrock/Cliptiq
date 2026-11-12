@@ -95,6 +95,8 @@ int main() {
     auto db = take(open_store(":memory:"));
     MediaService service(db, platform);
     auto settings = default_settings(platform);
+    settings.values["preview_width"]="1";
+    settings.values["preview_height"]="1";
     CHECK(settings.values.at("screenshots") == "0");
     CHECK(service.configure(settings));
     CHECK(service.on_screenshot_file("a.png"));
@@ -123,6 +125,25 @@ int main() {
     auto id = take(list_history(db))[0].id;
     pump(200);
     CHECK(service.preview({id, {}}));
+    // Workspace previews decode the original on demand, independent of the
+    // tiny menu thumbnail. Closing cancels publication and releases the image.
+    CHECK(!service.workspace_preview(PreviewRef{id, {}}));
+    pump(300);
+    auto detail = service.workspace_preview(PreviewRef{id, {}});
+    CHECK(detail && detail->width == 2 && detail->height == 4);
+    CHECK(!service.workspace_preview(std::nullopt));
+    CHECK(!service.workspace_preview(PreviewRef{id, {}}));
+    CHECK(!service.workspace_preview(std::nullopt));
+    pump(300);
+    CHECK(!service.workspace_preview(PreviewRef{id, {}}));
+    service.workspace_preview(std::nullopt);
+    ClipboardSnapshot other;other.representations={{0,"windows","CF_UNICODETEXT",CanonicalKind::Text,{'a',0,0,0},TextEncoding::Utf16Le}};
+    auto other_id=*take(ingest(db,other,{},100));
+    CHECK(!service.workspace_preview(PreviewRef{id, {}}));
+    CHECK(erase_history(db,other_id));
+    pump(300);
+    CHECK(service.workspace_preview(PreviewRef{id, {}}));
+    service.workspace_preview(std::nullopt);
     CHECK(service.on_screenshot_file("growing.png"));
     pump(700);
     CHECK(take(list_history(db)).size() == 1);
