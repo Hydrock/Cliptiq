@@ -15,6 +15,10 @@ struct NativeMenuOptions {
   // Windows background startup: retain the launcher as an IPC/tray owner,
   // but show it as a recovery route if the tray is unavailable/disabled.
   bool start_hidden = false;
+  bool workspace_enabled = false;
+  std::function<Result<MenuModel>()> workspace_model;
+  std::function<Result<std::string>(const MenuCommand &)> workspace_preview;
+  std::string workspace_status;
   // Called on the GUI thread before a native popup takes focus. Empty means
   // copy/manual paste only. External DBusMenu events cannot invent a target.
   std::function<InvocationContext()> invocation_provider;
@@ -43,6 +47,10 @@ public:
   Result<void> process_events(unsigned wait_ms = 0);
   NativeMenuStatus status() const;
   NativeMenuHandles native_handles() const;
+#ifdef _WIN32
+  Result<void> show_workspace();
+  void workspace_status(const std::string &);
+#endif
 };
 MenuImage scale_menu_image(const MenuImage &, unsigned dpi);
 std::optional<MenuImage> menu_preview(const MenuItem &,

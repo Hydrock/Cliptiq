@@ -228,7 +228,7 @@ Result<SelectionOutcome> execute_selection(Store &store,
     outcome.sequence_token = written.value();
     outcome.status = SelectionStatus::Copied;
     bool dispatched = false;
-    if (intent.auto_paste) {
+    if (intent.auto_paste && !intent.command.invocation.copy_only) {
       if (intent.command.invocation.target.empty()) {
         outcome.status = SelectionStatus::NeedsManualPaste;
         outcome.reason = "No captured target; paste manually";

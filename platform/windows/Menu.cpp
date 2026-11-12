@@ -7,6 +7,7 @@
 #include <shellapi.h>
 // clang-format on
 #include "cliptiq/native_menu.hpp"
+#include "Workspace.hpp"
 #include <algorithm>
 #include <map>
 #include <stdexcept>
@@ -82,6 +83,20 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
   bool closing = false;
   NativeMenuStatus status;
   std::wstring tooltip;
+  std::unique_ptr<windows::Workspace> workspace;
+  void open_workspace() {
+    if (!options.workspace_enabled) return;
+    if (!workspace) {
+      workspace = std::make_unique<windows::Workspace>(window, options,
+        [this](MenuCommand command) { if(callback)callback(std::move(command)); }, provider);
+      if (options.workspace_model) {
+        auto full = options.workspace_model();
+        if(full) workspace->update(std::move(full.value()));
+        else workspace->status(full.error().message);
+      } else workspace->update(model);
+    }
+    workspace->layout(dpi);
+  }
   State(NativeMenuOptions o, std::function<void(MenuCommand)> c,
         MenuPreviewProvider p)
       : options(o), callback(std::move(c)), provider(std::move(p)) {}
@@ -169,6 +184,7 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
     return {};
   }
   void layout() {
+    if(workspace){workspace->layout(dpi);return;}
     auto dpi = this->dpi;
     auto button = GetDlgItem(window, 1);
     if (!button)
@@ -204,6 +220,7 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
   void tray() {
     remove_icon();
     if (options.tray_style == TrayStyle::Hidden) {
+      open_workspace();
       ShowWindow(window, SW_SHOWNOACTIVATE);
       status.launcher_visible = true;
       status.tray_reason = "Tray hidden; launcher visible";
@@ -241,6 +258,7 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
       Shell_NotifyIconW(NIM_SETVERSION, &n);
     }
     if (!status.tray_available) {
+      open_workspace();
       ShowWindow(window, SW_SHOWNOACTIVATE);
       status.launcher_visible = true;
     }
@@ -288,12 +306,14 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
       return DefWindowProcW(w, message, wp, lp);
     try {
       auto s = raw->shared_from_this();
+      if(s->workspace){LRESULT result=0;if(s->workspace->message(message,wp,lp,result))return result;}
       if (message == s->taskbar_created && s->taskbar_created) {
         s->tray();
         return 0;
       }
       switch (message) {
       case WM_CREATE: {
+        if(s->options.workspace_enabled)return 0;
         CreateWindowW(L"BUTTON", lw(L"Clipboard History"),
                       WS_CHILD | WS_VISIBLE | WS_TABSTOP | BS_PUSHBUTTON, 16,
                       16, 240, 42, w, reinterpret_cast<HMENU>(1),
@@ -301,12 +321,19 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
         return 0;
       }
       case WM_SETFOCUS:
+        if(s->workspace)return 0;
         SetFocus(GetDlgItem(w, 1));
         return 0;
       case WM_SIZE:
         s->layout();
         return 0;
+      case WM_GETMINMAXINFO:
+        if(s->options.workspace_enabled){auto limit=reinterpret_cast<MINMAXINFO*>(lp);limit->ptMinTrackSize={MulDiv(880,s->dpi,96),MulDiv(580,s->dpi,96)};return 0;}
+        break;
       case WM_CLOSE: {
+        if(s->options.workspace_enabled && s->status.tray_available){
+          ShowWindow(w,SW_HIDE);s->workspace.reset();s->status.launcher_visible=false;return 0;
+        }
         if (!s->closing && s->callback) {
           auto cb = s->callback;
           cb({MenuAction::Quit, "", s->model.revision});
@@ -317,7 +344,9 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
         s->window = nullptr;
         return 0;
       case WM_COMMAND:
-        if (LOWORD(wp) == 1)
+        if (s->options.workspace_enabled && LOWORD(wp) == windows::WorkspaceQuit) {
+          if(s->callback) s->callback({MenuAction::Quit,"",s->model.revision});
+        } else if (LOWORD(wp) == 1)
           s->popup();
         else
           s->invoke(LOWORD(wp));
@@ -342,11 +371,16 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
         break;
       }
       case WM_APP + 1:
+        if(s->options.workspace_enabled && (LOWORD(lp)==NIN_SELECT||LOWORD(lp)==NIN_KEYSELECT)){
+          s->open_workspace();ShowWindow(w,SW_SHOWNORMAL);SetForegroundWindow(w);s->status.launcher_visible=true;return 0;
+        }
         if (LOWORD(lp) == NIN_SELECT || LOWORD(lp) == NIN_KEYSELECT ||
             LOWORD(lp) == WM_CONTEXTMENU)
           s->popup();
         return 0;
       case WM_DPICHANGED: {
+        const bool restore_workspace=bool(s->workspace);
+        s->workspace.reset();
         auto new_dpi = unsigned(HIWORD(wp));
         if (new_dpi >= 48)
           s->dpi = new_dpi;
@@ -355,6 +389,7 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
                      rect->right - rect->left, rect->bottom - rect->top,
                      SWP_NOZORDER | SWP_NOACTIVATE);
         s->layout();
+        if(restore_workspace)s->open_workspace();
         s->rebuild();
         return 0;
       }
@@ -409,7 +444,7 @@ Result<void> NativeMenu::initialize() {
   if (!RegisterClassW(&type) && GetLastError() != ERROR_CLASS_ALREADY_EXISTS)
     return Error{ErrorCode::Io, "Cannot register menu window"};
   s->window = CreateWindowExW(0, type.lpszClassName, L"Cliptiq",
-                              WS_OVERLAPPEDWINDOW | (s->options.start_hidden ? 0 : WS_VISIBLE), CW_USEDEFAULT,
+                              WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | (s->options.start_hidden ? 0 : WS_VISIBLE), CW_USEDEFAULT,
                               CW_USEDEFAULT, 300, 150, nullptr, nullptr,
                               type.hInstance, s.get());
   if (!s->window)
@@ -417,7 +452,7 @@ Result<void> NativeMenu::initialize() {
   s->dpi = GetDpiForWindow(s->window);
   if (!s->dpi)
     s->dpi = 96;
-  RECT client{0, 0, MulDiv(300, s->dpi, 96), MulDiv(110, s->dpi, 96)};
+  RECT client{0, 0, MulDiv(s->options.workspace_enabled?1040:300, s->dpi, 96), MulDiv(s->options.workspace_enabled?680:110, s->dpi, 96)};
   AdjustWindowRectExForDpi(&client, WS_OVERLAPPEDWINDOW, FALSE, 0, s->dpi);
   SetWindowPos(s->window, nullptr, 0, 0, client.right - client.left,
                client.bottom - client.top,
@@ -441,7 +476,9 @@ Result<void> NativeMenu::initialize() {
     SendMessageW(s->tip, TTM_SETMAXTIPWIDTH, 0, 400);
   }
   s->tray();
-  return update({});
+  auto result=update({});
+  if(result && s->options.workspace_enabled && !s->options.start_hidden)s->open_workspace();
+  return result;
 }
 Result<void> NativeMenu::update(MenuModel m) {
   auto valid = validate_menu_model(m);
@@ -451,7 +488,12 @@ Result<void> NativeMenu::update(MenuModel m) {
   if (!s->thread() || !s->window)
     return Error{ErrorCode::InvalidArgument, "Win32 menu not initialized"};
   s->model = std::move(m);
-  return s->rebuild();
+  auto result=s->rebuild();
+  if(result && s->workspace){
+    auto full=s->options.workspace_model?s->options.workspace_model():Result<MenuModel>(s->model);
+    if(full)s->workspace->update(std::move(full.value()));else s->workspace->status(full.error().message);
+  }
+  return result;
 }
 Result<void> NativeMenu::show(const InvocationContext &c) {
   auto s = state_;
@@ -467,6 +509,7 @@ Result<void> NativeMenu::set_options(NativeMenuOptions options) {
       options.preview_width > 512 || options.preview_height > 512)
     return Error{ErrorCode::InvalidArgument, "Invalid live menu options"};
   s->options = std::move(options);
+  if(s->workspace)s->workspace->status(s->options.workspace_status);
   auto result = update(s->model);
   if (!result)
     return result;
@@ -490,7 +533,8 @@ Result<void> NativeMenu::process_events(unsigned wait) {
   for (unsigned i = 0;
        i < 64 && PeekMessageW(&message, nullptr, 0, 0, PM_REMOVE); ++i) {
     dispatched = true;
-    if (message.message == WM_KEYDOWN &&
+    if(s->workspace && s->workspace->key(message))continue;
+    if (!s->workspace && message.message == WM_KEYDOWN &&
         (message.hwnd == s->window || IsChild(s->window, message.hwnd))) {
       auto button = GetDlgItem(s->window, 1);
       if (message.wParam == VK_TAB) {
@@ -516,6 +560,11 @@ Result<void> NativeMenu::process_events(unsigned wait) {
   return {};
 }
 NativeMenuStatus NativeMenu::status() const { return state_->status; }
+Result<void> NativeMenu::show_workspace(){
+  auto s=state_;if(!s->thread()||!s->window)return Error{ErrorCode::InvalidArgument,"Workspace requires GUI owner"};
+  s->open_workspace();ShowWindow(s->window,SW_SHOWNORMAL);SetForegroundWindow(s->window);s->status.launcher_visible=true;return {};
+}
+void NativeMenu::workspace_status(const std::string& value){if(state_->workspace)state_->workspace->status(value);}
 NativeMenuHandles NativeMenu::native_handles() const {
   return {reinterpret_cast<uintptr_t>(state_->window),
           reinterpret_cast<uintptr_t>(state_->menu)};

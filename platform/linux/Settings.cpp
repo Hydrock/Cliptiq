@@ -78,10 +78,10 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
   gtk_box_pack_start(GTK_BOX(box), tabs, TRUE, TRUE, 0);
   const char *names[] = {lc("General"),  lc("Menu"),      lc("Types"),
                          lc("Excluded"), lc("Shortcuts"), lc("Updates"),
-                         lc("Beta"),     lc("About")};
-  GtkWidget *grids[8]{};
-  int rows[8]{};
-  for (unsigned i = 0; i < 8; ++i) {
+                         lc("Beta"),     lc("About"), lc("Sounds")};
+  GtkWidget *grids[9]{};
+  int rows[9]{};
+  for (unsigned i = 0; i < 9; ++i) {
     auto scroll = gtk_scrolled_window_new(nullptr, nullptr);
     grids[i] = gtk_grid_new();
     gtk_grid_set_row_spacing(GTK_GRID(grids[i]), 10);
@@ -216,6 +216,7 @@ bool NativeSettings::confirm_clear() const {
   gtk_widget_destroy(dialog);
   return confirmed;
 }
+void NativeSettings::sound_preview(std::function<void(bool, int)>) {}
 void NativeSettings::status(const std::string &value) {
   if (state_->message)
     gtk_label_set_text(GTK_LABEL(state_->message), value.c_str());

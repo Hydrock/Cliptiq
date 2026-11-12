@@ -168,10 +168,10 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
   [s->window.contentView addSubview:tabs];
   NSArray *names = @[
     loc(@"General"), loc(@"Menu"), loc(@"Types"), loc(@"Excluded"),
-    loc(@"Shortcuts"), loc(@"Updates"), loc(@"Beta"), loc(@"About")
+    loc(@"Shortcuts"), loc(@"Updates"), loc(@"Beta"), loc(@"About"), loc(@"Sounds")
   ];
-  NSStackView *stacks[8];
-  for (unsigned g = 0; g < 8; ++g) {
+  NSStackView *stacks[9];
+  for (unsigned g = 0; g < 9; ++g) {
     auto item = [[NSTabViewItem alloc] initWithIdentifier:names[g]];
     item.label = names[g];
     auto scroll =
@@ -231,7 +231,7 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
     }
     s->controls.push_back({f.key, control, f.boolean, multiline});
   }
-  for (unsigned g = 0; g < 8; ++g) {
+  for (unsigned g = 0; g < 9; ++g) {
     auto size = stacks[g].fittingSize;
     stacks[g].frame =
         NSMakeRect(0, 0, 830, std::max(570.0, double(size.height)));
@@ -267,6 +267,7 @@ bool NativeSettings::confirm_clear() const {
   [alert addButtonWithTitle:loc(@"Cancel")];
   return [alert runModal] == NSAlertFirstButtonReturn;
 }
+void NativeSettings::sound_preview(std::function<void(bool, int)>) {}
 void NativeSettings::status(const std::string &value) {
   if (state_->message)
     state_->message.stringValue = str(value);

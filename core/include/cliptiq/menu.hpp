@@ -49,6 +49,7 @@ struct MenuSettings {
 struct InvocationContext {
   std::string target, activation_token;
   bool keyboard = false;
+  bool copy_only = false, delete_only = false;
   std::optional<int> x, y;
   unsigned modifiers = 0;
 };
@@ -59,6 +60,9 @@ struct MenuCommand {
   InvocationContext invocation;
 };
 Result<void> validate_menu_model(const MenuModel &);
+struct WorkspaceRow { MenuItem item; std::string group; };
+std::vector<WorkspaceRow> workspace_rows(const MenuModel &, MenuKind);
+Result<std::string> workspace_text(Store &, const MenuCommand &);
 Result<MenuModel> build_menu(Store &, MenuKind, const MenuSettings & = {});
 Result<MenuModel> build_folder_menu(Store &, const FolderId &,
                                     const MenuSettings & = {});

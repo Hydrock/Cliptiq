@@ -96,6 +96,13 @@ int main() {
           o.sequence_token == "own:42");
     CHECK(take(list_history(f.store))[0].used_ms == 10);
   });
+  test("workspace_copy_never_injects_even_when_auto_enabled", [] {
+    Fixture f;
+    f.intent.auto_paste = true;
+    f.intent.command.invocation.copy_only = true;
+    auto o=f.run();
+    CHECK(o.status==SelectionStatus::Copied && f.clipboard.writes==1 && f.paste.calls==0);
+  });
   test("plain_keeps_only_text_without_rich_formats", [] {
     Fixture f;
     f.intent.action = SelectionAction::Plain;

@@ -86,6 +86,7 @@ def main():
     p.add_argument('--open-settings',action='store_true')
     p.add_argument('--expect-background',action='store_true')
     p.add_argument('--expect-settings-destroyed',action='store_true')
+    p.add_argument('--workspace',action='store_true',help='Exit through the workspace Quit command, since closing hides to tray')
     args=p.parse_args()
     args.output.parent.mkdir(parents=True,exist_ok=True)
     root=args.output.parent.resolve()/f'profile-{time.time_ns()}'
@@ -161,7 +162,8 @@ def main():
                           for key,v in rows.items()},indent=2),flush=True)
     finally:
         for w in own:
-            if w['window_class']=='Cliptiq.NativeMenu':user.PostMessageW(w['hwnd'],0x10,0,0)
+            if w['window_class']=='Cliptiq.NativeMenu':
+                user.PostMessageW(w['hwnd'],0x111 if args.workspace else 0x10,7108 if args.workspace else 0,0)
         try:process.wait(timeout=10)
         except subprocess.TimeoutExpired:process.kill();process.wait()
         log.close()

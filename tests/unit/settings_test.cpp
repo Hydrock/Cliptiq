@@ -35,6 +35,30 @@ int main() {
               *default_settings(CapturePlatform::MacOS).hotkeys.at("main")) ==
           "Shift+Super+V");
   });
+  test("sound_defaults_ranges_and_legacy_profile", [] {
+    auto store = take(open_store(":memory:"));
+    auto s = default_settings(CapturePlatform::Windows);
+    CHECK(s.values.at("sound_copy") == "1");
+    CHECK(s.values.at("sound_paste") == "1");
+    CHECK(s.values.at("sound_volume") == "25");
+    s.values["history_count"] = "47";
+    CHECK(save_settings(store, s));
+    CHECK(sqlite3_exec(store.connection(),
+        "DELETE FROM settings WHERE key IN ('t09.sound_copy','t09.sound_paste','t09.sound_volume')",
+        nullptr, nullptr, nullptr) == SQLITE_OK);
+    auto old = take(load_settings(store));
+    CHECK(old.values.at("history_count") == "47" && old.revision == 1);
+    CHECK(old.values.at("sound_volume") == "25");
+    for (auto value : {"-1", "101", "25.5", "01", "loud"}) {
+      auto invalid = old;
+      invalid.values["sound_volume"] = value;
+      CHECK(!save_settings(store, invalid));
+    }
+    old.values["sound_volume"] = "100";
+    old.values["sound_copy"] = "0";
+    CHECK(save_settings(store, old));
+    CHECK(take(load_settings(store)).values.at("sound_copy") == "0");
+  });
   test("atomic_roundtrip_and_privacy_projection", [] {
     auto store = take(open_store(":memory:"));
     auto s = default_settings(CapturePlatform::X11);
@@ -81,9 +105,9 @@ int main() {
     s.values["concealed"] = "yes";
     CHECK(!validate_settings(s));
   });
-  test("eight_groups_and_unknown_capability_disabled_reason", [] {
+  test("nine_groups_and_unknown_capability_disabled_reason", [] {
     auto fields = settings_fields(default_settings(CapturePlatform::X11), {});
-    bool groups[8]{};
+    bool groups[9]{};
     for (auto &f : fields) {
       groups[unsigned(f.group)] = true;
       if (!f.enabled)

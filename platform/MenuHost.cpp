@@ -7,6 +7,9 @@
 #ifdef CLIPTIQ_WITH_UPDATES
 #include "Updates.hpp"
 #endif
+#ifdef CLIPTIQ_WITH_SOUND
+#include "windows/Sound.hpp"
+#endif
 #include "Application.hpp"
 #include "cliptiq/menu.hpp"
 #include "cliptiq/locale.hpp"
@@ -38,6 +41,7 @@
 #import <AppKit/AppKit.h>
 #endif
 #include <chrono>
+#include <algorithm>
 #include <cstdlib>
 #include <iostream>
 #include <thread>
@@ -60,6 +64,10 @@ void ok(Result<void> r) {
 int host(int argc, char **argv) {
   try {
     bool smoke = false, capture = false, demo = false;
+#ifdef CLIPTIQ_WITH_SOUND
+    windows::NativeSound sound;
+    bool initial_capture_sound = true;
+#endif
 #ifdef CLIPTIQ_WITH_UPDATES
     NativeUpdates updates;
 #endif
@@ -264,6 +272,10 @@ int host(int argc, char **argv) {
     auto store = take(open_store(path));
 #ifdef CLIPTIQ_WITH_SETTINGS
     auto preferences = take(load_settings(store));
+#ifdef CLIPTIQ_WITH_SOUND
+    auto configure_sound = [&]{sound.configure(preferences.values.at("sound_copy")=="1",preferences.values.at("sound_paste")=="1",unsigned(std::stoul(preferences.values.at("sound_volume"))));};
+    configure_sound();
+#endif
 #ifdef CLIPTIQ_WITH_LIFECYCLE
     auto language = requested_locale.empty() ? preferences.values.at("locale")
                                              : requested_locale;
@@ -307,6 +319,13 @@ int host(int argc, char **argv) {
 #else
     std::unique_ptr<linux_backend::LinuxCaptureSession> session;
 #endif
+    auto capture_feedback = [&](auto event) {
+      if(!event){std::cerr<<event.error().message<<'\n';return;}
+#ifdef CLIPTIQ_WITH_SOUND
+      const bool initial=initial_capture_sound;initial_capture_sound=false;
+      if(!smoke && !initial && event.value().disposition==CaptureDisposition::Accept && event.value().entry_id)sound.play_copy();
+#endif
+    };
     if (capture) {
       if (path == ":memory:")
         throw std::runtime_error("Capture requires an explicit database path");
@@ -324,10 +343,7 @@ int host(int argc, char **argv) {
 #else
           {}, {},
 #endif
-          [](auto event) {
-            if (!event)
-              std::cerr << event.error().message << '\n';
-          });
+          capture_feedback);
       if (!start) {
         std::cerr << start.error().message << '\n';
         session.reset();
@@ -368,6 +384,9 @@ int host(int argc, char **argv) {
 #endif
 #ifdef CLIPTIQ_WITH_SETTINGS
     NativeSettings settings_window;
+#ifdef CLIPTIQ_WITH_SOUND
+    if(!smoke)settings_window.sound_preview([&](bool paste,int volume){sound.preview(paste,unsigned(volume<0?0:volume));});
+#endif
 #ifdef CLIPTIQ_WITH_EDITOR
     NativeSnippetEditor editor_window;
     std::shared_ptr<SnippetEditorSession> editor_session;
@@ -468,6 +487,33 @@ int host(int argc, char **argv) {
         menu.items.push_back(std::move(item));
       }
     };
+#endif
+// Windows workspace reuses the existing stable-ID model and controller.
+#if defined(_WIN32) && defined(CLIPTIQ_WITH_LIFECYCLE) && defined(CLIPTIQ_WITH_SETTINGS)
+    options.workspace_enabled = !smoke;
+    options.workspace_model = [&]() -> Result<MenuModel> {
+      auto workspace_settings=settings;
+      workspace_settings.title_characters=100;
+      workspace_settings.tooltip_characters=512;
+      auto full=build_menu(store,MenuKind::Main,workspace_settings);
+      if(!full)return full.error();
+      filter_model(full.value());
+#ifdef CLIPTIQ_WITH_MEDIA
+      decorate_media(full.value());
+#endif
+      decorate_lifecycle(full.value());
+      return std::move(full.value());
+    };
+    options.workspace_preview = [&](const MenuCommand& command){return workspace_text(store,command);};
+    auto workspace_status_text = [&] {
+      auto policy=settings_capture(preferences);
+      if(std::none_of(policy.enabled_kinds.begin(),policy.enabled_kinds.end(),[](bool value){return value;}))
+        return std::string("Сохранение новых копий выключено в настройках форматов");
+      return capabilities.capture.status==CapabilityStatus::Unavailable
+        ? "Захват буфера недоступен: "+capabilities.capture.reason
+        : std::string("История хранится только на этом компьютере");
+    };
+    options.workspace_status=workspace_status_text();
 #endif
     NativeMenu ui(options, [&](MenuCommand command) {
       auto valid = validate_menu_command(store, command);
@@ -583,10 +629,7 @@ int host(int argc, char **argv) {
         return;
       auto result =
           session->start(settings_capture(preferences),
-                         settings_history(preferences), [](auto event) {
-                           if (!event)
-                             std::cerr << event.error().message << '\n';
-                         });
+                         settings_history(preferences), capture_feedback);
       if (!result)
         std::cerr << result.error().message << '\n';
     };
@@ -636,6 +679,9 @@ int host(int argc, char **argv) {
               return applied;
             }
             preferences = take(load_settings(store));
+#ifdef CLIPTIQ_WITH_SOUND
+            configure_sound();
+#endif
 #ifdef CLIPTIQ_WITH_UPDATES
             if(!smoke)updates.preferences(preferences.values.at("updates_auto")=="1",std::stoll(preferences.values.at("updates_interval")));
 #endif
@@ -650,6 +696,9 @@ int host(int argc, char **argv) {
             options.preview_width = settings.preview_width;
             options.preview_height = settings.preview_height;
             options.icons = settings.icons;
+#if defined(_WIN32) && defined(CLIPTIQ_WITH_LIFECYCLE)
+            options.workspace_status=workspace_status_text();
+#endif
             auto result = ui.set_options(options);
             if (!result)
               std::cerr << result.error().message << '\n';
@@ -782,6 +831,9 @@ int host(int argc, char **argv) {
                      : action == LaunchAction::Snippets ? MenuKind::Snippets
                                                         : MenuKind::Main;
               ok(rebuild());
+#ifdef _WIN32
+              if(action==LaunchAction::Main)ok(ui.show_workspace());else
+#endif
               ok(ui.show());
             }
           }
@@ -856,6 +908,9 @@ int host(int argc, char **argv) {
           if (action.second.target.empty())
             action.second.target = paste.capture_target();
           ok(rebuild());
+#if defined(_WIN32) && defined(CLIPTIQ_WITH_LIFECYCLE)
+          if(action.first=="main" && !action.second.keyboard)ok(ui.show_workspace());else
+#endif
           ok(ui.show(action.second));
         }
       }
@@ -885,14 +940,26 @@ int host(int argc, char **argv) {
         if (!action)
           std::cerr << action.error().message << '\n';
         else {
-          intent.action = action.value();
-          intent.auto_paste = auto_paste;
+          intent.action = intent.command.invocation.delete_only?SelectionAction::DeleteOnly:action.value();
+          intent.auto_paste = auto_paste && !intent.command.invocation.copy_only;
           intent.shortcut = shortcut;
           intent.now_ms =
               std::chrono::duration_cast<std::chrono::milliseconds>(
                   std::chrono::system_clock::now().time_since_epoch())
                   .count();
           auto result = execute_selection(store, intent, *clipboard, paste);
+#ifdef CLIPTIQ_WITH_SOUND
+          if(!smoke && result && !result.value().sequence_token.empty()){
+            if(result.value().status==SelectionStatus::Dispatched)sound.play_paste();
+            else if(result.value().status==SelectionStatus::Copied || result.value().status==SelectionStatus::NeedsManualPaste)sound.play_copy();
+          }
+#endif
+#ifdef _WIN32
+          if(!result)ui.workspace_status(result.error().message);
+          else if(result.value().history_deleted)ui.workspace_status("Запись удалена из истории");
+          else if(result.value().status==SelectionStatus::Copied || result.value().status==SelectionStatus::Dispatched)ui.workspace_status("Скопировано в буфер обмена");
+          else ui.workspace_status(result.value().reason);
+#endif
           if (!result)
             std::cerr << result.error().message << '\n';
           else {

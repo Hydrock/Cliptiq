@@ -86,7 +86,10 @@ const std::vector<Spec> &specs() {
       {SettingsGroup::Beta, "screenshot_directory",
        "Screenshot directory (absolute path)", "", -1, -1},
       {SettingsGroup::Donate, "support", "Project support",
-       "https://github.com/Hydrock/Cliptiq", -1, -1}};
+       "https://github.com/Hydrock/Cliptiq", -1, -1},
+      {SettingsGroup::Sounds, "sound_copy", "Sound on copy", "1", 0, 1},
+      {SettingsGroup::Sounds, "sound_paste", "Sound on paste", "1", 0, 1},
+      {SettingsGroup::Sounds, "sound_volume", "Sound volume (%)", "25", 0, 100}};
   return s;
 }
 int number(const std::string &s) {
@@ -497,6 +500,10 @@ std::vector<SettingField> settings_fields(const Settings &s,
                    false};
     if (!f.reason.empty())
       f.enabled = false;
+    if (f.group == SettingsGroup::Sounds && caps.platform != CapturePlatform::Windows) {
+      f.enabled = false;
+      f.reason = "Sound playback is currently available on Windows only";
+    }
     if (f.key == "support") {
       f.enabled = false;
       f.reason = "Cliptiq 0.1.0 — https://github.com/Hydrock/Cliptiq";
