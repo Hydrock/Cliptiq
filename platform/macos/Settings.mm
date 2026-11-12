@@ -205,10 +205,10 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
   [s->window.contentView addSubview:tabs];
   NSArray *names = @[
     loc(@"General"), loc(@"Menu"), loc(@"Types"), loc(@"Excluded"),
-    loc(@"Shortcuts"), loc(@"Updates"), loc(@"Beta"), loc(@"About"), loc(@"Sounds")
+    loc(@"Shortcuts"), loc(@"Updates"), loc(@"Beta"), loc(@"About"), loc(@"Sounds"), loc(@"Network")
   ];
-  NSStackView *stacks[9];
-  for (unsigned g = 0; g < 9; ++g) {
+  NSStackView *stacks[10];
+  for (unsigned g = 0; g < (s->advanced ? 10u : 9u); ++g) {
     auto item = [[NSTabViewItem alloc] initWithIdentifier:names[g]];
     item.label = names[g];
     auto scroll =
@@ -306,7 +306,10 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
   }
   [stacks[unsigned(SettingsGroup::Sounds)] addArrangedSubview:previews];
   s->target->advanced = [weak] { if(auto s=weak.lock())if(s->advanced)s->advanced(); };
-  [stacks[unsigned(SettingsGroup::Beta)] addArrangedSubview:[NSButton buttonWithTitle:loc(@"Advanced LAN settings") target:s->target action:@selector(advanced:)]];
+  if(s->advanced) {
+    [stacks[9] addArrangedSubview:[NSTextField wrappingLabelWithString:loc(@"Share new clipboard copies with your devices on a local network or VPN. Off until you add a device.")]];
+    [stacks[9] addArrangedSubview:[NSButton buttonWithTitle:loc(@"Open network settings") target:s->target action:@selector(advanced:)]];
+  }
   auto apply = [NSButton buttonWithTitle:loc(@"Apply")
                                   target:s->target
                                   action:@selector(apply:)];

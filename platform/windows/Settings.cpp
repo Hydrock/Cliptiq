@@ -198,7 +198,7 @@ struct NativeSettings::State : std::enable_shared_from_this<State> {
       }
       return DefWindowProcW(w, msg, wp, lp);
     }
-  } pages[9];
+  } pages[10];
   HWND apply_button = nullptr;
   void set_message(const std::wstring& value) {
     SetWindowTextW(message,value.c_str());
@@ -303,7 +303,7 @@ struct NativeSettings::State : std::enable_shared_from_this<State> {
   }
   void page() {
     int selected = TabCtrl_GetCurSel(tabs);
-    for (int p = 0; p < 9; ++p)
+    for (int p = 0; p < 10; ++p)
       ShowWindow(pages[p].window, p == selected ? SW_SHOW : SW_HIDE);
   }
   static LRESULT CALLBACK proc(HWND w, UINT msg, WPARAM wp, LPARAM lp) {
@@ -401,9 +401,9 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
   s->tabs = CreateWindowExW(
       0, WC_TABCONTROLW, L"", WS_CHILD | WS_VISIBLE | WS_TABSTOP | TCS_MULTILINE, 8, 8, 884,
       690, s->window, reinterpret_cast<HMENU>(200), wc.hInstance, nullptr);
-  const wchar_t *names[] = {L"\u041e\u0431\u0449\u0438\u0435", L"\u041c\u0435\u043d\u044e", L"\u0424\u043e\u0440\u043c\u0430\u0442\u044b", L"\u0418\u0441\u043a\u043b\u044e\u0447\u0435\u043d\u0438\u044f", L"\u041a\u043b\u0430\u0432\u0438\u0448\u0438", L"\u041e\u0431\u043d\u043e\u0432\u043b\u0435\u043d\u0438\u044f", L"\u0415\u0449\u0451", L"\u041e \u043f\u0440\u043e\u0433\u0440\u0430\u043c\u043c\u0435", L"\u0417\u0432\u0443\u043a\u0438"};
-  int rows[9]{};
-  for (int p = 0; p < 9; ++p) {
+  const wchar_t *names[] = {L"\u041e\u0431\u0449\u0438\u0435", L"\u041c\u0435\u043d\u044e", L"\u0424\u043e\u0440\u043c\u0430\u0442\u044b", L"\u0418\u0441\u043a\u043b\u044e\u0447\u0435\u043d\u0438\u044f", L"\u041a\u043b\u0430\u0432\u0438\u0448\u0438", L"\u041e\u0431\u043d\u043e\u0432\u043b\u0435\u043d\u0438\u044f", L"\u0415\u0449\u0451", L"\u041e \u043f\u0440\u043e\u0433\u0440\u0430\u043c\u043c\u0435", L"\u0417\u0432\u0443\u043a\u0438", lw(L"Network")};
+  int rows[10]{};
+  for (int p = 0; p < (s->advanced ? 10 : 9); ++p) {
     TCITEMW item{};
     item.mask = TCIF_TEXT;
     item.pszText = const_cast<wchar_t *>(names[p]);
@@ -495,13 +495,17 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
     }
     s->pages[p].rows.push_back({label,control,help,reason_control,multi?90:30,!options.empty()});
   }
-  for (int p = 0; p < 9; ++p) {
+  for (int p = 0; p < 10; ++p) {
     s->pages[p].height = rows[p] + 12;
     s->pages[p].rows_bottom=rows[p];
   }
-  auto network=CreateWindowExW(0,L"BUTTON",lw(L"Advanced LAN settings"),WS_CHILD|WS_VISIBLE|WS_TABSTOP,24,rows[6]+12,600,36,s->pages[6].window,reinterpret_cast<HMENU>(302),wc.hInstance,nullptr);
-  SendMessageW(network,WM_SETFONT,reinterpret_cast<WPARAM>(font),TRUE);
-  s->pages[6].height=rows[6]+64;
+  if(s->advanced) {
+    auto help=CreateWindowExW(0,L"STATIC",lw(L"Share new clipboard copies with your devices on a local network or VPN. Off until you add a device."),WS_CHILD|WS_VISIBLE,24,12,800,70,s->pages[9].window,nullptr,wc.hInstance,nullptr);
+    SendMessageW(help,WM_SETFONT,reinterpret_cast<WPARAM>(s->help_font),TRUE);
+    auto network=CreateWindowExW(0,L"BUTTON",lw(L"Open network settings"),WS_CHILD|WS_VISIBLE|WS_TABSTOP,24,96,600,36,s->pages[9].window,reinterpret_cast<HMENU>(302),wc.hInstance,nullptr);
+    SendMessageW(network,WM_SETFONT,reinterpret_cast<WPARAM>(font),TRUE);
+    s->pages[9].height=150;
+  }
   auto version=std::wstring(L"Cliptiq ")+wide(CLIPTIQ_APP_VERSION);
   auto about=CreateWindowExW(0,L"STATIC",version.c_str(),WS_CHILD|WS_VISIBLE,
     24,rows[7]+12,800,30,s->pages[7].window,nullptr,wc.hInstance,nullptr);

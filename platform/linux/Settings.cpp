@@ -79,10 +79,10 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
   gtk_box_pack_start(GTK_BOX(box), tabs, TRUE, TRUE, 0);
   const char *names[] = {lc("General"),  lc("Menu"),      lc("Types"),
                          lc("Excluded"), lc("Shortcuts"), lc("Updates"),
-                         lc("Beta"),     lc("About"), lc("Sounds")};
-  GtkWidget *grids[9]{};
-  int rows[9]{};
-  for (unsigned i = 0; i < 9; ++i) {
+                         lc("Beta"),     lc("About"), lc("Sounds"), lc("Network")};
+  GtkWidget *grids[10]{};
+  int rows[10]{};
+  for (unsigned i = 0; i < (s->advanced ? 10u : 9u); ++i) {
     auto scroll = gtk_scrolled_window_new(nullptr, nullptr);
     grids[i] = gtk_grid_new();
     gtk_grid_set_row_spacing(GTK_GRID(grids[i]), 10);
@@ -92,9 +92,14 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
     gtk_notebook_append_page(GTK_NOTEBOOK(tabs), scroll,
                              gtk_label_new(names[i]));
   }
-  auto network=gtk_button_new_with_label(lc("Advanced LAN settings"));
-  g_signal_connect(network,"clicked",G_CALLBACK(+[](GtkButton*,gpointer data){auto s=static_cast<State*>(data);if(s->advanced)s->advanced();}),s.get());
-  gtk_grid_attach(GTK_GRID(grids[6]),network,0,rows[6]++,2,1);
+  if(s->advanced) {
+    auto help=gtk_label_new(lc("Share new clipboard copies with your devices on a local network or VPN. Off until you add a device."));
+    gtk_label_set_line_wrap(GTK_LABEL(help),TRUE);gtk_label_set_max_width_chars(GTK_LABEL(help),70);gtk_label_set_xalign(GTK_LABEL(help),0);
+    gtk_grid_attach(GTK_GRID(grids[9]),help,0,rows[9]++,2,1);
+    auto network=gtk_button_new_with_label(lc("Open network settings"));
+    g_signal_connect(network,"clicked",G_CALLBACK(+[](GtkButton*,gpointer data){auto s=static_cast<State*>(data);if(s->advanced)s->advanced();}),s.get());
+    gtk_grid_attach(GTK_GRID(grids[9]),network,0,rows[9]++,2,1);
+  }
   for (auto &f : settings_fields(s->settings, caps)) {
     auto label = gtk_label_new(f.label.c_str());
     gtk_label_set_xalign(GTK_LABEL(label), 0);

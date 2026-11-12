@@ -309,5 +309,8 @@
   "Clipboard capture unavailable: ": "Clipboard capture unavailable: ",
   "History is stored only on this computer": "History is stored only on this computer",
   "Entry deleted from history": "Entry deleted from history",
-  "Copied to clipboard": "Copied to clipboard"
+  "Copied to clipboard": "Copied to clipboard",
+  "Network": "Network",
+  "Open network settings": "Open network settings",
+  "Share new clipboard copies with your devices on a local network or VPN. Off until you add a device.": "Share new clipboard copies with your devices on a local network or VPN. Off until you add a device."
 }

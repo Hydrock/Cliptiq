@@ -309,5 +309,8 @@
   "Clipboard capture unavailable: ": "Захват буфера недоступен: ",
   "History is stored only on this computer": "История хранится только на этом компьютере",
   "Entry deleted from history": "Запись удалена из истории",
-  "Copied to clipboard": "Скопировано в буфер обмена"
+  "Copied to clipboard": "Скопировано в буфер обмена",
+  "Network": "Сеть",
+  "Open network settings": "Открыть сетевые настройки",
+  "Share new clipboard copies with your devices on a local network or VPN. Off until you add a device.": "Обменивайтесь новыми копиями с вашими устройствами в локальной сети или VPN. Обмен выключен, пока вы не добавите устройство."
 }
