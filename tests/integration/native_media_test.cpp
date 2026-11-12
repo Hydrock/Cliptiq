@@ -1,4 +1,5 @@
 #include "../../platform/Media.hpp"
+#include "sqlite3.h"
 #include <atomic>
 #include <filesystem>
 #include <fstream>
@@ -127,8 +128,17 @@ int main() {
     CHECK(service.preview({id, {}}));
     // Workspace previews decode the original on demand, independent of the
     // tiny menu thumbnail. Closing cancels publication and releases the image.
+    int payload_reads=0;
+    sqlite3_trace_v2(db.connection(),SQLITE_TRACE_STMT,[](unsigned,void* context,void* statement,void*){
+      std::string sql=sqlite3_sql(static_cast<sqlite3_stmt*>(statement));
+      if(sql.find("SELECT item_index,platform,native_type,kind,data,text_encoding FROM representations")!=std::string::npos)
+        ++*static_cast<int*>(context);
+      return 0;
+    },&payload_reads);
     CHECK(!service.workspace_preview(PreviewRef{id, {}}));
     pump(300);
+    sqlite3_trace_v2(db.connection(),0,nullptr,nullptr);
+    CHECK(payload_reads==1); // Publication checks metadata, never reloads pixels.
     auto detail = service.workspace_preview(PreviewRef{id, {}});
     CHECK(detail && detail->width == 2 && detail->height == 4);
     CHECK(!service.workspace_preview(std::nullopt));

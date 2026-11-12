@@ -168,8 +168,7 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
     }
     return result;
   }
-  Result<void> rebuild() {
-    EndMenu();
+  void release_popup() {
     if (menu)
       DestroyMenu(menu);
     menu = nullptr;
@@ -177,6 +176,10 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
       DeleteObject(b);
     bitmaps.clear();
     commands.clear();
+  }
+  Result<void> rebuild() {
+    EndMenu();
+    release_popup();
     try {
       menu = build(model.items);
     } catch (...) {
@@ -286,8 +289,13 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
       ~Reset() { s->invocation = {}; }
     } reset{this};
     auto keep = shared_from_this();
+    if(options.transient_popup && !rebuild())return;
     if (!menu)
       return;
+    struct Release {
+      State* s;
+      ~Release(){if(s->options.transient_popup)s->release_popup();}
+    } release{this};
     if(!popup_window){
       WNDCLASSW type{};type.lpfnWndProc=popup_procedure;type.hInstance=GetModuleHandleW(nullptr);type.lpszClassName=L"Cliptiq.PopupOwner";
       RegisterClassW(&type);
@@ -416,13 +424,13 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
                      SWP_NOZORDER | SWP_NOACTIVATE);
         s->layout();
         if(restore_workspace)s->open_workspace();
-        s->rebuild();
+        if(s->options.transient_popup)s->release_popup();else s->rebuild();
         return 0;
       }
       case WM_THEMECHANGED:
       case WM_SETTINGCHANGE:
         s->layout();
-        s->rebuild();
+        if(s->options.transient_popup)s->release_popup();else s->rebuild();
         s->tray();
         return 0;
       case WM_MENUSELECT: {
@@ -514,7 +522,8 @@ Result<void> NativeMenu::update(MenuModel m) {
   if (!s->thread() || !s->window)
     return Error{ErrorCode::InvalidArgument, "Win32 menu not initialized"};
   s->model = std::move(m);
-  auto result=s->rebuild();
+  Result<void> result;
+  if(s->options.transient_popup)s->release_popup();else result=s->rebuild();
   if(result && s->workspace){
     auto full=s->options.workspace_model?s->options.workspace_model():Result<MenuModel>(s->model);
     if(full)s->workspace->update(std::move(full.value()));else s->workspace->status(full.error().message);

@@ -252,11 +252,16 @@ struct MediaService::Impl {
       } else {
         auto decoded = decode_native_image(job.rep);
         if (decoded) {
-          auto hash = image_fingerprint(decoded.value());
           auto scaled = fit_preview(decoded.value(), job.ticket.size);
-          if (hash && scaled) {
-            result.fingerprint = std::move(hash.value());
+          if (scaled && job.detail) {
+            // Selected-image previews are transient, not deduplication assets.
             result.image = std::move(scaled.value());
+          } else if(scaled) {
+            auto hash = image_fingerprint(decoded.value());
+            if(hash){
+              result.fingerprint = std::move(hash.value());
+              result.image = std::move(scaled.value());
+            }
           }
         }
       }
@@ -494,12 +499,17 @@ Result<bool> MediaService::poll() {
         s.last_bytes = std::move(r.bytes);
       } else if (r.detail) {
         if(r.detail == s.detail_generation && r.ticket.id == s.detail_id) {
-          auto snapshot = load_snapshot(s.store, r.ticket.id);
+          auto revision=data_revision(s.store);
+          if(!revision)return revision.error();
+          auto present=validate_menu_command(s.store,{MenuAction::SelectHistory,r.ticket.id,revision.value()});
           // History IDs identify immutable payloads. Deleting a different
           // entry must not invalidate this image; only its own existence does.
-          if(snapshot) {
+          if(present) {
             s.detail_image = std::move(r.image);
             changed = true;
+          } else {
+            // A transient database/revision race may be retried by selection.
+            s.detail_id.clear();
           }
         }
       } else if (r.image) {

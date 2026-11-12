@@ -1,0 +1,11 @@
+{
+  "mode": "eager",
+  "entries": 1000,
+  "images": 100,
+  "private_idle_bytes": 6021120,
+  "gdi_idle": 110,
+  "user_idle": 6,
+  "first_update_show_ms": 29.8551,
+  "median_update_show_ms": 29.9787,
+  "p95_update_show_ms": 37.8357
+}

@@ -485,6 +485,7 @@ int host(int argc, char **argv) {
 // Windows workspace reuses the existing stable-ID model and controller.
 #if defined(_WIN32) && defined(CLIPTIQ_WITH_LIFECYCLE) && defined(CLIPTIQ_WITH_SETTINGS)
     options.workspace_enabled = !smoke;
+    options.transient_popup = !smoke;
     options.workspace_model = [&]() -> Result<MenuModel> {
       auto workspace_settings=settings;
       workspace_settings.title_characters=100;

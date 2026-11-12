@@ -16,6 +16,8 @@ struct NativeMenuOptions {
   // but show it as a recovery route if the tray is unavailable/disabled.
   bool start_hidden = false;
   bool workspace_enabled = false;
+  // Windows: allocate native menu handles/bitmaps only while tracking a popup.
+  bool transient_popup = false;
   std::function<Result<MenuModel>()> workspace_model;
   std::function<Result<std::string>(const MenuCommand &)> workspace_preview;
   std::function<std::optional<MenuImage>(std::optional<PreviewRef>)> workspace_image;
