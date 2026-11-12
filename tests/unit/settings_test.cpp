@@ -35,6 +35,19 @@ int main() {
               *default_settings(CapturePlatform::MacOS).hotkeys.at("main")) ==
           "Shift+Super+V");
   });
+  test("tray_style_retired_without_hiding_existing_profiles", [] {
+    auto store=take(open_store(":memory:"));auto settings=default_settings(CapturePlatform::Windows);
+    CHECK(!settings.values.count("tray"));
+    CHECK(save_settings(store,settings));
+    CHECK(sqlite3_exec(store.connection(),"INSERT INTO settings VALUES('t09.tray','2')",nullptr,nullptr,nullptr)==SQLITE_OK);
+    auto loaded=take(load_settings(store,CapturePlatform::Windows));
+    CHECK(!loaded.values.count("tray"));
+    for(auto& field:settings_fields(loaded,{}))CHECK(field.key!="tray");
+    CHECK(save_settings(store,loaded));
+    sqlite3_stmt* query=nullptr;
+    CHECK(sqlite3_prepare_v2(store.connection(),"SELECT 1 FROM settings WHERE key='t09.tray'",-1,&query,nullptr)==SQLITE_OK);
+    CHECK(sqlite3_step(query)==SQLITE_DONE);sqlite3_finalize(query);
+  });
   test("shortcut_labels_hide_internal_folder_ids", [] {
     auto store=take(open_store(":memory:"));
     CHECK(sqlite3_exec(store.connection(),"INSERT INTO snippet_folders VALUES('internal-id','Work',0)",nullptr,nullptr,nullptr)==SQLITE_OK);

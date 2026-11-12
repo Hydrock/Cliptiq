@@ -54,7 +54,9 @@ int main() {try {
   auto diagnostic=local_diagnostics();CHECK(diagnostic.find("clipboard")==std::string::npos);CHECK(diagnostic.find("http")==std::string::npos);CHECK(diagnostic.size()<4096);
   auto menu=build_menu(store.value(),MenuKind::Main);CHECK(menu); bool check=false,diag=false;
   for(auto &i:menu.value().items){check|=i.action==MenuAction::CheckUpdates;diag|=i.action==MenuAction::ExportDiagnostics;}
-  CHECK(check&&diag);
+  CHECK(!check&&!diag); // Service commands no longer belong in the quick popup.
+  CHECK(validate_menu_command(store.value(),{MenuAction::CheckUpdates,"",0}));
+  CHECK(validate_menu_command(store.value(),{MenuAction::ExportDiagnostics,"",0}));
   CHECK(release_hint("<feed><entry><link rel='alternate' href='https://github.com/Hydrock/Cliptiq/releases/tag/v0.2.0'/></entry></feed>","0.1.0").value()=="0.2.0");
   CHECK(!release_hint(std::string(131073,'x'),"0.1.0"));
   CHECK(!release_hint("<!DOCTYPE x><feed/>","0.1.0"));

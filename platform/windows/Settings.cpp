@@ -33,7 +33,6 @@ std::string text(HWND w) {
 using Choices = std::vector<std::pair<std::string, std::wstring>>;
 Choices choices(const std::string &key) {
   if (key == "sort") return {{"0", L"\u041f\u043e \u0432\u0440\u0435\u043c\u0435\u043d\u0438 \u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u043d\u0438\u044f"}, {"1", L"\u041f\u043e \u0438\u0441\u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u043d\u0438\u044e"}};
-  if (key == "tray") return {{"0", L"\u041e\u0431\u044b\u0447\u043d\u044b\u0439"}, {"1", L"\u041e\u0431\u0440\u0430\u0442\u043d\u044b\u0439"}, {"2", L"\u0421\u043a\u0440\u044b\u0442\u044c"}};
   if (key == "unknown_source") return {{"0", L"\u041e\u0442\u043a\u043b\u043e\u043d\u044f\u0442\u044c \u043f\u0440\u0438 \u0438\u0441\u043a\u043b\u044e\u0447\u0435\u043d\u0438\u044f\u0445"}, {"1", L"\u0420\u0430\u0437\u0440\u0435\u0448\u0430\u0442\u044c"}, {"2", L"\u041e\u0442\u043a\u043b\u043e\u043d\u044f\u0442\u044c"}};
   if (key.find("modifier") != std::string::npos) return {{"0", L"\u041d\u0435 \u0438\u0441\u043f\u043e\u043b\u044c\u0437\u043e\u0432\u0430\u0442\u044c"}, {"1", L"Ctrl"}, {"2", L"Shift"}, {"4", L"Alt"}, {"8", L"Win"}};
   if (key == "cleanup_seconds") return {{"300", L"5 \u043c\u0438\u043d\u0443\u0442"}, {"1800", L"30 \u043c\u0438\u043d\u0443\u0442"}, {"3600", L"1 \u0447\u0430\u0441"}, {"14400", L"4 \u0447\u0430\u0441\u0430"}, {"28800", L"8 \u0447\u0430\u0441\u043e\u0432"}, {"86400", L"1 \u0434\u0435\u043d\u044c"}, {"259200", L"3 \u0434\u043d\u044f"}, {"604800", L"1 \u043d\u0435\u0434\u0435\u043b\u044f"}};
@@ -394,7 +393,6 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
     bool boolean = f.boolean && options.empty();
     auto caption = wide(f.label);
     if (f.key == "sort") caption = L"\u041f\u043e\u0440\u044f\u0434\u043e\u043a \u0438\u0441\u0442\u043e\u0440\u0438\u0438";
-    if (f.key == "tray") caption = L"\u041c\u0435\u043d\u044e \u0432 \u0442\u0440\u0435\u0435";
     if (f.key == "unknown_source") caption = L"\u041d\u0435\u0438\u0437\u0432\u0435\u0441\u0442\u043d\u043e\u0435 \u043f\u0440\u0438\u043b\u043e\u0436\u0435\u043d\u0438\u0435";
     if (f.key == "locale") caption = L"\u042f\u0437\u044b\u043a \u0438\u043d\u0442\u0435\u0440\u0444\u0435\u0439\u0441\u0430";
     if (f.key == "plain_modifier") caption = L"\u0412\u0441\u0442\u0430\u0432\u0438\u0442\u044c \u0431\u0435\u0437 \u0444\u043e\u0440\u043c\u0430\u0442\u0430";

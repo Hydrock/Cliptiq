@@ -301,7 +301,7 @@ int host(int argc, char **argv) {
     if (!modifier_override[2])
       bindings.paste_delete = loaded_bindings.paste_delete;
     if (!tray_override)
-      tray = TrayStyle(std::stoi(preferences.values.at("tray")));
+      tray = TrayStyle::Standard;
 #endif
     if (demo || smoke) {
       for (auto text :
@@ -690,8 +690,7 @@ int host(int argc, char **argv) {
             settings = settings_menu(preferences);
             auto_paste = preferences.values.at("auto_paste") == "1";
             bindings = settings_modifiers(preferences);
-            options.tray_style =
-                TrayStyle(std::stoi(preferences.values.at("tray")));
+            options.tray_style = tray;
             options.preview_width = settings.preview_width;
             options.preview_height = settings.preview_height;
             options.icons = settings.icons;

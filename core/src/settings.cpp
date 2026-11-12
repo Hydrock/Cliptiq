@@ -31,8 +31,6 @@ const std::vector<Spec> &specs() {
       {SettingsGroup::General, "login", "Launch at login", "0", 0, 1, ""},
       {SettingsGroup::General, "locale", "Language (auto/en/ru)", "auto", -1,
        -1},
-      {SettingsGroup::Menu, "tray", "Tray: 0 standard / 1 reversed / 2 hidden",
-       "0", 0, 2},
       {SettingsGroup::Menu, "inline_count", "Inline items", "0", 0, 100},
       {SettingsGroup::Menu, "folder_count", "Items per folder", "10", 1, 100},
       {SettingsGroup::Menu, "title_characters", "Title characters", "20", 1,
@@ -296,6 +294,9 @@ Result<Settings> load_settings(Store &store, CapturePlatform platform) {
         if (v < 0)
           detail::invalid("Invalid settings revision");
         result.revision = std::uint64_t(v);
+      } else if(key=="tray") {
+        // Retired preference: the tray now has one automatically usable icon.
+        continue;
       } else if (key.rfind("hotkey:", 0) == 0) {
         if (value.empty())
           result.hotkeys[key.substr(7)] = {};

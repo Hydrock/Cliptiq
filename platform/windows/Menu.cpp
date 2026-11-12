@@ -230,17 +230,10 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
       status.tray_reason = "Tray hidden; launcher visible";
       return;
     }
-    MenuImage pixels{32, 32, Bytes(32 * 32 * 4)};
-    unsigned color = options.tray_style == TrayStyle::Reversed ? 240 : 32;
-    for (unsigned y = 3; y < 29; ++y)
-      for (unsigned x = 7; x < 25; ++x)
-        if (x < 10 || x > 21 || y < 6 || y > 25) {
-          auto p = (y * 32 + x) * 4;
-          pixels.rgba[p] = pixels.rgba[p + 1] = pixels.rgba[p + 2] = color;
-          pixels.rgba[p + 3] = 255;
-        }
+    auto pixels=tray_icon(unsigned(GetSystemMetricsForDpi(SM_CXSMICON,dpi)));
     auto b = bitmap(pixels);
-    auto mask = CreateBitmap(32, 32, 1, 1, nullptr);
+    Bytes mask_bits(((pixels.width+15)/16)*2*pixels.height,0);
+    auto mask = CreateBitmap(pixels.width,pixels.height,1,1,mask_bits.data());
     ICONINFO info{};
     info.fIcon = TRUE;
     info.hbmColor = b;

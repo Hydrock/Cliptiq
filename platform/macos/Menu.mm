@@ -194,16 +194,7 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
         statusItemWithLength:NSSquareStatusItemLength];
     NSImage *icon = [NSImage imageWithSystemSymbolName:@"doc.on.clipboard"
                               accessibilityDescription:@"Cliptiq"];
-    if (options.tray_style == TrayStyle::Standard)
-      [icon setTemplate:YES];
-    else {
-      icon = [icon
-          imageWithSymbolConfiguration:[NSImageSymbolConfiguration
-                                           configurationWithPaletteColors:@[
-                                             NSColor.whiteColor
-                                           ]]];
-      [icon setTemplate:NO];
-    }
+    [icon setTemplate:YES];
     status_item.button.image = icon;
     status_item.button.toolTip = @"Cliptiq";
     [status_item.button setAccessibilityLabel:@"Cliptiq"];

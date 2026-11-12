@@ -56,6 +56,7 @@ public:
 #endif
 };
 MenuImage scale_menu_image(const MenuImage &, unsigned dpi);
+MenuImage tray_icon(unsigned size=32);
 std::optional<MenuImage> menu_preview(const MenuItem &,
                                       const NativeMenuOptions &,
                                       const MenuPreviewProvider &);

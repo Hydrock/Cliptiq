@@ -327,12 +327,10 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
     GVariantBuilder a;
     g_variant_builder_init(&a, G_VARIANT_TYPE("a(iiay)"));
     unsigned char bytes[16 * 16 * 4];
+    const auto icon=tray_icon(16);
     for (unsigned i = 0; i < sizeof(bytes); i += 4) {
-      bool stroke = (i / 4 % 16 == 3 || i / 4 % 16 == 12 || i / 4 / 16 == 3 ||
-                     i / 4 / 16 == 12);
-      auto v = options.tray_style == TrayStyle::Reversed ? 240 : 32;
-      bytes[i] = stroke ? 255 : 0;
-      bytes[i + 1] = bytes[i + 2] = bytes[i + 3] = v;
+      bytes[i]=icon.rgba[i+3];
+      bytes[i+1]=icon.rgba[i];bytes[i+2]=icon.rgba[i+1];bytes[i+3]=icon.rgba[i+2];
     }
     g_variant_builder_add(&a, "(ii@ay)", 16, 16,
                           g_variant_new_fixed_array(G_VARIANT_TYPE_BYTE, bytes,
