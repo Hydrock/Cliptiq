@@ -95,3 +95,27 @@ MSVC build and five targeted CTests passed (settings, hotkeys, locale schema and
 both sound checks). Interactive verification confirmed the full Apply caption
 and saved Ctrl+B after restart. Hotkey invocation through the automation input
 was not confirmed; registration and persistence were confirmed.
+
+
+## Quick popup isolation
+
+Hotkey popups remain anchored at the mouse pointer (top-left alignment), with
+normal Windows edge adjustment. No text-caret/UI Automation anchoring was added.
+A separate lazy zero-size tool window owns popup tracking so activating a popup
+does not raise the workspace. Menu tooltips/keyboard messages are forwarded to
+the existing controller. After tracking the owner is hidden; foreground is
+restored only if the popup still owns it, preserving intentional user focus changes.
+The issued paste target is retained through selection. Existing paste validation,
+modifier and UIPI checks remain in effect.
+
+Removed the disabled verbose update/version line from quick menus. Build version
+is displayed on the Windows About settings page instead. History/snippet menus
+and their bindings remain separate. Active profile has Ctrl+M history, Ctrl+B
+snippets, and auto_paste enabled; restarted --background without --no-auto-paste.
+
+The popup_owner test failed on the previous workspace owner and passes with the
+separate owner; it checks hidden workspace/owner after tracking, explicit negative
+screen coordinates and preservation of the original target through selection.
+Four targeted CTests passed (popup_owner, paste, menu, settings). Source review
+found no important issues. Background launch confirmed no visible Cliptiq windows.
+No external document was modified for a live paste test.

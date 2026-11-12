@@ -451,6 +451,11 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
   }
   for (int p = 0; p < 9; ++p)
     s->pages[p].height = rows[p] + 12;
+  auto version=std::wstring(L"Cliptiq ")+wide(CLIPTIQ_APP_VERSION);
+  auto about=CreateWindowExW(0,L"STATIC",version.c_str(),WS_CHILD|WS_VISIBLE,
+    24,rows[7]+12,800,30,s->pages[7].window,nullptr,wc.hInstance,nullptr);
+  SendMessageW(about,WM_SETFONT,reinterpret_cast<WPARAM>(font),TRUE);
+  s->pages[7].height=rows[7]+54;
   auto make_preview = [&](const wchar_t *title, int id, int x) {
     auto button = CreateWindowExW(0, L"BUTTON", title, WS_CHILD | WS_VISIBLE | WS_TABSTOP,
       x, rows[8] + 20, 280, 36, s->pages[8].window, reinterpret_cast<HMENU>(std::uintptr_t(id)), wc.hInstance, nullptr);

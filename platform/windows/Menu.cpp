@@ -70,7 +70,7 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
   std::function<void(MenuCommand)> callback;
   MenuPreviewProvider provider;
   std::thread::id owner = std::this_thread::get_id();
-  HWND window = nullptr, tip = nullptr;
+  HWND window = nullptr, tip = nullptr, popup_window = nullptr;
   HMENU menu = nullptr;
   HICON icon = nullptr;
   HFONT font = nullptr;
@@ -103,6 +103,7 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
   ~State() {
     closing = true;
     remove_icon();
+    if(popup_window)DestroyWindow(popup_window);
     if (window)
       DestroyWindow(window);
     if (font)
@@ -266,6 +267,16 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
                              ? "Shell_NotifyIcon registered"
                              : "Explorer tray unavailable; launcher visible";
   }
+  static LRESULT CALLBACK popup_procedure(HWND w,UINT message,WPARAM wp,LPARAM lp){
+    auto s=reinterpret_cast<State*>(GetWindowLongPtrW(w,GWLP_USERDATA));
+    if(message==WM_NCCREATE){
+      s=static_cast<State*>(reinterpret_cast<CREATESTRUCTW*>(lp)->lpCreateParams);
+      SetWindowLongPtrW(w,GWLP_USERDATA,reinterpret_cast<LONG_PTR>(s));
+    }
+    if(s && (message==WM_MENUCHAR || message==WM_MENUSELECT || message==WM_MENUCOMMAND))
+      return SendMessageW(s->window,message,wp,lp);
+    return DefWindowProcW(w,message,wp,lp);
+  }
   void popup(const InvocationContext &ctx = {}) {
     invocation = ctx;
     if (invocation.target.empty() && options.invocation_provider)
@@ -277,17 +288,32 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
     auto keep = shared_from_this();
     if (!menu)
       return;
+    if(!popup_window){
+      WNDCLASSW type{};type.lpfnWndProc=popup_procedure;type.hInstance=GetModuleHandleW(nullptr);type.lpszClassName=L"Cliptiq.PopupOwner";
+      RegisterClassW(&type);
+      // Independent, undecorated zero-size window: never activate the workspace.
+      popup_window=CreateWindowExW(WS_EX_TOOLWINDOW,type.lpszClassName,L"",WS_POPUP,
+        0,0,0,0,nullptr,nullptr,type.hInstance,this);
+      if(!popup_window)return;
+    }
+    auto previous=GetForegroundWindow();
     POINT p{};
     GetCursorPos(&p);
     if (ctx.x && ctx.y)
       p = {*ctx.x, *ctx.y};
-    SetForegroundWindow(window);
+    ShowWindow(popup_window,SW_SHOWNOACTIVATE);
+    SetForegroundWindow(popup_window);
     pending = 0;
-    auto id = TrackPopupMenuEx(menu, TPM_RETURNCMD | TPM_RIGHTBUTTON, p.x, p.y,
-                               window, nullptr);
+    auto id = TrackPopupMenuEx(menu, TPM_RETURNCMD | TPM_RIGHTBUTTON | TPM_LEFTALIGN | TPM_TOPALIGN, p.x, p.y,
+                               popup_window, nullptr);
     if (tip)
       SendMessageW(tip, TTM_TRACKACTIVATE, FALSE, 0);
-    PostMessageW(window, WM_NULL, 0, 0);
+    // Restore only while this popup still owns foreground. A click into another
+    // app must not pull focus back to the original target.
+    bool restore=GetForegroundWindow()==popup_window;
+    ShowWindow(popup_window,SW_HIDE);
+    if(restore && previous && IsWindow(previous))SetForegroundWindow(previous);
+    PostMessageW(popup_window, WM_NULL, 0, 0);
     if (pending)
       id = pending;
     if (id)

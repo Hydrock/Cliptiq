@@ -474,12 +474,6 @@ int host(int argc, char **argv) {
 #endif
 #ifdef CLIPTIQ_WITH_LIFECYCLE
     auto decorate_lifecycle = [&](MenuModel &menu) {
-#ifdef CLIPTIQ_WITH_UPDATES
-      MenuItem update_status;update_status.enabled=false;
-      auto last=last_update_attempt(store);
-      update_status.label=updates.status()+"; last attempt="+(last?std::to_string(last.value()):"unavailable");
-      menu.items.push_back(std::move(update_status));
-#endif
       if (startup_problem) {
         MenuItem item;
         item.label = tr(startup.status().reason);
