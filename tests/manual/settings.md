@@ -12,3 +12,13 @@ No clean Windows/macOS VM is available; hosted CI is not a clean-machine or inte
 8. Check installation on clean systems, recovery launchers and dependency footprint after later packaging exists. Current probes are not distributable signed/notarized installers, full offline packages, or updater payload measurements.
 
 Record OS/desktop/layout/DPI/permissions, source commit, steps, expected/actual behavior and evidence before closing any gate.
+
+
+## Windows embedded Network repaint regression
+
+With a configured peer, open Network, scroll down through formats and the peer,
+then scroll upward in several increments. Repeat in both a normal and maximized
+settings window. Maximize/restore while scrolled. Text, checkbox ticks, separators
+and edit contents must not leave copies at their old positions; the panel must
+remain visible immediately after restoring the window. Check wheel and scrollbar
+navigation without changing or saving the network configuration.

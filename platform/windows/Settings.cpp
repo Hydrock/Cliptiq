@@ -240,6 +240,8 @@ struct NativeSettings::State : std::enable_shared_from_this<State> {
       MoveWindow(message,margin,height-footer_height+margin,message_text.right,std::max(1,int(message_text.bottom)),TRUE);
     if (apply_button)
       MoveWindow(apply_button,width-margin-button_width,height-footer_height+margin,button_width,button_height,TRUE);
+    // Repaint embedded pages after the entire resize, not midway through child moves.
+    RedrawWindow(window,nullptr,nullptr,RDW_INVALIDATE|RDW_ERASE|RDW_ALLCHILDREN);
   }
   ~State() {
     if (window)
