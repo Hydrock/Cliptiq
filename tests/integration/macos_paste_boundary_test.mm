@@ -155,6 +155,46 @@ int run() {
       paste_fixture::retained_after_native_denial(p, target);
     }
   });
+  test("permission_help_after_copy_is_once_until_access_changes", [] {
+    Fixture f;f.trusted=false;
+    unsigned dialogs=0;f.calls->permission_help=[&]{++dialogs;};
+    NativePasteBackend p(f.calls);
+    auto store=paste_fixture::take(open_store(":memory:"));
+    ClipboardSnapshot snapshot;
+    snapshot.representations={{0,"macos","public.utf8-plain-text",CanonicalKind::Text,{'s','a','f','e'}}};
+    auto id=*paste_fixture::take(ingest(store,snapshot,{},1));
+    SelectionIntent intent;intent.command={MenuAction::SelectHistory,id,paste_fixture::take(data_revision(store)),{p.capture_target()}};
+    paste_fixture::MemoryWriter clipboard;
+    auto outcome=paste_fixture::take(execute_selection(store,intent,clipboard,p));
+    CHECK(outcome.status==SelectionStatus::NeedsManualPaste && clipboard.writes==1);
+    CHECK(dialogs==0 && f.posts==0);
+    CHECK(p.explain_paste_permission(intent,outcome));
+    CHECK(dialogs==1 && !p.explain_paste_permission(intent,outcome));
+    f.trusted=true;CHECK(!p.explain_paste_permission(intent,outcome));
+    f.trusted=false;CHECK(p.explain_paste_permission(intent,outcome));
+    CHECK(dialogs==2 && f.posts==0 && paste_fixture::take(list_history(store)).size()==1);
+  });
+  test("permission_help_only_for_failed_auto_paste_not_copy_or_other_denials", [] {
+    for(int n=0;n<9;++n){
+      Fixture f;f.trusted=false;unsigned dialogs=0;f.calls->permission_help=[&]{++dialogs;};
+      NativePasteBackend p(f.calls);SelectionIntent intent;intent.command.action=MenuAction::SelectSnippet;
+      SelectionOutcome outcome;outcome.status=SelectionStatus::NeedsManualPaste;outcome.sequence_token="copied";
+      if(n==0)intent.auto_paste=false;
+      if(n==1)intent.command.invocation.copy_only=true;
+      if(n==2)intent.action=SelectionAction::DeleteOnly;
+      if(n==3)outcome.status=SelectionStatus::Copied;
+      if(n==4)outcome.status=SelectionStatus::Cancelled;
+      if(n==5)outcome.status=SelectionStatus::Dispatched;
+      if(n==6)outcome.sequence_token.clear();
+      if(n==7)f.trusted=true;
+      if(n==8)intent.command.action=MenuAction::OpenSettings;
+      CHECK(!p.explain_paste_permission(intent,outcome) && dialogs==0);
+    }
+    Fixture f;f.trusted=false;unsigned dialogs=0;f.calls->permission_help=[&]{++dialogs;};
+    NativePasteBackend p(f.calls);SelectionIntent intent;intent.command.action=MenuAction::SelectSnippet;
+    SelectionOutcome outcome;outcome.status=SelectionStatus::NeedsManualPaste;outcome.sequence_token="copied";
+    CHECK(p.explain_paste_permission(intent,outcome) && dialogs==1);
+  });
   return failed ? 1 : 0;
 }
 int main() {

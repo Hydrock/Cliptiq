@@ -58,7 +58,8 @@ NSImage *wsImage(const cliptiq::MenuImage &i) {
 - (NSView *)tableView:(NSTableView *)view viewForTableColumn:(NSTableColumn *)column row:(NSInteger)n {
  (void)view;auto &r=rows[visible[n]];
  NSString *value;
- if([column.identifier isEqualToString:@"content"])value=wsString((r.item.source_device.empty()?"":"["+r.item.source_device+"] ")+r.item.label);
+ if([column.identifier isEqualToString:@"content"])value=wsString(r.item.label);
+ else if([column.identifier isEqualToString:@"source"])value=r.item.source_device.empty()?cliptiq::loc(@"This device"):wsString(r.item.source_device);
  else if(page==cliptiq::MenuKind::Snippets)value=wsString(r.group);
  else {switch(r.item.kind){case cliptiq::CanonicalKind::Image:value=cliptiq::loc(@"Image");break;case cliptiq::CanonicalKind::Files:value=cliptiq::loc(@"Files");break;case cliptiq::CanonicalKind::Url:value=cliptiq::loc(@"Link");break;case cliptiq::CanonicalKind::Rtf:value=@"RTF";break;case cliptiq::CanonicalKind::Html:value=@"HTML";break;case cliptiq::CanonicalKind::Pdf:value=@"PDF";break;default:value=cliptiq::loc(@"Text");}}
  auto cell=label(value,13);cell.lineBreakMode=NSLineBreakByTruncatingTail;cell.toolTip=wsString(r.item.tooltip);return cell;
@@ -68,7 +69,7 @@ NSImage *wsImage(const cliptiq::MenuImage &i) {
 - (void)filter {
  auto n=table.selectedRow;std::string old=(n>=0&&size_t(n)<visible.size())?rows[visible[n]].item.id:"";
  changing=YES;rows=cliptiq::workspace_rows(model,page);visible.clear();NSInteger selected=-1;
- for(size_t i=0;i<rows.size();++i){auto &r=rows[i];auto text=wsString(r.item.label+" "+r.item.tooltip+" "+r.group);if(search.stringValue.length&&[text rangeOfString:search.stringValue options:NSCaseInsensitiveSearch|NSDiacriticInsensitiveSearch].location==NSNotFound)continue;if(r.item.id==old)selected=visible.size();visible.push_back(i);}
+ for(size_t i=0;i<rows.size();++i){auto &r=rows[i];auto text=wsString(r.item.label+" "+r.item.tooltip+" "+r.group+" "+r.item.source_device);if(search.stringValue.length&&[text rangeOfString:search.stringValue options:NSCaseInsensitiveSearch|NSDiacriticInsensitiveSearch].location==NSNotFound)continue;if(r.item.id==old)selected=visible.size();visible.push_back(i);}
  [table reloadData];if(selected<0&&!visible.empty())selected=0;
  if(selected>=0)[table selectRowIndexes:[NSIndexSet indexSetWithIndex:selected] byExtendingSelection:NO];else [table deselectAll:nil];
  changing=NO;summary.stringValue=[NSString stringWithFormat:cliptiq::loc(@"%lu of %lu entries"),(unsigned long)visible.size(),(unsigned long)rows.size()];heading.stringValue=page==cliptiq::MenuKind::History?cliptiq::loc(@"Clipboard history"):cliptiq::loc(@"Text snippets");
@@ -110,8 +111,8 @@ Workspace::Workspace(NSWindow *window,const NativeMenuOptions &o,std::function<v
  c->table=[[CliptiqWorkspaceTable alloc] init];c->table.delegate=c;c->table.dataSource=c;c->table.rowHeight=34;c->table.allowsMultipleSelection=NO;c->table.target=c;c->table.doubleAction=@selector(clicked:);
  // A separate tagged target preserves the same copy command on double click.
  c->copy=button(cliptiq::loc(@"Copy"),5,646,86,370);c->table.target=c->copy;c->table.doubleAction=@selector(performClick:);
- auto col=[[NSTableColumn alloc] initWithIdentifier:@"content"];col.title=cliptiq::loc(@"Content");col.width=280;[c->table addTableColumn:col];col=[[NSTableColumn alloc] initWithIdentifier:@"kind"];col.title=cliptiq::loc(@"Type / folder");col.width=110;[c->table addTableColumn:col];
- auto scroll=[[NSScrollView alloc] init];scroll.documentView=c->table;scroll.hasVerticalScroller=YES;scroll.borderType=NSBezelBorder;add(scroll,212,152,410,312,NSViewHeightSizable|NSViewMaxXMargin);
+ auto col=[[NSTableColumn alloc] initWithIdentifier:@"content"];col.title=cliptiq::loc(@"Content");col.width=200;[c->table addTableColumn:col];col=[[NSTableColumn alloc] initWithIdentifier:@"kind"];col.title=cliptiq::loc(@"Type / folder");col.width=110;[c->table addTableColumn:col];col=[[NSTableColumn alloc] initWithIdentifier:@"source"];col.title=cliptiq::loc(@"Source");col.width=100;[c->table addTableColumn:col];
+ auto scroll=[[NSScrollView alloc] init];scroll.documentView=c->table;scroll.hasVerticalScroller=YES;scroll.hasHorizontalScroller=YES;scroll.borderType=NSBezelBorder;add(scroll,212,152,410,312,NSViewHeightSizable|NSViewMaxXMargin);
  add(label(cliptiq::loc(@"PREVIEW"),12),646,540,370,24,NSViewWidthSizable|NSViewMinYMargin);
  c->preview=[[NSTextView alloc] initWithFrame:NSMakeRect(0,0,370,370)];c->preview.editable=NO;c->preview.selectable=YES;c->preview.richText=NO;c->preview.font=[NSFont systemFontOfSize:14];c->preview.textContainerInset=NSMakeSize(10,10);c->preview.autoresizingMask=NSViewWidthSizable;c->preview.textContainer.widthTracksTextView=YES;
  c->textScroll=[[NSScrollView alloc] init];c->textScroll.documentView=c->preview;c->textScroll.hasVerticalScroller=YES;add(c->textScroll,646,152,370,378,NSViewHeightSizable|NSViewWidthSizable);

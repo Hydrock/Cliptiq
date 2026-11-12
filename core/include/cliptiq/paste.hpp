@@ -34,7 +34,7 @@ struct SelectionOutcome {
 };
 Result<SelectionOutcome> execute_selection(Store &, const SelectionIntent &,
                                            ClipboardBackend &, PasteBackend &);
-// Owner-GUI-thread service. Never requests permission or forges Wayland input.
+// Owner-GUI-thread service. Capture/dispatch never request permission or forge input.
 class NativePasteBackend final : public PasteBackend {
   struct State;
   std::unique_ptr<State> state_;
@@ -47,6 +47,10 @@ public:
   ~NativePasteBackend() override;
   NativePasteBackend(const NativePasteBackend &) = delete;
   NativePasteBackend &operator=(const NativePasteBackend &) = delete;
+#ifdef __APPLE__
+  // Explicit user-initiated guidance after a copied item could not auto-paste.
+  bool explain_paste_permission(const SelectionIntent &, const SelectionOutcome &);
+#endif
   TargetToken capture_target();
   Capability capability() const;
   Result<void> dispatch(const TargetToken &, Shortcut) override;

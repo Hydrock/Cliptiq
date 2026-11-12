@@ -209,3 +209,59 @@ Apple API reference: <https://developer.apple.com/documentation/appkit/nswindow/
 
 Final verification: debug: 56/56 passed (43.01 s); release: 56/56 passed (41.95 s). No tests excluded.
 The release app was rebuilt. Actual fullscreen display is still a manual gate.
+
+### Explicit paste-permission guidance — 2026-11-13
+
+The release's native diagnostic reported Accessibility/input access unavailable;
+System Settings also showed Cliptiq's Device Control and Data Access toggle off.
+The user confirmed manual Command+V works. No permission was enabled by the agent.
+
+Following the user's request for Clipy-like behavior, macOS now displays localized
+NSAlert guidance after an explicit auto-paste selection copied successfully but
+needs manual paste because permission is missing. Only the Open System Settings
+button requests AX/PostEvent OS guidance and opens the settings pane; Not Now
+keeps the clipboard usable. There is no stale paste retry. Guidance is suppressed
+for startup, plain workspace copying, cancelled/failed writes, disabled auto-paste,
+other native denials, and repeat attempts while access remains denied. Observing
+restored access rearms guidance for a later revocation. Capture/dispatch never
+request permission themselves.
+
+New permission-boundary tests failed before implementation, then passed alongside
+existing clipboard/history-preservation checks. Full Debug: **57/57** (52.68 s),
+including parallel icon work present in the checkout. Independent review found
+no actionable findings. Actual NSAlert visibility and live OS permission grant
+remain manual checks; tests inject the presentation boundary without OS prompts.
+Logs: `docs/support/macos-native/2026-11-13-arm64-paste-permission/`.
+Full MinSizeRel also passed **57/57** (51.21 s). Release rebuilt; OS permission remains user-controlled.
+
+
+### Startup setup and latest Network tab — 2026-11-13
+
+Fast-forwarded the shared branch to `7527731`; merged the en/ru JSON catalogues
+and regenerated compiled translations, preserving local permission/icon work.
+User approved mandatory clipboard and automatic-paste access at startup, with
+LAN access conditional on enabling LAN. `StartupPermissions` presents a native
+foreground/fullscreen-capable panel before capture, hotkeys, LAN and updates.
+Both current metadata checks must pass before Continue; the click is rechecked.
+Closing/quit stops startup. A ready launch skips setup, while smoke/demo explicit
+test modes do not request OS permissions. Request buttons are the only path to
+OS prompts and settings; no permission is granted programmatically. Clipboard
+payloads are never polled for status, and an explicit request's transient read
+is discarded without persistence. A modal-run-loop timer updates status and is
+invalidated on close; scoped autorelease/UI cleanup releases the setup window.
+
+English/Russian tests cover denied startup, disabled Continue, independent request
+buttons, revocation just before Continue, refresh, cancellation and cleanup.
+Native Network embedding tests cover draft, repeated save, cancel and layout.
+Independent review found no startup/UI blocker; its LAN loss finding was addressed
+with bounded peer-level ACK retention (details in LAN_VALIDATION.md).
+Final Debug: 61/61 passed, 56.66 s. Live OS grants are not exercised by fixtures.
+Final MinSizeRel: 61/61 passed, 64.92 s. Restarted the current Debug instance as
+the rebuilt release. Native Computer Use binding still timed out, so actual
+foreground presentation is not visually certified by the agent. No OS grant was
+performed. Setup and embedded Network native fixtures passed in both languages.
+The user confirmed the startup window is visible above other applications.
+A one-second sample of the restarted release showed the main thread inside
+StartupPermissions::run / NSApplication runModalForWindow, before the normal host
+loop. Live permission grants and subsequent cross-application paste remain user
+acceptance steps. No OS permissions were changed by the agent.

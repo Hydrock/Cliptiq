@@ -145,3 +145,30 @@ python3 tools/fetch-lan-deps.py --verify-only
 - No normal application profile was opened or migrated by this validation.
   Tests use their own temporary databases. No user peer was configured.
 - Logs: `docs/support/macos-native/2026-11-13-arm64-lan/`.
+
+
+## Native Mac Network-tab update and reconnect correction
+
+Synced `feature/windows-workspace` to `7527731`, preserving local permission and
+icon work. New AppKit tests exercise the embedded Network tab in English/Russian:
+10 tabs with LAN callback present, same parent window, local draft/Cancel, secure
+key field, invalid port, repeated Save with returned revision, three-peer layout,
+peer removal and parent close/reopen. Tests use callback fixtures, no real peers
+or credential writes.
+
+The full run exposed intermittent loss of a first live-peer event during
+simultaneous connection replacement. Frames were removed before ACK, or disappeared
+when the old socket was erased before the replacement HELLO. Retain outgoing
+payloads by peer/publication budget until FIFO ACK; replay from offset zero only
+after authenticated HELLO, within the original 10s bound. Expiry closes streams
+holding that frame, avoiding a delayed untagged ACK consuming a newer frame.
+Publications made with no connected peer remain unretained; stop/config restart
+clears retention. No offline disk queue was added.
+
+The deterministic reconnect test failed before peer-level retention, then passed.
+It also checks pre-ACK backpressure, ACK release and expiry recovery. Existing
+no-offline-replay assertions remain; the immediate Service exchange passed 20
+consecutive repeats. Debug full suite: 61/61 (56.66 s). Log bundle:
+`docs/support/macos-native/2026-11-13-arm64-startup-network/`.
+Physical Mac↔Windows exchange, VPN/firewall and Windows rebuild of this common
+transport change remain unverified on this Mac.

@@ -57,6 +57,7 @@
 #endif
 #ifdef __APPLE__
 #import <AppKit/AppKit.h>
+#include "macos/StartupPermissions.hpp"
 #endif
 #include <chrono>
 #include <algorithm>
@@ -305,6 +306,10 @@ int host(int argc, char **argv) {
     auto language = requested_locale.empty() ? preferences.values.at("locale")
                                              : requested_locale;
     activate_locale(language == "auto" ? system_locale() : language);
+#ifdef __APPLE__
+    // No capture, hotkeys, LAN or main UI before the required access is ready.
+    if(!smoke && !demo){macos::StartupPermissions permissions;if(!permissions.run())return 0;}
+#endif
     if (!smoke) {
       auto inspected = startup.inspect();
       startup_problem = preferences.values.at("login") == "1" &&
@@ -450,6 +455,9 @@ int host(int argc, char **argv) {
       network_service->history_policy(settings_history(preferences));
       auto started=network_service->initialize();if(!started)std::cerr<<started.error().message<<'\n';
       network=network_service.get();
+#ifdef __APPLE__
+      settings_window.advanced_apply([&]{return network_window.apply();});
+#endif
       settings_window.advanced([&](void* parent){
         auto config=network_service->config();if(!config){settings_window.status(config.error().message);return;}
         auto shown=network_window.show(std::move(config.value()),
@@ -1041,6 +1049,9 @@ int host(int argc, char **argv) {
             if(result.value().status==SelectionStatus::Dispatched)sound.play_paste();
             else if(result.value().status==SelectionStatus::Copied || result.value().status==SelectionStatus::NeedsManualPaste)sound.play_copy();
           }
+#endif
+#ifdef __APPLE__
+          if(!smoke && result)paste.explain_paste_permission(intent,result.value());
 #endif
 #if defined(_WIN32) || defined(__APPLE__)
           if(!result)ui.workspace_status(result.error().message);

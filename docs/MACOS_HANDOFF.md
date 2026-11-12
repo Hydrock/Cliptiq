@@ -273,3 +273,100 @@ formats and each numbered peer. AppKit uses native separators, bold headings and
 secondaryLabelColor; GTK uses themed dim-label styling. Windows wrapping and
 scrolling plus existing native settings tests were verified. Recheck the updated
 AppKit layout on Mac, including long Russian explanations and multiple peers.
+
+
+### macOS startup permission gate (native continuation)
+
+Normal startup now requires clipboard and automatic-paste access before capture,
+hotkeys, LAN service, updates and main UI initialize. The foreground setup panel
+shows independent request buttons and disables Continue until both checks pass.
+On macOS 15.4+ use Always Allow for clipboard; paste requires AX/PostEvent access.
+LAN is not an unconditional startup permission. Closing setup exits. Smoke/demo
+fixtures bypass this interactive gate. The user confirmed foreground visibility;
+Debug/release full suites passed 61/61 on macOS 27.2 arm64.
+
+The same continuation corrected outstanding TLS-frame retention during connection
+replacement; see LAN_VALIDATION.md for replay/ACK/expiry boundaries and tests.
+Uncommitted permission/icon work was preserved while syncing to 7527731.
+
+### Установка после удаления каталога Cliptiq.app (13 ноября 2026)
+
+После удаления пакета из `out` обязательно выполнить `cmake --preset release`
+перед `cmake --build --preset release`: Info.plist создаётся при конфигурации,
+и один инкрементальный build может восстановить только executable и ресурсы.
+Без Info.plist TCC идентифицирует процесс по пути к executable и создаёт
+отдельную запись разрешений вместо bundle identity. Такой пакет не устанавливать.
+Перед установкой запускать `ctest --test-dir out/core-Darwin-release -R lifecycle_bundle --output-on-failure`,
+проверять CFBundleIdentifier и после подписи `codesign --verify --strict`.
+Установленный пакет должен показывать `Info.plist entries`, а не `Info.plist=not bound`.
+Подписывать полный пакет до запуска; не менять подпись работающего приложения.
+Сейчас /Applications/Cliptiq.app восстановлен, bundle identity в журнале TCC
+подтверждена как io.github.hydrock.Cliptiq. Старые записи доступа требуют
+ручного удаления пользователем и выдачи доступа новому полному пакету.
+
+Дополнительная подтверждённая причина TCC: Launch Services сохранял регистрации
+Debug/Release и копий в Корзине с тем же bundle ID. При выдаче прав tccd пытался
+получить staticCode из удалённого out/core-Darwin-test/Cliptiq.app, выдавая
+_CFBundleCreateUnique failed. Удалены только эти регистрации через lsregister -u,
+для /Applications/Cliptiq.app выполнен lsregister -f и перезапуск без смены подписи.
+Проверка 13 ноября: в Launch Services осталась одна запись /Applications/Cliptiq.app;
+новый процесс получил authValue=2/authReason=4 для kTCCServiceAccessibility
+и kTCCServicePostEvent. Стек процесса подтверждает NativeMenu::process_events,
+а не StartupPermissions::runModal. Повторная пересборка для этого не потребовалась.
+При установке локальных сборок не оставлять зарегистрированные дубликаты
+с production bundle ID; перед диагностикой TCC проверять именно attribution path.
+
+### Apply во вкладке Сеть (13 ноября 2026)
+
+Исправлена несвязанная общая кнопка Apply: раньше она сохраняла обычные
+настройки и сообщала успех, оставляя сетевой черновик несохранённым. На macOS
+на активной вкладке Сеть Apply теперь вызывает тот же collect/save, что
+внутренняя Save. Ошибка показывается в постоянной строке окна, а поля и ключи
+сохраняются для повторной попытки. После успеха обновляются revision и baseline.
+Нативный EN/RU-тест воспроизводит исходный сбой общей кнопкой Apply; проверяет
+невалидный порт, отказ записи, повторную попытку с сохранённым ключом и reopen.
+
+Поиск Spotlight повторно регистрирует существующие тестовые .app, даже после
+lsregister -u. После установки дубликаты пакетов (включая старые копии из Корзины)
+перемещены в out/archived-apps.noindex и сняты с регистрации. На 13 ноября
+в Launch Services и Spotlight оставлена установленная /Applications/Cliptiq.app.
+При следующей сборке удалённых staging-пакетов сначала повторить cmake configure,
+а после установки убрать staging .app обратно в .noindex; не менять установленную
+подпись ради очистки поиска и не сбрасывать для этого TCC.
+
+### Отдельная колонка источника LAN-записей (13 ноября 2026)
+
+Таблица истории и сниппетов macOS/Windows: Содержимое, Тип / папка, Источник.
+Имя source_device больше не добавляется в квадратных скобках перед item.label
+в таблице; выводится в отдельной третьей колонке. Для пустого source_device
+показывается «Это устройство» (This device); поиск учитывает имя устройства.
+Модель записи, preview и команды копирования используют прежние payload/ID.
+Нативные EN/RU-тесты macOS проверяют три колонки, исходный текст, источник PC,
+локальный источник и прежнюю copy-only команду. Win32-изменение требует
+проверки на Windows. Установленная /Applications/Cliptiq.app этим изменением
+пока не обновлялась: сохраняем текущую подпись и выданные пользователем права.
+
+### Правило пользователя для переустановки
+
+Перед каждой установкой новой Mac-сборки сначала остановить и удалить предыдущий
+пакет из /Applications (переместить в Корзину внутри .noindex), снять его регистрацию.
+Историю, сниппеты, настройки и LAN-ключи сохранять. Проверить полный новый пакет
+и подпись до установки; затем установить только одну копию и запустить её.
+При изменении ad-hoc подписи сбросить Accessibility только для io.github.hydrock.Cliptiq
+до запуска нового пакета, чтобы не оставалось требования старого cdhash.
+Убрать staging-пакеты в .noindex и оставить единственную регистрацию /Applications/Cliptiq.app.
+Сборка с третьей колонкой Источник переустановлена этим способом 13 ноября 2026;
+4 Release-проверки (workspace EN/RU, workspace core, lifecycle_bundle) прошли.
+Выдача системного доступа остаётся явным действием пользователя.
+
+### Открытые вопросы перед push
+
+Повторный вызов быстрого меню в чужом полноэкранном Space по пользовательской
+проверке остаётся ненадёжным. Добавлены безопасные os_log-события hotkey received,
+popup begin/owner/end без текста буфера и названий окон. Тесты повторного
+AppKit tracking и owner flags проходят, но это не подтверждает устранение
+пользовательского fullscreen-сбоя. Не заявлять этот сценарий исправленным.
+Ad-hoc подпись меняется при обновлениях: Accessibility требует сброса старой
+записи и повторного явного разрешения пользователя; доступ к существующим
+LAN-ключам в login Keychain также может запрашиваться повторно. Постоянный
+сертификат подписи пока не настроен. Сетевой обмен пользователь подтвердил.

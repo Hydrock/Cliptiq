@@ -11,6 +11,9 @@ public:
   ~NativeLanSettings();
   Result<void> show(lan::Config, Save, std::function<Result<std::string>()>, std::function<Result<void>(std::string)>, void* parent = nullptr);
   Result<void> process_events();
+#ifdef __APPLE__
+  Result<void> apply();
+#endif
   void status(std::string);
 };
 } // namespace cliptiq

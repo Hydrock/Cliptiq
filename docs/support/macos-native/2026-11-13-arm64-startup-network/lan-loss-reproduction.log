@@ -1,0 +1,23 @@
+Test project /Users/smitevils/Projects/cliptiq/Cliptiq/out/core-Darwin-test
+    Start 56: lan_end_to_end
+    Test #56: lan_end_to_end ...................   Passed    0.73 sec
+    Start 56: lan_end_to_end
+    Test #56: lan_end_to_end ...................   Passed    0.73 sec
+    Start 56: lan_end_to_end
+    Test #56: lan_end_to_end ...................   Passed    0.74 sec
+    Start 56: lan_end_to_end
+    Test #56: lan_end_to_end ...................   Passed    0.74 sec
+    Start 56: lan_end_to_end
+    Test #56: lan_end_to_end ...................***Failed   12.12 sec
+text A=LAN sharing active
+B: Connected (TLS 1.3) B=LAN sharing active
+A: Connected (TLS 1.3) counts=1,0 writes=0,0
+
+
+0% tests passed, 1 tests failed out of 1
+
+Total Test time (real) =  15.06 sec
+
+The following tests FAILED:
+	 56 - lan_end_to_end (Failed)
+Errors while running CTest

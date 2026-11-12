@@ -1,4 +1,5 @@
 #include "PasteNative.hpp"
+#include "../LocaleNative.hpp"
 #import <AppKit/AppKit.h>
 #import <Carbon/Carbon.h>
 #include <thread>
@@ -89,9 +90,33 @@ struct MacTarget {
     return result;
   }
 };
+void permission_help() {
+  auto alert = [NSAlert new];
+  alert.alertStyle = NSAlertStyleInformational;
+  alert.messageText = loc(@"Allow automatic paste");
+  alert.informativeText = loc(@"The selected item is already on the clipboard. To paste it into another app automatically, allow Cliptiq to control other apps in System Settings. Without this access, press Command-V to paste manually.");
+  [alert addButtonWithTitle:loc(@"Open System Settings")];
+  [alert addButtonWithTitle:loc(@"Not Now")];
+  if ([alert runModal] != NSAlertFirstButtonReturn)
+    return;
+  // Only the explicit button requests OS guidance; granting remains a user action.
+  if (!AXIsProcessTrusted()) {
+    const void *keys[] = {kAXTrustedCheckOptionPrompt};
+    const void *values[] = {kCFBooleanTrue};
+    auto options = CFDictionaryCreate(nullptr, keys, values, 1,
+        &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+    AXIsProcessTrustedWithOptions(options);
+    CFRelease(options);
+  }
+  if (!CGPreflightPostEventAccess())
+    CGRequestPostEventAccess();
+  [NSWorkspace.sharedWorkspace openURL:[NSURL URLWithString:
+      @"x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility"]];
+}
 std::shared_ptr<NativePasteCalls> native_calls() {
   auto c = std::make_shared<NativePasteCalls>();
   auto target = std::make_shared<MacTarget>();
+  c->permission_help = permission_help;
   c->trusted = [] {
     return AXIsProcessTrusted() && CGPreflightPostEventAccess();
   };
@@ -130,6 +155,7 @@ struct NativePasteBackend::State {
   std::shared_ptr<NativePasteCalls> calls;
   TargetToken token;
   std::uint64_t serial = 0;
+  bool permission_help_shown = false;
 };
 NativePasteBackend::NativePasteBackend() : NativePasteBackend(native_calls()) {}
 NativePasteBackend::NativePasteBackend(std::shared_ptr<NativePasteCalls> calls)
@@ -137,6 +163,27 @@ NativePasteBackend::NativePasteBackend(std::shared_ptr<NativePasteCalls> calls)
   state_->calls = std::move(calls);
 }
 NativePasteBackend::~NativePasteBackend() = default;
+bool NativePasteBackend::explain_paste_permission(const SelectionIntent &intent,
+                                                   const SelectionOutcome &outcome) {
+  auto &s = *state_;
+  if (s.owner != std::this_thread::get_id() || !NSThread.isMainThread)
+    return false;
+  if (s.calls->trusted()) {
+    s.permission_help_shown = false;
+    return false;
+  }
+  if (!intent.auto_paste || intent.command.invocation.copy_only ||
+      intent.action == SelectionAction::DeleteOnly ||
+      (intent.command.action != MenuAction::SelectHistory &&
+       intent.command.action != MenuAction::SelectSnippet) ||
+      outcome.status != SelectionStatus::NeedsManualPaste ||
+      outcome.sequence_token.empty() || s.permission_help_shown ||
+      !s.calls->permission_help)
+    return false;
+  s.permission_help_shown = true;
+  s.calls->permission_help();
+  return true;
+}
 Capability NativePasteBackend::capability() const {
   if (!state_->calls->trusted())
     return {CapabilityStatus::Unavailable,

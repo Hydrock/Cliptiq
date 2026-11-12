@@ -43,3 +43,19 @@ receipt; the API's Dispatched alone cannot prove receipt.
 
 Keep these checks OPEN until actual observations are recorded. Prior backend and
 menu object/property/protocol suites remain separate evidence.
+
+
+## macOS automatic-paste permission guidance
+
+With Accessibility/input access denied, choose a history item or snippet from
+quick menu while automatic paste is enabled. Verify the clipboard was populated
+and the localized dialog explains manual Command+V. Choose Not Now: no system
+permission request should occur, and repeated attempts in the same process must
+not repeatedly show the dialog. Restart, repeat and choose Open System Settings:
+verify the OS permission guidance and correct settings pane, then grant access
+manually. Select again from the original target field; no stale automatic retry
+should occur while granting. Revoke access and test denial again. Also confirm no
+prompt at startup, from workspace Copy, with automatic paste off, on Escape, or
+when focus/modifiers/keymap rather than permission prevent dispatch. Repeat in
+English and Russian, including from a fullscreen target. Local ad-hoc rebuilds
+may require renewed permission. Automated fixtures do not grant any OS access.

@@ -145,6 +145,26 @@ int run() {
     std::cout
         << "PASS_native_registration_conflict_rebind_and_lifetime_cleanup\n";
 #endif
+#ifdef __APPLE__
+    // Global hotkeys must be handled at the dispatcher, before AppKit can
+    // route them through a foreground application's/menu tracking target.
+    auto handle=take(native.acquire("dispatcher-test",take(parse_chord("Ctrl+Alt+Q"))));
+    for(unsigned attempt=0;attempt<3;++attempt){
+      EventRef event=nullptr;
+      CHECK(CreateEvent(nullptr,kEventClassKeyboard,kEventHotKeyPressed,
+                        GetCurrentEventTime(),kEventAttributeUserEvent,&event)==noErr);
+      EventHotKeyID id{0x43746971,handle};
+      CHECK(SetEventParameter(event,kEventParamDirectObject,typeEventHotKeyID,
+                              sizeof(id),&id)==noErr);
+      auto result=SendEventToEventTargetWithOptions(event,GetEventDispatcherTarget(),
+                                                   kEventTargetDontPropagate);
+      ReleaseEvent(event);
+      CHECK(result==noErr);
+      CHECK(events==attempt+1 && selected=="dispatcher-test");
+    }
+    native.release(handle);
+    std::cout<<"PASS repeated_dispatcher_hotkey_delivery\n";
+#endif
     std::cout << "PASS no_ambient_key_injection\n";
     return 0;
   } catch (const std::exception &e) {

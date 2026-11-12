@@ -11,5 +11,6 @@ struct NativePasteCalls {
   std::function<bool(int)> key_down;
   std::function<CGEventRef(CGKeyCode, bool)> create;
   std::function<void(CGEventRef)> post;
+  std::function<void()> permission_help;
 };
 } // namespace cliptiq

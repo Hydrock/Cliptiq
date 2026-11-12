@@ -113,6 +113,9 @@ struct Transport::Impl {
       size_t offset = 0;
     };
     std::deque<Out> out;
+    // Keep sent payloads until their FIFO ACK, so replacing a simultaneous
+    // duplicate connection can replay them safely (Service deduplicates IDs).
+    std::deque<Out> unacknowledged;
     Connection(Impl *o) : owner(o) {
       mbedtls_net_init(&net);
       mbedtls_ssl_init(&ssl);
@@ -167,6 +170,12 @@ struct Transport::Impl {
     Clock::time_point retry{};
     std::string lastStatus;
     unsigned attempts = 0;
+    struct Pending {
+      std::shared_ptr<const Bytes> body;
+      std::shared_ptr<int> budget;
+      Clock::time_point expires;
+    };
+    std::deque<Pending> outstanding;
   };
   std::vector<PeerState> peerStates;
   std::vector<std::unique_ptr<Connection>> connections;
@@ -184,6 +193,28 @@ struct Transport::Impl {
                          return connection->peer == peer && connection->hello &&
                                 !connection->dead;
                        });
+  }
+  PeerState &peer_state(TransportPeer *peer) {
+    return peerStates[static_cast<size_t>(peer - config.peers.data())];
+  }
+  void expire_publications() {
+    const auto now = Clock::now();
+    for (auto &peer : peerStates)
+      for (auto it = peer.outstanding.begin(); it != peer.outstanding.end();) {
+        if (it->expires > now) { ++it; continue; }
+        auto budget = it->budget;
+        // ACKs carry no ID. Retire the old stream too, so its delayed ACK
+        // cannot acknowledge a later publication on that connection.
+        for (auto &connection : connections) {
+          auto matches = [&](const Connection::Out &frame) { return frame.budget == budget; };
+          if (std::any_of(connection->out.begin(), connection->out.end(), matches) ||
+              std::any_of(connection->unacknowledged.begin(), connection->unacknowledged.end(), matches)) {
+            connection->failureStatus = "Transfer timed out";
+            connection->dead = true;
+          }
+        }
+        it = peer.outstanding.erase(it);
+      }
   }
   void status(std::string p, const char *s) {
     for (size_t index = 0; index < config.peers.size(); ++index)
@@ -298,13 +329,21 @@ struct Transport::Impl {
         n = x.body ? x.body->size() - (x.offset - 5) : 0;
         d = n ? x.body->data() + x.offset - 5 : nullptr;
       }
-      if (!n)
+      auto complete = [&] {
+        if (x.h[4] == 2)
+          c.unacknowledged.push_back(std::move(x));
         c.out.pop_front();
+      };
+      if (!n)
+        complete();
       else {
         int r = mbedtls_ssl_write(&c.ssl, d, std::min(n, size_t(16384)));
         if (r > 0) {
           x.offset += r;
           c.lastWrite = Clock::now();
+          // Register before reading an ACK that may arrive in this same pass.
+          if (x.offset == 5 + (x.body ? x.body->size() : 0))
+            complete();
         } else if (!retry(r))
           c.dead = true;
       }
@@ -387,6 +426,11 @@ struct Transport::Impl {
             }
           }
         c.hello = true;
+        // The old socket may already have been erased before this HELLO.
+        // Replay only retained live-peer publications within their original bound.
+        for (const auto &frame : peer_state(c.peer).outstanding)
+          if (frame.expires > Clock::now())
+            c.queue(2, frame.body, frame.budget);
         for (size_t index = 0; index < config.peers.size(); ++index)
           if (&config.peers[index] == c.peer) {
             peerStates[index].attempts = 0;
@@ -405,6 +449,12 @@ struct Transport::Impl {
           return;
         }
         c.queue(3, nullptr);
+      } else if (c.type == 3 && !c.unacknowledged.empty()) {
+        auto budget = c.unacknowledged.front().budget;
+        auto &outstanding = peer_state(c.peer).outstanding;
+        outstanding.erase(std::remove_if(outstanding.begin(), outstanding.end(),
+            [&](const PeerState::Pending &frame) { return frame.budget == budget; }), outstanding.end());
+        c.unacknowledged.pop_front();
       }
       incoming -= c.body.capacity();
       Bytes().swap(c.body);
@@ -433,12 +483,21 @@ struct Transport::Impl {
         }
         if (!running)
           break;
+        expire_publications();
         if (callbacks.tick)
           callbacks.tick();
-        if (event)
+        if (event) {
+          const auto expires = Clock::now() + std::chrono::seconds(10);
           for (auto &c : connections)
-            if (c->hello && !c->dead && c->peer->send)
-              c->queue(2, event, eventBudget);
+            if (c->hello && !c->dead && c->peer->send) {
+              auto &outstanding = peer_state(c->peer).outstanding;
+              if (std::none_of(outstanding.begin(), outstanding.end(),
+                  [&](const PeerState::Pending &frame) { return frame.budget == eventBudget; })) {
+                outstanding.push_back({event, eventBudget, expires});
+                c->queue(2, event, eventBudget);
+              }
+            }
+        }
         unsigned pendingCount = 0;
         for (auto &c : connections)
           if (!c->hello)
@@ -532,7 +591,7 @@ struct Transport::Impl {
             c->dead = true;
           if (c->hello && ((c->head && Clock::now() - c->lastRead >
                                            std::chrono::seconds(10)) ||
-                           (!c->out.empty() && Clock::now() - c->lastWrite >
+                           ((!c->out.empty() || !c->unacknowledged.empty()) && Clock::now() - c->lastWrite >
                                                    std::chrono::seconds(10)))) {
             c->failureStatus = "Transfer timed out";
             c->dead = true;

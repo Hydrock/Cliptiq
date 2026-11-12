@@ -109,7 +109,7 @@ int main() {
     require(!a.post([] {}), "off post accepted");
     a.stop();
     std::atomic<int> connected{0}, arrivals{0}, preflights{0}, started{0},
-        stopped{0}, posted{0};
+        stopped{0}, posted{0}, disconnected{0};
     std::atomic<bool> persist{true};
     std::atomic<size_t> expectedSize{3};
     TransportCallbacks cb;
@@ -119,6 +119,7 @@ int main() {
     cb.status = [&](std::string, std::string s) {
       if (s.find("Connected") != std::string::npos)
         ++connected;
+      if (s=="Disconnected")++disconnected;
     };
     cb.receiving = [&](std::string) -> Result<std::string> {
       ++preflights;
@@ -198,6 +199,28 @@ int main() {
     }
     a.stop();
     require(connected == 0, "wrong device identity authenticated");
+    // A socket may disappear before the replacement HELLO is received.
+    // Keep the publication until ACK, including across this ordered reconnect.
+    connected=0;disconnected=0;
+    require(bool(a.start(ca, cb)), "replay server start");
+    {
+      RawPeer raw(49881);raw.hello();
+      require(wait([&]{return connected>0;}),"replay peer hello");
+      a.publish(retained);
+      require(raw.read(5)==Bytes({0,0,0,3,2}) && raw.read(3)==*retained,"initial replay frame missing");
+      require(!wait([&]{return a.ready_to_publish();},100),"publication released before ACK");
+    }
+    require(wait([&]{return disconnected>0;}),"old socket not removed");
+    {
+      RawPeer raw(49881);raw.hello();
+      require(raw.read(5)==Bytes({0,0,0,3,2}) && raw.read(3)==*retained,"unacknowledged frame lost across reconnect");
+      raw.send({0,0,0,0,3});
+      require(wait([&]{return a.ready_to_publish();}),"ACK retained publication budget");
+      a.publish(retained);
+      require(raw.read(5)==Bytes({0,0,0,3,2}) && raw.read(3)==*retained,"expiry frame missing");
+      require(wait([&]{return a.ready_to_publish();},11000),"expired publication retained budget");
+    }
+    a.stop();
     // Short reads and ACK only after successful persistence.
     require(bool(a.start(ca, cb)), "raw server start");
     {

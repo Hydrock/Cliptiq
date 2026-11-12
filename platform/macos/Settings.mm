@@ -103,6 +103,8 @@ struct NativeSettings::State : std::enable_shared_from_this<State> {
   CliptiqSettingsActions *target = nil;
   Settings settings;
   std::function<void(void*)> advanced;
+  std::function<Result<void>()> apply_advanced;
+  NSTabView *tabs=nil;
   std::function<void(bool, int)> preview;
   NSButton *previewCopy = nil, *previewPaste = nil;
   std::function<Result<void>(Settings)> apply;
@@ -122,6 +124,11 @@ struct NativeSettings::State : std::enable_shared_from_this<State> {
   void save() {
     auto keep = shared_from_this();
     [window makeFirstResponder:nil];
+    if(apply_advanced && [tabs indexOfTabViewItem:tabs.selectedTabViewItem]==9){
+      auto result=apply_advanced();
+      message.stringValue=result?loc(@"Network settings saved."):str(result.error().message);
+      return;
+    }
     std::map<std::string, std::string> values;
     for (auto &c : controls) {
       if (c.boolean)
@@ -200,6 +207,7 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
     }
   };
   auto tabs = [[NSTabView alloc] initWithFrame:NSMakeRect(12, 80, 876, 608)];
+  s->tabs=tabs;
   tabs.identifier = @"settings-tabs";
   tabs.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
   [s->window.contentView addSubview:tabs];
@@ -339,6 +347,7 @@ bool NativeSettings::confirm_clear() const {
   [alert addButtonWithTitle:loc(@"Cancel")];
   return [alert runModal] == NSAlertFirstButtonReturn;
 }
+void NativeSettings::advanced_apply(std::function<Result<void>()> cb) {state_->apply_advanced=std::move(cb);}
 void NativeSettings::advanced(std::function<void(void*)> cb) { state_->advanced=std::move(cb); }
 void NativeSettings::sound_preview(std::function<void(bool, int)> callback) {
   state_->preview = std::move(callback);

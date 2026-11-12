@@ -2,6 +2,7 @@
 #include "cliptiq/native_menu.hpp"
 #include "Workspace.hpp"
 #import <AppKit/AppKit.h>
+#import <os/log.h>
 #include <map>
 #include <cstring>
 #include <thread>
@@ -184,6 +185,7 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
     // Keep State alive through the cleanup guard, even if a command closes UI.
     auto keep = shared_from_this();
     ++opening;
+    os_log(OS_LOG_DEFAULT,"Cliptiq popup begin generation=%llu appHidden=%d appActive=%d",(unsigned long long)opening,(int)NSApp.hidden,(int)NSApp.active);
     invocation = ctx;
     if (invocation.target.empty() && options.invocation_provider)
       invocation = options.invocation_provider();
@@ -230,8 +232,10 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
         NSWindowCollectionBehaviorCanJoinAllApplications |
         NSWindowCollectionBehaviorTransient | NSWindowCollectionBehaviorIgnoresCycle;
     [anchor orderFrontRegardless];
-    [tracking popUpMenuPositioningItem:tracking.numberOfItems ? [tracking itemAtIndex:0] : nil
+    os_log(OS_LOG_DEFAULT,"Cliptiq popup owner visible=%d activeSpace=%d",(int)anchor.visible,(int)anchor.onActiveSpace);
+    BOOL selected = [tracking popUpMenuPositioningItem:tracking.numberOfItems ? [tracking itemAtIndex:0] : nil
                            atLocation:NSZeroPoint inView:anchor.contentView];
+    os_log(OS_LOG_DEFAULT,"Cliptiq popup end selected=%d ownerActiveSpace=%d",(int)selected,(int)anchor.onActiveSpace);
   }
   void refresh_workspace() {
     if(!workspace)return;

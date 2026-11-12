@@ -72,6 +72,19 @@ manual fallback; no forced user-key releases or delayed surprise paste retry.
   submits Command+V for both standard and terminal policies: Terminal
   Shift+Command+V means Paste Selection and is deliberately not used. Focused
   window is checked again after normal activation. No receipt acknowledgement.
+  Normal macOS startup now requires clipboard and paste access before capture,
+  hotkeys, network service or main UI start. A foreground native setup window
+  exposes independent request buttons and keeps Continue disabled until both
+  metadata checks pass; Quit/closing aborts startup. On macOS 15.4+ clipboard
+  history requires AlwaysAllow. AX trust and PostEvent access are both required
+  for paste. OS grants remain user-controlled; smoke/demo fixtures bypass setup.
+  The following post-selection guidance remains a fallback for later revocation.
+  After an explicit history/snippet selection copies successfully but cannot
+  auto-paste because permission is missing, the host shows localized guidance
+  once per denied-access period in that process. Only its "Open System Settings"
+  button requests OS permission guidance and opens the Accessibility pane.
+  "Not Now" keeps manual Command+V available; no delayed paste is retried.
+  Capture, dispatch, startup, copy-only and non-permission failures stay silent.
 - X11 checks XTEST, XKB keymap, held/latched modifiers, actual focus, destroyed
   target and own launcher PID ancestry. A short scoped server grab keeps target
   validation and XTest event queuing together; it makes no focus change. The current XKB group resolves Latin V, including Dvorak/remaps, then a Latin

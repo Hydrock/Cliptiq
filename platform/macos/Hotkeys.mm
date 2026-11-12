@@ -1,6 +1,7 @@
 #include "cliptiq/hotkeys.hpp"
 #import <AppKit/AppKit.h>
 #import <Carbon/Carbon.h>
+#import <os/log.h>
 #include <atomic>
 #include <cctype>
 #include <thread>
@@ -61,6 +62,7 @@ struct NativeHotkeys::State {
     auto it = s->actions.find(id.id);
     if (it == s->actions.end())
       return eventNotHandledErr;
+    os_log(OS_LOG_DEFAULT,"Cliptiq hotkey received id=%u",id.id);
     auto callback = s->callback;
     auto action = it->second.action;
     InvocationContext ctx;

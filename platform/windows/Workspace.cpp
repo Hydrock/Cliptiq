@@ -45,7 +45,7 @@ Workspace::Workspace(HWND owner,const NativeMenuOptions& options,std::function<v
  list_=control(WC_LISTVIEWW,L"",WS_TABSTOP|LVS_REPORT|LVS_SINGLESEL|LVS_SHOWSELALWAYS|LVS_NOSORTHEADER,List,WS_EX_CLIENTEDGE);
  ListView_SetExtendedListViewStyle(list_,LVS_EX_FULLROWSELECT|LVS_EX_DOUBLEBUFFER|LVS_EX_LABELTIP);
  row_images_=ImageList_Create(1,px(34),ILC_COLOR32,1,1);ListView_SetImageList(list_,row_images_,LVSIL_SMALL);
- LVCOLUMNW col{};col.mask=LVCF_TEXT|LVCF_WIDTH;col.pszText=const_cast<wchar_t*>(L"Содержимое");col.cx=px(300);ListView_InsertColumn(list_,0,&col);col.pszText=const_cast<wchar_t*>(L"Тип / папка");col.cx=px(110);ListView_InsertColumn(list_,1,&col);
+ LVCOLUMNW col{};col.mask=LVCF_TEXT|LVCF_WIDTH;col.pszText=const_cast<wchar_t*>(L"Содержимое");col.cx=px(300);ListView_InsertColumn(list_,0,&col);col.pszText=const_cast<wchar_t*>(L"Тип / папка");col.cx=px(110);ListView_InsertColumn(list_,1,&col);col.pszText=const_cast<wchar_t*>(L"Источник");col.cx=px(100);ListView_InsertColumn(list_,2,&col);
  preview_heading_=control(L"STATIC",L"ПРЕДПРОСМОТР",0,7194);
  preview_=control(L"EDIT",L"Выберите запись слева.",ES_MULTILINE|ES_READONLY|ES_AUTOVSCROLL|WS_VSCROLL|WS_TABSTOP,7195);
  if(!SetWindowSubclass(preview_,preview_proc,1,0))throw std::runtime_error("Cannot configure workspace preview");
@@ -71,7 +71,7 @@ void Workspace::layout(unsigned dpi){
  place(heading_,left,108,listw,28);place(summary_,left,139,listw,22);place(filter_,left,172,listw,32);
  place(list_,left,216,listw,h-304);place(preview_heading_,detail,112,detailw,24);place(preview_,detail,149,detailw,h-291);place(image_,detail,149,detailw,h-291);
  place(copy_,detail,h-122,detailw,36);place(erase_,detail,h-78,detailw,32);place(clear_,left,h-78,listw,32);place(status_,212,h-31,w-236,23);
- ListView_SetColumnWidth(list_,0,px(std::max(130,listw-132)));ListView_SetColumnWidth(list_,1,px(116));
+ ListView_SetColumnWidth(list_,0,px(std::max(130,listw-232)));ListView_SetColumnWidth(list_,1,px(116));ListView_SetColumnWidth(list_,2,px(100));
  InvalidateRect(owner_,nullptr,TRUE);
 }
 const WorkspaceRow* Workspace::selection()const{int n=ListView_GetNextItem(list_,-1,LVNI_SELECTED);return n>=0&&size_t(n)<visible_.size()?&rows_[visible_[n]]:nullptr;}
@@ -80,9 +80,10 @@ void Workspace::filter(){
  auto old=selection();std::string id=old?old->item.id:"";
  changing_=true;rows_=workspace_rows(model_,page_);visible_.clear();SendMessageW(list_,WM_SETREDRAW,FALSE,0);ListView_DeleteAllItems(list_);
  wchar_t buffer[257]{};GetWindowTextW(filter_,buffer,257);auto query=lower(buffer);int selected_index=-1;
- for(size_t i=0;i<rows_.size();++i){const auto& row=rows_[i];if(!query.empty()&&lower(wide(row.item.label+" "+row.item.tooltip+" "+row.group)).find(query)==std::wstring::npos)continue;
-  auto label=wide((row.item.source_device.empty()?"":"["+row.item.source_device+"] ")+row.item.label);LVITEMW item{};item.mask=LVIF_TEXT;item.iItem=int(visible_.size());item.pszText=label.data();ListView_InsertItem(list_,&item);
-  auto group=page_==MenuKind::Snippets?wide(row.group):std::wstring(type(row.item.kind));ListView_SetItemText(list_,item.iItem,1,group.data());if(row.item.id==id)selected_index=item.iItem;visible_.push_back(i);
+ for(size_t i=0;i<rows_.size();++i){const auto& row=rows_[i];if(!query.empty()&&lower(wide(row.item.label+" "+row.item.tooltip+" "+row.group+" "+row.item.source_device)).find(query)==std::wstring::npos)continue;
+  auto label=wide(row.item.label);LVITEMW item{};item.mask=LVIF_TEXT;item.iItem=int(visible_.size());item.pszText=label.data();ListView_InsertItem(list_,&item);
+  auto group=page_==MenuKind::Snippets?wide(row.group):std::wstring(type(row.item.kind));ListView_SetItemText(list_,item.iItem,1,group.data());
+  auto source=row.item.source_device.empty()?std::wstring(L"Это устройство"):wide(row.item.source_device);ListView_SetItemText(list_,item.iItem,2,source.data());if(row.item.id==id)selected_index=item.iItem;visible_.push_back(i);
  }
  if(selected_index<0&&!visible_.empty())selected_index=0;if(selected_index>=0)ListView_SetItemState(list_,selected_index,LVIS_SELECTED|LVIS_FOCUSED,LVIS_SELECTED|LVIS_FOCUSED);
  SendMessageW(list_,WM_SETREDRAW,TRUE,0);InvalidateRect(list_,nullptr,TRUE);changing_=false;

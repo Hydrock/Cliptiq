@@ -56,6 +56,9 @@ public:
   std::uintptr_t native_handle() const;
   bool confirm_clear() const;
   void advanced(std::function<void(void*)>);
+#ifdef __APPLE__
+  void advanced_apply(std::function<Result<void>()>);
+#endif
   void sound_preview(std::function<void(bool, int)>);
   void status(const std::string &);
   bool record_chord(const KeyChord &);

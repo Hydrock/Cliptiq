@@ -1,0 +1,20 @@
+Test project /Users/smitevils/Projects/cliptiq/Cliptiq/out/core-Darwin-test
+    Start 16: paste_native_boundary
+1/1 Test #16: paste_native_boundary ............***Failed    0.49 sec
+PASS issued_target_and_terminal_both_clipboard_command_v
+PASS permission_denial_and_revocation
+PASS closed_changed_window_and_unrelated_focus
+PASS held_modifiers_key_and_missing_keymap_or_allocation
+PASS normal_restore_denial_and_window_recheck
+PASS native_denial_preserves_paste_delete_history
+FAIL permission_help_after_copy_is_once_until_access_changes: p.explain_paste_permission(intent,outcome)
+FAIL permission_help_only_for_failed_auto_paste_not_copy_or_other_denials: p.explain_paste_permission(intent,outcome) && dialogs==1
+
+
+0% tests passed, 1 tests failed out of 1
+
+Total Test time (real) =   0.49 sec
+
+The following tests FAILED:
+	 16 - paste_native_boundary (Failed)
+Errors while running CTest
