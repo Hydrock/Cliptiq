@@ -45,7 +45,7 @@ struct LanSettingsDraft {
     if(key=="urls")return tr("Allows sending and receiving links recognized by the clipboard as URLs. A link copied as plain text also depends on the text setting.");
     if(key=="images")return tr("Allows sending and receiving images, converted to PNG. Maximum 8 MiB per transfer and 8 million pixels per image. Files and folders are not transferred.");
     if(key=="peer:name")return tr("A friendly name for the OTHER device, for example Work Mac. This name labels copies received from it in your history. It does not have to match its system name.");
-    if(key=="peer:host")return tr("The IP address or DNS name of the OTHER computer, reachable from here over LAN or VPN, for example 192.168.1.20 or its Tailscale name.");
+    if(key=="peer:host")return tr("The IP address or DNS name of the OTHER computer, reachable from here over LAN or VPN, for example 192.168.1.20 or pc.local.");
     if(key=="peer:port")return tr("Enter the listen port configured on the OTHER computer. Usually 49731. This is its port, not necessarily the listen port of this computer.");
     if(key=="peer:enabled")return tr("Enables this device after saving. Disable it to disconnect only this device while keeping its address and key for later.");
     if(key=="peer:send")return tr("Sends new copies from THIS computer to this device. Configure the matching receive permission on the other computer.");

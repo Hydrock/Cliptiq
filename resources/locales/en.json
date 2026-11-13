@@ -322,7 +322,6 @@
   "Allows sending and receiving links recognized by the clipboard as URLs. A link copied as plain text also depends on the text setting.": "Allows sending and receiving links recognized by the clipboard as URLs. A link copied as plain text also depends on the text setting.",
   "Allows sending and receiving images, converted to PNG. Maximum 8 MiB per transfer and 8 million pixels per image. Files and folders are not transferred.": "Allows sending and receiving images, converted to PNG. Maximum 8 MiB per transfer and 8 million pixels per image. Files and folders are not transferred.",
   "A friendly name for the OTHER device, for example Work Mac. This name labels copies received from it in your history. It does not have to match its system name.": "A friendly name for the OTHER device, for example Work Mac. This name labels copies received from it in your history. It does not have to match its system name.",
-  "The IP address or DNS name of the OTHER computer, reachable from here over LAN or VPN, for example 192.168.1.20 or its Tailscale name.": "The IP address or DNS name of the OTHER computer, reachable from here over LAN or VPN, for example 192.168.1.20 or its Tailscale name.",
   "Enter the listen port configured on the OTHER computer. Usually 49731. This is its port, not necessarily the listen port of this computer.": "Enter the listen port configured on the OTHER computer. Usually 49731. This is its port, not necessarily the listen port of this computer.",
   "Enables this device after saving. Disable it to disconnect only this device while keeping its address and key for later.": "Enables this device after saving. Disable it to disconnect only this device while keeping its address and key for later.",
   "Sends new copies from THIS computer to this device. Configure the matching receive permission on the other computer.": "Sends new copies from THIS computer to this device. Configure the matching receive permission on the other computer.",
@@ -390,5 +389,9 @@
   "Receive clipboard": "Receive clipboard",
   "Device reconnected.": "Device reconnected.",
   "Device endpoint could not be verified.": "Device endpoint could not be verified.",
-  "Finish or cancel pairing before removing a device.": "Finish or cancel pairing before removing a device."
+  "Finish or cancel pairing before removing a device.": "Finish or cancel pairing before removing a device.",
+  "The IP address or DNS name of the OTHER computer, reachable from here over LAN or VPN, for example 192.168.1.20 or pc.local.": "The IP address or DNS name of the OTHER computer, reachable from here over LAN or VPN, for example 192.168.1.20 or pc.local.",
+  "Advanced settings": "Advanced settings",
+  "Network interface": "Network interface",
+  "Automatic (recommended)": "Automatic (recommended)"
 }

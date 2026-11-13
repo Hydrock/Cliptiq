@@ -47,7 +47,6 @@ struct NativeLanSettings::State {
   for(auto c:promptChildren)DestroyWindow(c);promptChildren.clear();discoveryActions.clear();discoveryId=10000;int y=16;
   if(window){if(!snapshot.local_name.empty()){topControl(window,L"STATIC",tr("This device")+": "+snapshot.local_name,0,16,y,704,28);y+=36;}auto availability=topButton(window,"Available for discovery",10,{},16,y,704,BS_AUTOCHECKBOX);SendMessageW(availability,BM_SETCHECK,snapshot.enabled?BST_CHECKED:BST_UNCHECKED,0);EnableWindow(availability,snapshot.available);y+=40;
    topControl(window,L"STATIC",tr("Enable discovery once on each computer you want to connect."),0,16,y,704,48);y+=56;
-   for(const auto& iface:snapshot.interfaces){int id=discoveryId++;discoveryActions[id]={16,iface.id};auto b=topControl(window,L"BUTTON",iface.name,WS_TABSTOP|BS_AUTORADIOBUTTON,16,y,704,32,id);SendMessageW(b,BM_SETCHECK,iface.id==snapshot.interface_id?BST_CHECKED:BST_UNCHECKED,0);y+=40;}
    auto search=topButton(window,snapshot.searching?"Stop search":"Find devices on network",snapshot.searching?12:11,{},16,y,350);EnableWindow(search,snapshot.available);y+=44;
    for(const auto& device:snapshot.devices){topControl(window,L"STATIC",device.name+" · "+device.platform+" · "+device.address+" · "+device.device_id.substr(0,8),0,16,y+4,440,36);bool paired=std::any_of(snapshot.peers.begin(),snapshot.peers.end(),[&](const auto& p){return p.remote_device_id==device.device_id;});auto b=topButton(window,paired?"Paired":"Connect",17,device.device_id,492,y);EnableWindow(b,!paired&&!pairing_active(snapshot));y+=44;}
    if(!snapshot.peers.empty()){topControl(window,L"STATIC",tr("Paired devices"),0,16,y,704,28);y+=36;for(const auto& peer:snapshot.peers){auto status=snapshot.peer_statuses.find(peer.id);topControl(window,L"STATIC",peer.name+(status==snapshot.peer_statuses.end()?"":" · "+tr(status->second)),0,16,y,440,36);auto remove=topButton(window,"Delete",23,peer.id,492,y);EnableWindow(remove,bool(discovery.remove_peer)&&!pairing_active(snapshot));y+=44;int x=16;for(int kind:{20,21,22}){auto b=topButton(window,kind==20?"Enable sharing":kind==21?"Send clipboard":"Receive clipboard",kind,peer.id,x,y,220,BS_AUTOCHECKBOX);SendMessageW(b,BM_SETCHECK,(kind==20?peer.enabled:kind==21?peer.send:peer.receive)?BST_CHECKED:BST_UNCHECKED,0);x+=238;}y+=40;}}
@@ -57,7 +56,13 @@ struct NativeLanSettings::State {
    if(!prompt){WNDCLASSW wc{};wc.lpfnWndProc=promptProc;wc.hInstance=GetModuleHandleW(nullptr);wc.lpszClassName=L"CliptiqPairing";wc.hCursor=LoadCursor(nullptr,IDC_ARROW);wc.hbrBackground=reinterpret_cast<HBRUSH>(COLOR_WINDOW+1);RegisterClassW(&wc);prompt=CreateWindowExW(WS_EX_TOOLWINDOW,wc.lpszClassName,lw(L"Pair device"),WS_OVERLAPPED|WS_CAPTION|WS_SYSMENU,CW_USEDEFAULT,CW_USEDEFAULT,px(510),px(390),nullptr,nullptr,wc.hInstance,this);}if(prompt){pairingControls(prompt,16);if(!IsWindowVisible(prompt)){ShowWindow(prompt,SW_SHOW);SetForegroundWindow(prompt);}}
   }else{if(prompt)ShowWindow(prompt,SW_HIDE);if(window)y=pairingControls(window,y);}
   if(code_edit){SetWindowTextW(code_edit,wide(entered).c_str());if(focus)SetFocus(code_edit);}
-  if(window){if(!snapshot.message.empty()){topControl(window,L"STATIC",tr(snapshot.message),0,16,y,704,64);y+=72;}int delta=y-discoveryHeight;for(auto& child:children)if(!child.discovery)child.y+=delta;height+=delta;discoveryHeight=y;std::stable_sort(children.begin(),children.end(),[](const auto& a,const auto& b){return a.y<b.y;});layout();}
+  if(window){if(!snapshot.message.empty()){topControl(window,L"STATIC",tr(snapshot.message),0,16,y,704,64);y+=72;}topControl(window,L"BUTTON",tr("Advanced settings"),WS_TABSTOP,16,y,350,32,9000);y+=44;
+   if(manualExpanded){
+    topControl(window,L"STATIC",tr("Network interface"),0,16,y,704,28);y+=36;
+    auto automatic=topButton(window,"Automatic (recommended)",16,{},16,y,704,BS_AUTORADIOBUTTON|WS_GROUP);SendMessageW(automatic,BM_SETCHECK,snapshot.interface_id.empty()?BST_CHECKED:BST_UNCHECKED,0);y+=40;
+    for(const auto& iface:snapshot.interfaces){int id=discoveryId++;discoveryActions[id]={16,iface.id};auto b=topControl(window,L"BUTTON",iface.name+" ("+iface.address+")",WS_TABSTOP|BS_AUTORADIOBUTTON,16,y,704,32,id);SendMessageW(b,BM_SETCHECK,iface.id==snapshot.interface_id?BST_CHECKED:BST_UNCHECKED,0);y+=40;}
+   }
+   int delta=y-discoveryHeight;for(auto& child:children)if(!child.discovery)child.y+=delta;height+=delta;discoveryHeight=y;std::stable_sort(children.begin(),children.end(),[](const auto& a,const auto& b){return a.y<b.y;});layout();}
  }
  void discoveryAction(int id){auto it=discoveryActions.find(id);if(it==discoveryActions.end())return;auto a=it->second;Result<void> result;
   if(a.kind==10&&discovery.available)result=discovery.available(!snapshot.enabled);if(a.kind==11&&discovery.search)result=discovery.search();if(a.kind==12&&discovery.stop_search)discovery.stop_search();if(a.kind==13&&discovery.accept)result=discovery.accept(a.peer);if(a.kind==14&&discovery.enter_code)result=discovery.enter_code(a.peer,code_edit?utf(code_edit):"");if(a.kind==15&&discovery.cancel)discovery.cancel(a.peer);if(a.kind==16&&discovery.select_interface)result=discovery.select_interface(a.peer);if(a.kind==17&&discovery.connect)result=discovery.connect(a.peer);
@@ -71,7 +76,7 @@ struct NativeLanSettings::State {
  }
  void remember(){for(const auto& input:inputs)manualValues[input.field.key]=input.field.check?(SendMessageW(input.window,BM_GETCHECK,0,0)==BST_CHECKED?"1":"0"):utf(input.window);}
  void build(){for(auto& c:children)DestroyWindow(c.window);children.clear();inputs.clear();actions.clear();int y=16,id=100;discoveryHeight=0;height=0;
- if(discovery.snapshot){snapshot=discovery.snapshot();signature=discovery_signature(snapshot);renderDiscovery();y=discoveryHeight+8;control(L"BUTTON",tr("Manual connection"),WS_TABSTOP,16,y,350,32,9000);y+=44;}
+ if(discovery.snapshot){snapshot=discovery.snapshot();signature=discovery_signature(snapshot);renderDiscovery();y=discoveryHeight+8;}
  if(manualExpanded||!discovery.snapshot){
  control(L"STATIC",tr("Changes take effect only after Save. No peers means LAN is off."),0,16,y,720,40);y+=44;
  control(L"STATIC",tr("Listen on this device's LAN or VPN IP. Add the other device's address and use the same pairing key on both."),0,16,y,720,60);y+=68;

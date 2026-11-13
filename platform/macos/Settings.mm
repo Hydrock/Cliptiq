@@ -3,6 +3,12 @@
 #import <AppKit/AppKit.h>
 #include <thread>
 using namespace cliptiq;
+// A short settings document must stay at the top of its scroll viewport.
+@interface CliptiqSettingsClipView : NSClipView
+@end
+@implementation CliptiqSettingsClipView
+- (BOOL)isFlipped { return YES; }
+@end
 @interface CliptiqShortcutField : NSTextField
 @end
 @implementation CliptiqShortcutField
@@ -221,6 +227,7 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
     item.label = names[g];
     auto scroll =
         [[NSScrollView alloc] initWithFrame:NSMakeRect(0, 0, 850, 570)];
+    scroll.contentView = [[CliptiqSettingsClipView alloc] initWithFrame:scroll.contentView.frame];
     scroll.hasVerticalScroller = YES;
     auto stack = [NSStackView new];
     stack.orientation = NSUserInterfaceLayoutOrientationVertical;

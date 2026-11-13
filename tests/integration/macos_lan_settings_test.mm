@@ -74,15 +74,29 @@ int main(int argc,char **argv) { @autoreleasepool { try {
  [window performClose:nil];CHECK(!window.visible);window=show();CHECK(window.visible && panel.window==window);
  [window performClose:nil];
  NativeLanSettings discoveredNetwork;lan::DiscoverySnapshot snapshot;snapshot.available=true;unsigned searches=0,closes=0,approvals=0,submitted=0;DiscoveryUiCallbacks callbacks;callbacks.snapshot=[&]{return snapshot;};callbacks.available=[&](bool value)->Result<void>{snapshot.enabled=value;return {};};callbacks.search=[&]()->Result<void>{++searches;snapshot.searching=true;return {};};callbacks.stop_search=[&]{snapshot.searching=false;};callbacks.close_view=[&]{++closes;};callbacks.connect=[](std::string)->Result<void>{return {};};callbacks.accept=[&](std::string id)->Result<void>{CHECK(id=="ui-session");++approvals;return {};};callbacks.enter_code=[&](std::string id,std::string code)->Result<void>{CHECK(id=="ui-session"&&code=="123456");++submitted;return {};};callbacks.cancel=[](std::string){};
+ snapshot.interfaces={{"en0","Wi-Fi","192.168.1.1",2}};callbacks.select_interface=[&](std::string id)->Result<void>{snapshot.interface_id=std::move(id);return {};};
  discoveredNetwork.discovery(callbacks);CHECK(discoveredNetwork.show(config,[](lan::Config&,std::map<std::string,std::string>)->Result<void>{return {};},[]()->Result<std::string>{return std::string(64,'a');},[](std::string)->Result<void>{return {};}));
  NSWindow* discoveryWindow=nil;for(NSWindow* candidate in NSApp.windows)if([candidate.title isEqualToString:text("Advanced LAN settings")]&&candidate.visible)discoveryWindow=candidate;CHECK(discoveryWindow);
  auto searchButton=button(discoveryWindow.contentView,text("Find devices on network"));CHECK(searchButton);[searchButton performClick:nil];CHECK(searches==1);CHECK(discoveredNetwork.process_events());
- auto manual=button(discoveryWindow.contentView,text("Manual connection"));CHECK(manual);[manual performClick:nil];auto nameField=(NSTextField*)field(discoveryWindow.contentView,text("Local device name"));CHECK(nameField&&!nameField.hidden);nameField.stringValue=@"Preserve draft";
+ auto automatic=button(discoveryWindow.contentView,text("Automatic (recommended)"));CHECK(automatic&&automatic.isHiddenOrHasHiddenAncestor&&automatic.state==NSControlStateValueOn);
+ auto manual=button(discoveryWindow.contentView,text("Advanced settings"));CHECK(manual);[manual performClick:nil];auto nameField=(NSTextField*)field(discoveryWindow.contentView,text("Local device name"));CHECK(nameField&&!nameField.hidden);nameField.stringValue=@"Preserve draft";
+ CHECK(!automatic.isHiddenOrHasHiddenAncestor);auto wifi=button(discoveryWindow.contentView,@"Wi-Fi (192.168.1.1)");CHECK(wifi);[wifi performClick:nil];CHECK(snapshot.interface_id=="en0");[button(discoveryWindow.contentView,text("Automatic (recommended)")) performClick:nil];CHECK(snapshot.interface_id.empty());
  lan::DiscoveryDevice found;found.device_id="found";found.name="Same name";found.platform="windows";auto sameName=found;sameName.device_id="another-found";snapshot.devices={found,sameName};CHECK(discoveredNetwork.process_events());CHECK([nameField.stringValue isEqualToString:@"Preserve draft"]);CHECK(button(discoveryWindow.contentView,text("Connect")));
  snapshot.pairing=lan::PairingEvent::Kind::Incoming;snapshot.session_id="ui-session";snapshot.peer_name="Test PC";CHECK(discoveredNetwork.process_events());auto allow=button(discoveryWindow.contentView,text("Allow pairing"));CHECK(allow);[allow performClick:nil];CHECK(approvals==1);
  snapshot.pairing=lan::PairingEvent::Kind::Code;snapshot.code="012345";CHECK(discoveredNetwork.process_events());CHECK(button(discoveryWindow.contentView,text("Cancel pairing")));
  snapshot.pairing=lan::PairingEvent::Kind::EnterCode;snapshot.code.clear();CHECK(discoveredNetwork.process_events());auto input=codeField(discoveryWindow.contentView);CHECK(input);input.stringValue=@"123456";snapshot.message="Search complete.";CHECK(discoveredNetwork.process_events());CHECK([codeField(discoveryWindow.contentView).stringValue isEqualToString:@"123456"]);[button(discoveryWindow.contentView,text("Pair device")) performClick:nil];CHECK(submitted==1);
  snapshot.pairing=lan::PairingEvent::Kind::Failed;snapshot.message="Pairing failed. Start again with a new code.";CHECK(discoveredNetwork.process_events());CHECK(button(discoveryWindow.contentView,text("Connect")).enabled);
  [discoveryWindow performClose:nil];CHECK(closes==1);snapshot.message="Late result";CHECK(discoveredNetwork.process_events());
+ // Short collapsed discovery content must start at the top of the embedded page.
+ snapshot.pairing.reset();snapshot.session_id.clear();snapshot.devices.clear();snapshot.message.clear();
+ NativeSettings compactSettings;compactSettings.advanced([&](void* parent){CHECK(discoveredNetwork.show(config,[](lan::Config&,std::map<std::string,std::string>)->Result<void>{return {};},[]()->Result<std::string>{return std::string(64,'a');},[](std::string)->Result<void>{return {};},parent));});
+ Capabilities compactCaps;compactCaps.platform=CapturePlatform::MacOS;CHECK(compactSettings.show(default_settings(CapturePlatform::MacOS),compactCaps,[](Settings)->Result<void>{return {};}));
+ auto compactWindow=(__bridge NSWindow*)(void*)compactSettings.native_handle();auto compactTabs=tabs(compactWindow.contentView);[compactTabs selectTabViewItemAtIndex:9];
+ [compactWindow.contentView layoutSubtreeIfNeeded];[NSApp updateWindows];
+ auto available=button(compactWindow.contentView,text("Available for discovery"));CHECK(available);
+ NSView* clip=available.superview;while(clip&&![clip isKindOfClass:NSClipView.class])clip=clip.superview;CHECK(clip);
+ auto location=[available convertRect:available.bounds toView:clip];CGFloat gap=clip.isFlipped?NSMinY(location)-NSMinY(clip.bounds):NSMaxY(clip.bounds)-NSMaxY(location);
+ if(gap>60)std::cerr<<"Discovery top gap: "<<gap<<"\n";CHECK(gap>=0&&gap<60);
+ [compactWindow performClose:nil];
  std::cout<<"PASS embedded macOS Network settings: draft, keys, repeated save, cancel, layout and reopen\n";return 0;
  }catch(const std::exception &error){std::cerr<<error.what()<<'\n';return 1;} } }

@@ -4,6 +4,7 @@
 #include "Text.hpp"
 #include <algorithm>
 #include <chrono>
+#include <cctype>
 #include <deque>
 #include <set>
 #include <mbedtls/platform_util.h>
@@ -30,7 +31,13 @@ struct DiscoveryService::State {
  Result<NetworkInterface> selected(){
   auto interfaces=hooks.interfaces();if(!interfaces)return interfaces.error();view.interfaces=std::move(interfaces.value());
   auto match=std::find_if(view.interfaces.begin(),view.interfaces.end(),[&](const auto& i){return !prefs.interface_id.empty()?i.id==prefs.interface_id:scoped(i.address,i.index)==config.bind_address;});
-  if(match==view.interfaces.end()&&prefs.interface_id.empty()&&config.peers.empty()&&config.bind_address=="127.0.0.1"&&view.interfaces.size()==1)match=view.interfaces.begin();
+  if(match==view.interfaces.end()&&prefs.interface_id.empty()&&config.peers.empty()&&config.bind_address=="127.0.0.1") {
+   // Prefer ordinary IPv4 LAN adapters over point-to-point and tunnel adapters.
+   auto rank=[](const NetworkInterface& iface){auto name=iface.id+" "+iface.name;std::transform(name.begin(),name.end(),name.begin(),[](unsigned char c){return char(std::tolower(c));});
+    bool auxiliary=name.find("awdl")!=std::string::npos||name.find("llw")!=std::string::npos||name.find("utun")!=std::string::npos||name.find("vpn")!=std::string::npos||name.find("tunnel")!=std::string::npos||name.find("tailscale")!=std::string::npos;
+    return (auxiliary?2:0)+(iface.address.find(':')!=std::string::npos?1:0);};
+   match=std::min_element(view.interfaces.begin(),view.interfaces.end(),[&](const auto& a,const auto& b){return rank(a)<rank(b);});
+  }
   if(match==view.interfaces.end())return Error{ErrorCode::Busy,"Choose a network interface for device discovery."};
   if(scoped(match->address,match->index)!=config.bind_address&&!(config.peers.empty()&&config.bind_address=="127.0.0.1"))return Error{ErrorCode::Busy,"Choose the same network as the existing LAN listener"};return *match;
  }
@@ -86,7 +93,7 @@ Result<void> DiscoveryService::initialize(){auto& s=*state_;if(s.initialized)sto
 }
 DiscoverySnapshot DiscoveryService::snapshot()const{auto snapshot=state_->view;if(state_->service)snapshot.peer_statuses=state_->service->peer_statuses();return snapshot;}
 Result<void> DiscoveryService::available(bool enabled){auto& s=*state_;if(!s.initialized||(enabled&&!s.view.available))return s.problem(unavailable());if(!s.view.session_id.empty())cancel(s.view.session_id);auto prefs=s.prefs;prefs.enabled=enabled;auto saved=save_discovery_preferences(s.store,prefs);if(!saved)return s.problem(saved.error());auto current=load_discovery_preferences(s.store);if(!current)return s.problem(current.error());s.prefs=current.value();s.view.enabled=enabled;auto result=s.publish();if(!result)return s.problem(result.error());s.view.message=enabled?"Device discovery enabled.":"Device discovery disabled.";return {};}
-Result<void> DiscoveryService::select_interface(std::string id){auto& s=*state_;if(!s.initialized)return unavailable();if(!s.view.session_id.empty())return s.problem({ErrorCode::Busy,"Finish or cancel pairing before changing networks."});auto interfaces=s.hooks.interfaces();if(!interfaces)return s.problem(interfaces.error());if(std::none_of(interfaces.value().begin(),interfaces.value().end(),[&](const auto& i){return i.id==id;}))return s.problem({ErrorCode::InvalidArgument,"Network interface is no longer available."});auto prefs=s.prefs;prefs.interface_id=std::move(id);auto saved=save_discovery_preferences(s.store,prefs);if(!saved)return s.problem(saved.error());auto current=load_discovery_preferences(s.store);if(!current)return s.problem(current.error());s.prefs=current.value();s.view.interface_id=s.prefs.interface_id;auto result=s.publish();if(!result)return s.problem(result.error());s.view.message.clear();return {};}
+Result<void> DiscoveryService::select_interface(std::string id){auto& s=*state_;if(!s.initialized)return unavailable();if(!s.view.session_id.empty())return s.problem({ErrorCode::Busy,"Finish or cancel pairing before changing networks."});auto interfaces=s.hooks.interfaces();if(!interfaces)return s.problem(interfaces.error());if(!id.empty()&&std::none_of(interfaces.value().begin(),interfaces.value().end(),[&](const auto& i){return i.id==id;}))return s.problem({ErrorCode::InvalidArgument,"Network interface is no longer available."});auto prefs=s.prefs;prefs.interface_id=std::move(id);auto saved=save_discovery_preferences(s.store,prefs);if(!saved)return s.problem(saved.error());auto current=load_discovery_preferences(s.store);if(!current)return s.problem(current.error());s.prefs=current.value();s.view.interface_id=s.prefs.interface_id;auto result=s.publish();if(!result)return s.problem(result.error());s.view.message.clear();return {};}
 Result<Config> DiscoveryService::remove_peer(const std::string& id){
  auto& s=*state_;auto fail=[&](Error error)->Result<Config>{s.problem(error);return error;};
  if(!s.initialized)return fail(unavailable());
