@@ -106,10 +106,10 @@ struct PairingServer::Impl {
    std::unique_lock<std::mutex> lock(mutex);cv.wait_for(lock,std::chrono::milliseconds(10),[&]{return stopped||!commands.empty();});
   }connections.clear();active.clear();}
 };
-PairingServer::PairingServer(std::string id,std::string name,std::string platform):impl_(std::make_unique<Impl>(std::move(id),std::move(name),std::move(platform))){}
+PairingServer::PairingServer(std::string id,std::string name,std::string platform,std::uint16_t data_port):impl_(std::make_unique<Impl>(std::move(id),std::move(name),std::move(platform))){impl_->data_port=data_port;}
 PairingServer::~PairingServer(){stop();}
-Result<std::uint16_t> PairingServer::listen(std::string address,std::uint16_t data_port){
- stop();auto& s=*impl_;if(!s.sockets||!data_port)return Error{ErrorCode::InvalidArgument,"Pairing networking is unavailable"};auto local=endpoint(address,0);if(!local)return local.error();Socket sock=socket(local.value().family,SOCK_STREAM,IPPROTO_TCP);if(sock==invalid)return Error{ErrorCode::Io,"Cannot create pairing listener"};
+Result<std::uint16_t> PairingServer::listen(std::string address,std::uint16_t data_port,std::uint32_t index){
+ stop();auto& s=*impl_;if(!s.sockets||!data_port)return Error{ErrorCode::InvalidArgument,"Pairing networking is unavailable"};auto local=endpoint(address,0,index);if(!local)return local.error();Socket sock=socket(local.value().family,SOCK_STREAM,IPPROTO_TCP);if(sock==invalid)return Error{ErrorCode::Io,"Cannot create pairing listener"};
  int one=1;setsockopt(sock,SOL_SOCKET,SO_REUSEADDR,reinterpret_cast<const char*>(&one),sizeof one);
 #ifdef SO_NOSIGPIPE
  setsockopt(sock,SOL_SOCKET,SO_NOSIGPIPE,&one,sizeof one);

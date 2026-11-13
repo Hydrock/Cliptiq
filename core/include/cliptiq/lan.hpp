@@ -14,6 +14,17 @@ bool active(const Config&);
 struct DiscoveryPreferences { bool enabled=false;std::string interface_id;std::uint64_t revision=0; };
 Result<DiscoveryPreferences> load_discovery_preferences(Store&);
 Result<void> save_discovery_preferences(Store&,const DiscoveryPreferences&);
+struct PendingPair {
+ enum class Phase {Prepared,Committed};
+ std::string session_id,peer_id,remote_device_id,secret_ref,auth_id,name,host,bind_address;
+ std::uint16_t port=0;std::int64_t expires_ms=0;Phase phase=Phase::Prepared;
+};
+Result<void> stage_pair(Store&,const PendingPair&);
+Result<void> commit_pair(Store&,const std::string& session_id);
+Result<void> finish_pair(Store&,const std::string& session_id);
+Result<void> abort_pair(Store&,const std::string& session_id);
+Result<std::vector<PendingPair>> pending_pairs(Store&);
+Result<void> finish_authenticated_pair(Store&,const std::string& peer_id,const std::string& remote_device_id);
 std::string new_id();
 Result<std::string> key_fingerprint(const std::string& key64hex);
 struct Event { std::string origin_device_id,event_id; std::uint64_t sequence=0; std::int64_t created_ms=0; std::vector<Representation> representations; };

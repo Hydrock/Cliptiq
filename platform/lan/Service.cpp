@@ -79,7 +79,7 @@ struct Service::State {
   callbacks.tick=[weak]{if(auto r=weak.lock())r->flush();};
   callbacks.stopped=[weak]{if(auto r=weak.lock())r->store.reset();};
   callbacks.status=[weak](std::string peer,std::string value){if(auto r=weak.lock())r->report(peer,value);};
-  callbacks.identity=[weak](std::string peer,std::string remote)->Result<void>{auto r=weak.lock();if(!r)return stopped();auto db=r->connection();if(!db)return db.error();return bind_peer_identity(*db.value(),peer,remote);};
+  callbacks.identity=[weak](std::string peer,std::string remote)->Result<void>{auto r=weak.lock();if(!r)return stopped();auto db=r->connection();if(!db)return db.error();auto bound=bind_peer_identity(*db.value(),peer,remote);if(!bound)return bound;return finish_authenticated_pair(*db.value(),peer,remote);};
   callbacks.receiving=[weak](std::string)->Result<std::string>{
    auto r=weak.lock();if(!r)return stopped();auto request=std::make_shared<Checkpoint>();
    {std::lock_guard<std::mutex> lock(r->mutex);if(r->stopping)return stopped();if(r->checkpoints.size()>=16)return Error{ErrorCode::Busy,"LAN receive checkpoint queue full"};r->checkpoints.push_back(request);}
@@ -113,6 +113,7 @@ Service::Service(Store&s,std::string database,CapturePlatform platform,Clipboard
 Service::~Service(){stop();}
 Result<void> Service::initialize(){auto loaded=load_config(state_->ui);if(!loaded)return loaded.error();state_->configuration=std::move(loaded.value());auto started=state_->start();if(!started)state_->problem=started.error().message;return started;}
 Result<Config> Service::config(){auto loaded=load_config(state_->ui);if(loaded)state_->configuration=loaded.value();return loaded;}
+Result<void> Service::refresh(){state_->stop();return initialize();}
 void Service::stop(){state_->stop();}
 bool Service::running()const{return state_->runtime&&state_->runtime->transport->active();}
 void Service::history_policy(HistoryPolicy value){state_->history=value;if(auto r=state_->runtime){std::lock_guard<std::mutex> lock(r->mutex);r->history=value;}}

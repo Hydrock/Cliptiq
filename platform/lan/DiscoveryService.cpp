@@ -1,0 +1,89 @@
+#include "DiscoveryService.hpp"
+#include "Secrets.hpp"
+#include "Text.hpp"
+#include <algorithm>
+#include <chrono>
+#include <deque>
+#include <mbedtls/platform_util.h>
+namespace cliptiq::lan {
+namespace {
+std::int64_t steady(){return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();}
+std::int64_t wall(){return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();}
+std::string label(std::string s){while(s.size()>250||!valid_display_text(s,250)) {if(s.empty())return "Cliptiq";s.pop_back();}return s.empty()?"Cliptiq":s;}
+std::string scoped(std::string address,std::uint32_t index){if(index&&address.find('%')==std::string::npos&&address.size()>4&&address.substr(0,4)=="fe80")address+="%"+std::to_string(index);return address;}
+Error unavailable(){return {ErrorCode::Unsupported,"Device discovery is unavailable. Use manual connection."};}
+}
+struct DiscoveryService::State {
+ Store& store;Service* service=nullptr;CapturePlatform platform=CapturePlatform::Unknown;DiscoveryHooks hooks;Config config;DiscoveryPreferences prefs;DiscoverySnapshot view;std::unique_ptr<DiscoveryRegistry> registry;std::unique_ptr<NativeDiscovery> native;std::unique_ptr<PairingServer> pairing;std::int64_t search_deadline=0;bool initialized=false;std::string system;std::deque<std::string> cancelled;
+ State(Store& s,DiscoveryHooks h):store(s),hooks(std::move(h)){}
+ Result<void> problem(Error error){view.message=error.message;return error;}
+ void adapters(){if(!service)return;
+  system=platform==CapturePlatform::MacOS?"macos":platform==CapturePlatform::Windows?"windows":"linux";
+  native=std::make_unique<NativeDiscovery>(config.device_id);pairing=std::make_unique<PairingServer>(config.device_id,label(config.device_name),system,config.port);
+  hooks.capability=[this]{return native->capability();};hooks.publish=[this](auto a){return native->publish(std::move(a));};hooks.browse=[this]{return native->browse();};hooks.stop_browse=[this]{native->stop_browse();};hooks.discovery_events=[this]{return native->poll();};hooks.interfaces=network_interfaces;hooks.listen=[this](const NetworkInterface& iface,std::uint16_t port){return pairing->listen(iface.address,port,iface.index);};hooks.connect=[this](auto d){return pairing->connect(std::move(d));};hooks.accept=[this](auto id){return pairing->accept(id);};hooks.enter_code=[this](auto id,auto code){return pairing->enter_code(id,std::move(code));};hooks.prepared=[this](auto id,auto result){pairing->prepared(id,std::move(result));};hooks.committed=[this](auto id,auto result){pairing->committed(id,std::move(result));};hooks.cancel=[this](auto id){pairing->cancel(id);};hooks.pairing_events=[this]{return pairing->poll();};hooks.stop_pairing=[this]{pairing->stop();};hooks.write_secret=write_secret;hooks.erase_secret=erase_secret;hooks.refresh=[this]{return service->refresh();};hooks.steady_clock=steady;hooks.wall_clock=wall;
+ }
+ Result<void> reload(){auto current=load_config(store);if(!current)return current.error();config=std::move(current.value());view.peers=config.peers;return {};}
+ Result<void> cleanup(const PendingPair& p){auto aborted=abort_pair(store,p.session_id);if(!aborted)return aborted;auto current=load_config(store);if(!current)return current.error();if(std::none_of(current.value().peers.begin(),current.value().peers.end(),[&](const auto& peer){return peer.secret_ref==p.secret_ref;})){auto erased=hooks.erase_secret(p.secret_ref);if(!erased)return erased;}return {};}
+ Result<NetworkInterface> selected(){
+  auto interfaces=hooks.interfaces();if(!interfaces)return interfaces.error();view.interfaces=std::move(interfaces.value());
+  auto match=std::find_if(view.interfaces.begin(),view.interfaces.end(),[&](const auto& i){return !prefs.interface_id.empty()?i.id==prefs.interface_id:scoped(i.address,i.index)==config.bind_address;});
+  if(match==view.interfaces.end()&&prefs.interface_id.empty()&&config.peers.empty()&&config.bind_address=="127.0.0.1"&&view.interfaces.size()==1)match=view.interfaces.begin();
+  if(match==view.interfaces.end())return Error{ErrorCode::Busy,"Choose a network interface for device discovery."};
+  if(scoped(match->address,match->index)!=config.bind_address&&!(config.peers.empty()&&config.bind_address=="127.0.0.1"))return Error{ErrorCode::Busy,"Choose the same network as the existing LAN listener"};return *match;
+ }
+ Result<void> publish(){
+  view.published=false;auto off=hooks.publish({});hooks.stop_pairing();if(!off)return off;if(!prefs.enabled)return {};
+  auto iface=selected();if(!iface)return iface.error();auto port=hooks.listen(iface.value(),config.port);if(!port)return port.error();
+  DiscoveryDevice d;d.device_id=config.device_id;d.name=label(config.device_name);d.platform=system.empty()?"test":system;d.interface_index=iface.value().index;d.control_port=port.value();d.data_port=config.port;
+  auto result=hooks.publish(DiscoveryAnnouncement{std::move(d)});if(!result){hooks.stop_pairing();return result;}view.published=true;return {};
+ }
+ void clear_pair(){view.pairing.reset();view.session_id.clear();view.peer_name.clear();if(!view.code.empty())mbedtls_platform_zeroize(view.code.data(),view.code.size());view.code.clear();}
+ void event(PairingEvent& event){
+  if(std::find(cancelled.begin(),cancelled.end(),event.session_id)!=cancelled.end()){hooks.cancel(event.session_id);return;}
+  if(event.kind==PairingEvent::Kind::Incoming&&(view.pairing==PairingEvent::Kind::Complete||view.pairing==PairingEvent::Kind::Failed))clear_pair();
+  if(!view.session_id.empty()&&view.session_id!=event.session_id){hooks.cancel(event.session_id);return;}
+  view.session_id=event.session_id;view.peer_name=event.peer.hello.name;view.pairing=event.kind;view.message=event.message;
+  if(!view.code.empty())mbedtls_platform_zeroize(view.code.data(),view.code.size());view.code.clear();
+  if(event.kind==PairingEvent::Kind::Code)view.code=event.code;
+  if(event.kind==PairingEvent::Kind::Prepare){
+   auto iface=std::find_if(view.interfaces.begin(),view.interfaces.end(),[&](const auto& i){return i.address==event.peer.local_address;});std::uint32_t index=iface==view.interfaces.end()?0:iface->index;
+   PendingPair pending;pending.session_id=event.session_id;pending.peer_id=new_id();pending.remote_device_id=event.peer.hello.device_id;pending.secret_ref="pairing-"+event.session_id;pending.name=event.peer.hello.name;pending.host=scoped(event.peer.remote_address,index);pending.bind_address=scoped(event.peer.local_address,index);pending.port=event.peer.hello.data_port;pending.expires_ms=hooks.wall_clock()+300000;
+   std::string key;const char hex[]="0123456789abcdef";for(auto b:event.key){key+=hex[b>>4];key+=hex[b&15];}
+   auto existing=pending_pairs(store);auto current=load_config(store);bool collision=!existing||!current;
+   if(existing)collision|=std::any_of(existing.value().begin(),existing.value().end(),[&](const auto& p){return p.session_id==pending.session_id;});
+   if(current)collision|=std::any_of(current.value().peers.begin(),current.value().peers.end(),[&](const auto& p){return p.secret_ref==pending.secret_ref;});
+   auto fingerprint=key_fingerprint(key);Result<void> result=fingerprint?Result<void>{}:Result<void>{fingerprint.error()};if(collision)result=Error{ErrorCode::Busy,"Pairing session already exists. Start again."};if(result){pending.auth_id=fingerprint.value();result=hooks.write_secret(pending.secret_ref,key);if(result){result=stage_pair(store,pending);if(!result)hooks.erase_secret(pending.secret_ref);}}
+   if(!key.empty())mbedtls_platform_zeroize(key.data(),key.size());hooks.prepared(event.session_id,result);if(!result)view.message=result.error().message;
+  }else if(event.kind==PairingEvent::Kind::Commit){auto result=commit_pair(store,event.session_id);hooks.committed(event.session_id,result);if(result){auto refreshed=hooks.refresh();if(!refreshed)view.message=refreshed.error().message;reload();}else view.message=result.error().message;
+  }else if(event.kind==PairingEvent::Kind::Complete){auto finished=finish_pair(store,event.session_id);if(!finished)view.message=finished.error().message;else view.message="Device paired.";reload();
+  }else if(event.kind==PairingEvent::Kind::Failed){auto pending=pending_pairs(store);if(pending){for(const auto& p:pending.value())if(p.session_id==event.session_id){if(p.phase==PendingPair::Phase::Prepared){auto result=cleanup(p);if(!result)view.message=result.error().message;}else view.message="Connection interrupted. Waiting for authenticated reconnection.";}}}
+ }
+};
+DiscoveryService::DiscoveryService(Store& store,Service& service,CapturePlatform platform):state_(std::make_unique<State>(store,DiscoveryHooks{})){state_->service=&service;state_->platform=platform;}
+DiscoveryService::DiscoveryService(Store& store,DiscoveryHooks hooks):state_(std::make_unique<State>(store,std::move(hooks))){}
+DiscoveryService::~DiscoveryService(){stop();}
+Result<void> DiscoveryService::initialize(){auto& s=*state_;if(s.initialized)stop();auto loaded=s.reload();if(!loaded)return s.problem(loaded.error());auto prefs=load_discovery_preferences(s.store);if(!prefs)return s.problem(prefs.error());s.prefs=prefs.value();s.adapters();s.registry=std::make_unique<DiscoveryRegistry>(s.config.device_id);
+ if(!s.hooks.capability||!s.hooks.interfaces||!s.hooks.wall_clock||!s.hooks.steady_clock)return s.problem({ErrorCode::InvalidArgument,"Discovery adapters are incomplete"});s.initialized=true;auto capability=s.hooks.capability();s.view.available=capability.available;s.view.enabled=s.prefs.enabled;s.view.interface_id=s.prefs.interface_id;s.view.message=capability.message;auto interfaces=s.hooks.interfaces();if(interfaces)s.view.interfaces=interfaces.value();
+ auto pending=pending_pairs(s.store);if(!pending)return s.problem(pending.error());bool refresh=false;for(const auto& p:pending.value())if(p.phase==PendingPair::Phase::Prepared||p.expires_ms<=s.hooks.wall_clock()){auto cleaned=s.cleanup(p);if(!cleaned)return s.problem(cleaned.error());refresh|=p.phase==PendingPair::Phase::Committed;}
+ if(refresh){auto result=s.hooks.refresh();if(!result)s.view.message=result.error().message;s.reload();}
+ if(s.view.available&&s.prefs.enabled){auto result=s.publish();if(!result)s.view.message=result.error().message;}return {};
+}
+DiscoverySnapshot DiscoveryService::snapshot()const{return state_->view;}
+Result<void> DiscoveryService::available(bool enabled){auto& s=*state_;if(!s.initialized||(enabled&&!s.view.available))return s.problem(unavailable());if(!s.view.session_id.empty())cancel(s.view.session_id);auto prefs=s.prefs;prefs.enabled=enabled;auto saved=save_discovery_preferences(s.store,prefs);if(!saved)return s.problem(saved.error());auto current=load_discovery_preferences(s.store);if(!current)return s.problem(current.error());s.prefs=current.value();s.view.enabled=enabled;auto result=s.publish();if(!result)return s.problem(result.error());s.view.message=enabled?"Device discovery enabled.":"Device discovery disabled.";return {};}
+Result<void> DiscoveryService::select_interface(std::string id){auto& s=*state_;if(!s.initialized)return unavailable();if(!s.view.session_id.empty())return s.problem({ErrorCode::Busy,"Finish or cancel pairing before changing networks."});auto interfaces=s.hooks.interfaces();if(!interfaces)return s.problem(interfaces.error());if(std::none_of(interfaces.value().begin(),interfaces.value().end(),[&](const auto& i){return i.id==id;}))return s.problem({ErrorCode::InvalidArgument,"Network interface is no longer available."});auto prefs=s.prefs;prefs.interface_id=std::move(id);auto saved=save_discovery_preferences(s.store,prefs);if(!saved)return s.problem(saved.error());auto current=load_discovery_preferences(s.store);if(!current)return s.problem(current.error());s.prefs=current.value();s.view.interface_id=s.prefs.interface_id;auto result=s.publish();if(!result)return s.problem(result.error());s.view.message.clear();return {};}
+Result<void> DiscoveryService::search(){auto& s=*state_;if(!s.initialized||!s.view.available)return s.problem(unavailable());stop_search();s.registry=std::make_unique<DiscoveryRegistry>(s.config.device_id);s.view.devices.clear();auto result=s.hooks.browse();if(!result)return s.problem(result.error());s.view.searching=true;s.search_deadline=s.hooks.steady_clock()+10000;s.view.message="Searching for devices…";return {};}
+void DiscoveryService::stop_search(){auto& s=*state_;if(!s.initialized)return;s.hooks.stop_browse();s.view.searching=false;s.search_deadline=0;}
+Result<void> DiscoveryService::connect(const std::string& id){auto& s=*state_;if(!s.initialized||!s.view.available)return unavailable();if(s.view.pairing==PairingEvent::Kind::Complete||s.view.pairing==PairingEvent::Kind::Failed)s.clear_pair();if(!s.view.session_id.empty())return s.problem({ErrorCode::Busy,"Finish or cancel the current pairing."});if(std::any_of(s.config.peers.begin(),s.config.peers.end(),[&](const auto& p){return p.remote_device_id==id;}))return s.problem({ErrorCode::Busy,"Device is already paired."});auto endpoints=s.registry->endpoints(id);auto endpoint=std::find_if(endpoints.begin(),endpoints.end(),[&](const auto& d){return (s.config.peers.empty()&&s.config.bind_address=="127.0.0.1")||scoped(d.interface_address,d.interface_index)==s.config.bind_address;});if(endpoint==endpoints.end())return s.problem({ErrorCode::Busy,"Choose the same network as the existing LAN listener"});auto session=s.hooks.connect(*endpoint);if(!session)return s.problem(session.error());s.view.session_id=session.value();s.view.peer_name=endpoint->name;s.view.message="Waiting for approval on the other device…";return {};}
+Result<void> DiscoveryService::accept(const std::string& id){auto& s=*state_;if(id!=s.view.session_id||s.view.pairing!=PairingEvent::Kind::Incoming)return Error{ErrorCode::InvalidArgument,"Pairing request has expired."};return s.hooks.accept(id);}
+Result<void> DiscoveryService::enter_code(const std::string& id,std::string code){auto& s=*state_;if(id!=s.view.session_id||s.view.pairing!=PairingEvent::Kind::EnterCode)return Error{ErrorCode::InvalidArgument,"Pairing request has expired."};return s.hooks.enter_code(id,std::move(code));}
+void DiscoveryService::cancel(const std::string& id){auto& s=*state_;if(!s.initialized)return;if(s.cancelled.size()>=64)s.cancelled.pop_front();s.cancelled.push_back(id);s.hooks.cancel(id);auto pending=pending_pairs(s.store);bool refresh=false;if(pending)for(const auto& p:pending.value())if(p.session_id==id){auto cleaned=s.cleanup(p);if(!cleaned)s.view.message=cleaned.error().message;refresh|=p.phase==PendingPair::Phase::Committed;}if(refresh){s.hooks.refresh();s.reload();}if(s.view.session_id==id)s.clear_pair();}
+bool DiscoveryService::poll(){auto& s=*state_;if(!s.initialized)return false;bool changed=false;
+ for(auto& event:s.hooks.discovery_events()){changed=true;if(event.kind==DiscoveryEvent::Kind::Found)s.registry->update(std::move(event.device),s.hooks.steady_clock());else if(event.kind==DiscoveryEvent::Kind::Removed)s.registry->remove(event.device.device_id,event.device.interface_index);else s.view.message=event.message;}
+ auto before=s.registry->devices().size();s.registry->expire(s.hooks.steady_clock());if(before!=s.registry->devices().size())changed=true;s.view.devices=s.registry->devices();
+ if(s.view.searching&&s.hooks.steady_clock()>=s.search_deadline){stop_search();s.view.message=s.view.devices.empty()?"No devices found. Enable discovery on the other computer.":"Search complete.";changed=true;}
+ for(auto& event:s.hooks.pairing_events()){s.event(event);if(!event.key.empty())mbedtls_platform_zeroize(event.key.data(),event.key.size());if(!event.code.empty())mbedtls_platform_zeroize(event.code.data(),event.code.size());changed=true;}
+ auto pending=pending_pairs(s.store);bool refreshed=false;if(pending)for(const auto& p:pending.value())if(p.expires_ms<=s.hooks.wall_clock()){auto cleaned=s.cleanup(p);if(!cleaned)s.view.message=cleaned.error().message;refreshed|=p.phase==PendingPair::Phase::Committed;changed=true;}if(refreshed){s.hooks.refresh();s.reload();}return changed;
+}
+void DiscoveryService::close_view(){stop_search();auto& s=*state_;if(!s.view.session_id.empty()&&s.view.pairing!=PairingEvent::Kind::Complete&&s.view.pairing!=PairingEvent::Kind::Failed)cancel(s.view.session_id);}
+void DiscoveryService::stop(){auto& s=*state_;if(!s.initialized)return;stop_search();s.hooks.publish({});s.hooks.stop_pairing();auto pending=pending_pairs(s.store);if(pending)for(const auto& p:pending.value())if(p.phase==PendingPair::Phase::Prepared)s.cleanup(p);s.clear_pair();s.view.published=false;s.initialized=false;}
+}

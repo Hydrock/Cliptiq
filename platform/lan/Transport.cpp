@@ -5,6 +5,7 @@
 #include "Transport.hpp"
 #include "Resolver.hpp"
 #include <algorithm>
+#include <charconv>
 #include <array>
 #include <atomic>
 #include <chrono>
@@ -43,13 +44,18 @@ static_assert(retrySeconds(0) == 1 && retrySeconds(1) == 2 &&
                   retrySeconds(100) == 30,
               "Reconnect backoff must increase and remain bounded");
 bool numericAddress(const std::string &address) {
+  auto host=address;auto zone=host.find('%');
+  if(zone!=std::string::npos){
+    auto scope=host.substr(zone+1);host.resize(zone);std::uint32_t index=0;auto parsed=std::from_chars(scope.data(),scope.data()+scope.size(),index);
+    if(scope.empty()||parsed.ec!=std::errc{}||parsed.ptr!=scope.data()+scope.size()||index==0||host.find(':')==std::string::npos)return false;
+  }
   unsigned char binary[sizeof(in6_addr)]{};
 #ifdef _WIN32
-  return InetPtonA(AF_INET, address.c_str(), binary) == 1 ||
-         InetPtonA(AF_INET6, address.c_str(), binary) == 1;
+  return InetPtonA(AF_INET, host.c_str(), binary) == 1 ||
+         InetPtonA(AF_INET6, host.c_str(), binary) == 1;
 #else
-  return inet_pton(AF_INET, address.c_str(), binary) == 1 ||
-         inet_pton(AF_INET6, address.c_str(), binary) == 1;
+  return inet_pton(AF_INET, host.c_str(), binary) == 1 ||
+         inet_pton(AF_INET6, host.c_str(), binary) == 1;
 #endif
 }
 Error fail(const char *m) { return {ErrorCode::Io, m}; }

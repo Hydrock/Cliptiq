@@ -15,6 +15,7 @@ public:
  ~Service();
  Result<void> initialize();
  Result<Config> config();
+ Result<void> refresh();
  Result<void> save(Config,std::map<std::string,std::string> changed_keys);
  Result<void> copy_secret(const std::string&);
  void captured(const EntryId&);
