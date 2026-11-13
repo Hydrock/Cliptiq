@@ -393,5 +393,9 @@
   "The IP address or DNS name of the OTHER computer, reachable from here over LAN or VPN, for example 192.168.1.20 or pc.local.": "The IP address or DNS name of the OTHER computer, reachable from here over LAN or VPN, for example 192.168.1.20 or pc.local.",
   "Advanced settings": "Advanced settings",
   "Network interface": "Network interface",
-  "Automatic (recommended)": "Automatic (recommended)"
+  "Automatic (recommended)": "Automatic (recommended)",
+  "Device search": "Device search",
+  "More connection options": "More connection options",
+  "Search for nearby devices to connect. Your saved connections are listed separately below.": "Search for nearby devices to connect. Your saved connections are listed separately below.",
+  "No paired devices yet. Find a device above to create your first connection.": "No paired devices yet. Find a device above to create your first connection."
 }

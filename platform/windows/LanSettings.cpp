@@ -32,6 +32,12 @@ struct NativeLanSettings::State {
   auto c=CreateWindowExW(std::wstring(cls)==L"EDIT"?WS_EX_CLIENTEDGE:0,cls,wide(value).c_str(),WS_CHILD|WS_VISIBLE|style,px(x),px(y),px(w),px(h),host,reinterpret_cast<HMENU>(INT_PTR(id)),GetModuleHandleW(nullptr),nullptr);SendMessageW(c,WM_SETFONT,reinterpret_cast<WPARAM>(font?reinterpret_cast<HGDIOBJ>(font):GetStockObject(DEFAULT_GUI_FONT)),TRUE);promptChildren.push_back(c);return c;
  }
  HWND topButton(HWND host,const char* title,int kind,const std::string& value,int x,int y,int w=220,DWORD style=0){int id=discoveryId++;discoveryActions[id]={kind,value};return topControl(host,L"BUTTON",tr(title),WS_TABSTOP|style,x,y,w,32,id);}
+ void discoverySection(const char* title,int& y,bool live=true){
+  auto make=[&](const std::string& text,DWORD style,int top,int h){return live?topControl(window,L"STATIC",text,style,16,top,704,h):control(L"STATIC",text,style,16,top,704,h);};
+  if(y>16){y+=20;make("",SS_ETCHEDHORZ,y,2);y+=16;}
+  auto heading=make(tr(title),0,y,30);SendMessageW(heading,WM_SETFONT,reinterpret_cast<WPARAM>(heading_font),TRUE);y+=42;
+ }
+ void discoveryHelp(const std::string& text,int& y){auto h=topControl(window,L"STATIC",text,0,16,y,704,48);SendMessageW(h,WM_SETFONT,reinterpret_cast<WPARAM>(help_font),TRUE);SetPropW(h,L"Cliptiq.LanHelp",reinterpret_cast<HANDLE>(1));y+=60;}
  int pairingControls(HWND host,int y){using Kind=lan::PairingEvent::Kind;if(snapshot.session_id.empty())return y;
   topControl(host,L"STATIC",snapshot.peer_name,0,16,y,450,28);y+=36;
   if(snapshot.pairing==Kind::Incoming){topControl(host,L"STATIC",tr("Allow this device to pair?"),0,16,y,450,36);y+=44;topButton(host,"Allow pairing",13,snapshot.session_id,16,y);y+=44;}
@@ -45,18 +51,22 @@ struct NativeLanSettings::State {
  void renderDiscovery(){if(!discovery.snapshot)return;std::string entered=code_edit?utf(code_edit):"";bool focus=code_edit&&GetFocus()==code_edit;code_edit=nullptr;
   for(auto it=children.begin();it!=children.end();)if(it->discovery){DestroyWindow(it->window);it=children.erase(it);}else ++it;
   for(auto c:promptChildren)DestroyWindow(c);promptChildren.clear();discoveryActions.clear();discoveryId=10000;int y=16;
-  if(window){if(!snapshot.local_name.empty()){topControl(window,L"STATIC",tr("This device")+": "+snapshot.local_name,0,16,y,704,28);y+=36;}auto availability=topButton(window,"Available for discovery",10,{},16,y,704,BS_AUTOCHECKBOX);SendMessageW(availability,BM_SETCHECK,snapshot.enabled?BST_CHECKED:BST_UNCHECKED,0);EnableWindow(availability,snapshot.available);y+=40;
-   topControl(window,L"STATIC",tr("Enable discovery once on each computer you want to connect."),0,16,y,704,48);y+=56;
+  if(window){discoverySection("This device",y);if(!snapshot.local_name.empty()){topControl(window,L"STATIC",snapshot.local_name,0,16,y,704,28);y+=36;}auto availability=topButton(window,"Available for discovery",10,{},16,y,704,BS_AUTOCHECKBOX);SendMessageW(availability,BM_SETCHECK,snapshot.enabled?BST_CHECKED:BST_UNCHECKED,0);EnableWindow(availability,snapshot.available);y+=40;
+   discoveryHelp(tr("Enable discovery once on each computer you want to connect."),y);
+   discoverySection("Device search",y);
+   discoveryHelp(tr("Search for nearby devices to connect. Your saved connections are listed separately below."),y);
    auto search=topButton(window,snapshot.searching?"Stop search":"Find devices on network",snapshot.searching?12:11,{},16,y,350);EnableWindow(search,snapshot.available);y+=44;
    for(const auto& device:snapshot.devices){topControl(window,L"STATIC",device.name+" · "+device.platform+" · "+device.address+" · "+device.device_id.substr(0,8),0,16,y+4,440,36);bool paired=std::any_of(snapshot.peers.begin(),snapshot.peers.end(),[&](const auto& p){return p.remote_device_id==device.device_id;});auto b=topButton(window,paired?"Paired":"Connect",17,device.device_id,492,y);EnableWindow(b,!paired&&!pairing_active(snapshot));y+=44;}
-   if(!snapshot.peers.empty()){topControl(window,L"STATIC",tr("Paired devices"),0,16,y,704,28);y+=36;for(const auto& peer:snapshot.peers){auto status=snapshot.peer_statuses.find(peer.id);topControl(window,L"STATIC",peer.name+(status==snapshot.peer_statuses.end()?"":" · "+tr(status->second)),0,16,y,440,36);auto remove=topButton(window,"Delete",23,peer.id,492,y);EnableWindow(remove,bool(discovery.remove_peer)&&!pairing_active(snapshot));y+=44;int x=16;for(int kind:{20,21,22}){auto b=topButton(window,kind==20?"Enable sharing":kind==21?"Send clipboard":"Receive clipboard",kind,peer.id,x,y,220,BS_AUTOCHECKBOX);SendMessageW(b,BM_SETCHECK,(kind==20?peer.enabled:kind==21?peer.send:peer.receive)?BST_CHECKED:BST_UNCHECKED,0);x+=238;}y+=40;}}
+   discoverySection("Paired devices",y);
+   if(snapshot.peers.empty())discoveryHelp(tr("No paired devices yet. Find a device above to create your first connection."),y);
+   if(!snapshot.peers.empty()){for(const auto& peer:snapshot.peers){auto status=snapshot.peer_statuses.find(peer.id);topControl(window,L"STATIC",peer.name+(status==snapshot.peer_statuses.end()?"":" · "+tr(status->second)),0,16,y,440,36);auto remove=topButton(window,"Delete",23,peer.id,492,y);EnableWindow(remove,bool(discovery.remove_peer)&&!pairing_active(snapshot));y+=44;int x=16;for(int kind:{20,21,22}){auto b=topButton(window,kind==20?"Enable sharing":kind==21?"Send clipboard":"Receive clipboard",kind,peer.id,x,y,220,BS_AUTOCHECKBOX);SendMessageW(b,BM_SETCHECK,(kind==20?peer.enabled:kind==21?peer.send:peer.receive)?BST_CHECKED:BST_UNCHECKED,0);x+=238;}y+=60;}}
   }
   bool pending=pairing_active(snapshot);
   if((pending&&(!window||!IsWindowVisible(window)||prompt))||(prompt&&IsWindowVisible(prompt)&&snapshot.pairing)){
    if(!prompt){WNDCLASSW wc{};wc.lpfnWndProc=promptProc;wc.hInstance=GetModuleHandleW(nullptr);wc.lpszClassName=L"CliptiqPairing";wc.hCursor=LoadCursor(nullptr,IDC_ARROW);wc.hbrBackground=reinterpret_cast<HBRUSH>(COLOR_WINDOW+1);RegisterClassW(&wc);prompt=CreateWindowExW(WS_EX_TOOLWINDOW,wc.lpszClassName,lw(L"Pair device"),WS_OVERLAPPED|WS_CAPTION|WS_SYSMENU,CW_USEDEFAULT,CW_USEDEFAULT,px(510),px(390),nullptr,nullptr,wc.hInstance,this);}if(prompt){pairingControls(prompt,16);if(!IsWindowVisible(prompt)){ShowWindow(prompt,SW_SHOW);SetForegroundWindow(prompt);}}
   }else{if(prompt)ShowWindow(prompt,SW_HIDE);if(window)y=pairingControls(window,y);}
   if(code_edit){SetWindowTextW(code_edit,wide(entered).c_str());if(focus)SetFocus(code_edit);}
-  if(window){if(!snapshot.message.empty()){topControl(window,L"STATIC",tr(snapshot.message),0,16,y,704,64);y+=72;}topControl(window,L"BUTTON",tr("Advanced settings"),WS_TABSTOP,16,y,350,32,9000);y+=44;
+  if(window){if(!snapshot.message.empty()){topControl(window,L"STATIC",tr(snapshot.message),0,16,y,704,64);y+=72;}discoverySection("More connection options",y);topControl(window,L"BUTTON",tr("Advanced settings"),WS_TABSTOP,16,y,350,32,9000);y+=44;
    if(manualExpanded){
     topControl(window,L"STATIC",tr("Network interface"),0,16,y,704,28);y+=36;
     auto automatic=topButton(window,"Automatic (recommended)",16,{},16,y,704,BS_AUTORADIOBUTTON|WS_GROUP);SendMessageW(automatic,BM_SETCHECK,snapshot.interface_id.empty()?BST_CHECKED:BST_UNCHECKED,0);y+=40;
@@ -93,7 +103,8 @@ struct NativeLanSettings::State {
  actions[id]={5,{}};control(L"BUTTON",tr("Save"),WS_TABSTOP|BS_DEFPUSHBUTTON,254,y,220,32,id++);
  actions[id]={6,{}};control(L"BUTTON",tr("Cancel"),WS_TABSTOP,492,y,220,32,id++);y+=44;
  }
- message=control(L"STATIC",tr("Ready. Pair keys are stored securely after Save."),0,16,y,704,48);height=y+64;layout();
+ y+=12;control(L"STATIC","",SS_ETCHEDHORZ,16,y,704,2);y+=16;
+ message=control(L"STATIC",tr("Ready. Pair keys are stored securely after Save."),0,16,y,704,48);SendMessageW(message,WM_SETFONT,reinterpret_cast<WPARAM>(help_font),TRUE);SetPropW(message,L"Cliptiq.LanHelp",reinterpret_cast<HANDLE>(1));height=y+64;layout();
  }
  void action(int id){if(id>=10000){discoveryAction(id);return;}if(id==9000){remember();manualExpanded=!manualExpanded;build();return;}auto a=actions.find(id);if(a==actions.end())return;auto kind=a->second.kind;auto peer=a->second.peer;if(kind==6){manualValues.clear();draft.keys.clear();if(embedded){draft.config=saved;build();}else ShowWindow(window,SW_HIDE);return;}
  auto result=collect();if(!result){status(result.error().message);return;}

@@ -393,5 +393,9 @@
   "The IP address or DNS name of the OTHER computer, reachable from here over LAN or VPN, for example 192.168.1.20 or pc.local.": "IP-адрес или DNS-имя ДРУГОГО компьютера, доступного через локальную сеть или VPN. Например 192.168.1.20 или pc.local.",
   "Advanced settings": "Дополнительные настройки",
   "Network interface": "Сетевой интерфейс",
-  "Automatic (recommended)": "Автоматически (рекомендуется)"
+  "Automatic (recommended)": "Автоматически (рекомендуется)",
+  "Device search": "Поиск устройств",
+  "More connection options": "Дополнительно",
+  "Search for nearby devices to connect. Your saved connections are listed separately below.": "Найдите доступные устройства для подключения. Уже сохранённые подключения находятся в отдельном блоке ниже.",
+  "No paired devices yet. Find a device above to create your first connection.": "Подключённых устройств пока нет. Найдите устройство выше, чтобы создать первое подключение."
 }
