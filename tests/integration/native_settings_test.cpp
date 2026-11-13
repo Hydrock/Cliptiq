@@ -148,6 +148,9 @@ int run() {
           [(NSTabView *)tabs numberOfTabViewItems] == 9);
     CHECK([[[(NSTabView *)tabs tabViewItemAtIndex:8] label]
         isEqualToString:russian ? @"Звуки" : @"Sounds"]);
+    // Unvisited tabs must not instantiate their controls or AppKit backing graphs.
+    CHECK(!find([((NSTabView*)tabs) tabViewItemAtIndex:4].view, @"hotkey:main"));
+    CHECK(!find([((NSTabView*)tabs) tabViewItemAtIndex:8].view, @"sound_volume"));
     auto field = (NSTextField *)find(window.contentView, @"history_count");
     CHECK(field);
     field.stringValue = @"5";
@@ -228,6 +231,10 @@ int run() {
     std::cout << "PASS "
                  "eight_native_panels_apply_to_real_store_and_disabled_future_"
                  "controls\n";
+#ifdef __APPLE__
+    [window performClose:nil];
+    CHECK(!find(window.contentView,@"settings-tabs"));
+#endif
     NativeMenuOptions options;
     options.tray_style = TrayStyle::Hidden;
     NativeMenu menu(options, [](auto) {});

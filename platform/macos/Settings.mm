@@ -2,6 +2,7 @@
 #include "../LocaleNative.hpp"
 #import <AppKit/AppKit.h>
 #include <thread>
+#include <array>
 using namespace cliptiq;
 // A short settings document must stay at the top of its scroll viewport.
 @interface CliptiqSettingsClipView : NSClipView
@@ -51,9 +52,11 @@ using namespace cliptiq;
   [super keyDown:event];
 }
 @end
-@interface CliptiqSettingsActions : NSObject <NSWindowDelegate> {
+@interface CliptiqSettingsActions : NSObject <NSWindowDelegate, NSTabViewDelegate> {
 @public
   std::function<void()> save;
+  std::function<void(unsigned)> selectPage;
+  std::function<void()> closed;
   std::function<void()> advanced;
   std::function<void(bool)> preview;
   CliptiqShortcutEditor *editor;
@@ -63,6 +66,10 @@ using namespace cliptiq;
 - (void)preview:(id)sender;
 @end
 @implementation CliptiqSettingsActions
+- (void)windowWillClose:(NSNotification *)note { (void)note;if(closed)closed(); }
+- (void)tabView:(NSTabView *)view didSelectTabViewItem:(NSTabViewItem *)item {
+  auto index=[view indexOfTabViewItem:item];if(index>=0&&selectPage)selectPage(unsigned(index));
+}
 - (void)advanced:(id)sender { (void)sender;if(advanced)advanced(); }
 - (void)preview:(id)sender { if (preview) preview([sender tag] != 0); }
 - (void)apply:(id)sender {
@@ -111,6 +118,8 @@ struct NativeSettings::State : std::enable_shared_from_this<State> {
   std::function<void(void*)> advanced;
   std::function<Result<void>()> apply_advanced;
   NSTabView *tabs=nil;
+  std::array<bool,10> loaded{};
+  std::function<void(unsigned)> load_page;
   std::function<void(bool, int)> preview;
   NSButton *previewCopy = nil, *previewPaste = nil;
   std::function<Result<void>(Settings)> apply;
@@ -181,7 +190,7 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
   if (s->target)
     s->target->save = {};
   [s->window close];
-  s->controls.clear();
+  s->controls.clear();s->load_page={};s->loaded={};s->previewCopy=nil;s->previewPaste=nil;
   s->settings = std::move(settings);
   s->apply = std::move(callback);
   s->authorize = std::move(authorize);
@@ -197,6 +206,11 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
   s->target = [CliptiqSettingsActions new];
   s->window.delegate = s->target;
   std::weak_ptr<State> weak = s;
+  s->target->closed=[weak]{if(auto s=weak.lock()){
+    s->controls.clear();s->load_page={};s->loaded={};s->tabs.delegate=nil;s->tabs=nil;
+    s->previewCopy=nil;s->previewPaste=nil;s->message=nil;s->target->editor=nil;
+    s->window.contentView=[NSView new];
+  }};
   s->target->save = [weak] {
     if (auto state = weak.lock())
       state->save();
@@ -221,7 +235,7 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
     loc(@"General"), loc(@"Menu"), loc(@"Types"), loc(@"Excluded"),
     loc(@"Shortcuts"), loc(@"Updates"), loc(@"Beta"), loc(@"About"), loc(@"Sounds"), loc(@"Network")
   ];
-  NSStackView *stacks[10];
+  auto stacks=[NSMutableArray<NSStackView*> new];
   for (unsigned g = 0; g < (s->advanced ? 10u : 9u); ++g) {
     auto item = [[NSTabViewItem alloc] initWithIdentifier:names[g]];
     item.label = names[g];
@@ -242,10 +256,13 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
       [stack.widthAnchor constraintEqualToAnchor:scroll.contentView.widthAnchor]
     ]];
     item.view = scroll;
-    stacks[g] = stack;
+    [stacks addObject:stack];
     [tabs addTabViewItem:item];
   }
+  s->load_page=[weak,caps,stacks](unsigned page){
+  auto s=weak.lock();if(!s||page>=stacks.count||s->loaded[page])return;s->loaded[page]=true;
   for (auto &f : settings_fields(s->settings, caps)) {
+    if(unsigned(f.group)!=page)continue;
     auto row = [NSStackView new];
     row.orientation = NSUserInterfaceLayoutOrientationHorizontal;
     row.spacing = 12;
@@ -310,6 +327,7 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
     }
     s->controls.push_back({f.key, control, boolean, multiline});
   }
+  if(page==unsigned(SettingsGroup::Sounds)){
   auto previews = [NSStackView new];
   previews.orientation = NSUserInterfaceLayoutOrientationVertical;
   for (int n = 0; n < 2; ++n) {
@@ -320,7 +338,11 @@ NativeSettings::show(Settings settings, const Capabilities &caps,
     if (n) s->previewPaste = button; else s->previewCopy = button;
   }
   [stacks[unsigned(SettingsGroup::Sounds)] addArrangedSubview:previews];
-  if(s->advanced) s->advanced((__bridge void*)stacks[9]);
+  }
+  if(page==9&&s->advanced) s->advanced((__bridge void*)stacks[9]);
+  };
+  s->target->selectPage=[weak](unsigned page){if(auto s=weak.lock())if(s->load_page)s->load_page(page);};
+  tabs.delegate=s->target;s->load_page(0);
   auto apply = [NSButton buttonWithTitle:loc(@"Apply")
                                   target:s->target
                                   action:@selector(apply:)];

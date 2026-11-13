@@ -32,10 +32,10 @@ int main(int argc,char **argv) { @autoreleasepool { try {
  NativeLanSettings network;NativeSettings settings;
  lan::Config config;config.device_id=lan::new_id();config.device_name="Original";
  bool rejectSave=false;
- unsigned saves=0,copies=0;std::map<std::string,std::string> savedKeys;NSStackView *panel=nil;
+ unsigned saves=0,copies=0,advancedBuilds=0;std::map<std::string,std::string> savedKeys;NSStackView *panel=nil;
  settings.advanced_apply([&]{return network.apply();});
  settings.advanced([&](void *parent){
-  CHECK(parent);panel=(__bridge NSStackView *)parent;
+  ++advancedBuilds;CHECK(parent);panel=(__bridge NSStackView *)parent;
   CHECK(network.show(config,[&](lan::Config &draft,std::map<std::string,std::string> keys)->Result<void>{
    if(rejectSave)return Error{ErrorCode::Busy,"Test persistence failure"};
    CHECK(draft.revision==config.revision);++draft.revision;config=draft;savedKeys=std::move(keys);++saves;return {};
@@ -43,11 +43,11 @@ int main(int argc,char **argv) { @autoreleasepool { try {
  });
  auto show=[&]{
   Capabilities caps;caps.platform=CapturePlatform::MacOS;
-  CHECK(settings.show(default_settings(CapturePlatform::MacOS),caps,[](Settings)->Result<void>{return {};}));
-  auto window=(__bridge NSWindow *)(void *)settings.native_handle();
+  auto buildsBefore=advancedBuilds;CHECK(settings.show(default_settings(CapturePlatform::MacOS),caps,[](Settings)->Result<void>{return {};}));
+  CHECK(advancedBuilds==buildsBefore);auto window=(__bridge NSWindow *)(void *)settings.native_handle();
   auto tab=tabs(window.contentView);CHECK(tab && tab.numberOfTabViewItems==10);
   CHECK([[tab tabViewItemAtIndex:9].label isEqualToString:russian?@"Сеть":@"Network"]);
-  [tab selectTabViewItemAtIndex:9];CHECK(panel.window==window);
+  [tab selectTabViewItemAtIndex:9];CHECK(advancedBuilds==buildsBefore+1);CHECK(panel.window==window);[tab selectTabViewItemAtIndex:0];CHECK(network.process_events());[tab selectTabViewItemAtIndex:9];CHECK(network.process_events());CHECK(advancedBuilds==buildsBefore+1);
   [window.contentView layoutSubtreeIfNeeded];[NSApp updateWindows];return window;
  };
  auto click=[&](const char *key){auto control=button(panel,text(key));CHECK(control);[control performClick:nil];};
@@ -78,15 +78,20 @@ int main(int argc,char **argv) { @autoreleasepool { try {
  discoveredNetwork.discovery(callbacks);CHECK(discoveredNetwork.show(config,[](lan::Config&,std::map<std::string,std::string>)->Result<void>{return {};},[]()->Result<std::string>{return std::string(64,'a');},[](std::string)->Result<void>{return {};}));
  NSWindow* discoveryWindow=nil;for(NSWindow* candidate in NSApp.windows)if([candidate.title isEqualToString:text("Advanced LAN settings")]&&candidate.visible)discoveryWindow=candidate;CHECK(discoveryWindow);
  auto searchButton=button(discoveryWindow.contentView,text("Find devices on network"));CHECK(searchButton);[searchButton performClick:nil];CHECK(searches==1);CHECK(discoveredNetwork.process_events());
- auto automatic=button(discoveryWindow.contentView,text("Automatic (recommended)"));CHECK(automatic&&automatic.isHiddenOrHasHiddenAncestor&&automatic.state==NSControlStateValueOn);
+ auto automatic=button(discoveryWindow.contentView,text("Automatic (recommended)"));CHECK(!automatic&&!field(discoveryWindow.contentView,text("Local device name")));
  auto manual=button(discoveryWindow.contentView,text("Advanced settings"));CHECK(manual);[manual performClick:nil];auto nameField=(NSTextField*)field(discoveryWindow.contentView,text("Local device name"));CHECK(nameField&&!nameField.hidden);nameField.stringValue=@"Preserve draft";
- CHECK(!automatic.isHiddenOrHasHiddenAncestor);auto wifi=button(discoveryWindow.contentView,@"Wi-Fi (192.168.1.1)");CHECK(wifi);[wifi performClick:nil];CHECK(snapshot.interface_id=="en0");[button(discoveryWindow.contentView,text("Automatic (recommended)")) performClick:nil];CHECK(snapshot.interface_id.empty());
+ automatic=button(discoveryWindow.contentView,text("Automatic (recommended)"));CHECK(automatic&&automatic.state==NSControlStateValueOn&&!automatic.isHiddenOrHasHiddenAncestor);auto wifi=button(discoveryWindow.contentView,@"Wi-Fi (192.168.1.1)");CHECK(wifi);[wifi performClick:nil];CHECK(snapshot.interface_id=="en0");[button(discoveryWindow.contentView,text("Automatic (recommended)")) performClick:nil];CHECK(snapshot.interface_id.empty());
+ // Hiding a window is not closing it: controls and unsaved drafts must survive.
+ [discoveryWindow orderOut:nil];CHECK(discoveredNetwork.process_events());[discoveryWindow makeKeyAndOrderFront:nil];CHECK(discoveredNetwork.process_events());CHECK(field(discoveryWindow.contentView,text("Local device name"))==nameField);
  lan::DiscoveryDevice found;found.device_id="found";found.name="Same name";found.platform="windows";auto sameName=found;sameName.device_id="another-found";snapshot.devices={found,sameName};CHECK(discoveredNetwork.process_events());CHECK([nameField.stringValue isEqualToString:@"Preserve draft"]);CHECK(button(discoveryWindow.contentView,text("Connect")));
  snapshot.pairing=lan::PairingEvent::Kind::Incoming;snapshot.session_id="ui-session";snapshot.peer_name="Test PC";CHECK(discoveredNetwork.process_events());auto allow=button(discoveryWindow.contentView,text("Allow pairing"));CHECK(allow);[allow performClick:nil];CHECK(approvals==1);
  snapshot.pairing=lan::PairingEvent::Kind::Code;snapshot.code="012345";CHECK(discoveredNetwork.process_events());CHECK(button(discoveryWindow.contentView,text("Cancel pairing")));
  snapshot.pairing=lan::PairingEvent::Kind::EnterCode;snapshot.code.clear();CHECK(discoveredNetwork.process_events());auto input=codeField(discoveryWindow.contentView);CHECK(input);input.stringValue=@"123456";snapshot.message="Search complete.";CHECK(discoveredNetwork.process_events());CHECK([codeField(discoveryWindow.contentView).stringValue isEqualToString:@"123456"]);[button(discoveryWindow.contentView,text("Pair device")) performClick:nil];CHECK(submitted==1);
  snapshot.pairing=lan::PairingEvent::Kind::Failed;snapshot.message="Pairing failed. Start again with a new code.";CHECK(discoveredNetwork.process_events());CHECK(button(discoveryWindow.contentView,text("Connect")).enabled);
- [discoveryWindow performClose:nil];CHECK(closes==1);snapshot.message="Late result";CHECK(discoveredNetwork.process_events());
+ auto closesBeforeClosing=closes;[discoveryWindow performClose:nil];CHECK(closes==closesBeforeClosing+1);snapshot.message="Late result";CHECK(discoveredNetwork.process_events());
+ // A background-only adapter must still present incoming pairing approval.
+ NativeLanSettings backgroundNetwork;backgroundNetwork.discovery(callbacks);snapshot.pairing=lan::PairingEvent::Kind::Incoming;snapshot.session_id="ui-session";CHECK(backgroundNetwork.process_events());
+ NSWindow* incomingWindow=nil;for(NSWindow* candidate in NSApp.windows)if(candidate.visible&&[candidate.title isEqualToString:text("Pair device")])incomingWindow=candidate;CHECK(incomingWindow&&button(incomingWindow.contentView,text("Allow pairing")));[incomingWindow performClose:nil];
  // Short collapsed discovery content must start at the top of the embedded page.
  snapshot.pairing.reset();snapshot.session_id.clear();snapshot.devices.clear();snapshot.message.clear();
  NativeSettings compactSettings;compactSettings.advanced([&](void* parent){CHECK(discoveredNetwork.show(config,[](lan::Config&,std::map<std::string,std::string>)->Result<void>{return {};},[]()->Result<std::string>{return std::string(64,'a');},[](std::string)->Result<void>{return {};},parent));});
