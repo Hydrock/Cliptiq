@@ -869,3 +869,13 @@ if(BUILD_TESTING AND TARGET cliptiq_media_native)
 endif()
 
 include(cmake/Lan.cmake)
+
+if(APPLE AND BUILD_TESTING AND TARGET cliptiq_lan_native AND TARGET cliptiq_editor_native)
+ add_executable(macos_memory_stability EXCLUDE_FROM_ALL experiments/macos-idle/stability-ui.mm)
+ target_include_directories(macos_memory_stability PRIVATE "${CMAKE_SOURCE_DIR}")
+ target_compile_options(macos_memory_stability PRIVATE -fobjc-arc)
+ target_link_libraries(macos_memory_stability PRIVATE cliptiq_menu_native cliptiq_settings_native cliptiq_editor_native cliptiq_lan_native)
+endif()
+if(APPLE AND BUILD_TESTING)
+ add_test(NAME macos_process_usage_units COMMAND ${Python3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/experiments/macos-idle/test-process-usage.py)
+endif()

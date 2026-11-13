@@ -1,0 +1,178 @@
+[
+  {
+    "cycle": 0,
+    "pid": 50719,
+    "rss_bytes": 88588288,
+    "footprint_bytes": 25052096,
+    "cpu_ticks": 3540708,
+    "timebase_numer": 125,
+    "timebase_denom": 3,
+    "workspace_roots_alive": 0,
+    "settings_roots_alive": 0
+  },
+  {
+    "cycle": 20,
+    "pid": 50719,
+    "rss_bytes": 132153344,
+    "footprint_bytes": 56329224,
+    "cpu_ticks": 75465229,
+    "timebase_numer": 125,
+    "timebase_denom": 3,
+    "workspace_roots_alive": 1,
+    "settings_roots_alive": 0
+  },
+  {
+    "cycle": 40,
+    "pid": 50719,
+    "rss_bytes": 133038080,
+    "footprint_bytes": 56951816,
+    "cpu_ticks": 142706306,
+    "timebase_numer": 125,
+    "timebase_denom": 3,
+    "workspace_roots_alive": 1,
+    "settings_roots_alive": 0
+  },
+  {
+    "cycle": 60,
+    "pid": 50719,
+    "rss_bytes": 133251072,
+    "footprint_bytes": 57017352,
+    "cpu_ticks": 210370247,
+    "timebase_numer": 125,
+    "timebase_denom": 3,
+    "workspace_roots_alive": 1,
+    "settings_roots_alive": 0
+  },
+  {
+    "cycle": 80,
+    "pid": 50719,
+    "rss_bytes": 133464064,
+    "footprint_bytes": 57213960,
+    "cpu_ticks": 280692465,
+    "timebase_numer": 125,
+    "timebase_denom": 3,
+    "workspace_roots_alive": 1,
+    "settings_roots_alive": 0
+  },
+  {
+    "cycle": 100,
+    "pid": 50719,
+    "rss_bytes": 133709824,
+    "footprint_bytes": 57394184,
+    "cpu_ticks": 353570198,
+    "timebase_numer": 125,
+    "timebase_denom": 3,
+    "workspace_roots_alive": 1,
+    "settings_roots_alive": 0
+  },
+  {
+    "cycle": 120,
+    "pid": 50719,
+    "rss_bytes": 133988352,
+    "footprint_bytes": 57738248,
+    "cpu_ticks": 422007072,
+    "timebase_numer": 125,
+    "timebase_denom": 3,
+    "workspace_roots_alive": 1,
+    "settings_roots_alive": 0
+  },
+  {
+    "cycle": 140,
+    "pid": 50719,
+    "rss_bytes": 134496256,
+    "footprint_bytes": 58180616,
+    "cpu_ticks": 491213878,
+    "timebase_numer": 125,
+    "timebase_denom": 3,
+    "workspace_roots_alive": 1,
+    "settings_roots_alive": 0
+  },
+  {
+    "cycle": 160,
+    "pid": 50719,
+    "rss_bytes": 134610944,
+    "footprint_bytes": 58295304,
+    "cpu_ticks": 560647300,
+    "timebase_numer": 125,
+    "timebase_denom": 3,
+    "workspace_roots_alive": 1,
+    "settings_roots_alive": 0
+  },
+  {
+    "cycle": 180,
+    "pid": 50719,
+    "rss_bytes": 134774784,
+    "footprint_bytes": 56853512,
+    "cpu_ticks": 629914376,
+    "timebase_numer": 125,
+    "timebase_denom": 3,
+    "workspace_roots_alive": 1,
+    "settings_roots_alive": 0
+  },
+  {
+    "cycle": 200,
+    "pid": 50719,
+    "rss_bytes": 134823936,
+    "footprint_bytes": 56968200,
+    "cpu_ticks": 702572638,
+    "timebase_numer": 125,
+    "timebase_denom": 3,
+    "workspace_roots_alive": 1,
+    "settings_roots_alive": 0
+  },
+  {
+    "cycle": 220,
+    "pid": 50719,
+    "rss_bytes": 135069696,
+    "footprint_bytes": 57148424,
+    "cpu_ticks": 772505172,
+    "timebase_numer": 125,
+    "timebase_denom": 3,
+    "workspace_roots_alive": 1,
+    "settings_roots_alive": 0
+  },
+  {
+    "cycle": 240,
+    "pid": 50719,
+    "rss_bytes": 135168000,
+    "footprint_bytes": 55772168,
+    "cpu_ticks": 842322233,
+    "timebase_numer": 125,
+    "timebase_denom": 3,
+    "workspace_roots_alive": 1,
+    "settings_roots_alive": 0
+  },
+  {
+    "cycle": 260,
+    "pid": 50719,
+    "rss_bytes": 135446528,
+    "footprint_bytes": 56116232,
+    "cpu_ticks": 912310454,
+    "timebase_numer": 125,
+    "timebase_denom": 3,
+    "workspace_roots_alive": 1,
+    "settings_roots_alive": 0
+  },
+  {
+    "cycle": 280,
+    "pid": 50719,
+    "rss_bytes": 135544832,
+    "footprint_bytes": 56214536,
+    "cpu_ticks": 981511041,
+    "timebase_numer": 125,
+    "timebase_denom": 3,
+    "workspace_roots_alive": 1,
+    "settings_roots_alive": 0
+  },
+  {
+    "cycle": 300,
+    "pid": 50719,
+    "rss_bytes": 135610368,
+    "footprint_bytes": 56181768,
+    "cpu_ticks": 1053456939,
+    "timebase_numer": 125,
+    "timebase_denom": 3,
+    "workspace_roots_alive": 1,
+    "settings_roots_alive": 0
+  }
+]

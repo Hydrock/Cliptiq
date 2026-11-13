@@ -1,0 +1,56 @@
+Process:         macos_memory_stability [52862]
+Path:            /Users/USER/*/macos_memory_stability
+Load Address:    0x104338000
+Identifier:      macos_memory_stability
+Version:         0
+Code Type:       ARM64
+Platform:        macOS
+Parent Process:  codex [1944]
+Target Type:     live task
+
+Date/Time:       2026-11-13 21:11:38.308 +0500
+Launch Time:     2026-11-13 21:11:05.435 +0500
+OS Version:      macOS 27.2 (26B123)
+Report Version:  7
+Analysis Tool:   /usr/bin/leaks
+
+Physical footprint:         124.5M
+Physical footprint (peak):  131.6M
+Idle exit:                  untracked
+----
+
+leaks Report Version: 4.0, multi-line stacks
+Process 52862: 123642 nodes malloced for 20631 KB
+Process 52862: 5 leaks for 480 total leaked bytes.
+
+STACK OF 1 INSTANCE OF 'ROOT LEAK: <NSMutableDictionary>':
+20  dyld                                  0x1856a4d7c start + 6652
+19  macos_memory_stability                0x10433c640 main + 3188
+18  macos_memory_stability                0x104342724 cliptiq::NativeMenu::initialize() + 260
+17  com.apple.AppKit                      0x18f5b41e0 +[NSApplication sharedApplication] + 128
+16  com.apple.AppKit                      0x18f5b46f0 -[NSApplication init] + 836
+15  com.apple.AppKit                      0x18f5b6750 _NSInitializeAppContext + 44
+14  com.apple.AppKit                      0x1901f73cc +[NSMenuBarPresentationInstance _isMenuBarVisible] + 36
+13  com.apple.AppKit                      0x1901f3c68 -[NSMenuBarPresentationInstance _isVisible] + 64
+12  com.apple.AppKit                      0x1901f4b80 _NSGetAggregateUIMode + 84
+11  com.apple.AppKit                      0x1901f3f34 -[NSMenuBarPresentationInstance _getAggregateUIMode:withOptions:] + 144
+10  com.apple.HIServices                  0x197911850 GetCurrentProcess + 36
+9   com.apple.HIServices                  0x197911a34 _RegisterApplication + 164
+8   libdispatch.dylib                     0x18a6fb624 _dispatch_once_callout + 32
+7   libdispatch.dylib                     0x18a7125a0 _dispatch_client_callout + 16
+6   com.apple.HIServices                  0x19793e258 ___RegisterApplication_block_invoke + 228
+5   com.apple.CoreFoundation              0x1898c0cd8 CFDictionaryCreateMutable + 44
+4   com.apple.CoreFoundation              0x1898c19e8 __NSDictionaryM_new + 204
+3   com.apple.CoreFoundation              0x1898bffc4 __CFAllocateObject + 20
+2   libobjc.A.dylib                       0x1855f73d4 class_createInstance + 76
+1   libsystem_malloc.dylib                0x187083f5c _calloc + 88
+0   libsystem_malloc.dylib                0x1870a4a8c _malloc_zone_calloc_instrumented_or_legacy + 132 
+====
+    5 (480 bytes) ROOT LEAK: <NSMutableDictionary 0x7988d08150> [48]
+       3 (416 bytes) <NSMutableDictionary (Storage) 0x79890982a0> [224]
+          1 (128 bytes) <CFString 0x7988c1a100> [128]
+          1 (64 bytes) <CFString 0x798920b980> [64]
+       1 (16 bytes) cow --> <NSMutableDictionary.cow (struct __cow_state_t) 0x7988c54080> [16]
+
+
+

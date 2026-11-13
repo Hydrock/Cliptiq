@@ -327,6 +327,7 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
            *bind = nil;
   CliptiqSnippetBridge *bridge = nil;
   std::shared_ptr<SnippetEditorSession> model;
+  std::string window_locale, rendered_structure;
   bool updating = false;
   int pending_command = 0;
   std::uint64_t drag = 0;
@@ -444,6 +445,14 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
     }
     history();
   }
+  std::string structure() const {
+    std::string value;
+    auto field=[&](const std::string& text){value+=std::to_string(text.size())+":"+text;};
+    for(const auto& folder:model->folders()) {field(folder.id);field(folder.title);field(std::to_string(folder.index));field(folder.enabled?"1":"0");}
+    field("snippets");
+    for(const auto& snippet:model->snippets()) {field(snippet.id);field(snippet.folder_id);field(snippet.title);field(std::to_string(snippet.index));field(snippet.enabled?"1":"0");}
+    return value;
+  }
   void rebuild() {
     [bridge cancelRename];
     updating = true;
@@ -477,6 +486,7 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
       n.children = [NSMutableArray new];
       [parent.children addObject:n];
     }
+    rendered_structure=structure();
     bridge->roots = roots;
     [tree reloadData];
     [tree expandItem:nil expandChildren:YES];
@@ -573,6 +583,15 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
   if (s->window && s->model && s->model->has_unsaved())
     return Error{ErrorCode::Busy, "Unsaved draft retained in existing editor"};
   [NSApplication sharedApplication];
+  // Reuse the outline for an unchanged session/locale. Discarding a populated
+  // outline on every opening accumulates AppKit disclosure-button observers.
+  if(s->window && s->model==model && s->window_locale==active_locale()) {
+    if(s->rendered_structure!=s->structure()) s->rebuild();
+    else {s->restore_selection();s->detail();}
+    [s->window makeKeyAndOrderFront:nil];
+    return {};
+  }
+  s->window_locale=active_locale();
   if (s->bridge) {
     s->bridge->action = {};
     s->bridge->select = {};

@@ -1,6 +1,7 @@
 #include "../../platform/Media.hpp"
 #include "sqlite3.h"
 #include <atomic>
+#include <cstdlib>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -154,6 +155,17 @@ int main() {
     pump(300);
     CHECK(service.workspace_preview(PreviewRef{id, {}}));
     service.workspace_preview(std::nullopt);
+    if(const char* cycles=std::getenv("CLIPTIQ_MEDIA_STABILITY_CYCLES")) {
+      for(unsigned n=0;n<unsigned(std::stoul(cycles));++n) {
+        service.workspace_preview(PreviewRef{id,{}});
+        std::optional<MenuImage> decoded;
+        for(unsigned retry=0;retry<100&&!decoded;++retry){pump(10);decoded=service.workspace_preview(PreviewRef{id,{}});}
+        CHECK(decoded&&decoded->width==2&&decoded->height==4);
+        service.workspace_preview(std::nullopt);
+        CHECK(!service.workspace_preview(std::nullopt));
+      }
+      std::cout<<"PASS repeated workspace preview decode/cancel "<<cycles<<std::endl;
+    }
     CHECK(service.on_screenshot_file("growing.png"));
     pump(700);
     CHECK(take(list_history(db)).size() == 1);

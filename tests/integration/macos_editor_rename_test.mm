@@ -36,6 +36,15 @@ int main(int argc, char **argv) { @autoreleasepool {
     auto window = (__bridge NSWindow *)(void *)ui.native_handle();
     auto tree = (NSOutlineView *)find(window.contentView, @"editor-tree");
     CHECK(tree);
+    // Reopening the same editor session must reuse its outline. AppKit retains
+    // disclosure buttons through notification blocks after discarded outlines.
+    auto originalNode=[tree itemAtRow:0];
+    CHECK(take(ui.request_close()));
+    CHECK(ui.show(session));
+    CHECK((__bridge NSWindow *)(void *)ui.native_handle()==window);
+    CHECK(find(window.contentView,@"editor-tree")==tree);
+    CHECK([tree itemAtRow:0]==originalNode);
+
     CHECK([window.title isEqualToString:russian?@"Сниппеты Cliptiq":@"Cliptiq Snippets"]);
     CHECK([((NSButton *)find(window.contentView,@"editor-add-folder")).title
         isEqualToString:russian?@"Добавить папку":@"Add Folder"]);
@@ -96,6 +105,17 @@ int main(int argc, char **argv) { @autoreleasepool {
     CHECK(session->title() == "Renamed snippet");
     CHECK(session->reload());
     CHECK(ui.request_close());
+    auto extraFolder=take(create_folder(store,"Added while hidden"));
+    CHECK(session->reload());
+    CHECK(ui.show(session));
+    CHECK((__bridge NSWindow *)(void *)ui.native_handle()==window);
+    CHECK(tree.numberOfRows==3); // two folders and the existing snippet
+    CHECK(take(ui.request_close()));
+    activate_locale(russian?"en":"ru");
+    CHECK(ui.show(session));
+    auto translatedWindow=(__bridge NSWindow *)(void *)ui.native_handle();
+    CHECK([translatedWindow.title isEqualToString:russian?@"Cliptiq Snippets":@"Сниппеты Cliptiq"]);
+    CHECK(take(ui.request_close()));
     std::cout << "macOS inline rename passed\n";
     return 0;
   } catch (const std::exception &error) {

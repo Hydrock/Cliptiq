@@ -1,0 +1,6 @@
+2026-11-13 21:05:59.157 macos_editor_rename_test[51512:398341] Error received in message reply handler: Connection invalid
+2026-11-13 21:05:59.157 macos_editor_rename_test[51512:398357] Connection Invalid error for service com.apple.hiservices-xpcservice.
+macOS inline rename passed
+2026-11-13 21:06:00.388 macos_editor_rename_test[51513:398379] Error received in message reply handler: Connection invalid
+2026-11-13 21:06:00.388 macos_editor_rename_test[51513:398381] Connection Invalid error for service com.apple.hiservices-xpcservice.
+macOS inline rename passed

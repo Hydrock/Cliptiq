@@ -1,0 +1,31 @@
+Process:         macos_memory_stability [48953]
+Path:            /Users/USER/*/macos_memory_stability
+Load Address:    0x100cf8000
+Identifier:      macos_memory_stability
+Version:         0
+Code Type:       ARM64
+Platform:        macOS
+Parent Process:  codex [1944]
+Target Type:     live task
+
+Date/Time:       2026-11-13 21:04:50.476 +0500
+Launch Time:     2026-11-13 20:56:10.444 +0500
+OS Version:      macOS 27.2 (26B123)
+Report Version:  7
+Analysis Tool:   /usr/bin/leaks
+
+Physical footprint:         73.8M
+Physical footprint (peak):  80.9M
+Idle exit:                  untracked
+----
+
+leaks Report Version: 4.0
+Process 48953: 372990 nodes malloced for 39905 KB
+Process 48953: 5 leaks for 432 total leaked bytes.
+
+    5 (432 bytes) ROOT LEAK: <NSMutableDictionary 0x79d6cea5e0> [32]
+       3 (384 bytes) <NSMutableDictionary (Storage) 0x79d7024540> [224]
+          1 (112 bytes) <CFString 0x79d700c4d0> [112]
+          1 (48 bytes) <CFString 0x79d6cf1e30> [48]
+       1 (16 bytes) cow --> <NSMutableDictionary.cow (struct __cow_state_t) 0x10165e590> [16]
+

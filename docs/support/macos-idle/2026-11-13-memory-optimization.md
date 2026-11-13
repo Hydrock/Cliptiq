@@ -1,5 +1,7 @@
 # macOS memory profile and optimization — 13 November 2026
 
+> CPU corrected during stability audit: the original sampler treated Mach ticks as nanoseconds. On this host the timebase is 125/3; previous CPU figures were understated by 41.67×. Memory figures are unchanged.
+
 Baseline: `8f45652`; final optimization code: `6371925`, installed and verified
 in `/Applications/Cliptiq.app`. Executable hashes and final-package checks are
 recorded in comparison.json.
@@ -16,9 +18,9 @@ user+system time as a percentage of one core (100% = one fully occupied core).
 
 | Scenario | Before, MiB | After, MiB | Reduction | CPU before → after |
 |---|---:|---:|---:|---:|
-| Фон, свежий запуск | 30.0 | 27.7 | 7.8% | 0.066% → 0.067% |
-| Общие настройки | 55.4 | 43.6 | 21.3% | 0.076% → 0.077% |
-| Сетевые настройки | 59.1 | 44.1 | 25.3% | 0.070% → 0.067% |
+| Фон, свежий запуск | 30.0 | 27.7 | 7.8% | 2.75% → 2.79% |
+| Общие настройки | 55.4 | 43.6 | 21.3% | 3.17% → 3.21% |
+| Сетевые настройки | 59.1 | 44.1 | 25.3% | 2.92% → 2.79% |
 
 For the A/B series, each archived, signed app was installed in turn. Each process
 started with `--background`; a stack sample confirmed NativeMenu's running main
@@ -125,8 +127,8 @@ A separate 20-second sanity measurement on the final package gave:
 
 | Final package page | Footprint, MiB | CPU, one core |
 |---|---:|---:|
-| General | 44.8 | 0.075% |
-| Network, PC connected | 45.6 | 0.065% |
+| General | 44.8 | 3.12% |
+| Network, PC connected | 45.6 | 2.71% |
 
 Compared with the controlled baseline pages (55.4 and 59.1 MiB), these final
 observations are approximately 19% and 23% lower. The earlier A/B table retains

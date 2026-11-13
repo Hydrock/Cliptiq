@@ -1,0 +1,7 @@
+STRESS 50 bounded history, bidirectional TLS text/PNG
+STRESS 100 bounded history, bidirectional TLS text/PNG
+STRESS 150 bounded history, bidirectional TLS text/PNG
+STRESS 200 bounded history, bidirectional TLS text/PNG
+STRESS 250 bounded history, bidirectional TLS text/PNG
+STRESS 300 bounded history, bidirectional TLS text/PNG
+PASS real TLS Service pair: text/PNG/URL, provenance, no echo, history-only, stop

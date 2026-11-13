@@ -537,7 +537,7 @@ partial settings Apply, lazy advanced fields and background incoming pairing.
 The final package is installed with the persistent local certificate; no TCC reset
 was needed. PC TLS 1.3 connectivity and tab round-trip were verified after normal
 launch. Final page sanity: General 44.8 MiB footprint, Network 45.6 MiB, CPU about
-0.065–0.075% of one core; controlled baseline pages were 55.4/59.1 MiB.
+2.71–3.13% of one core (corrected Mach timebase 125/3; previous 0.065–0.075% was a sampler unit error); controlled baseline pages were 55.4/59.1 MiB.
 
 See `docs/support/macos-idle/2026-11-13-memory-optimization.md` and raw aggregate
 artifacts under `experiments/macos-idle/results/2026-11-13-memory/`. Instruments
@@ -545,3 +545,14 @@ was unavailable; heap/vmmap profiles contain no object contents. Do not compare
 unready Keychain-blocked startup samples or the unstable main-window interval as
 steady-state improvements. A direct background launch showed a Keychain startup
 delay; the normal Launch Services restart was verified ready and connected.
+
+
+## Memory stability audit (13 November 2026)
+
+See docs/support/macos-idle/2026-11-13-memory-stability.md and its aggregate
+artifacts. Reopening the Mac snippet editor recreated outlines; AppKit
+notification blocks retained their disclosure buttons. Reuse the window and
+unchanged tree for the same session/locale; rebuild on structural/locale changes.
+The audit also corrected the old CPU sampler: RUSAGE_INFO_V2 CPU counters require
+Mach timebase conversion (125/3 here). Previous ~0.07% claims were wrong; fresh
+background CPU is around 3% of one core. Footprint measurements were unaffected.

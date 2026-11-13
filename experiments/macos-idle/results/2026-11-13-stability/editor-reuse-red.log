@@ -1,0 +1,1 @@
+(__bridge NSWindow *)(void *)ui.native_handle()==window

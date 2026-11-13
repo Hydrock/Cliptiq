@@ -1,0 +1,123 @@
+[
+  {
+    "cycle": 0,
+    "pid": 46119,
+    "rss_bytes": 90243072,
+    "footprint_bytes": 22840208,
+    "workspace_roots_alive": 0,
+    "settings_roots_alive": 0,
+    "cpu_ticks": 2474791,
+    "timebase_numer": 125,
+    "timebase_denom": 3
+  },
+  {
+    "cycle": 20,
+    "pid": 46119,
+    "rss_bytes": 177176576,
+    "footprint_bytes": 95913064,
+    "workspace_roots_alive": 1,
+    "settings_roots_alive": 0,
+    "cpu_ticks": 108885075,
+    "timebase_numer": 125,
+    "timebase_denom": 3
+  },
+  {
+    "cycle": 40,
+    "pid": 46119,
+    "rss_bytes": 178192384,
+    "footprint_bytes": 89785448,
+    "workspace_roots_alive": 1,
+    "settings_roots_alive": 0,
+    "cpu_ticks": 217006191,
+    "timebase_numer": 125,
+    "timebase_denom": 3
+  },
+  {
+    "cycle": 60,
+    "pid": 46119,
+    "rss_bytes": 179208192,
+    "footprint_bytes": 90834048,
+    "workspace_roots_alive": 1,
+    "settings_roots_alive": 0,
+    "cpu_ticks": 325150642,
+    "timebase_numer": 125,
+    "timebase_denom": 3
+  },
+  {
+    "cycle": 80,
+    "pid": 46119,
+    "rss_bytes": 180011008,
+    "footprint_bytes": 91210880,
+    "workspace_roots_alive": 1,
+    "settings_roots_alive": 0,
+    "cpu_ticks": 434163047,
+    "timebase_numer": 125,
+    "timebase_denom": 3
+  },
+  {
+    "cycle": 100,
+    "pid": 46119,
+    "rss_bytes": 180568064,
+    "footprint_bytes": 97895552,
+    "workspace_roots_alive": 1,
+    "settings_roots_alive": 0,
+    "cpu_ticks": 545840615,
+    "timebase_numer": 125,
+    "timebase_denom": 3
+  },
+  {
+    "cycle": 120,
+    "pid": 46119,
+    "rss_bytes": 181600256,
+    "footprint_bytes": 99828864,
+    "workspace_roots_alive": 1,
+    "settings_roots_alive": 0,
+    "cpu_ticks": 657271537,
+    "timebase_numer": 125,
+    "timebase_denom": 3
+  },
+  {
+    "cycle": 140,
+    "pid": 46119,
+    "rss_bytes": 182042624,
+    "footprint_bytes": 93127808,
+    "workspace_roots_alive": 1,
+    "settings_roots_alive": 0,
+    "cpu_ticks": 768706052,
+    "timebase_numer": 125,
+    "timebase_denom": 3
+  },
+  {
+    "cycle": 160,
+    "pid": 46119,
+    "rss_bytes": 182714368,
+    "footprint_bytes": 100746368,
+    "workspace_roots_alive": 1,
+    "settings_roots_alive": 0,
+    "cpu_ticks": 882169585,
+    "timebase_numer": 125,
+    "timebase_denom": 3
+  },
+  {
+    "cycle": 180,
+    "pid": 46119,
+    "rss_bytes": 183205888,
+    "footprint_bytes": 101172352,
+    "workspace_roots_alive": 1,
+    "settings_roots_alive": 0,
+    "cpu_ticks": 995844952,
+    "timebase_numer": 125,
+    "timebase_denom": 3
+  },
+  {
+    "cycle": 200,
+    "pid": 46119,
+    "rss_bytes": 183713792,
+    "footprint_bytes": 101631104,
+    "workspace_roots_alive": 1,
+    "settings_roots_alive": 0,
+    "cpu_ticks": 1110681601,
+    "timebase_numer": 125,
+    "timebase_denom": 3
+  }
+]

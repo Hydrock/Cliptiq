@@ -1,0 +1,2 @@
+PASS repeated workspace preview decode/cancel 300
+PASS native codec, malformed/40MP, partial write, event coalescing, pixel dedup both orders, privacy exclusions/types, stop, deletion race

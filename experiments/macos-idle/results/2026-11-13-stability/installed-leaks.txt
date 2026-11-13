@@ -1,0 +1,25 @@
+Process:         Cliptiq [42385]
+Path:            /Applications/Cliptiq.app/Contents/MacOS/Cliptiq
+Load Address:    0x102604000
+Identifier:      io.github.hydrock.Cliptiq
+Version:         0.1.0 (0.1.0)
+Code Type:       ARM64
+Platform:        macOS
+Parent Process:  launchd [1]
+Target Type:     live task (Roots Present)
+
+Date/Time:       2026-11-13 21:00:23.816 +0500
+Launch Time:     2026-11-13 20:22:25.237 +0500
+OS Version:      macOS 27.2 (26B123)
+Report Version:  7
+Analysis Tool:   /usr/bin/leaks
+
+Physical footprint:         61.8M
+Physical footprint (peak):  65.0M
+Idle exit:                  untracked
+----
+
+leaks Report Version: 4.0
+Process 42385: 234527 nodes malloced for 30514 KB
+Process 42385: 0 leaks for 0 total leaked bytes.
+

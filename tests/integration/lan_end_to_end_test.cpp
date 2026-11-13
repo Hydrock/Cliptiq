@@ -46,8 +46,8 @@ static unsigned short free_port(){
 }
 struct Device {
  std::filesystem::path directory=std::filesystem::temp_directory_path()/("cliptiq-real-lan-"+lan::new_id());
- std::optional<Store> store;std::unique_ptr<lan::Service> service;std::string token="start";std::vector<ClipboardSnapshot> writes;unsigned short port=free_port();
- Device(){std::filesystem::create_directories(directory);auto path=(directory/"history.db").u8string();store.emplace(take(open_store(path)));lan::ClipboardHooks hooks;hooks.token=[&]()->Result<std::string>{return token;};hooks.write=[&](const ClipboardSnapshot&s)->Result<std::string>{writes.push_back(s);token="own-"+std::to_string(writes.size());return token;};hooks.compare_write=[&,write=hooks.write](const ClipboardSnapshot&s,const std::string&e)->Result<std::string>{if(token!=e)return Error{ErrorCode::Busy,"local copy wins"};return write(s);};
+ std::optional<Store> store;std::unique_ptr<lan::Service> service;std::string token="start";std::vector<ClipboardSnapshot> writes;unsigned short port=free_port();unsigned writeSerial=0;
+ Device(){std::filesystem::create_directories(directory);auto path=(directory/"history.db").u8string();store.emplace(take(open_store(path)));lan::ClipboardHooks hooks;hooks.token=[&]()->Result<std::string>{return token;};hooks.write=[&](const ClipboardSnapshot&s)->Result<std::string>{writes.push_back(s);token="own-"+std::to_string(++writeSerial);return token;};hooks.compare_write=[&,write=hooks.write](const ClipboardSnapshot&s,const std::string&e)->Result<std::string>{if(token!=e)return Error{ErrorCode::Busy,"local copy wins"};return write(s);};
 #ifdef _WIN32
  auto platform=CapturePlatform::Windows;
 #elif defined(__APPLE__)
@@ -66,7 +66,7 @@ struct Device {
 #else
  auto native=take(lan::native_snapshot(e,CapturePlatform::X11));
 #endif
- token="local-"+lan::new_id();auto id=take(ingest(*store,std::move(native),{},100+take(data_revision(*store))));CHECK(id);service->captured(*id);}
+ token="local-"+lan::new_id();auto id=take(ingest(*store,std::move(native),{},std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count()));CHECK(id);service->captured(*id);}
  size_t count(){return take(list_history(*store,SortOrder::LastUsed,1000)).size();}
 };
 int main(){try{Device a,b;if(a.port==b.port)b.port=free_port();CHECK(!a.service->running()&&!b.service->running());a.configure("A",b.port);b.configure("B",a.port);
@@ -95,6 +95,20 @@ int main(){try{Device a,b;if(a.port==b.port)b.port=free_port();CHECK(!a.service-
  auto an=a.count(),bn=b.count();std::string third="copy from C";c.send({{0,"portable","text/plain",CanonicalKind::Text,Bytes(third.begin(),third.end())}});
  mesh([&]{return a.count()==an+1&&b.count()==bn+1&&a.writes.size()==2;});
  CHECK(take(lan::entry_origin(*a.store,take(list_history(*a.store))[0].id))=="C");CHECK(c.count()==1);CHECK(b.writes.size()==1);
+ if(const char* cycles=std::getenv("CLIPTIQ_LAN_STABILITY_CYCLES")){
+  unsigned total=unsigned(std::stoul(cycles));
+  for(unsigned n=0;n<total;++n){
+   a.writes.clear();b.writes.clear();c.writes.clear();
+   auto& sender=n%2?a:c;auto& receiver=n%2?c:a;
+   std::string marker="Cliptiq stress "+std::to_string(n)+std::string(4096,'x');
+   std::vector<Representation> payload{{0,"portable","text/plain",CanonicalKind::Text,Bytes(marker.begin(),marker.end())}};
+   if(n%3==0)payload.push_back({1,"portable","image/png",CanonicalKind::Image,png});
+   stage="stress "+std::to_string(n);sender.send(std::move(payload));
+   mesh([&]{return !receiver.writes.empty()&&std::any_of(receiver.writes.back().representations.begin(),receiver.writes.back().representations.end(),[&](const Representation& r){return r.kind==CanonicalKind::Text&&r.data==Bytes(marker.begin(),marker.end());});});
+   CHECK(a.count()<=30&&b.count()<=30&&c.count()<=30);
+   if((n+1)%50==0)std::cout<<"STRESS "<<n+1<<" bounded history, bidirectional TLS text/PNG"<<std::endl;
+  }
+ }
  if(std::getenv("CLIPTIQ_LAN_IDLE_BENCH")){std::cout<<"READY three connected services idle"<<std::endl;auto until=std::chrono::steady_clock::now()+std::chrono::seconds(40);while(std::chrono::steady_clock::now()<until){a.service->poll();b.service->poll();c.service->poll();std::this_thread::sleep_for(std::chrono::milliseconds(20));}}
  a.service->stop();b.service->stop();c.service->stop();CHECK(!a.service->running()&&!b.service->running()&&!c.service->running());std::cout<<"PASS real TLS Service pair: text/PNG/URL, provenance, no echo, history-only, stop\n";
  }catch(const std::exception&e){std::cerr<<e.what()<<'\n';return 1;}}
