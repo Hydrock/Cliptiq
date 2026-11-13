@@ -85,6 +85,24 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
   NativeMenuStatus status;
   std::wstring tooltip;
   std::unique_ptr<windows::Workspace> workspace;
+  static constexpr UINT_PTR idle_wake_timer=0x434c4950;
+  void dispatch(MSG& message) {
+    if(options.windows_message_filter &&
+       options.windows_message_filter(reinterpret_cast<std::uintptr_t>(&message)))return;
+    bool own=message.hwnd==window || IsChild(window,message.hwnd);
+    if(workspace && own && workspace->key(message))return;
+    if(!workspace && own && message.message==WM_KEYDOWN){
+      auto button=GetDlgItem(window,1);
+      if(message.wParam==VK_TAB){SetFocus(button);return;}
+      if((message.wParam==VK_RETURN||message.wParam==VK_SPACE)&&GetFocus()==button){SendMessageW(button,BM_CLICK,0,0);return;}
+    }
+    // A blocking wait may receive input for another Cliptiq settings/editor
+    // window. Use that window's dialog manager, not the main workspace's.
+    auto dialog=message.hwnd?GetAncestor(message.hwnd,GA_ROOT):window;
+    if(!dialog || !IsDialogMessageW(dialog,&message)){
+      TranslateMessage(&message);DispatchMessageW(&message);
+    }
+  }
   void open_workspace() {
     if (!options.workspace_enabled) return;
     if (!workspace) {
@@ -368,6 +386,9 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
         return 0;
       }
       switch (message) {
+      case WM_TIMER:
+        if(wp==idle_wake_timer)return 0;
+        break;
       case WM_CREATE: {
         if(s->options.workspace_enabled)return 0;
         CreateWindowW(L"BUTTON", lw(L"Clipboard History"),
@@ -591,30 +612,22 @@ Result<void> NativeMenu::process_events(unsigned wait) {
   for (unsigned i = 0;
        i < 64 && PeekMessageW(&message, nullptr, 0, 0, PM_REMOVE); ++i) {
     dispatched = true;
-    if(s->workspace && s->workspace->key(message))continue;
-    if (!s->workspace && message.message == WM_KEYDOWN &&
-        (message.hwnd == s->window || IsChild(s->window, message.hwnd))) {
-      auto button = GetDlgItem(s->window, 1);
-      if (message.wParam == VK_TAB) {
-        SetFocus(button);
-        continue;
-      }
-      if ((message.wParam == VK_RETURN || message.wParam == VK_SPACE) &&
-          GetFocus() == button) {
-        SendMessageW(button, BM_CLICK, 0, 0);
-        continue;
-      }
-    }
-    if (!IsDialogMessageW(s->window, &message)) {
-      TranslateMessage(&message);
-      DispatchMessageW(&message);
-    }
+    s->dispatch(message);
   }
-  // Return to the controller immediately after callbacks (selection/hotkeys).
-  // INPUTAVAILABLE also covers old messages left by the bounded dispatch pass.
-  if (wait && !dispatched)
-    MsgWaitForMultipleObjectsEx(0, nullptr, std::min(wait, 100u),
-                               QS_ALLINPUT, MWMO_INPUTAVAILABLE);
+  if(wait && !dispatched){
+    // MsgWait can repeatedly wake for nonqueued UI Automation/COM calls
+    // without a removable message. GetMessage services those calls while
+    // staying blocked; a private timer retains the controller's 100 ms bound.
+    auto timer=SetTimer(s->window,State::idle_wake_timer,std::min(wait,100u),nullptr);
+    if(!timer)return Error{ErrorCode::Io,"Cannot arm menu idle deadline"};
+    MSG next{};
+    auto received=GetMessageW(&next,nullptr,0,0);
+    KillTimer(s->window,timer);
+    if(received<0)return Error{ErrorCode::Io,"Cannot receive menu message"};
+    if(received==0){if(s->callback)s->callback({MenuAction::Quit,"",s->model.revision});}
+    else if(next.hwnd!=s->window || next.message!=WM_TIMER || next.wParam!=timer)
+      s->dispatch(next);
+  }
   return {};
 }
 NativeMenuStatus NativeMenu::status() const { return state_->status; }

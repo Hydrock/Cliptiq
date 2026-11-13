@@ -950,6 +950,17 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
   ShowWindow(s->window, SW_SHOW);
   return {};
 }
+bool NativeSnippetEditor::pre_translate(std::uintptr_t message) {
+  auto s=state_;
+  if(!message || !s->window || GetCurrentThreadId()!=s->owner)return false;
+  auto& msg=*reinterpret_cast<MSG*>(message);
+  auto edit=TreeView_GetEditControl(s->tree);
+  if(edit && msg.hwnd==edit && msg.message==WM_KEYDOWN &&
+     (msg.wParam==VK_RETURN||msg.wParam==VK_ESCAPE)) {
+    TreeView_EndEditLabelNow(s->tree,msg.wParam==VK_ESCAPE);return true;
+  }
+  return false;
+}
 Result<void> NativeSnippetEditor::process_events() {
   auto s = state_;
   if (GetCurrentThreadId() != s->owner)
@@ -958,10 +969,7 @@ Result<void> NativeSnippetEditor::process_events() {
   for (unsigned n = 0;
        n < 64 && s->window && PeekMessageW(&msg, s->window, 0, 0, PM_REMOVE);
        ++n) {
-    auto edit=TreeView_GetEditControl(s->tree);
-    if(edit && msg.hwnd==edit && msg.message==WM_KEYDOWN && (msg.wParam==VK_RETURN||msg.wParam==VK_ESCAPE)) {
-      TreeView_EndEditLabelNow(s->tree,msg.wParam==VK_ESCAPE);continue;
-    }
+    if(pre_translate(reinterpret_cast<std::uintptr_t>(&msg)))continue;
     if (!IsDialogMessageW(s->window, &msg)) {
       TranslateMessage(&msg);
       DispatchMessageW(&msg);

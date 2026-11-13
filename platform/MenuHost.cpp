@@ -533,6 +533,9 @@ int host(int argc, char **argv) {
     filter_model(model);
 #endif
     NativeMenuOptions options;
+#if defined(_WIN32) && defined(CLIPTIQ_WITH_EDITOR)
+    options.windows_message_filter=[&](std::uintptr_t message){return editor_window.pre_translate(message);};
+#endif
 #if (defined(_WIN32) || defined(__APPLE__)) && defined(CLIPTIQ_WITH_LIFECYCLE)
     options.start_hidden = background && !smoke;
 #endif

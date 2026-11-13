@@ -22,6 +22,10 @@ struct NativeMenuOptions {
   std::function<Result<std::string>(const MenuCommand &)> workspace_preview;
   std::function<std::optional<MenuImage>(std::optional<PreviewRef>)> workspace_image;
   std::string workspace_status;
+#ifdef _WIN32
+  // Owner-thread pretranslation shared by bounded and blocking message pumps.
+  std::function<bool(std::uintptr_t)> windows_message_filter;
+#endif
   // Called on the GUI thread before a native popup takes focus. Empty means
   // copy/manual paste only. External DBusMenu events cannot invent a target.
   std::function<InvocationContext()> invocation_provider;

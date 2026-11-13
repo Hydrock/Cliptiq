@@ -61,6 +61,9 @@ public:
   ~NativeSnippetEditor();
   Result<void> show(std::shared_ptr<SnippetEditorSession>);
   Result<void> process_events();
+#ifdef _WIN32
+  bool pre_translate(std::uintptr_t message);
+#endif
   Result<bool> request_close();
   std::uintptr_t native_handle() const;
   bool record_chord(const KeyChord &);
