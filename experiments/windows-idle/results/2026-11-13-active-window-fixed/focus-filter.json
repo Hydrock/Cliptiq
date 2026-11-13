@@ -1,0 +1,290 @@
+{
+  "pid": 7556,
+  "scenario": "focus_filter",
+  "duration_seconds": 30.000267999999778,
+  "environment": {
+    "os": "Windows-11-10.0.26200-SP0",
+    "logical_cpus": 32
+  },
+  "cpu_percent_one_core": 0.10416573611942477,
+  "working_set_mib_mean": 27.55859375,
+  "private_mib_mean": 6.66015625,
+  "samples": [
+    {
+      "elapsed_seconds": 1.0003489000000627,
+      "cpu_seconds": 5.6875,
+      "working_set_bytes": 28897280,
+      "private_bytes": 6983680,
+      "peak_working_set_bytes": 28901376,
+      "focus_control_id": 7109,
+      "foreground_is_target": true
+    },
+    {
+      "elapsed_seconds": 2.000724099999843,
+      "cpu_seconds": 5.6875,
+      "working_set_bytes": 28897280,
+      "private_bytes": 6983680,
+      "peak_working_set_bytes": 28901376,
+      "focus_control_id": 7109,
+      "foreground_is_target": true
+    },
+    {
+      "elapsed_seconds": 3.0011171999999533,
+      "cpu_seconds": 5.6875,
+      "working_set_bytes": 28897280,
+      "private_bytes": 6983680,
+      "peak_working_set_bytes": 28901376,
+      "focus_control_id": 7109,
+      "foreground_is_target": true
+    },
+    {
+      "elapsed_seconds": 4.00151249999999,
+      "cpu_seconds": 5.6875,
+      "working_set_bytes": 28897280,
+      "private_bytes": 6983680,
+      "peak_working_set_bytes": 28901376,
+      "focus_control_id": 7109,
+      "foreground_is_target": true
+    },
+    {
+      "elapsed_seconds": 5.002078699999856,
+      "cpu_seconds": 5.6875,
+      "working_set_bytes": 28897280,
+      "private_bytes": 6983680,
+      "peak_working_set_bytes": 28901376,
+      "focus_control_id": 7109,
+      "foreground_is_target": true
+    },
+    {
+      "elapsed_seconds": 6.002529700000196,
+      "cpu_seconds": 5.6875,
+      "working_set_bytes": 28897280,
+      "private_bytes": 6983680,
+      "peak_working_set_bytes": 28901376,
+      "focus_control_id": 7109,
+      "foreground_is_target": true
+    },
+    {
+      "elapsed_seconds": 7.003080599999976,
+      "cpu_seconds": 5.6875,
+      "working_set_bytes": 28897280,
+      "private_bytes": 6983680,
+      "peak_working_set_bytes": 28901376,
+      "focus_control_id": 7109,
+      "foreground_is_target": true
+    },
+    {
+      "elapsed_seconds": 8.003763100000015,
+      "cpu_seconds": 5.6875,
+      "working_set_bytes": 28897280,
+      "private_bytes": 6983680,
+      "peak_working_set_bytes": 28901376,
+      "focus_control_id": 7109,
+      "foreground_is_target": true
+    },
+    {
+      "elapsed_seconds": 9.00403950000009,
+      "cpu_seconds": 5.6875,
+      "working_set_bytes": 28897280,
+      "private_bytes": 6983680,
+      "peak_working_set_bytes": 28901376,
+      "focus_control_id": 7109,
+      "foreground_is_target": true
+    },
+    {
+      "elapsed_seconds": 10.004552400000193,
+      "cpu_seconds": 5.6875,
+      "working_set_bytes": 28897280,
+      "private_bytes": 6983680,
+      "peak_working_set_bytes": 28901376,
+      "focus_control_id": 7109,
+      "foreground_is_target": true
+    },
+    {
+      "elapsed_seconds": 11.00522460000002,
+      "cpu_seconds": 5.6875,
+      "working_set_bytes": 28897280,
+      "private_bytes": 6983680,
+      "peak_working_set_bytes": 28901376,
+      "focus_control_id": 7109,
+      "foreground_is_target": true
+    },
+    {
+      "elapsed_seconds": 12.005735799999911,
+      "cpu_seconds": 5.6875,
+      "working_set_bytes": 28897280,
+      "private_bytes": 6983680,
+      "peak_working_set_bytes": 28901376,
+      "focus_control_id": 7109,
+      "foreground_is_target": true
+    },
+    {
+      "elapsed_seconds": 13.006445999999869,
+      "cpu_seconds": 5.6875,
+      "working_set_bytes": 28897280,
+      "private_bytes": 6983680,
+      "peak_working_set_bytes": 28901376,
+      "focus_control_id": 7109,
+      "foreground_is_target": true
+    },
+    {
+      "elapsed_seconds": 14.007115800000065,
+      "cpu_seconds": 5.6875,
+      "working_set_bytes": 28897280,
+      "private_bytes": 6983680,
+      "peak_working_set_bytes": 28901376,
+      "focus_control_id": 7109,
+      "foreground_is_target": true
+    },
+    {
+      "elapsed_seconds": 15.00770220000004,
+      "cpu_seconds": 5.6875,
+      "working_set_bytes": 28897280,
+      "private_bytes": 6983680,
+      "peak_working_set_bytes": 28901376,
+      "focus_control_id": 7109,
+      "foreground_is_target": true
+    },
+    {
+      "elapsed_seconds": 16.008322700000008,
+      "cpu_seconds": 5.703125,
+      "working_set_bytes": 28897280,
+      "private_bytes": 6983680,
+      "peak_working_set_bytes": 28901376,
+      "focus_control_id": 7109,
+      "foreground_is_target": true
+    },
+    {
+      "elapsed_seconds": 17.008605999999872,
+      "cpu_seconds": 5.703125,
+      "working_set_bytes": 28897280,
+      "private_bytes": 6983680,
+      "peak_working_set_bytes": 28901376,
+      "focus_control_id": 7109,
+      "foreground_is_target": true
+    },
+    {
+      "elapsed_seconds": 18.00913720000017,
+      "cpu_seconds": 5.703125,
+      "working_set_bytes": 28897280,
+      "private_bytes": 6983680,
+      "peak_working_set_bytes": 28901376,
+      "focus_control_id": 7109,
+      "foreground_is_target": true
+    },
+    {
+      "elapsed_seconds": 19.00953500000014,
+      "cpu_seconds": 5.703125,
+      "working_set_bytes": 28897280,
+      "private_bytes": 6983680,
+      "peak_working_set_bytes": 28901376,
+      "focus_control_id": 7109,
+      "foreground_is_target": true
+    },
+    {
+      "elapsed_seconds": 20.009870899999896,
+      "cpu_seconds": 5.703125,
+      "working_set_bytes": 28897280,
+      "private_bytes": 6983680,
+      "peak_working_set_bytes": 28901376,
+      "focus_control_id": 7109,
+      "foreground_is_target": true
+    },
+    {
+      "elapsed_seconds": 21.010320599999886,
+      "cpu_seconds": 5.703125,
+      "working_set_bytes": 28897280,
+      "private_bytes": 6983680,
+      "peak_working_set_bytes": 28901376,
+      "focus_control_id": 7109,
+      "foreground_is_target": true
+    },
+    {
+      "elapsed_seconds": 22.01060419999976,
+      "cpu_seconds": 5.703125,
+      "working_set_bytes": 28897280,
+      "private_bytes": 6983680,
+      "peak_working_set_bytes": 28901376,
+      "focus_control_id": 7109,
+      "foreground_is_target": true
+    },
+    {
+      "elapsed_seconds": 23.01102660000015,
+      "cpu_seconds": 5.703125,
+      "working_set_bytes": 28897280,
+      "private_bytes": 6983680,
+      "peak_working_set_bytes": 28901376,
+      "focus_control_id": 7109,
+      "foreground_is_target": true
+    },
+    {
+      "elapsed_seconds": 24.013802399999804,
+      "cpu_seconds": 5.703125,
+      "working_set_bytes": 28897280,
+      "private_bytes": 6983680,
+      "peak_working_set_bytes": 28901376,
+      "focus_control_id": 7109,
+      "foreground_is_target": true
+    },
+    {
+      "elapsed_seconds": 25.01414109999996,
+      "cpu_seconds": 5.703125,
+      "working_set_bytes": 28897280,
+      "private_bytes": 6983680,
+      "peak_working_set_bytes": 28901376,
+      "focus_control_id": 7109,
+      "foreground_is_target": true
+    },
+    {
+      "elapsed_seconds": 26.015054800000144,
+      "cpu_seconds": 5.703125,
+      "working_set_bytes": 28897280,
+      "private_bytes": 6983680,
+      "peak_working_set_bytes": 28901376,
+      "focus_control_id": 7109,
+      "foreground_is_target": true
+    },
+    {
+      "elapsed_seconds": 27.015536899999915,
+      "cpu_seconds": 5.703125,
+      "working_set_bytes": 28897280,
+      "private_bytes": 6983680,
+      "peak_working_set_bytes": 28901376,
+      "focus_control_id": 7109,
+      "foreground_is_target": true
+    },
+    {
+      "elapsed_seconds": 28.016096899999866,
+      "cpu_seconds": 5.703125,
+      "working_set_bytes": 28897280,
+      "private_bytes": 6983680,
+      "peak_working_set_bytes": 28901376,
+      "focus_control_id": 7109,
+      "foreground_is_target": true
+    },
+    {
+      "elapsed_seconds": 29.01697090000016,
+      "cpu_seconds": 5.703125,
+      "working_set_bytes": 28897280,
+      "private_bytes": 6983680,
+      "peak_working_set_bytes": 28901376,
+      "focus_control_id": 7109,
+      "foreground_is_target": true
+    },
+    {
+      "elapsed_seconds": 30.00010259999999,
+      "cpu_seconds": 5.71875,
+      "working_set_bytes": 28897280,
+      "private_bytes": 6983680,
+      "peak_working_set_bytes": 28901376,
+      "focus_control_id": 7109,
+      "foreground_is_target": true
+    }
+  ],
+  "gui_thread": 48000,
+  "focus_control_ids": [
+    7109
+  ],
+  "foreground_samples": 30,
+  "sample_count": 30
+}

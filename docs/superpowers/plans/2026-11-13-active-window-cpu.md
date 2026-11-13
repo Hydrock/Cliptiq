@@ -12,5 +12,5 @@ Architecture: GetMessage handles nonqueued calls while staying blocked, with a p
 - [x] Preserve editor pretranslation, Enter, filter Tab, text selection and foreign-dialog routing.
 - [x] Independent review of production diff (no P1/P2 findings).
 - [x] Complete available test suite; 61/61 passed, 12 documented environment exclusions.
-- [ ] Install without diagnostic instrumentation, preserving profile and old binary.
-- [ ] Measure real foreground/controls and background with focus metadata; save raw counters and report.
+- [x] Install without diagnostic instrumentation, preserving profile and old binary.
+- [x] Measure real foreground/controls and background with focus metadata; save raw counters and report.
