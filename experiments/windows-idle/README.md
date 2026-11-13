@@ -55,3 +55,32 @@ python experiments/windows-idle/measure.py --build-dir out/windows-idle-baseline
 
 Baseline бинарник и промежуточные сборки сохраняются локально в `out/`, не в Git.
 Исходные замеры и результаты — в `docs/support/windows-idle/`.
+
+
+## Сравнение CPU до и после оптимизации
+
+Запускайте обе сборки последовательно, с одинаковой историей, без пересборки и CTest:
+
+```powershell
+python experiments/windows-idle/measure.py --build-dir out/before --output out/before.json --entries 30 --seconds 45 --settle 10 --expect-background --workspace --workspace-visible
+python experiments/windows-idle/measure.py --build-dir out/after --output out/after.json --entries 30 --seconds 45 --settle 10 --expect-background --workspace --workspace-visible
+python experiments/windows-idle/measure-lan-services.py --build-dir out/before --output out/lan-before.json
+python experiments/windows-idle/measure-lan-services.py --build-dir out/after --output out/lan-after.json
+```
+
+`--workspace-visible` открывает главное окно через штатный IPC, измеряет его простой,
+затем закрывает окно в трей. Укажите `--workspace`, чтобы завершить тестовый процесс
+командой выхода. При заблокированном рабочем столе visible проверяется по HWND;
+это не проверка реальной отрисовки на разблокированном экране.
+
+Для работающего процесса используйте измеритель, который не читает историю и буфер.
+Сначала установите нужный режим окна и проверьте PID:
+
+```powershell
+python experiments/windows-idle/measure-running.py --pid 1234 --scenario background --seconds 45 --output out/live-background.json
+```
+
+Не сравнивайте напрямую разные профили, закрытый и свёрнутый интерфейс, процесс трёх
+тестовых служб и основное приложение. Сохраняйте SHA-256 сборок с результатами.
+В стандартной фикстуре LAN и захват новых данных в историю выключены; сетевой стенд
+использует синтетические clipboard hooks и временные ключи.

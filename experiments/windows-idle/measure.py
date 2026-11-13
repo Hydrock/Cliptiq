@@ -86,6 +86,7 @@ def main():
     p.add_argument('--open-settings',action='store_true')
     p.add_argument('--expect-background',action='store_true')
     p.add_argument('--expect-settings-destroyed',action='store_true')
+    p.add_argument('--workspace-visible',action='store_true',help='Also measure the main window opened through IPC')
     p.add_argument('--workspace',action='store_true',help='Exit through the workspace Quit command, since closing hides to tray')
     args=p.parse_args()
     args.output.parent.mkdir(parents=True,exist_ok=True)
@@ -119,6 +120,19 @@ def main():
         time.sleep(args.settle)
         assert not any(w['visible'] for w in windows(process.pid))
         rows={'startup_hidden':measure(process,args.seconds,5)}
+        if args.workspace_visible:
+            subprocess.run([str(exe),'--database',str(db)],env=env,check=True,timeout=15)
+            deadline=time.perf_counter()+10
+            while time.perf_counter()<deadline:
+                if any(w['visible'] and w['window_class']=='Cliptiq.NativeMenu' for w in windows(process.pid)):break
+                time.sleep(.05)
+            else:raise AssertionError('Workspace did not open through IPC')
+            time.sleep(args.settle)
+            rows['workspace_visible']=measure(process,args.seconds,5)
+            # Only this isolated test PID; restore the closed-window scenario.
+            for w in windows(process.pid):
+                if w['window_class']=='Cliptiq.NativeMenu':user.PostMessageW(w['hwnd'],0x10,0,0)
+            time.sleep(args.settle)
         if args.open_settings:
             forwarded=subprocess.run([str(exe),'--database',str(db),'--show-settings'],env=env,timeout=15)
             assert forwarded.returncode==0

@@ -1,5 +1,6 @@
 #include "PairingServer.hpp"
 #include "Text.hpp"
+#include "SocketWait.hpp"
 #include <atomic>
 #include <chrono>
 #include <condition_variable>
@@ -43,6 +44,9 @@ void wipe(PairingEvent& event){if(!event.key.empty())mbedtls_platform_zeroize(ev
 }
 struct PairingServer::Impl {
  enum class CommandKind {Connect,Accept,Code,Prepared,Committed,Cancel};
+#ifdef _WIN32
+ SocketWait socket_wait;
+#endif
  struct Command {CommandKind kind;std::string id,code;DiscoveryDevice device;bool success=true;};
  struct Connection {Socket socket=invalid;bool connecting=false,initiator=false,claimed=false,cancelled=false;std::uint32_t interface_index=0;std::string id,expected;std::int64_t activity=0;Bytes input,output;size_t sent=0;std::unique_ptr<PairingSession> session;~Connection(){close_socket(socket);}};
  std::string id,name,platform;std::uint16_t data_port=49731;Socket listener=invalid;std::thread worker;std::atomic<bool> stopped{true};std::mutex mutex;std::condition_variable cv;std::deque<Command> commands;std::vector<PairingEvent> events;std::vector<std::unique_ptr<Connection>> connections;PairingRateLimiter rate;std::string active;bool sockets=true;
@@ -57,7 +61,11 @@ struct PairingServer::Impl {
 #endif
  }
  void push(PairingEvent e){std::lock_guard<std::mutex> lock(mutex);if(events.size()<64)events.push_back(std::move(e));else wipe(e);}
- Result<void> queue(Command command){std::lock_guard<std::mutex> lock(mutex);if(stopped||commands.size()>=64){if(!command.code.empty())mbedtls_platform_zeroize(command.code.data(),command.code.size());return Error{ErrorCode::Busy,"Pairing is not ready. Try again."};}commands.push_back(std::move(command));cv.notify_one();return {};}
+ Result<void> queue(Command command){std::lock_guard<std::mutex> lock(mutex);if(stopped||commands.size()>=64){if(!command.code.empty())mbedtls_platform_zeroize(command.code.data(),command.code.size());return Error{ErrorCode::Busy,"Pairing is not ready. Try again."};}commands.push_back(std::move(command));cv.notify_one();
+#ifdef _WIN32
+ socket_wait.signal();
+#endif
+ return {};}
  void start_worker(){if(!stopped)return;stopped=false;worker=std::thread([this]{run();});}
  void failed(std::string session){push({PairingEvent::Kind::Failed,std::move(session),{},{},"Pairing failed. Start again with a new code.",{}});}
  bool initialize(Connection& c){
@@ -104,9 +112,25 @@ struct PairingServer::Impl {
   return !c.session->finished()||!c.output.empty();
  }
  void run(){while(!stopped){std::deque<Command> work;{std::lock_guard<std::mutex> lock(mutex);work.swap(commands);}for(auto& cmd:work)execute(cmd);accept_socket();
-   for(auto it=connections.begin();it!=connections.end();){auto& c=**it;if(pump(c)){++it;continue;}if(c.session&&!c.session->finished()){c.session->cancel();for(auto& e:c.session->take_events())push(std::move(e));}else if(!c.session)failed(c.id);if(c.claimed&&active==c.id)active.clear();it=connections.erase(it);}
+   for(auto it=connections.begin();it!=connections.end();){auto& c=**it;if(pump(c)){++it;continue;}if(c.session&&!c.session->finished()){c.session->cancel();for(auto& e:c.session->take_events())push(std::move(e));}else if(!c.session)failed(c.id);if(c.claimed&&active==c.id)active.clear();
+#ifdef _WIN32
+   socket_wait.remove(c.socket);
+#endif
+   it=connections.erase(it);}
+#ifdef _WIN32
+   bool work_ready;{std::lock_guard<std::mutex> lock(mutex);work_ready=stopped||!commands.empty();}if(work_ready)continue;
+   std::vector<SocketWait::Interest> interests;
+   if(listener!=invalid)interests.push_back({listener,FD_ACCEPT|FD_CLOSE});
+   unsigned timeout=250;for(auto& c:connections){interests.push_back({c->socket,FD_READ|FD_WRITE|FD_CONNECT|FD_CLOSE});if(c->sent<c->output.size())timeout=10;}
+   if(socket_wait.wait(interests,timeout))continue;
+#endif
    std::unique_lock<std::mutex> lock(mutex);cv.wait_for(lock,std::chrono::milliseconds(10),[&]{return stopped||!commands.empty();});
-  }connections.clear();active.clear();}
+  }
+#ifdef _WIN32
+  for(auto& c:connections)socket_wait.remove(c->socket);
+  socket_wait.remove(listener);
+#endif
+  connections.clear();active.clear();}
 };
 PairingServer::PairingServer(std::string id,std::string name,std::string platform,std::uint16_t data_port):impl_(std::make_unique<Impl>(std::move(id),std::move(name),std::move(platform))){impl_->data_port=data_port;}
 PairingServer::~PairingServer(){stop();}
@@ -126,5 +150,9 @@ void PairingServer::prepared(const std::string& id,Result<void> result){impl_->q
 void PairingServer::committed(const std::string& id,Result<void> result){impl_->queue({Impl::CommandKind::Committed,id,{},{},static_cast<bool>(result)});}
 void PairingServer::cancel(const std::string& id){impl_->queue({Impl::CommandKind::Cancel,id,{},{},true});}
 std::vector<PairingEvent> PairingServer::poll(){std::lock_guard<std::mutex> lock(impl_->mutex);std::vector<PairingEvent> events;events.swap(impl_->events);return events;}
-void PairingServer::stop(){auto& s=*impl_;s.stopped=true;s.cv.notify_all();if(s.worker.joinable())s.worker.join();close_socket(s.listener);s.listener=invalid;std::lock_guard<std::mutex> lock(s.mutex);for(auto& c:s.commands)if(!c.code.empty())mbedtls_platform_zeroize(c.code.data(),c.code.size());s.commands.clear();for(auto& e:s.events)wipe(e);s.events.clear();}
+void PairingServer::stop(){auto& s=*impl_;s.stopped=true;s.cv.notify_all();
+#ifdef _WIN32
+ s.socket_wait.signal();
+#endif
+ if(s.worker.joinable())s.worker.join();close_socket(s.listener);s.listener=invalid;std::lock_guard<std::mutex> lock(s.mutex);for(auto& c:s.commands)if(!c.code.empty())mbedtls_platform_zeroize(c.code.data(),c.code.size());s.commands.clear();for(auto& e:s.events)wipe(e);s.events.clear();}
 }

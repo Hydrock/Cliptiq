@@ -11,7 +11,7 @@ public:
   NativeLanSettings();
   ~NativeLanSettings();
   Result<void> show(lan::Config, Save, std::function<Result<std::string>()>, std::function<Result<void>(std::string)>, void* parent = nullptr);
-  Result<void> process_events();
+  Result<void> process_events(bool changed = true);
 #ifdef __APPLE__
   Result<void> apply();
 #endif

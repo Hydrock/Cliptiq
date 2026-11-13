@@ -4,6 +4,11 @@
 #include <chrono>
 #include <filesystem>
 #include <thread>
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+#include <windows.h>
+#endif
 namespace cliptiq {
 Result<LaunchAction> parse_launch_action(const std::string &s) {
   for (unsigned n = 1; n <= 5; ++n)
@@ -32,7 +37,14 @@ struct SessionInstance::Impl {
   sqlite3 *db = nullptr;
   std::shared_ptr<void> guard;
   bool primary = false;
+#ifdef _WIN32
+  HANDLE notification = nullptr;
+  std::chrono::steady_clock::time_point next_scan{};
+#endif
   ~Impl() {
+#ifdef _WIN32
+    if (notification) CloseHandle(notification);
+#endif
     if (db)
       sqlite3_close_v2(db);
   }
@@ -65,6 +77,17 @@ SessionInstance::start(InstanceOptions options,
     if (!secure)
       return secure.error();
     auto prefix = directory / options.scope;
+#ifdef _WIN32
+    // An advisory signal only: validated actions remain in the private
+    // mailbox. Older senders and failed/lost signals are covered by a scan.
+    detail::Sha256 hash;
+    auto identity=prefix.u8string()+native_session_hint();
+    hash.field(identity.data(),identity.size());
+    auto name=std::string("Local\\Cliptiq.Mailbox.")+hash.finish();
+    if(impl_->notification)CloseHandle(impl_->notification);
+    impl_->notification=CreateEventW(nullptr,FALSE,FALSE,
+                                     std::wstring(name.begin(),name.end()).c_str());
+#endif
     // Serialize election + initialization and forwarding. The retained SQLite
     // application_id identifies our schema, not readiness of the current owner.
     std::shared_ptr<void> initialization;
@@ -161,6 +184,9 @@ SessionInstance::start(InstanceOptions options,
       insert.bind(1, std::int64_t(*action));
       insert.done();
       tx.commit();
+#ifdef _WIN32
+      if (impl_->notification) SetEvent(impl_->notification);
+#endif
     }
     return impl_->primary ? InstanceRole::Primary : InstanceRole::Forwarded;
   });
@@ -171,13 +197,25 @@ Result<std::vector<LaunchAction>> SessionInstance::receive() {
         if (!impl_->db || !impl_->primary)
           return Error{ErrorCode::InvalidArgument,
                        "Only the primary instance receives actions"};
+#ifdef _WIN32
+        auto now=std::chrono::steady_clock::now();
+        if(impl_->notification && now<impl_->next_scan &&
+           WaitForSingleObject(impl_->notification,0)==WAIT_TIMEOUT)
+          return std::vector<LaunchAction>{};
+        // Leave retries immediately due if SQLite returns Busy or corrupt data.
+        impl_->next_scan={};
+#endif
         auto db = impl_->db;
         // Empty polls are read-only. Acquire a writer only when there is work;
         // re-read in that transaction so concurrent appends cannot be lost.
         {
           detail::Statement pending(db, "SELECT 1 FROM mailbox LIMIT 1");
-          if (!pending.row())
+          if (!pending.row()) {
+#ifdef _WIN32
+            impl_->next_scan=now+std::chrono::seconds(2);
+#endif
             return std::vector<LaunchAction>{};
+          }
         }
         detail::Transaction tx(db);
         detail::Statement q(db,
@@ -191,6 +229,9 @@ Result<std::vector<LaunchAction>> SessionInstance::receive() {
         }
         detail::exec(db, "DELETE FROM mailbox");
         tx.commit();
+#ifdef _WIN32
+        impl_->next_scan=now+std::chrono::seconds(2);
+#endif
         return out;
       });
 }

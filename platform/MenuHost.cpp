@@ -946,12 +946,12 @@ int host(int argc, char **argv) {
 #endif
       ok(settings_window.process_events());
 #ifdef CLIPTIQ_WITH_LAN
-      if(network_discovery)network_discovery->poll();
-      ok(network_window.process_events());
+      bool network_changed=network_discovery && network_discovery->poll();
       if(network_service){
-        if(network_service->poll())refresh=true;
-        auto status=network_service->status();if(status!=last_network_status){last_network_status=status;network_window.status(std::move(status));}
+        if(network_service->poll()){refresh=true;network_changed=true;}
+        auto status=network_service->status();if(status!=last_network_status){last_network_status=status;network_window.status(std::move(status));network_changed=true;}
       }
+      ok(network_window.process_events(network_changed));
 #endif
 #endif
 #ifdef _WIN32

@@ -4,6 +4,7 @@
 #endif
 #include "Transport.hpp"
 #include "Resolver.hpp"
+#include "SocketWait.hpp"
 #include <algorithm>
 #include <charconv>
 #include <array>
@@ -100,6 +101,9 @@ struct Transport::Impl {
       mbedtls_ssl_config_init(&tls);
     }
     ~Connection() {
+#ifdef _WIN32
+      owner->socket_wait.remove(static_cast<SOCKET>(net.fd));
+#endif
       mbedtls_ssl_free(&ssl);
       mbedtls_ssl_config_free(&tls);
       mbedtls_net_free(&net);
@@ -130,6 +134,9 @@ struct Transport::Impl {
   std::thread worker;
   std::mutex mutex;
   std::condition_variable cv;
+#ifdef _WIN32
+  SocketWait socket_wait;
+#endif
   std::deque<std::function<void()>> jobs;
   std::shared_ptr<const Bytes> pending;
   // A separate lifetime token counts only transport references, not caller-held
@@ -601,6 +608,22 @@ struct Transport::Impl {
         connections.erase(std::remove_if(connections.begin(), connections.end(),
                                          [](auto &c) { return c->dead; }),
                           connections.end());
+#ifdef _WIN32
+        bool work_ready;
+        {std::lock_guard<std::mutex> l(mutex);work_ready=!running || pending || !jobs.empty();}
+        if(work_ready)continue;
+        std::vector<SocketWait::Interest> interests;
+        if(listener.fd>=0)interests.push_back({static_cast<SOCKET>(listener.fd),FD_ACCEPT|FD_CLOSE});
+        unsigned timeout=250;
+        for(auto& peer:peerStates)if(peer.resolver)timeout=10;
+        for(auto& c:connections){
+          interests.push_back({static_cast<SOCKET>(c->net.fd),FD_READ|FD_WRITE|FD_CONNECT|FD_CLOSE});
+          // Buffered TLS records/queued writes need another bounded I/O pass,
+          // even when no new kernel socket readiness arrives.
+          if(mbedtls_ssl_check_pending(&c->ssl)||!c->out.empty())timeout=10;
+        }
+        if(socket_wait.wait(interests,timeout))continue;
+#endif
         std::unique_lock<std::mutex> l(mutex);
         cv.wait_for(l, std::chrono::milliseconds(10),
                     [&] { return !running || pending || !jobs.empty(); });
@@ -611,6 +634,9 @@ struct Transport::Impl {
     }
     peerStates.clear();
     connections.clear();
+#ifdef _WIN32
+    socket_wait.remove(static_cast<SOCKET>(listener.fd));
+#endif
     mbedtls_net_free(&listener);
     {
       std::lock_guard<std::mutex> l(mutex);
@@ -698,6 +724,9 @@ void Transport::stop() {
   impl_->stopping = true;
   impl_->running = false;
   impl_->cv.notify_all();
+#ifdef _WIN32
+  impl_->socket_wait.signal();
+#endif
   if (impl_->worker.joinable())
     impl_->worker.join();
 }
@@ -710,6 +739,9 @@ void Transport::publish(std::shared_ptr<const Bytes> b) {
     impl_->outbound = impl_->pendingBudget;
     impl_->pending = std::move(b);
     impl_->cv.notify_all();
+#ifdef _WIN32
+  impl_->socket_wait.signal();
+#endif
   }
 }
 Result<void> Transport::post(std::function<void()> f) {
@@ -722,6 +754,9 @@ Result<void> Transport::post(std::function<void()> f) {
     return Error{ErrorCode::Busy, "LAN worker queue full"};
   impl_->jobs.push_back(std::move(f));
   impl_->cv.notify_all();
+#ifdef _WIN32
+  impl_->socket_wait.signal();
+#endif
   return {};
 }
 bool Transport::active() const { return impl_->running; }

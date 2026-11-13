@@ -37,10 +37,23 @@ int main(int argc,char**argv){try{
   {SessionInstance owner;take(owner.start({(root/"private").u8string(),"idle"},std::nullopt));
    sqlite3* other=nullptr;auto file=(root/"private/idle.sqlite3").u8string();
    if(sqlite3_open(file.c_str(),&other)!=SQLITE_OK)throw std::runtime_error("Cannot open mailbox fixture");
+   #ifdef _WIN32
+   // Drain startup once, then a quiet mailbox must not touch SQLite at all.
+   take(owner.receive());
+   sqlite3_exec(other,"BEGIN EXCLUSIVE",nullptr,nullptr,nullptr);
+#else
    sqlite3_exec(other,"BEGIN IMMEDIATE",nullptr,nullptr,nullptr);
+#endif
    auto result=owner.receive();
    sqlite3_exec(other,"ROLLBACK",nullptr,nullptr,nullptr);sqlite3_close(other);
-   if(!result||!result.value().empty())throw std::runtime_error("Idle mailbox unnecessarily acquired a write lock");
+   if(!result||!result.value().empty())throw std::runtime_error("Quiet mailbox touched SQLite while no launch request was pending");
+#ifdef _WIN32
+   // Simulate an older sender that commits a valid request without a signal.
+   if(sqlite3_open(file.c_str(),&other)!=SQLITE_OK)throw std::runtime_error("Cannot reopen mailbox fixture");
+   sqlite3_exec(other,"INSERT INTO mailbox(action) VALUES(1)",nullptr,nullptr,nullptr);sqlite3_close(other);
+   std::this_thread::sleep_for(std::chrono::milliseconds(2100));
+   auto legacy=take(owner.receive());if(legacy.size()!=1||legacy[0]!=LaunchAction::Main)throw std::runtime_error("Fallback lost unsignaled launch request");
+#endif
   }std::filesystem::remove_all(root);
  }else return 2;
  std::cout<<"PASS "<<argv[1]<<'\n';return 0;

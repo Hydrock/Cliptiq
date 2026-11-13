@@ -34,5 +34,11 @@ int main(){try{
  callbacks.remove_peer=[&](std::string id)->Result<lan::Config>{check(id==removeFixture.id,"removed wrong peer");++removals;snapshot.peers.clear();auto next=config;++next.revision;return next;};discovery.discovery(callbacks);
  check(bool(discovery.process_events()),"paired row update failed");click(w,L"Delete");check(removals==1&&snapshot.peers.empty(),"paired Delete callback missing");check(caption(edit(w,L"Local device name"))==L"Retain draft","Delete lost unrelated draft");
  snapshot.pairing=lan::PairingEvent::Kind::EnterCode;snapshot.session_id="fixture";check(bool(discovery.process_events()),"code view failed");auto code=GetDlgItem(w,8999);check(code!=nullptr,"code entry missing");SetWindowTextW(code,L"123456");SetFocus(code);snapshot.message="Searching for devices…";check(bool(discovery.process_events()),"code update failed");check(caption(GetDlgItem(w,8999))==L"123456","code entry was discarded");SendMessageW(w,WM_CLOSE,0,0);check(closes==1,"close callback missing");
+ unsigned hiddenSnapshots=0;callbacks.snapshot=[&]{++hiddenSnapshots;return snapshot;};discovery.discovery(callbacks);
+ check(bool(discovery.process_events(false))&&hiddenSnapshots==0,"hidden network view polled discovery snapshot");
+ snapshot.pairing=lan::PairingEvent::Kind::Incoming;snapshot.session_id="incoming-in-background";
+ check(bool(discovery.process_events(true))&&hiddenSnapshots==1,"background pairing update was ignored");
+ auto prompt=FindWindowW(L"CliptiqPairing",nullptr);check(prompt&&IsWindowVisible(prompt),"incoming pairing prompt suppressed in background");
+ SendMessageW(prompt,WM_CLOSE,0,0);
  std::cout<<"native LAN settings: passed\n";return 0;
  }catch(const std::exception& e){std::cerr<<e.what()<<'\n';return 1;}}

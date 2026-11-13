@@ -3,6 +3,7 @@ Uses synthetic clipboard hooks and in-memory test credentials, not the user clip
 The result is the combined test-process cost, NOT main-application memory.
 """
 import argparse
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -26,6 +27,9 @@ try:
         if line.startswith('READY'):
             break
     result = shared['measure'](process, 30, 5)
+    exe=args.build_dir.resolve()/'lan_end_to_end_test.exe'
+    result['exe_sha256']=hashlib.sha256(exe.read_bytes()).hexdigest()
+    result['exe_bytes']=exe.stat().st_size
     result['fixture'] = 'three connected Services, one test process; fake clipboard and key store'
     output = process.communicate(timeout=20)[0]
     if process.returncode:

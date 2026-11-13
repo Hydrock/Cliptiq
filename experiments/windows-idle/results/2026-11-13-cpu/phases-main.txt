@@ -1,0 +1,14 @@
+seconds 40.3523
+controller.total 406 449324630
+data_revision 124 3498480
+editor_window.process_events 406 878920
+hotkeys.dispatch 406 50135850
+instance.receive 365 202454320
+media.poll 406 39496360
+network_discovery->poll 406 5113130
+network_service->poll 406 684990
+network_service->status 406 14267830
+network_window.process_events 406 11897670
+settings_window.process_events 406 793350
+synchronize_folder_hotkeys 36 42139570
+ui.process_events 406 53006960
