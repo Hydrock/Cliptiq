@@ -8,6 +8,7 @@ struct DiscoveryDevice {
  std::uint16_t control_port=0,data_port=0;
  std::int64_t expires_ms=0;
 };
+bool valid_numeric_endpoint(const std::string&,std::uint32_t interface_index);
 class DiscoveryRegistry {
  std::string local_id_;
  std::map<std::string,std::vector<DiscoveryDevice>> entries_;

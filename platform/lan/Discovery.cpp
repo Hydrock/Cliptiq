@@ -9,8 +9,7 @@
 #include <arpa/inet.h>
 #endif
 namespace cliptiq::lan {
-namespace {
-bool numeric(const std::string& value,std::uint32_t index){
+bool valid_numeric_endpoint(const std::string& value,std::uint32_t index){
  if(value.empty()||value.size()>128)return false;
  auto address=value;auto zone=address.find('%');
  if(zone!=std::string::npos){
@@ -24,11 +23,10 @@ bool numeric(const std::string& value,std::uint32_t index){
  if(mapped&&(v6.s6_addr[12]==0||v6.s6_addr[12]>=224))return false;
  return !(v6.s6_addr[0]==0xfe && (v6.s6_addr[1]&0xc0)==0x80) || index!=0;
 }
-}
 Result<void> DiscoveryRegistry::update(DiscoveryDevice d,std::int64_t now){
  if(now<0||now>INT64_MAX-30000||d.expires_ms<=now||!valid_device_id(d.device_id)||d.device_id==local_id_||
     !valid_display_text(d.name,256)||!valid_display_text(d.platform,32)||!valid_display_text(d.host,253)||
-    !d.control_port||!d.data_port||!numeric(d.address,d.interface_index)||!numeric(d.interface_address,d.interface_index))
+    !d.control_port||!d.data_port||!valid_numeric_endpoint(d.address,d.interface_index)||!valid_numeric_endpoint(d.interface_address,d.interface_index))
   return Error{ErrorCode::InvalidArgument,"Invalid discovered device"};
  expire(now);
  auto found=entries_.find(d.device_id);

@@ -1,3 +1,4 @@
+#include "CryptoRuntime.hpp"
 #ifndef NOMINMAX
 #define NOMINMAX
 #endif
@@ -41,38 +42,6 @@ static_assert(retrySeconds(0) == 1 && retrySeconds(1) == 2 &&
                   retrySeconds(4) == 16 && retrySeconds(5) == 30 &&
                   retrySeconds(100) == 30,
               "Reconnect backoff must increase and remain bounded");
-#ifdef _WIN32
-void mutexInit(mbedtls_threading_mutex_t *m) {
-  InitializeCriticalSection(&m->native);
-  m->valid = 1;
-}
-void mutexFree(mbedtls_threading_mutex_t *m) {
-  if (m->valid) {
-    DeleteCriticalSection(&m->native);
-    m->valid = 0;
-  }
-}
-int mutexLock(mbedtls_threading_mutex_t *m) {
-  if (!m->valid)
-    return MBEDTLS_ERR_THREADING_BAD_INPUT_DATA;
-  EnterCriticalSection(&m->native);
-  return 0;
-}
-int mutexUnlock(mbedtls_threading_mutex_t *m) {
-  if (!m->valid)
-    return MBEDTLS_ERR_THREADING_BAD_INPUT_DATA;
-  LeaveCriticalSection(&m->native);
-  return 0;
-}
-#endif
-void initializeCrypto() {
-  static std::once_flag once;
-  std::call_once(once, [] {
-#ifdef _WIN32
-    mbedtls_threading_set_alt(mutexInit, mutexFree, mutexLock, mutexUnlock);
-#endif
-  });
-}
 bool numericAddress(const std::string &address) {
   unsigned char binary[sizeof(in6_addr)]{};
 #ifdef _WIN32
@@ -180,7 +149,7 @@ struct Transport::Impl {
   std::vector<PeerState> peerStates;
   std::vector<std::unique_ptr<Connection>> connections;
 
-  Impl() { mbedtls_net_init(&listener); }
+  Impl() { (void)initialize_crypto_runtime();mbedtls_net_init(&listener); }
   ~Impl() {
     if (cryptoInitialized) {
       mbedtls_entropy_free(&entropy);
@@ -677,7 +646,7 @@ Result<void> Transport::start(TransportConfig c, TransportCallbacks cb) {
       if (c.peers[i].auth_id == c.peers[j].auth_id ||
           c.peers[i].id == c.peers[j].id || c.peers[i].key == c.peers[j].key)
         return fail("Duplicate peer credentials");
-  initializeCrypto();
+  if(!initialize_crypto_runtime())return fail("TLS crypto initialization failed");
   if (impl_->cryptoInitialized) {
     mbedtls_entropy_free(&impl_->entropy);
     mbedtls_ctr_drbg_free(&impl_->rng);
@@ -694,8 +663,6 @@ Result<void> Transport::start(TransportConfig c, TransportCallbacks cb) {
       mbedtls_platform_zeroize(peer.key.data(), peer.key.size());
     return fail(message);
   };
-  if (psa_crypto_init() != PSA_SUCCESS)
-    return abortStart("TLS crypto initialization failed");
   static const unsigned char label[] = "cliptiq-lan";
   if (mbedtls_ctr_drbg_seed(&impl_->rng, mbedtls_entropy_func, &impl_->entropy,
                             label, sizeof(label)))

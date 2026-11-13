@@ -63,18 +63,19 @@ The DTOs below live in namespace cliptiq::lan. Use existing Result<T>, Bytes and
 ### Task 2: PAKE and exact wire protocol
 
 **Interfaces:**
-- PairingRole { Initiator, Responder }.
+- PairingRole { Initiator, Responder }. Shared initialize_crypto_runtime() sets Windows threading/PSA once before worker contexts.
 - PairingCrypto(role: PairingRole, code: string); round_one() -> Result<Bytes>; read_round_one(const Bytes&) -> Result<void>; round_two() -> Result<Bytes>; read_round_two(const Bytes&) -> Result<void>; derive(context: Bytes) -> Result<Bytes>; proof(context: Bytes, role: PairingRole) -> Result<Bytes>; verify_proof(context: Bytes, role: PairingRole, proof: Bytes) -> Result<void>.
 - PairingHello { session_id, device_id, name, platform, data_address: string; data_port: uint16_t; nonce: Bytes(32) }.
 - PairingFrame { kind: enum; session_id: string; payload: Bytes }; encode_pairing_frame/decode_pairing_frame -> Result<Bytes>/Result<PairingFrame>. Maximum payload/frame 8192 bytes, bounded length prefix, no trailing data/unknown version.
 - Message kinds: Request, Accept, RoundOne, RoundTwo, Proof, Prepared, Commit, Committed, Done, Abort. Code is never a frame field.
+- seal_control(context, PairingFrame) -> Result<Bytes> and open_control(context, Bytes) -> Result<PairingFrame> authenticate post-proof control messages with role-separated HMAC keys and strict per-direction sequence numbers; key export requires mutual proof.
 - Transcript order is canonical: initiator hello, responder hello, initiator R1, responder R1, initiator R2, responder R2. Role labels separate both proof HMACs and the final PSK; version, both IDs/nonces and data endpoints are included. No arrival-order hashing.
 
-- [ ] Write tests/unit/lan_pairing_crypto_test.cpp and lan_pairing_wire_test.cpp: matching code derives equal 32-byte keys, wrong code fails proofs, altered/reordered hello/rounds/roles/session fail, replay nonce fails, invalid frame sizes/fields rejected, upstream PAKE vectors exercised.
-- [ ] Observe RED before adding APIs/module; document wire and transcript bytes in docs/LAN_PAIRING_PROTOCOL.md with deterministic non-secret test vectors.
-- [ ] Enable MBEDTLS_ECJPAKE_C only. Implement wrappers with P-256/SHA-256, secure RNG, constant-time proof compare and secret zeroization; preserve the existing TLS 1.3-only config. Confirm the pinned library supports the selected calls before using them.
-- [ ] Run crypto/wire and existing lan_tls_transport tests; test module build on Mac and compile checks on Windows CI when available.
-- [ ] Commit the protocol/wrapper with vectors. Stop and report if the pinned library cannot implement it; do not improvise a replacement PAKE.
+- [x] Write tests/unit/lan_pairing_crypto_test.cpp and lan_pairing_wire_test.cpp: matching code derives equal 32-byte keys, wrong code fails proofs, altered/reordered hello/rounds/roles/session fail, replay nonce fails, invalid frame sizes/fields rejected, upstream PAKE vectors exercised.
+- [x] Observe RED before adding APIs/module; document wire and transcript bytes in docs/LAN_PAIRING_PROTOCOL.md with deterministic non-secret test vectors.
+- [x] Enable MBEDTLS_ECJPAKE_C only. Implement wrappers with P-256/SHA-256, secure RNG, constant-time proof compare and secret zeroization; preserve the existing TLS 1.3-only config. Confirm the pinned library supports the selected calls before using them.
+- [x] Run crypto/wire and existing lan_tls_transport tests; test module build on Mac and compile checks on Windows CI when available.
+- [x] Commit the protocol/wrapper with vectors. Stop and report if the pinned library cannot implement it; do not improvise a replacement PAKE.
 
 ### Task 3: Native DNS-SD adapters
 
@@ -96,7 +97,7 @@ The DTOs below live in namespace cliptiq::lan. Use existing Result<T>, Bytes and
 - PairingPeer { hello: PairingHello; remote_address, local_address: string }.
 - PairingEvent { kind: Incoming/Code/EnterCode/Prepare/Commit/Complete/Failed; session_id: string; peer: PairingPeer; code, message: string; key: Bytes }. Code/key are in-memory only; key only at authenticated Prepare.
 - PairingServer: listen(local_address: string, data_port: uint16_t) -> Result<uint16_t> (OS-assigned control port); connect(DiscoveryDevice) -> Result<string>; accept(session_id: string) -> Result<void>; enter_code(session_id: string, code: string) -> Result<void>; prepared(session_id: string, result: Result<void>); committed(session_id: string, result: Result<void>); cancel(session_id: string); poll() -> vector<PairingEvent>; stop().
-- Internal pure session class consumes validated frames, commands and injected clock/RNG. Native worker uses bounded nonblocking sockets and produces only queued events.
+- Internal pure session class consumes validated frames, commands and injected clock/RNG. All Prepared through Abort frames after proof use PairingCrypto seal_control/open_control, never bare frames. Native worker uses bounded nonblocking sockets and produces only queued events.
 
 - [ ] Add tests/unit/lan_pairing_session_test.cpp: explicit approval on B before code, correct/wrong/expired code, cancel, duplicate frames, replay/out-of-order proofs, 120 s expiry, one active receiver code, at most 3 guesses; rate caps keyed by real address and globally, not claimed ID.
 - [ ] Observe RED; implement the pure state machine before sockets. Fix rate caps at 3 new requests/source/min and 10 total/min, max 4 pending sockets, max 64 queued events and 64 KiB queued wire/session; no clipboard references in this subsystem.
