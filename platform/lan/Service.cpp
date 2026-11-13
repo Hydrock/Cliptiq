@@ -117,6 +117,7 @@ Result<void> Service::refresh(){state_->stop();return initialize();}
 void Service::stop(){state_->stop();}
 bool Service::running()const{return state_->runtime&&state_->runtime->transport->active();}
 void Service::history_policy(HistoryPolicy value){state_->history=value;if(auto r=state_->runtime){std::lock_guard<std::mutex> lock(r->mutex);r->history=value;}}
+std::map<std::string,std::string> Service::peer_statuses()const{auto r=state_->runtime;if(!r)return {};std::lock_guard<std::mutex> lock(r->mutex);return r->statuses;}
 std::string Service::status()const{
  if(!state_->problem.empty())return tr(state_->problem);
  auto r=state_->runtime;if(!r)return tr(state_->configuration.paused?"LAN sharing paused":"LAN sharing off");

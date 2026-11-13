@@ -1,4 +1,5 @@
 #include "NetworkInterfaces.hpp"
+#include "Text.hpp"
 #include <algorithm>
 #include <map>
 #ifdef _WIN32
@@ -10,8 +11,17 @@
 #include <arpa/inet.h>
 #include <ifaddrs.h>
 #include <net/if.h>
+#include <unistd.h>
 #endif
 namespace cliptiq::lan {
+std::string local_device_name(){
+#ifdef _WIN32
+ wchar_t name[256]{};DWORD count=256;std::string value;if(GetComputerNameW(name,&count)){int n=WideCharToMultiByte(CP_UTF8,0,name,static_cast<int>(count),nullptr,0,nullptr,nullptr);if(n>0){value.resize(n);WideCharToMultiByte(CP_UTF8,0,name,static_cast<int>(count),value.data(),n,nullptr,nullptr);}}
+#else
+ char name[256]{};std::string value;if(gethostname(name,sizeof name-1)==0)value=name;if(value.size()>6&&value.substr(value.size()-6)==".local")value.resize(value.size()-6);
+#endif
+ return valid_display_text(value,250)?value:"Cliptiq";
+}
 Result<std::vector<NetworkInterface>> network_interfaces(){
  std::map<std::string,NetworkInterface> unique;
  auto add=[&](std::string id,std::string name,std::string address,std::uint32_t index){if(!valid_numeric_endpoint(address,index)||address.rfind("127.",0)==0||address=="::1")return;auto it=unique.find(id);if(it==unique.end()||(it->second.address.find(':')!=std::string::npos&&address.find(':')==std::string::npos))unique[id]={id,std::move(name),std::move(address),index};};

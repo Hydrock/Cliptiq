@@ -44,7 +44,7 @@ void wipe(PairingEvent& event){if(!event.key.empty())mbedtls_platform_zeroize(ev
 struct PairingServer::Impl {
  enum class CommandKind {Connect,Accept,Code,Prepared,Committed,Cancel};
  struct Command {CommandKind kind;std::string id,code;DiscoveryDevice device;bool success=true;};
- struct Connection {Socket socket=invalid;bool connecting=false,initiator=false,claimed=false,close_after_write=false;std::string id,expected;std::int64_t activity=0;Bytes input,output;size_t sent=0;std::unique_ptr<PairingSession> session;~Connection(){close_socket(socket);}};
+ struct Connection {Socket socket=invalid;bool connecting=false,initiator=false,claimed=false,cancelled=false;std::uint32_t interface_index=0;std::string id,expected;std::int64_t activity=0;Bytes input,output;size_t sent=0;std::unique_ptr<PairingSession> session;~Connection(){close_socket(socket);}};
  std::string id,name,platform;std::uint16_t data_port=49731;Socket listener=invalid;std::thread worker;std::atomic<bool> stopped{true};std::mutex mutex;std::condition_variable cv;std::deque<Command> commands;std::vector<PairingEvent> events;std::vector<std::unique_ptr<Connection>> connections;PairingRateLimiter rate;std::string active;bool sockets=true;
  Impl(std::string id,std::string name,std::string platform):id(std::move(id)),name(std::move(name)),platform(std::move(platform)){
 #ifdef _WIN32
@@ -63,16 +63,17 @@ struct PairingServer::Impl {
  bool initialize(Connection& c){
   sockaddr_storage remote{},local{};socklen_t size=sizeof remote;if(getpeername(c.socket,reinterpret_cast<sockaddr*>(&remote),&size)!=0)return false;size=sizeof local;if(getsockname(c.socket,reinterpret_cast<sockaddr*>(&local),&size)!=0)return false;
   auto nonce=pairing_random(32);if(!nonce)return false;PairingHello hello{c.id,id,name,platform,address_of(local),data_port,std::move(nonce.value())};if(!encode_pairing_hello(hello))return false;
-  c.session=std::make_unique<PairingSession>(c.initiator?PairingRole::Initiator:PairingRole::Responder,std::move(hello),address_of(remote),address_of(local),now,pairing_random,c.expected);c.activity=now();return !c.initiator||static_cast<bool>(c.session->start());
+  if(local.ss_family==AF_INET6){auto localScope=reinterpret_cast<const sockaddr_in6*>(&local)->sin6_scope_id,remoteScope=reinterpret_cast<const sockaddr_in6*>(&remote)->sin6_scope_id;if(localScope)c.interface_index=localScope;else if(remoteScope)c.interface_index=remoteScope;}
+  c.session=std::make_unique<PairingSession>(c.initiator?PairingRole::Initiator:PairingRole::Responder,std::move(hello),address_of(remote),address_of(local),now,pairing_random,c.expected,c.interface_index);c.activity=now();return !c.initiator||static_cast<bool>(c.session->start());
  }
  void execute(Command& command){
   if(command.kind==CommandKind::Connect){if(!active.empty()||connections.size()>=4){failed(command.id);return;}auto address=endpoint(command.device.address,command.device.control_port,command.device.interface_index);if(!address){failed(command.id);return;}
-   auto c=std::make_unique<Connection>();c->id=command.id;c->initiator=true;c->expected=command.device.device_id;c->socket=socket(address.value().family,SOCK_STREAM,IPPROTO_TCP);if(c->socket==invalid||!nonblock(c->socket)){failed(command.id);return;}
+   auto c=std::make_unique<Connection>();c->id=command.id;c->initiator=true;c->expected=command.device.device_id;c->interface_index=command.device.interface_index;c->socket=socket(address.value().family,SOCK_STREAM,IPPROTO_TCP);if(c->socket==invalid||!nonblock(c->socket)){failed(command.id);return;}
    // Bind to the interface selected from the resolved endpoint. Never silently use another network.
    auto local=endpoint(command.device.interface_address,0,command.device.interface_index);if(!local||local.value().family!=address.value().family||bind(c->socket,reinterpret_cast<sockaddr*>(&local.value().storage),local.value().size)!=0){failed(command.id);return;}
    int result=::connect(c->socket,reinterpret_cast<sockaddr*>(&address.value().storage),address.value().size);if(result!=0&&!again()){failed(command.id);return;}c->connecting=result!=0;c->activity=now();active=c->id;c->claimed=true;if(!c->connecting&&!initialize(*c)){active.clear();failed(command.id);return;}connections.push_back(std::move(c));return;
   }
-  auto it=std::find_if(connections.begin(),connections.end(),[&](const auto& c){return c->session&&c->session->session_id()==command.id;});if(it==connections.end())return;auto& session=*(*it)->session;
+  auto it=std::find_if(connections.begin(),connections.end(),[&](const auto& c){return c->id==command.id||(c->session&&c->session->session_id()==command.id);});if(it==connections.end())return;if(command.kind==CommandKind::Cancel){(*it)->cancelled=true;if((*it)->session)(*it)->session->cancel();return;}if(!(*it)->session)return;auto& session=*(*it)->session;
   switch(command.kind){case CommandKind::Accept:session.accept();break;case CommandKind::Code:session.enter_code(std::move(command.code));break;case CommandKind::Prepared:session.prepared(command.success?Result<void>{}:Result<void>{Error{ErrorCode::Io,"Credential storage failed"}});break;case CommandKind::Committed:session.committed(command.success?Result<void>{}:Result<void>{Error{ErrorCode::Io,"Peer storage failed"}});break;case CommandKind::Cancel:session.cancel();break;default:break;}
  }
  void accept_socket(){if(listener==invalid)return;for(int i=0;i<4;++i){sockaddr_storage remote{};socklen_t size=sizeof remote;Socket sock=::accept(listener,reinterpret_cast<sockaddr*>(&remote),&size);if(sock==invalid)return;
@@ -80,6 +81,7 @@ struct PairingServer::Impl {
   }
  }
  bool pump(Connection& c){
+  if(c.cancelled)return false;
   if(c.connecting){fd_set write,error;FD_ZERO(&write);FD_ZERO(&error);FD_SET(c.socket,&write);FD_SET(c.socket,&error);timeval t{};if(select(static_cast<int>(c.socket+1),nullptr,&write,&error,&t)>0){int status=0;socklen_t size=sizeof status;if(getsockopt(c.socket,SOL_SOCKET,SO_ERROR,reinterpret_cast<char*>(&status),&size)!=0||status!=0||!initialize(c))return false;c.connecting=false;}else return now()-c.activity<10000;}
   if(!c.session)return false;c.session->tick();
   if(!c.session->finished())for(int reads=0;reads<4;++reads){unsigned char buffer[8192];int size=recv(c.socket,reinterpret_cast<char*>(buffer),sizeof buffer,0);if(size==0)return false;if(size<0){if(again())break;return false;}c.activity=now();if(c.input.size()+size>16384)return false;c.input.insert(c.input.end(),buffer,buffer+size);
@@ -119,7 +121,7 @@ Result<std::uint16_t> PairingServer::listen(std::string address,std::uint16_t da
 }
 Result<std::string> PairingServer::connect(DiscoveryDevice device){auto& s=*impl_;if(!s.sockets||!valid_device_id(device.device_id)||device.device_id==s.id||!device.control_port||!valid_numeric_endpoint(device.address,device.interface_index)||!valid_numeric_endpoint(device.interface_address,device.interface_index))return Error{ErrorCode::InvalidArgument,"Invalid discovered pairing endpoint"};auto id=fresh_id();if(!id)return id.error();s.start_worker();Impl::Command cmd{Impl::CommandKind::Connect,id.value(),{},std::move(device),true};auto result=s.queue(std::move(cmd));if(!result)return result.error();return id.value();}
 Result<void> PairingServer::accept(const std::string& id){return impl_->queue({Impl::CommandKind::Accept,id,{},{},true});}
-Result<void> PairingServer::enter_code(const std::string& id,std::string code){return impl_->queue({Impl::CommandKind::Code,id,std::move(code),{},true});}
+Result<void> PairingServer::enter_code(const std::string& id,std::string code){if(code.size()!=6||!std::all_of(code.begin(),code.end(),[](unsigned char c){return c>='0'&&c<='9';})){if(!code.empty())mbedtls_platform_zeroize(code.data(),code.size());return Error{ErrorCode::InvalidArgument,"Enter a 6-digit code."};}return impl_->queue({Impl::CommandKind::Code,id,std::move(code),{},true});}
 void PairingServer::prepared(const std::string& id,Result<void> result){impl_->queue({Impl::CommandKind::Prepared,id,{},{},static_cast<bool>(result)});}
 void PairingServer::committed(const std::string& id,Result<void> result){impl_->queue({Impl::CommandKind::Committed,id,{},{},static_cast<bool>(result)});}
 void PairingServer::cancel(const std::string& id){impl_->queue({Impl::CommandKind::Cancel,id,{},{},true});}

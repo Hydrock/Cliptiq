@@ -82,6 +82,7 @@ int main(int argc,char **argv) { @autoreleasepool { try {
  snapshot.pairing=lan::PairingEvent::Kind::Incoming;snapshot.session_id="ui-session";snapshot.peer_name="Test PC";CHECK(discoveredNetwork.process_events());auto allow=button(discoveryWindow.contentView,text("Allow pairing"));CHECK(allow);[allow performClick:nil];CHECK(approvals==1);
  snapshot.pairing=lan::PairingEvent::Kind::Code;snapshot.code="012345";CHECK(discoveredNetwork.process_events());CHECK(button(discoveryWindow.contentView,text("Cancel pairing")));
  snapshot.pairing=lan::PairingEvent::Kind::EnterCode;snapshot.code.clear();CHECK(discoveredNetwork.process_events());auto input=codeField(discoveryWindow.contentView);CHECK(input);input.stringValue=@"123456";snapshot.message="Search complete.";CHECK(discoveredNetwork.process_events());CHECK([codeField(discoveryWindow.contentView).stringValue isEqualToString:@"123456"]);[button(discoveryWindow.contentView,text("Pair device")) performClick:nil];CHECK(submitted==1);
+ snapshot.pairing=lan::PairingEvent::Kind::Failed;snapshot.message="Pairing failed. Start again with a new code.";CHECK(discoveredNetwork.process_events());CHECK(button(discoveryWindow.contentView,text("Connect")).enabled);
  [discoveryWindow performClose:nil];CHECK(closes==1);snapshot.message="Late result";CHECK(discoveredNetwork.process_events());
  std::cout<<"PASS embedded macOS Network settings: draft, keys, repeated save, cancel, layout and reopen\n";return 0;
  }catch(const std::exception &error){std::cerr<<error.what()<<'\n';return 1;} } }

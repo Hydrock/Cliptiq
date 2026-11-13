@@ -384,5 +384,10 @@
   "Device discovery is unavailable on this platform. Use manual connection.": "Device discovery is unavailable on this platform. Use manual connection.",
   "Local network access was denied. Allow Cliptiq in System Settings.": "Local network access was denied. Allow Cliptiq in System Settings.",
   "Network interface is no longer available.": "Network interface is no longer available.",
-  "Pairing session already exists. Start again.": "Pairing session already exists. Start again."
+  "Pairing session already exists. Start again.": "Pairing session already exists. Start again.",
+  "Enable sharing": "Enable sharing",
+  "Send clipboard": "Send clipboard",
+  "Receive clipboard": "Receive clipboard",
+  "Device reconnected.": "Device reconnected.",
+  "Device endpoint could not be verified.": "Device endpoint could not be verified."
 }

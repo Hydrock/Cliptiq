@@ -24,10 +24,12 @@
 #ifdef _WIN32
 #include <winsock2.h>
 #include <ws2tcpip.h>
+#include <netioapi.h>
 #else
 #include <arpa/inet.h>
 #include <fcntl.h>
 #include <netdb.h>
+#include <net/if.h>
 #include <sys/socket.h>
 #include <unistd.h>
 #endif
@@ -47,7 +49,8 @@ bool numericAddress(const std::string &address) {
   auto host=address;auto zone=host.find('%');
   if(zone!=std::string::npos){
     auto scope=host.substr(zone+1);host.resize(zone);std::uint32_t index=0;auto parsed=std::from_chars(scope.data(),scope.data()+scope.size(),index);
-    if(scope.empty()||parsed.ec!=std::errc{}||parsed.ptr!=scope.data()+scope.size()||index==0||host.find(':')==std::string::npos)return false;
+    if(scope.empty()||scope.size()>32||host.find(':')==std::string::npos)return false;
+    if(parsed.ec!=std::errc{}||parsed.ptr!=scope.data()+scope.size()||index==0){if(!std::all_of(scope.begin(),scope.end(),[](unsigned char c){return (c>='a'&&c<='z')||(c>='A'&&c<='Z')||(c>='0'&&c<='9')||c=='_'||c=='-'||c=='.';})||if_nametoindex(scope.c_str())==0)return false;}
   }
   unsigned char binary[sizeof(in6_addr)]{};
 #ifdef _WIN32
@@ -401,6 +404,7 @@ struct Transport::Impl {
             }
           }
         c.hello = true;
+        if(config.probe_only){running=false;return;}
         // The old socket may already have been erased before this HELLO.
         // Replay only retained live-peer publications within their original bound.
         for (const auto &frame : peer_state(c.peer).outstanding)
@@ -477,7 +481,7 @@ struct Transport::Impl {
         for (auto &c : connections)
           if (!c->hello)
             ++pendingCount;
-        if (pendingCount < 4 && connections.size() < 20) {
+        if (!config.probe_only && pendingCount < 4 && connections.size() < 20) {
           auto c = std::make_unique<Connection>(this);
           int r = mbedtls_net_accept(&listener, &c->net, nullptr, 0, nullptr);
           if (!r) {
@@ -547,6 +551,10 @@ struct Transport::Impl {
           }
           connection->net.fd = static_cast<int>(socketHandle);
           mbedtls_net_set_nonblock(&connection->net);
+          if(config.probe_only){addrinfo hints{};hints.ai_family=address.address.ss_family;hints.ai_socktype=SOCK_STREAM;hints.ai_flags=AI_NUMERICHOST;addrinfo* locals=nullptr;
+            if(getaddrinfo(config.bind_address.c_str(),"0",&hints,&locals)!=0)continue;
+            bool bound=false;for(auto* local=locals;local;local=local->ai_next)if(::bind(socketHandle,local->ai_addr,static_cast<int>(local->ai_addrlen))==0){bound=true;break;}freeaddrinfo(locals);if(!bound)continue;
+          }
           ::connect(socketHandle,
                     reinterpret_cast<const sockaddr *>(&address.address),
                     address.length);
@@ -652,6 +660,7 @@ Result<void> Transport::start(TransportConfig c, TransportCallbacks cb) {
       if (c.peers[i].auth_id == c.peers[j].auth_id ||
           c.peers[i].id == c.peers[j].id || c.peers[i].key == c.peers[j].key)
         return fail("Duplicate peer credentials");
+  if(c.probe_only&&(c.peers.size()!=1||c.peers[0].receive))return fail("Invalid endpoint probe configuration");
   if(!initialize_crypto_runtime())return fail("TLS crypto initialization failed");
   if (impl_->cryptoInitialized) {
     mbedtls_entropy_free(&impl_->entropy);
@@ -673,10 +682,10 @@ Result<void> Transport::start(TransportConfig c, TransportCallbacks cb) {
   if (mbedtls_ctr_drbg_seed(&impl_->rng, mbedtls_entropy_func, &impl_->entropy,
                             label, sizeof(label)))
     return abortStart("Secure random initialization failed");
-  if (mbedtls_net_bind(&impl_->listener, c.bind_address.c_str(),
+  if (!c.probe_only && mbedtls_net_bind(&impl_->listener, c.bind_address.c_str(),
                        std::to_string(c.port).c_str(), MBEDTLS_NET_PROTO_TCP))
     return abortStart("LAN listener unavailable");
-  mbedtls_net_set_nonblock(&impl_->listener);
+  if(!c.probe_only)mbedtls_net_set_nonblock(&impl_->listener);
   impl_->config = std::move(c);
   impl_->callbacks = std::move(cb);
   impl_->peerStates.resize(impl_->config.peers.size());
@@ -693,7 +702,7 @@ void Transport::stop() {
     impl_->worker.join();
 }
 void Transport::publish(std::shared_ptr<const Bytes> b) {
-  if (!b || b->empty() || b->size() > cap)
+  if (impl_->config.probe_only || !b || b->empty() || b->size() > cap)
     return;
   std::lock_guard<std::mutex> l(impl_->mutex);
   if (impl_->running && impl_->outbound.expired()) {

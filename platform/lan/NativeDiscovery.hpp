@@ -6,7 +6,7 @@ namespace cliptiq::lan {
 struct DiscoveryAnnouncement {DiscoveryDevice device;};
 struct DiscoveryEvent {
  enum class Kind {Found,Removed,Failure};
- Kind kind=Kind::Failure;DiscoveryDevice device;std::string message;
+ Kind kind=Kind::Failure;DiscoveryDevice device;std::string message;bool publication=false;
 };
 Result<Bytes> encode_discovery_txt(const DiscoveryDevice&);
 Result<DiscoveryDevice> decode_discovery_txt(const Bytes&,DiscoveryDevice resolved);

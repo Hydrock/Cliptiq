@@ -193,5 +193,13 @@ normal-profile Keychain entries or mutate the real clipboard.
 Windows DNS-SD and Win32 UI have source implementation and native fixtures;
 Windows compilation/runtime verification and physical Mac↔Windows acceptance are
 still open. No Windows pass is inferred from a Mac run. Linux discovery is explicitly
-unsupported, with the existing manual path retained. Existing-peer address changes
-remain manual; unauthenticated announcements cannot replace a trusted endpoint.
+unsupported, with the existing manual path retained. Existing-peer address changes found during a search require a TLS-only probe with
+the saved PSK and pinned device identity before transactional endpoint replacement.
+Negative probe tests reject wrong credentials and device identity without clipboard access.
+
+Final macOS verification after independent-review fixes: full Debug **73/73**
+(80.25 s) and MinSizeRel/Release **73/73** (79.42 s). Locale generation check,
+diff whitespace check, complete app Info.plist and EN/RU InfoPlist.strings passed.
+The new TLS-only endpoint probe rejects a wrong PSK or a mismatched pinned device
+identity without fake clipboard writes. Independent profile credentials remain
+independent when one pair is forgotten. Windows execution remains open.

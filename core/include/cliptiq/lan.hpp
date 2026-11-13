@@ -22,6 +22,7 @@ struct PendingPair {
 Result<void> stage_pair(Store&,const PendingPair&);
 Result<void> commit_pair(Store&,const std::string& session_id);
 Result<void> finish_pair(Store&,const std::string& session_id);
+Result<bool> begin_abort_pair(Store&,const std::string& session_id);
 Result<void> abort_pair(Store&,const std::string& session_id);
 Result<std::vector<PendingPair>> pending_pairs(Store&);
 Result<void> finish_authenticated_pair(Store&,const std::string& peer_id,const std::string& remote_device_id);
@@ -33,6 +34,7 @@ Result<ClipboardSnapshot> native_snapshot(const Event&,CapturePlatform);
 Result<Event> make_event(Store&,std::vector<Representation>,std::int64_t);
 Result<Bytes> encode_event(const Event&);
 Result<Event> decode_event(const Bytes&);
+Result<void> update_peer_endpoint(Store&,const Peer& expected,const std::string& host,std::uint16_t port);
 Result<void> bind_peer_identity(Store&,const std::string& peer_id,const std::string& remote_device_id);
 struct Arrival { bool duplicate=false; std::optional<EntryId> entry_id; ReceiveMode receive_mode=ReceiveMode::ClipboardAndHistory; };
 Result<Arrival> accept_event(Store&,const std::string& peer_id,const Event&,HistoryPolicy,std::int64_t,CapturePlatform platform=CapturePlatform::Unknown);

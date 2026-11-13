@@ -14,10 +14,10 @@ namespace {
 std::int64_t now(){return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();}
 std::wstring wide(const std::string& text){int n=MultiByteToWideChar(CP_UTF8,MB_ERR_INVALID_CHARS,text.data(),static_cast<int>(text.size()),nullptr,0);if(n<=0)return {};std::wstring s(n,0);MultiByteToWideChar(CP_UTF8,MB_ERR_INVALID_CHARS,text.data(),static_cast<int>(text.size()),s.data(),n);return s;}
 std::string utf8(const wchar_t* p){if(!p)return {};size_t n=wcsnlen(p,1025);if(n>1024)return {};int size=WideCharToMultiByte(CP_UTF8,WC_ERR_INVALID_CHARS,p,static_cast<int>(n),nullptr,0,nullptr,nullptr);if(size<=0)return {};std::string s(size,0);WideCharToMultiByte(CP_UTF8,WC_ERR_INVALID_CHARS,p,static_cast<int>(n),s.data(),size,nullptr,nullptr);return s;}
-std::string local_address(ULONG index,int family){
+std::string local_address(ULONG index,int family,bool link_local){
  ULONG size=16384;std::vector<unsigned char> data(size);auto* adapters=reinterpret_cast<IP_ADAPTER_ADDRESSES*>(data.data());auto result=GetAdaptersAddresses(AF_UNSPEC,0,nullptr,adapters,&size);
  if(result==ERROR_BUFFER_OVERFLOW&&size<=65536){data.resize(size);adapters=reinterpret_cast<IP_ADAPTER_ADDRESSES*>(data.data());result=GetAdaptersAddresses(AF_UNSPEC,0,nullptr,adapters,&size);}if(result!=NO_ERROR)return {};
- for(auto* a=adapters;a;a=a->Next){if((family==AF_INET?a->IfIndex:a->Ipv6IfIndex)!=index)continue;for(auto* p=a->FirstUnicastAddress;p;p=p->Next){auto* sa=p->Address.lpSockaddr;if(!sa||sa->sa_family!=family)continue;char text[INET6_ADDRSTRLEN]{};
+ for(auto* a=adapters;a;a=a->Next){if((family==AF_INET?a->IfIndex:a->Ipv6IfIndex)!=index)continue;for(auto* p=a->FirstUnicastAddress;p;p=p->Next){auto* sa=p->Address.lpSockaddr;if(!sa||sa->sa_family!=family)continue;if(family==AF_INET6&&static_cast<bool>(IN6_IS_ADDR_LINKLOCAL(&reinterpret_cast<sockaddr_in6*>(sa)->sin6_addr))!=link_local)continue;char text[INET6_ADDRSTRLEN]{};
   auto* raw=family==AF_INET?static_cast<void*>(&reinterpret_cast<sockaddr_in*>(sa)->sin_addr):static_cast<void*>(&reinterpret_cast<sockaddr_in6*>(sa)->sin6_addr);
   if(inet_ntop(family,raw,text,sizeof text)&&valid_numeric_endpoint(text,index))return text;
  }}return {};
@@ -26,7 +26,7 @@ struct State {
  DiscoveryInbox inbox,publication;std::mutex mutex;std::map<std::wstring,bool> names;std::map<std::wstring,std::vector<DiscoveryDevice>> found;std::atomic<std::uint64_t> active{0};bool sockets=false;
  explicit State(std::string id):inbox(id),publication(std::move(id)){publication.begin();WSADATA data{};sockets=WSAStartup(MAKEWORD(2,2),&data)==0;}
  ~State(){if(sockets)WSACleanup();}
- void failure(std::uint64_t gen,DWORD code,bool pub=false){auto event=DiscoveryEvent{DiscoveryEvent::Kind::Failure,{},"Windows device discovery failed ("+std::to_string(code)+"). Check local network access and firewall settings."};if(pub)publication.accept(1,std::move(event));else inbox.accept(gen,std::move(event));}
+ void failure(std::uint64_t gen,DWORD code,bool pub=false){auto event=DiscoveryEvent{DiscoveryEvent::Kind::Failure,{},"Windows device discovery failed ("+std::to_string(code)+"). Check local network access and firewall settings.",pub};if(pub)publication.accept(1,std::move(event));else inbox.accept(gen,std::move(event));}
 };
 struct Query {std::shared_ptr<State> state;std::uint64_t generation=0;DNS_SERVICE_CANCEL cancel{};std::atomic<bool> done{false},cancelled{false};std::wstring name;DNS_SERVICE_BROWSE_REQUEST browse{};DNS_SERVICE_RESOLVE_REQUEST resolve{};};
 using QueryHold=std::shared_ptr<Query>;
@@ -47,7 +47,7 @@ void WINAPI resolved(DWORD status,void* context,DNS_SERVICE_INSTANCE* instance){
  if(!status&&!q->cancelled&&instance&&instance->dwPropertyCount<=32&&instance->keys&&instance->values){
   Bytes txt;bool valid=true;for(DWORD i=0;i<instance->dwPropertyCount;++i){auto key=utf8(instance->keys[i]),value=utf8(instance->values[i]);auto s=key+"="+value;if(s.size()>255||key.empty()||txt.size()+s.size()+1>1024){valid=false;break;}txt.push_back(static_cast<std::uint8_t>(s.size()));txt.insert(txt.end(),s.begin(),s.end());}
   if(valid)for(int family:{AF_INET,AF_INET6}){const void* raw=family==AF_INET?static_cast<const void*>(instance->ip4Address):static_cast<const void*>(instance->ip6Address);if(!raw)continue;char text[INET6_ADDRSTRLEN]{};if(!inet_ntop(family,raw,text,sizeof text))continue;
-   DiscoveryDevice d;d.host=utf8(instance->pszHostName);d.address=text;d.interface_index=instance->dwInterfaceIndex;d.interface_address=local_address(d.interface_index,family);d.control_port=instance->wPort;d.expires_ms=now()+30000;
+   DiscoveryDevice d;d.host=utf8(instance->pszHostName);d.address=text;d.interface_index=instance->dwInterfaceIndex;d.interface_address=local_address(d.interface_index,family,family==AF_INET6&&IN6_IS_ADDR_LINKLOCAL(static_cast<const IN6_ADDR*>(raw)));d.control_port=instance->wPort;d.expires_ms=now()+30000;
    auto parsed=decode_discovery_txt(txt,std::move(d));if(parsed&&q->state->inbox.accept(q->generation,{DiscoveryEvent::Kind::Found,parsed.value(),{}})){
     std::lock_guard<std::mutex> lock(q->state->mutex);if(q->state->active==q->generation&&q->state->found.size()<64){auto& endpoints=q->state->found[q->name];if(endpoints.size()<4)endpoints.push_back(std::move(parsed.value()));}
    }

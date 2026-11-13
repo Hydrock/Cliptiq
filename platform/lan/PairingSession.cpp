@@ -19,13 +19,13 @@ bool PairingRateLimiter::admit(const std::string& address,std::int64_t now){
 }
 struct PairingSession::State {
  enum class Phase {New,Request,Approval,Accept,Code,Pake,Proof,Prepare,Commit,Committed,Done,Failed};
- PairingRole role;PairingHello local,remote;std::string remote_address,local_address,expected;Clock clock;Random random;std::int64_t deadline;Phase phase=Phase::New;
+ std::uint32_t interface_index=0;PairingRole role;PairingHello local,remote;std::string remote_address,local_address,expected;Clock clock;Random random;std::int64_t deadline;Phase phase=Phase::New;
  std::unique_ptr<PairingCrypto> crypto;Bytes r1a,r1b,r2a,r2b,context;std::vector<Bytes> outgoing;std::vector<PairingEvent> events;bool own_prepared=false,peer_prepared=false;
  State(PairingRole r,PairingHello l,std::string ra,std::string la,Clock c,Random rng,std::string expected):role(r),local(std::move(l)),remote_address(std::move(ra)),local_address(std::move(la)),expected(std::move(expected)),clock(std::move(c)),random(std::move(rng)),deadline(clock()+120000){}
  ~State(){for(auto& e:events){wipe(e.key);wipe(e.code);}}
  bool terminal()const{return phase==Phase::Done||phase==Phase::Failed;}
- void event(PairingEvent::Kind kind,std::string code={},Bytes key={}){if(events.size()>=64){fail();return;}events.push_back({kind,local.session_id,{remote,remote_address,local_address},std::move(code),{},std::move(key)});}
- Result<void> fail(){if(!terminal()){phase=Phase::Failed;crypto.reset();for(auto& e:events){wipe(e.key);wipe(e.code);}events.clear();outgoing.clear();events.push_back({PairingEvent::Kind::Failed,local.session_id,{remote,remote_address,local_address},{},failure().message,{}});}return failure();}
+ void event(PairingEvent::Kind kind,std::string code={},Bytes key={}){if(events.size()>=64){fail();return;}events.push_back({kind,local.session_id,{remote,remote_address,local_address,interface_index},std::move(code),{},std::move(key)});}
+ Result<void> fail(){if(!terminal()){phase=Phase::Failed;crypto.reset();for(auto& e:events){wipe(e.key);wipe(e.code);}events.clear();outgoing.clear();events.push_back({PairingEvent::Kind::Failed,local.session_id,{remote,remote_address,local_address,interface_index},{},failure().message,{}});}return failure();}
  Result<void> send(PairingMessage kind,Bytes payload={}){
   PairingFrame frame{kind,local.session_id,std::move(payload)};auto wire=kind>=PairingMessage::Prepared?crypto->seal_control(context,std::move(frame)):encode_pairing_frame(frame);if(!wire)return fail();size_t bytes=wire.value().size();for(const auto& w:outgoing)bytes+=w.size();if(bytes>65536)return fail();outgoing.push_back(std::move(wire.value()));return {};
  }
@@ -35,7 +35,7 @@ struct PairingSession::State {
  Result<void> initiator_rounds(){if(r1b.empty())return {};if(!crypto->read_round_one(r1b))return fail();auto first=crypto->round_one();if(!first)return fail();r1a=first.value();auto second=crypto->round_two();if(!second)return fail();r2a=second.value();if(!send(PairingMessage::RoundOne,r1a))return fail();phase=Phase::Pake;return send(PairingMessage::RoundTwo,r2a);}
  Result<void> maybe_commit(){if(role==PairingRole::Initiator&&phase==Phase::Prepare&&own_prepared&&peer_prepared){phase=Phase::Commit;return send(PairingMessage::Commit);}return {};}
 };
-PairingSession::PairingSession(PairingRole role,PairingHello local,std::string remote_address,std::string local_address,Clock clock,Random rng,std::string expected):state_(std::make_unique<State>(role,std::move(local),std::move(remote_address),std::move(local_address),std::move(clock),std::move(rng),std::move(expected))){}
+PairingSession::PairingSession(PairingRole role,PairingHello local,std::string remote_address,std::string local_address,Clock clock,Random rng,std::string expected,std::uint32_t index):state_(std::make_unique<State>(role,std::move(local),std::move(remote_address),std::move(local_address),std::move(clock),std::move(rng),std::move(expected))){state_->interface_index=index;}
 PairingSession::~PairingSession()=default;
 Result<void> PairingSession::start(){auto& s=*state_;if(s.role!=PairingRole::Initiator||s.phase!=State::Phase::New)return s.fail();auto hello=encode_pairing_hello(s.local);if(!hello)return s.fail();s.phase=State::Phase::Request;return s.send(PairingMessage::Request,std::move(hello.value()));}
 Result<void> PairingSession::accept(){

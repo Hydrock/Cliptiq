@@ -13,6 +13,7 @@ struct TransportConfig {
   std::string device_id, bind_address;
   std::uint16_t port = 0;
   std::vector<TransportPeer> peers;
+  bool probe_only=false;
 };
 struct TransportCallbacks {
   std::function<Result<void>(std::string, std::string)> identity;

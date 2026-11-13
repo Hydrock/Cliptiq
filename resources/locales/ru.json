@@ -384,5 +384,10 @@
   "Device discovery is unavailable on this platform. Use manual connection.": "На этой платформе обнаружение недоступно. Используйте ручное подключение.",
   "Local network access was denied. Allow Cliptiq in System Settings.": "Доступ к локальной сети запрещён. Разрешите его для Cliptiq в настройках системы.",
   "Network interface is no longer available.": "Выбранная сеть больше недоступна.",
-  "Pairing session already exists. Start again.": "Это подключение уже существует. Начните заново."
+  "Pairing session already exists. Start again.": "Это подключение уже существует. Начните заново.",
+  "Enable sharing": "Включить обмен",
+  "Send clipboard": "Отправлять",
+  "Receive clipboard": "Получать",
+  "Device reconnected.": "Связь с устройством восстановлена.",
+  "Device endpoint could not be verified.": "Не удалось подтвердить новый адрес устройства."
 }

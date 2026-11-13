@@ -21,7 +21,7 @@ target_include_directories(cliptiq_lan_tls PUBLIC "${CMAKE_CURRENT_LIST_DIR}/../
 target_compile_features(cliptiq_lan_tls PUBLIC cxx_std_17)
 target_link_libraries(cliptiq_lan_tls PUBLIC mbedtls mbedcrypto mbedx509)
 if(WIN32)
- target_link_libraries(cliptiq_lan_tls PRIVATE ws2_32)
+ target_link_libraries(cliptiq_lan_tls PRIVATE ws2_32 iphlpapi)
 else()
  find_package(Threads REQUIRED)
  target_link_libraries(cliptiq_lan_tls PRIVATE Threads::Threads)

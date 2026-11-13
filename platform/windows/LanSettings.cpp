@@ -32,7 +32,7 @@ struct NativeLanSettings::State {
   auto c=CreateWindowExW(std::wstring(cls)==L"EDIT"?WS_EX_CLIENTEDGE:0,cls,wide(value).c_str(),WS_CHILD|WS_VISIBLE|style,px(x),px(y),px(w),px(h),host,reinterpret_cast<HMENU>(INT_PTR(id)),GetModuleHandleW(nullptr),nullptr);SendMessageW(c,WM_SETFONT,reinterpret_cast<WPARAM>(font?reinterpret_cast<HGDIOBJ>(font):GetStockObject(DEFAULT_GUI_FONT)),TRUE);promptChildren.push_back(c);return c;
  }
  HWND topButton(HWND host,const char* title,int kind,const std::string& value,int x,int y,int w=220,DWORD style=0){int id=discoveryId++;discoveryActions[id]={kind,value};return topControl(host,L"BUTTON",tr(title),WS_TABSTOP|style,x,y,w,32,id);}
- int pairingControls(HWND host,int y){using Kind=lan::PairingEvent::Kind;if(!snapshot.pairing)return y;
+ int pairingControls(HWND host,int y){using Kind=lan::PairingEvent::Kind;if(snapshot.session_id.empty())return y;
   topControl(host,L"STATIC",snapshot.peer_name,0,16,y,450,28);y+=36;
   if(snapshot.pairing==Kind::Incoming){topControl(host,L"STATIC",tr("Allow this device to pair?"),0,16,y,450,36);y+=44;topButton(host,"Allow pairing",13,snapshot.session_id,16,y);y+=44;}
   if(snapshot.pairing==Kind::Code){topControl(host,L"STATIC",tr("Enter this code on the other computer. It expires in 2 minutes."),0,16,y,450,48);y+=56;auto code=topControl(host,L"STATIC",snapshot.code,0,16,y,220,36);if(heading_font)SendMessageW(code,WM_SETFONT,reinterpret_cast<WPARAM>(heading_font),TRUE);y+=44;}
@@ -45,14 +45,14 @@ struct NativeLanSettings::State {
  void renderDiscovery(){if(!discovery.snapshot)return;std::string entered=code_edit?utf(code_edit):"";bool focus=code_edit&&GetFocus()==code_edit;code_edit=nullptr;
   for(auto it=children.begin();it!=children.end();)if(it->discovery){DestroyWindow(it->window);it=children.erase(it);}else ++it;
   for(auto c:promptChildren)DestroyWindow(c);promptChildren.clear();discoveryActions.clear();discoveryId=10000;int y=16;
-  if(window){auto availability=topButton(window,"Available for discovery",10,{},16,y,704,BS_AUTOCHECKBOX);SendMessageW(availability,BM_SETCHECK,snapshot.enabled?BST_CHECKED:BST_UNCHECKED,0);EnableWindow(availability,snapshot.available);y+=40;
+  if(window){if(!snapshot.local_name.empty()){topControl(window,L"STATIC",tr("This device")+": "+snapshot.local_name,0,16,y,704,28);y+=36;}auto availability=topButton(window,"Available for discovery",10,{},16,y,704,BS_AUTOCHECKBOX);SendMessageW(availability,BM_SETCHECK,snapshot.enabled?BST_CHECKED:BST_UNCHECKED,0);EnableWindow(availability,snapshot.available);y+=40;
    topControl(window,L"STATIC",tr("Enable discovery once on each computer you want to connect."),0,16,y,704,48);y+=56;
    for(const auto& iface:snapshot.interfaces){int id=discoveryId++;discoveryActions[id]={16,iface.id};auto b=topControl(window,L"BUTTON",iface.name,WS_TABSTOP|BS_AUTORADIOBUTTON,16,y,704,32,id);SendMessageW(b,BM_SETCHECK,iface.id==snapshot.interface_id?BST_CHECKED:BST_UNCHECKED,0);y+=40;}
    auto search=topButton(window,snapshot.searching?"Stop search":"Find devices on network",snapshot.searching?12:11,{},16,y,350);EnableWindow(search,snapshot.available);y+=44;
-   for(const auto& device:snapshot.devices){topControl(window,L"STATIC",device.name+" · "+device.platform,0,16,y+4,440,36);bool paired=std::any_of(snapshot.peers.begin(),snapshot.peers.end(),[&](const auto& p){return p.remote_device_id==device.device_id;});auto b=topButton(window,paired?"Paired":"Connect",17,device.device_id,492,y);EnableWindow(b,!paired&&snapshot.session_id.empty());y+=44;}
-   if(!snapshot.peers.empty()){topControl(window,L"STATIC",tr("Paired devices"),0,16,y,704,28);y+=36;for(const auto& peer:snapshot.peers){topControl(window,L"STATIC",peer.name,0,16,y,704,28);y+=36;}}
+   for(const auto& device:snapshot.devices){topControl(window,L"STATIC",device.name+" · "+device.platform+" · "+device.address+" · "+device.device_id.substr(0,8),0,16,y+4,440,36);bool paired=std::any_of(snapshot.peers.begin(),snapshot.peers.end(),[&](const auto& p){return p.remote_device_id==device.device_id;});auto b=topButton(window,paired?"Paired":"Connect",17,device.device_id,492,y);EnableWindow(b,!paired&&!pairing_active(snapshot));y+=44;}
+   if(!snapshot.peers.empty()){topControl(window,L"STATIC",tr("Paired devices"),0,16,y,704,28);y+=36;for(const auto& peer:snapshot.peers){auto status=snapshot.peer_statuses.find(peer.id);topControl(window,L"STATIC",peer.name+(status==snapshot.peer_statuses.end()?"":" · "+tr(status->second)),0,16,y,704,28);y+=36;int x=16;for(int kind:{20,21,22}){auto b=topButton(window,kind==20?"Enable sharing":kind==21?"Send clipboard":"Receive clipboard",kind,peer.id,x,y,220,BS_AUTOCHECKBOX);SendMessageW(b,BM_SETCHECK,(kind==20?peer.enabled:kind==21?peer.send:peer.receive)?BST_CHECKED:BST_UNCHECKED,0);x+=238;}y+=40;}}
   }
-  bool pending=snapshot.pairing&&snapshot.pairing!=lan::PairingEvent::Kind::Complete&&snapshot.pairing!=lan::PairingEvent::Kind::Failed;
+  bool pending=pairing_active(snapshot);
   if((pending&&(!window||!IsWindowVisible(window)||prompt))||(prompt&&IsWindowVisible(prompt)&&snapshot.pairing)){
    if(!prompt){WNDCLASSW wc{};wc.lpfnWndProc=promptProc;wc.hInstance=GetModuleHandleW(nullptr);wc.lpszClassName=L"CliptiqPairing";wc.hCursor=LoadCursor(nullptr,IDC_ARROW);wc.hbrBackground=reinterpret_cast<HBRUSH>(COLOR_WINDOW+1);RegisterClassW(&wc);prompt=CreateWindowExW(WS_EX_TOOLWINDOW,wc.lpszClassName,lw(L"Pair device"),WS_OVERLAPPED|WS_CAPTION|WS_SYSMENU,CW_USEDEFAULT,CW_USEDEFAULT,px(510),px(390),nullptr,nullptr,wc.hInstance,this);}if(prompt){pairingControls(prompt,16);if(!IsWindowVisible(prompt)){ShowWindow(prompt,SW_SHOW);SetForegroundWindow(prompt);}}
   }else{if(prompt)ShowWindow(prompt,SW_HIDE);if(window)y=pairingControls(window,y);}
@@ -61,6 +61,7 @@ struct NativeLanSettings::State {
  }
  void discoveryAction(int id){auto it=discoveryActions.find(id);if(it==discoveryActions.end())return;auto a=it->second;Result<void> result;
   if(a.kind==10&&discovery.available)result=discovery.available(!snapshot.enabled);if(a.kind==11&&discovery.search)result=discovery.search();if(a.kind==12&&discovery.stop_search)discovery.stop_search();if(a.kind==13&&discovery.accept)result=discovery.accept(a.peer);if(a.kind==14&&discovery.enter_code)result=discovery.enter_code(a.peer,code_edit?utf(code_edit):"");if(a.kind==15&&discovery.cancel)discovery.cancel(a.peer);if(a.kind==16&&discovery.select_interface)result=discovery.select_interface(a.peer);if(a.kind==17&&discovery.connect)result=discovery.connect(a.peer);
+  if(a.kind>=20&&a.kind<=22&&discovery.peer_options){auto p=std::find_if(snapshot.peers.begin(),snapshot.peers.end(),[&](const auto& p){return p.id==a.peer;});if(p!=snapshot.peers.end())result=discovery.peer_options(p->id,a.kind==20?!p->enabled:p->enabled,a.kind==21?!p->send:p->send,a.kind==22?!p->receive:p->receive);}
   snapshot=discovery.snapshot();if(!result)snapshot.message=result.error().message;signature=discovery_signature(snapshot);renderDiscovery();
  }
  void remember(){for(const auto& input:inputs)manualValues[input.field.key]=input.field.check?(SendMessageW(input.window,BM_GETCHECK,0,0)==BST_CHECKED?"1":"0"):utf(input.window);}

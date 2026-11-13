@@ -23,6 +23,7 @@ public:
  void history_policy(HistoryPolicy);
  bool running() const;
  std::string status() const;
+ std::map<std::string,std::string> peer_statuses() const;
  void stop();
 private: struct State;std::unique_ptr<State> state_;
 };

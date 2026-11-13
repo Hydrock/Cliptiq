@@ -11,9 +11,10 @@
 namespace cliptiq::lan {
 namespace {
 std::int64_t now(){return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();}
-std::string local_address(std::uint32_t index,int family){
+std::string local_address(std::uint32_t index,int family,bool link_local){
  ifaddrs* all=nullptr;if(getifaddrs(&all)!=0)return {};std::string result;
  for(auto* it=all;it;it=it->ifa_next){if(!it->ifa_addr||it->ifa_addr->sa_family!=family||if_nametoindex(it->ifa_name)!=index)continue;
+  if(family==AF_INET6&&static_cast<bool>(IN6_IS_ADDR_LINKLOCAL(&reinterpret_cast<sockaddr_in6*>(it->ifa_addr)->sin6_addr))!=link_local)continue;
   char text[INET6_ADDRSTRLEN]{};const void* address=family==AF_INET?static_cast<const void*>(&reinterpret_cast<sockaddr_in*>(it->ifa_addr)->sin_addr):static_cast<const void*>(&reinterpret_cast<sockaddr_in6*>(it->ifa_addr)->sin6_addr);
   if(inet_ntop(family,address,text,sizeof text)&&valid_numeric_endpoint(text,index)){result=text;break;}
  }freeifaddrs(all);return result;
@@ -25,7 +26,7 @@ struct NativeDiscovery::Impl {
  std::string id;bool local_only;DiscoveryInbox inbox,publication;std::uint64_t generation=0;std::int64_t deadline=0;
  std::vector<std::unique_ptr<Op>> ops;std::map<std::string,std::vector<DiscoveryDevice>> found;std::set<std::string> resolving;
  Impl(std::string id,bool local):id(std::move(id)),local_only(local),inbox(this->id),publication(this->id){publication.begin();}
- void failure(DNSServiceErrorType code,bool pub=false){(pub?publication:inbox).accept(pub?1:generation,{DiscoveryEvent::Kind::Failure,{},code==kDNSServiceErr_PolicyDenied?"Local network access was denied. Allow Cliptiq in System Settings.":"Bonjour discovery failed ("+std::to_string(code)+")."});}
+ void failure(DNSServiceErrorType code,bool pub=false){(pub?publication:inbox).accept(pub?1:generation,{DiscoveryEvent::Kind::Failure,{},code==kDNSServiceErr_PolicyDenied?"Local network access was denied. Allow Cliptiq in System Settings.":"Bonjour discovery failed ("+std::to_string(code)+").",pub});}
  std::unique_ptr<Op> operation(Kind k,std::string key={}){auto op=std::make_unique<Op>();op->owner=this;op->kind=k;op->key=std::move(key);return op;}
  static void registered(DNSServiceRef,DNSServiceFlags,DNSServiceErrorType e,const char*,const char*,const char*,void* context){auto& op=*static_cast<Op*>(context);if(e){op.owner->failure(e,true);op.done=true;}}
  static void browsed(DNSServiceRef,DNSServiceFlags flags,std::uint32_t index,DNSServiceErrorType e,const char* name,const char* type,const char* domain,void* context){
@@ -35,27 +36,27 @@ struct NativeDiscovery::Impl {
    auto it=self.found.find(key);if(it!=self.found.end()){for(auto& d:it->second)self.inbox.accept(self.generation,{DiscoveryEvent::Kind::Removed,d,{}});self.found.erase(it);}
    for(auto& op:self.ops)if(op->key==key)op->done=true;self.resolving.erase(key);return;
   }
-  if(self.ops.size()>=128||!self.resolving.insert(key).second)return;
+  if(self.ops.size()>=128||self.resolving.size()>=64||!self.resolving.insert(key).second)return;
   auto op=self.operation(Kind::Resolve,key);auto* raw=op.get();auto result=DNSServiceResolve(&op->ref,0,index,name,type,domain,resolved,raw);
   if(result){self.failure(result);self.resolving.erase(key);}else self.ops.push_back(std::move(op));
  }
  static void resolved(DNSServiceRef,DNSServiceFlags,std::uint32_t index,DNSServiceErrorType e,const char*,const char* host,std::uint16_t port,std::uint16_t size,const unsigned char* txt,void* context){
   auto& op=*static_cast<Op*>(context);auto& self=*op.owner;op.done=true;
   if(e){self.failure(e);self.resolving.erase(op.key);return;}
-  if(size>1024||!host||self.ops.size()>=128)return;
+  if(size>1024||!host||self.ops.size()>=128){self.resolving.erase(op.key);return;}
   auto address=self.operation(Kind::Address,op.key);address->device.host=host;address->device.interface_index=index;address->device.control_port=ntohs(port);address->txt.assign(txt,txt+size);
   auto result=DNSServiceGetAddrInfo(&address->ref,0,index,kDNSServiceProtocol_IPv4|kDNSServiceProtocol_IPv6,host,addressed,address.get());
   if(result){self.failure(result);self.resolving.erase(op.key);}else self.ops.push_back(std::move(address));
  }
  static void addressed(DNSServiceRef,DNSServiceFlags flags,std::uint32_t index,DNSServiceErrorType e,const char*,const sockaddr* address,std::uint32_t ttl,void* context){
-  auto& op=*static_cast<Op*>(context);auto& self=*op.owner;if(e){self.failure(e);return;}
+  auto& op=*static_cast<Op*>(context);auto& self=*op.owner;if(e){self.failure(e);op.done=true;self.resolving.erase(op.key);return;}
   if(!address||(address->sa_family!=AF_INET&&address->sa_family!=AF_INET6))return;
   auto d=op.device;d.interface_index=index;char text[INET6_ADDRSTRLEN]{};
   const void* raw=address->sa_family==AF_INET?static_cast<const void*>(&reinterpret_cast<const sockaddr_in*>(address)->sin_addr):static_cast<const void*>(&reinterpret_cast<const sockaddr_in6*>(address)->sin6_addr);
   if(!inet_ntop(address->sa_family,raw,text,sizeof text))return;d.address=text;
   // Local-only DNS callbacks use the pseudo interface index. Resolve loopback for tests.
   if(self.local_only){d.interface_index=if_nametoindex("lo0");d.interface_address=address->sa_family==AF_INET?"127.0.0.1":"::1";}
-  else d.interface_address=local_address(index,address->sa_family);
+  else d.interface_address=local_address(index,address->sa_family,address->sa_family==AF_INET6&&IN6_IS_ADDR_LINKLOCAL(&reinterpret_cast<const sockaddr_in6*>(address)->sin6_addr));
   d.expires_ms=now()+std::min<std::uint32_t>(ttl,30)*1000;
   auto parsed=decode_discovery_txt(op.txt,d);if(!parsed)return;d=std::move(parsed.value());
   bool added=(flags&kDNSServiceFlagsAdd)&&ttl>0;
@@ -89,8 +90,8 @@ std::vector<DiscoveryEvent> NativeDiscovery::poll(){
  auto& s=*impl_;if(s.deadline&&now()>=s.deadline){auto pending=s.inbox.drain();s.cancel_browse();auto pub=s.publication.drain();pending.insert(pending.end(),pub.begin(),pub.end());return pending;}
  // Snapshot pointers: a callback can append operations, but cannot free one here.
  std::vector<Impl::Op*> snapshot;for(auto& op:s.ops)snapshot.push_back(op.get());
- for(auto* op:snapshot){if(op->done)continue;int fd=DNSServiceRefSockFD(op->ref);if(fd<0||fd>=FD_SETSIZE){op->done=true;continue;}fd_set fds;FD_ZERO(&fds);FD_SET(fd,&fds);timeval timeout{};
-  if(select(fd+1,&fds,nullptr,nullptr,&timeout)>0){auto e=DNSServiceProcessResult(op->ref);if(e){s.failure(e,op->kind==Impl::Kind::Publish);op->done=true;}}
+ for(auto* op:snapshot){if(op->done)continue;int fd=DNSServiceRefSockFD(op->ref);if(fd<0||fd>=FD_SETSIZE){op->done=true;s.resolving.erase(op->key);continue;}fd_set fds;FD_ZERO(&fds);FD_SET(fd,&fds);timeval timeout{};
+  if(select(fd+1,&fds,nullptr,nullptr,&timeout)>0){auto e=DNSServiceProcessResult(op->ref);if(e){s.failure(e,op->kind==Impl::Kind::Publish);op->done=true;s.resolving.erase(op->key);}}
  }
  s.ops.erase(std::remove_if(s.ops.begin(),s.ops.end(),[](const auto& op){return op->done;}),s.ops.end());auto events=s.inbox.drain();auto pub=s.publication.drain();events.insert(events.end(),pub.begin(),pub.end());return events;
 }
