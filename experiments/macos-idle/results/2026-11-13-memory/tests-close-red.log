@@ -1,0 +1,14 @@
+Test project /Users/smitevils/Projects/cliptiq/Cliptiq/out/core-Darwin-release
+    Start 10: settings_native
+1/1 Test #10: settings_native ..................***Failed    0.83 sec
+PASS eight_native_panels_apply_to_real_store_and_disabled_future_controls
+FAIL native_settings: !find(window.contentView,@"settings-tabs")
+
+
+0% tests passed, 1 tests failed out of 1
+
+Total Test time (real) =   0.83 sec
+
+The following tests FAILED:
+	 10 - settings_native (Failed)
+Errors while running CTest

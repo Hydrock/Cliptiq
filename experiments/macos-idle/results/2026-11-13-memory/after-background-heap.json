@@ -1,0 +1,128 @@
+{
+  "nodes": 49733,
+  "allocated_bytes": 12515478,
+  "largest_types": [
+    {
+      "count": 17774,
+      "bytes": 8721484,
+      "type": "non-object"
+    },
+    {
+      "count": 918,
+      "bytes": 460736,
+      "type": "Class.methodCache._buckets (bucket_t)"
+    },
+    {
+      "count": 760,
+      "bytes": 301744,
+      "type": "NSMutableDictionary (Storage)"
+    },
+    {
+      "count": 5251,
+      "bytes": 283040,
+      "type": "CFString"
+    },
+    {
+      "count": 20,
+      "bytes": 264448,
+      "type": "Swift Metadata"
+    },
+    {
+      "count": 206,
+      "bytes": 133312,
+      "type": "CFDictionary (Value Storage)"
+    },
+    {
+      "count": 318,
+      "bytes": 123504,
+      "type": "NSDictionary"
+    },
+    {
+      "count": 8,
+      "bytes": 98304,
+      "type": "NSConcreteMutableData (Bytes Storage)"
+    },
+    {
+      "count": 94,
+      "bytes": 71264,
+      "type": "CFDictionary (Weak Key Storage)"
+    },
+    {
+      "count": 112,
+      "bytes": 62048,
+      "type": "CFDictionary (Key Storage)"
+    },
+    {
+      "count": 197,
+      "bytes": 51840,
+      "type": "CFData"
+    },
+    {
+      "count": 1444,
+      "bytes": 46208,
+      "type": "Metaclass.data (metaclass_rw_v2_t)"
+    },
+    {
+      "count": 821,
+      "bytes": 40848,
+      "type": "__NSMallocBlock__"
+    },
+    {
+      "count": 88,
+      "bytes": 39424,
+      "type": "_NSViewLayoutAux"
+    },
+    {
+      "count": 20,
+      "bytes": 37248,
+      "type": "CFData (Bytes Storage)"
+    },
+    {
+      "count": 283,
+      "bytes": 36224,
+      "type": "NSMapTable"
+    },
+    {
+      "count": 626,
+      "bytes": 34832,
+      "type": "NSMutableArray (Storage)"
+    },
+    {
+      "count": 679,
+      "bytes": 32592,
+      "type": "NSMutableArray"
+    },
+    {
+      "count": 870,
+      "bytes": 27840,
+      "type": "NSMutableDictionary"
+    },
+    {
+      "count": 406,
+      "bytes": 25520,
+      "type": "CFSet (Value Storage)"
+    }
+  ],
+  "controls": [
+    {
+      "count": 108,
+      "bytes": 8640,
+      "type": "NSLayoutConstraint"
+    },
+    {
+      "count": 7,
+      "bytes": 3584,
+      "type": "ViewGraph"
+    },
+    {
+      "count": 1,
+      "bytes": 896,
+      "type": "NSTextField"
+    },
+    {
+      "count": 1,
+      "bytes": 640,
+      "type": "NSStackView"
+    }
+  ]
+}

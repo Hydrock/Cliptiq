@@ -1,0 +1,11 @@
+Test project /Users/smitevils/Projects/cliptiq/Cliptiq/out/core-Darwin-release
+    Start 68: lan_end_to_end
+    Test #68: lan_end_to_end ...................   Passed    0.64 sec
+    Start 68: lan_end_to_end
+    Test #68: lan_end_to_end ...................   Passed    0.67 sec
+    Start 68: lan_end_to_end
+1/1 Test #68: lan_end_to_end ...................   Passed    0.67 sec
+
+100% tests passed out of 1
+
+Total Test time (real) =   1.97 sec
