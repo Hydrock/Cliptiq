@@ -15,10 +15,8 @@ extern "C" UINT cliptiq_test_track_popup(HMENU menu, UINT, int, int, HWND,
 #import <objc/runtime.h>
 static bool pick_item = false;
 static __weak NSWindow *popup_owner;
-static bool owner_is_panel, owner_nonactivating, owner_visible, owner_key;
-static bool owner_can_become_key, owner_can_become_main;
-static NSWindowCollectionBehavior owner_behavior;
-static NSInteger owner_level;
+static bool popup_has_view, popup_has_positioning_item;
+static NSApplicationActivationPolicy popup_policy;
 static NSPoint popup_screen_point;
 @interface NSMenu (CliptiqPopupBoundary)
 - (BOOL)cliptiq_testPopup:(NSMenuItem *)item
@@ -29,16 +27,9 @@ static NSPoint popup_screen_point;
 - (BOOL)cliptiq_testPopup:(NSMenuItem *)item
                atLocation:(NSPoint)p
                    inView:(NSView *)view {
-  (void)item;
+  popup_has_view=view!=nil;popup_has_positioning_item=item!=nil;
+  popup_policy=NSApp.activationPolicy;
   popup_owner = view.window;
-  owner_is_panel = [view.window isKindOfClass:NSPanel.class];
-  owner_nonactivating = bool(view.window.styleMask & NSWindowStyleMaskNonactivatingPanel);
-  owner_visible = view.window.visible;
-  owner_key = view.window.keyWindow;
-  owner_can_become_key = view.window.canBecomeKeyWindow;
-  owner_can_become_main = view.window.canBecomeMainWindow;
-  owner_behavior = view.window.collectionBehavior;
-  owner_level = view.window.level;
   popup_screen_point = view ? [view.window convertPointToScreen:[view convertPoint:p toView:nil]] : p;
   auto d = self.delegate;
   if ([d respondsToSelector:@selector(menuWillOpen:)])
@@ -191,12 +182,9 @@ int run(int argc, char **argv) {
       for(unsigned n=0;n<3;++n){
         pick_item=n!=0;
         ok(ui.show(ctx));
-        CHECK(owner_is_panel && owner_nonactivating && owner_visible);
-        CHECK(!owner_key && !owner_can_become_key && !owner_can_become_main);
-        CHECK(owner_behavior & NSWindowCollectionBehaviorCanJoinAllSpaces);
-        CHECK(owner_behavior & NSWindowCollectionBehaviorFullScreenAuxiliary);
-        CHECK(owner_behavior & NSWindowCollectionBehaviorCanJoinAllApplications);
-        CHECK(owner_level>=NSStatusWindowLevel);
+        CHECK(!popup_has_view && !popup_owner);
+        CHECK(!popup_has_positioning_item);
+        CHECK(popup_policy==NSApplicationActivationPolicyAccessory);
         CHECK(NSEqualPoints(popup_screen_point,NSMakePoint(*ctx.x,*ctx.y)));
         CHECK(!popup_owner || !popup_owner.visible);
         CHECK(workspace.visible==wasVisible);
@@ -205,7 +193,7 @@ int run(int argc, char **argv) {
         CHECK(calls==n);
         if(n)CHECK(command.invocation.target==ctx.target && command.invocation.activation_token==ctx.activation_token);
       }
-      std::cout<<"PASS nonactivating fullscreen popup owner, coordinates, cleanup and target\n";
+      std::cout<<"PASS accessory screen-coordinate popup, repeated cancellation/selection and target\n";
       return 0;
     }
     pick_item = false;

@@ -32,6 +32,10 @@ int main(int argc, char **argv) {
 #elif !defined(__APPLE__)
     CHECK(getenv("CLIPTIQ_TEST_ISOLATED"));
 #endif
+#ifdef __APPLE__
+    __block unsigned launches=0;
+    auto launchObserver=[NSNotificationCenter.defaultCenter addObserverForName:NSApplicationWillFinishLaunchingNotification object:nil queue:nil usingBlock:^(NSNotification *){++launches;}];
+#endif
     unsigned selected = 0;
     MenuCommand command;
     NativeMenuOptions options;
@@ -41,6 +45,11 @@ int main(int argc, char **argv) {
       command = std::move(c);
     });
     ok(ui.initialize());
+#ifdef __APPLE__
+    CHECK(launches==1);
+    [NSNotificationCenter.defaultCenter removeObserver:launchObserver];
+    std::cout<<"PASS custom_event_loop_finishes_appkit_launch\n";
+#endif
     CHECK(ui.status().launcher_visible && !ui.status().tray_available);
     std::cout << "PASS hidden_tray_keeps_launcher\n";
     MenuModel m;

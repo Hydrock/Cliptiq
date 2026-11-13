@@ -78,7 +78,7 @@ bool StartupPermissions::run(){ @autoreleasepool {
  if(s->owner!=std::this_thread::get_id() || !NSThread.isMainThread)return false;
  if(!s->calls.clipboard_allowed || !s->calls.paste_allowed || !s->calls.request_clipboard || !s->calls.request_paste)return false;
  if(s->ready())return true;
- [NSApplication sharedApplication];[NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
+ [NSApplication sharedApplication];[NSApp setActivationPolicy:NSApplicationActivationPolicyAccessory];
  s->accepted=false;s->target=[CliptiqStartupActions new];s->target->action=[s](NSInteger tag){s->clicked(tag);};
  s->window=[[NSPanel alloc] initWithContentRect:NSMakeRect(0,0,660,440) styleMask:NSWindowStyleMaskTitled|NSWindowStyleMaskClosable backing:NSBackingStoreBuffered defer:NO];
  s->window.releasedWhenClosed=NO;s->window.identifier=@"startup-permissions";s->window.title=loc(@"Set up Cliptiq");s->window.delegate=s->target;

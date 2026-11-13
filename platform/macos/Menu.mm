@@ -6,14 +6,6 @@
 #include <map>
 #include <cstring>
 #include <thread>
-// A menu needs an owner in the current Space, without activating Cliptiq or
-// replacing the foreground app that will receive the selected clipboard entry.
-@interface CliptiqPopupPanel : NSPanel
-@end
-@implementation CliptiqPopupPanel
-- (BOOL)canBecomeKeyWindow { return NO; }
-- (BOOL)canBecomeMainWindow { return NO; }
-@end
 @interface CliptiqMenuTarget : NSObject <NSMenuDelegate, NSWindowDelegate, NSApplicationDelegate> {
 @public
   std::function<void(NSMenuItem *)> invoke;
@@ -185,7 +177,7 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
     // Keep State alive through the cleanup guard, even if a command closes UI.
     auto keep = shared_from_this();
     ++opening;
-    os_log(OS_LOG_DEFAULT,"Cliptiq popup begin generation=%llu appHidden=%d appActive=%d",(unsigned long long)opening,(int)NSApp.hidden,(int)NSApp.active);
+    os_log(OS_LOG_DEFAULT,"Cliptiq popup begin generation=%llu appHidden=%d appActive=%d policy=%ld",(unsigned long long)opening,(int)NSApp.hidden,(int)NSApp.active,(long)NSApp.activationPolicy);
     invocation = ctx;
     if (invocation.target.empty() && options.invocation_provider)
       invocation = options.invocation_provider();
@@ -199,10 +191,7 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
       State *s;
       NSMenu *tracking;
       bool release;
-      NSPanel *anchor = nil;
       ~Reset() {
-        [anchor orderOut:nil];
-        [anchor close];
         s->invocation = {};
         s->explicit_tracking = false;
         if(release && s->menu==tracking) {
@@ -214,28 +203,18 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
     if (!tracking) return;
     NSPoint p = NSEvent.mouseLocation;
     if (ctx.x && ctx.y) p = NSMakePoint(*ctx.x, *ctx.y);
-    auto anchor = [[CliptiqPopupPanel alloc]
-        initWithContentRect:NSMakeRect(p.x, p.y, 1, 1)
-                  styleMask:NSWindowStyleMaskBorderless | NSWindowStyleMaskNonactivatingPanel
-                    backing:NSBackingStoreBuffered defer:NO];
-    reset.anchor = anchor;
-    anchor.releasedWhenClosed = NO;
-    anchor.opaque = NO;
-    anchor.backgroundColor = NSColor.clearColor;
-    anchor.hasShadow = NO;
-    anchor.ignoresMouseEvents = YES;
-    anchor.hidesOnDeactivate = NO;
-    anchor.animationBehavior = NSWindowAnimationBehaviorNone;
-    anchor.level = NSStatusWindowLevel;
-    anchor.collectionBehavior = NSWindowCollectionBehaviorCanJoinAllSpaces |
-        NSWindowCollectionBehaviorFullScreenAuxiliary |
-        NSWindowCollectionBehaviorCanJoinAllApplications |
-        NSWindowCollectionBehaviorTransient | NSWindowCollectionBehaviorIgnoresCycle;
-    [anchor orderFrontRegardless];
-    os_log(OS_LOG_DEFAULT,"Cliptiq popup owner visible=%d activeSpace=%d",(int)anchor.visible,(int)anchor.onActiveSpace);
-    BOOL selected = [tracking popUpMenuPositioningItem:tracking.numberOfItems ? [tracking itemAtIndex:0] : nil
-                           atLocation:NSZeroPoint inView:anchor.contentView];
-    os_log(OS_LOG_DEFAULT,"Cliptiq popup end selected=%d ownerActiveSpace=%d",(int)selected,(int)anchor.onActiveSpace);
+    // Like Clipy, use screen coordinates and no window/view owner for the
+    // accessory-app popup. Inspect its actual surfaces while AppKit tracks it.
+    // No window titles, clipboard values or target identifiers enter the log.
+    auto surfaceProbe=[NSTimer timerWithTimeInterval:0.05 repeats:NO block:^(NSTimer *){
+      unsigned visible=0,active=0;
+      for(NSWindow *w in NSApp.windows)if(w.visible && w.level>=NSPopUpMenuWindowLevel){++visible;if(w.onActiveSpace)++active;}
+      os_log(OS_LOG_DEFAULT,"Cliptiq popup surface visible=%u activeSpace=%u",visible,active);
+    }];
+    [[NSRunLoop mainRunLoop] addTimer:surfaceProbe forMode:NSEventTrackingRunLoopMode];
+    BOOL selected = [tracking popUpMenuPositioningItem:nil atLocation:p inView:nil];
+    [surfaceProbe invalidate];
+    os_log(OS_LOG_DEFAULT,"Cliptiq popup end selected=%d",(int)selected);
   }
   void refresh_workspace() {
     if(!workspace)return;
@@ -300,7 +279,7 @@ Result<void> NativeMenu::initialize() {
     return Error{ErrorCode::InvalidArgument,
                  "AppKit menu requires main thread"};
   [NSApplication sharedApplication];
-  [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
+  [NSApp setActivationPolicy:NSApplicationActivationPolicyAccessory];
   s->target = [CliptiqMenuTarget new];
   std::weak_ptr<State> weak = s;
   s->target->invoke = [weak](NSMenuItem *item) {
@@ -355,6 +334,10 @@ Result<void> NativeMenu::initialize() {
   }
   auto r = update({});
   s->tray();
+  // We pump AppKit manually rather than entering -[NSApplication run].
+  // Complete the launch handshake once, as -run normally does, before UI use.
+  static dispatch_once_t launched;
+  dispatch_once(&launched, ^{[NSApp finishLaunching];});
   if(!s->options.start_hidden||!s->status.tray_available)s->open_workspace();
   return r;
   }

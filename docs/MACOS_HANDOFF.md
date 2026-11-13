@@ -370,3 +370,76 @@ Ad-hoc подпись меняется при обновлениях: Accessibil
 записи и повторного явного разрешения пользователя; доступ к существующим
 LAN-ключам в login Keychain также может запрашиваться повторно. Постоянный
 сертификат подписи пока не настроен. Сетевой обмен пользователь подтвердил.
+
+### Проверка fullscreen: незавершённый запуск AppKit
+
+В установленной сборке hotkey received и popup begin/owner/end подтверждают
+доставку горячей клавиши и owner.onActiveSpace=1 даже при жалобе на невидимость
+меню. Это не доказывает видимость самого NSPopupMenuWindow. Отдельный probe
+с подтверждённым NSWindowDidEnterFullScreenNotification у другого тестового
+процесса показал видимые NSMenu-поверхности, но не воспроизвёл пользовательский
+сбой над реальными приложениями. Временные probes создавались только в /private/tmp.
+
+Подтверждён отдельный дефект: ручной цикл AppKit не вызывал finishLaunching.
+По документации Apple этот шаг выполняет NSApplication.run перед циклом:
+https://developer.apple.com/documentation/appkit/nsapplication/finishlaunching()
+Добавлен однократный finishLaunching после создания native menu/tray.
+Регрессионный menu_native наблюдает NSApplicationWillFinishLaunchingNotification:
+без исправления падает, с исправлением проходит. DidFinish зависит от доставки
+системного launch-события и не подходит для синхронного assertion в CLI test.
+
+Добавлен одноразовый tracking-mode probe уровня >= NSPopUpMenuWindowLevel:
+пишет только количество visible/onActiveSpace поверхностей меню, без имён окон,
+содержимого и идентификаторов целей. Таймер инвалидируется при возврате popup.
+Связь исправления launch handshake с пользовательским fullscreen-сбоем требует
+проверки в переустановленной сборке; не считать fullscreen исправленным заранее.
+
+Проверочная сборка launch-handshake установлена после удаления предыдущей.
+Release: 61/61, 68.43 s (/private/tmp/cliptiq-appkit-launch-release-tests.log).
+Запрошена повторная проверка двух вызовов в реальном полноэкранном приложении.
+При установке сброшена только старая запись Accessibility для Cliptiq; подпись
+нового полного пакета проверена до запуска. Staging-пакеты убраны в .noindex.
+
+После установки launch-handshake candidate повторная выдача доступа потребовала
+различить две TCC-записи: вручную добавленная по пути /Applications/Cliptiq.app
+и автоматически созданная по Bundle ID io.github.hydrock.Cliptiq. В System Settings
+они отображались как Cliptiq (on) и Cliptiq.app (off). После явного подтверждения
+пользователя через CUA включена именно вторая запись. tccd подтвердил
+authValue=2/authReason=4 для Accessibility и PostEvent в текущем процессе.
+Стартовое окно осталось в runModal, ожидая Continue (автопереход не реализован).
+Повторная проверка fullscreen после Continue остаётся открытой. Не пересобирать
+или повторно сбрасывать доступ до получения этой проверки.
+
+### Сравнение fullscreen с Clipy (13 ноября 2026)
+
+Пользователь подтвердил: один finishLaunching не устранил fullscreen-сбой.
+Свежие логи показывают hotkey received, menu surfaces visible=2/activeSpace=2,
+но визуальная доступность в реальных полноэкранных приложениях не подтверждена.
+
+Изучены текущие первичные исходники Clipy develop:
+- Clipy/Sources/Services/HotKeyService.swift: callback вызывает MenuManager.popUpMenu.
+- Clipy/Sources/Managers/MenuManager.swift: popUp(positioning:nil, at:NSEvent.mouseLocation, in:nil).
+- Clipy/Supporting Files/Info.plist: LSUIElement=true; переход в regular отсутствует.
+Источник: https://github.com/Clipy/Clipy/blob/develop/Clipy/Sources/Managers/MenuManager.swift
+
+Перенесён механизм: NSApplicationActivationPolicyAccessory в NativeMenu и startup
+permissions, popup в экранных координатах с nil positioning item и nil view.
+Удалён прозрачный NSPanel owner и его lifecycle. Захваченный InvocationContext,
+одноразовый model generation, keyboard modifiers и paste target сохраняются.
+Тест menu_fullscreen_owner теперь проверяет contract accessory/screen popup,
+три повторных cancel/select, координаты, очистку и неизменность foreground/target.
+RED до изменения: !popup_has_view && !popup_owner. GREEN после: 8/8 native
+Debug checks. Полноэкранная пользовательская проверка новой схемы ещё требуется.
+
+### Fullscreen подтверждён пользователем
+
+13 ноября 2026 пользователь проверил установленную сборку со схемой Clipy:
+«теперь это работает везде», повторный вызов — «Появляется оба раза».
+Рабочее решение: сохранять activationPolicy accessory (LSUIElement), показывать
+NSMenu в экранных координатах с positioningItem=nil и inView=nil, без прозрачного
+окна-владельца. Предыдущий finishLaunching сам по себе сбой не исправил.
+Release-проверка новой схемы: 61/61, 58.83 s
+(/private/tmp/cliptiq-clipy-release-tests.log); 8/8 целевых Debug проверок.
+Установлена одна /Applications/Cliptiq.app после удаления предыдущей версии;
+оба разрешения подтверждены tccd после перезапуска того же бинарника.
+Fullscreen-сбой закрыт пользовательской проверкой, включая повторное открытие.
