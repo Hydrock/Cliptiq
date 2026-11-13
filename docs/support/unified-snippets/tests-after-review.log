@@ -1,0 +1,17 @@
+Test project C:/Users/SmiteVils/.codex/worktrees/lan-clipboard/cliptiq/out/windows-build-cdf72ba
+    Start  4: editor
+1/6 Test  #4: editor ...........................   Passed    0.21 sec
+    Start  7: editor_inline_rename
+2/6 Test  #7: editor_inline_rename .............   Passed    0.19 sec
+    Start  8: snippets_workspace
+3/6 Test  #8: snippets_workspace ...............   Passed    0.29 sec
+    Start 16: paste
+4/6 Test #16: paste ............................   Passed    0.02 sec
+    Start 18: menu_idle_wait
+5/6 Test #18: menu_idle_wait ...................   Passed    0.54 sec
+    Start 36: menu
+6/6 Test #36: menu .............................   Passed    0.07 sec
+
+100% tests passed, 0 tests failed out of 6
+
+Total Test time (real) =   1.44 sec

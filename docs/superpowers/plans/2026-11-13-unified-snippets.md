@@ -32,6 +32,6 @@
 ### Task 3: Verification and delivery
 - [x] Build Windows and run available CTest suite, localization and diff checks.
 - [x] Review changed lifecycle and platform guards; document macOS build limitation and handoff.
-- [ ] Install Windows build preserving profile, inspect main Snippets UI, commit results.
+- [x] Install Windows build preserving profile, inspect main Snippets UI, commit results.
 
 Review rulings: retain the existing session on remount to preserve undo; refresh fonts in-place on DPI change; outline Cmd+C requires actual first-responder status so body selection copying stays native. Windows 62/62 available tests passed, then 6 affected tests passed after review fixes. macOS integration tests added, execution pending a Mac.

@@ -1,0 +1,11 @@
+{
+  "snippet_tables_unchanged": true,
+  "counts": {
+    "snippets": 2,
+    "snippet_folders": 3,
+    "snippet_states": 2,
+    "snippet_folder_states": 1
+  },
+  "installed_source_commit": "61826dc",
+  "installed_exe_sha256": "bd46d5cb5d07d647ff3e2ce581f8eac0a2d86512ade0ab0ab43caaf47419467c"
+}
