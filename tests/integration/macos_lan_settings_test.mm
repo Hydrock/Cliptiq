@@ -20,6 +20,7 @@ static NSControl *field(NSView *root, NSString *title) {
  for(NSView *child in root.subviews)if(auto result=field(child,title))return result;
  return nil;
 }
+static NSTextField* codeField(NSView* root){if([root isKindOfClass:NSTextField.class]&&[((NSTextField*)root).placeholderString isEqualToString:[NSString stringWithUTF8String:tr("6-digit code").c_str()]])return (NSTextField*)root;for(NSView* child in root.subviews)if(auto result=codeField(child))return result;return nil;}
 static NSTabView *tabs(NSView *root) {
  if([root isKindOfClass:NSTabView.class])return (NSTabView *)root;
  for(NSView *child in root.subviews)if(auto result=tabs(child))return result;
@@ -71,5 +72,16 @@ int main(int argc,char **argv) { @autoreleasepool { try {
  [window.contentView layoutSubtreeIfNeeded];[NSApp updateWindows];CHECK(panel.frame.size.height>window.contentView.frame.size.height);
  click("Cancel");CHECK(!field(panel,text("Peer address")) && saves==3);
  [window performClose:nil];CHECK(!window.visible);window=show();CHECK(window.visible && panel.window==window);
- [window performClose:nil];std::cout<<"PASS embedded macOS Network settings: draft, keys, repeated save, cancel, layout and reopen\n";return 0;
+ [window performClose:nil];
+ NativeLanSettings discoveredNetwork;lan::DiscoverySnapshot snapshot;snapshot.available=true;unsigned searches=0,closes=0,approvals=0,submitted=0;DiscoveryUiCallbacks callbacks;callbacks.snapshot=[&]{return snapshot;};callbacks.available=[&](bool value)->Result<void>{snapshot.enabled=value;return {};};callbacks.search=[&]()->Result<void>{++searches;snapshot.searching=true;return {};};callbacks.stop_search=[&]{snapshot.searching=false;};callbacks.close_view=[&]{++closes;};callbacks.connect=[](std::string)->Result<void>{return {};};callbacks.accept=[&](std::string id)->Result<void>{CHECK(id=="ui-session");++approvals;return {};};callbacks.enter_code=[&](std::string id,std::string code)->Result<void>{CHECK(id=="ui-session"&&code=="123456");++submitted;return {};};callbacks.cancel=[](std::string){};
+ discoveredNetwork.discovery(callbacks);CHECK(discoveredNetwork.show(config,[](lan::Config&,std::map<std::string,std::string>)->Result<void>{return {};},[]()->Result<std::string>{return std::string(64,'a');},[](std::string)->Result<void>{return {};}));
+ NSWindow* discoveryWindow=nil;for(NSWindow* candidate in NSApp.windows)if([candidate.title isEqualToString:text("Advanced LAN settings")]&&candidate.visible)discoveryWindow=candidate;CHECK(discoveryWindow);
+ auto searchButton=button(discoveryWindow.contentView,text("Find devices on network"));CHECK(searchButton);[searchButton performClick:nil];CHECK(searches==1);CHECK(discoveredNetwork.process_events());
+ auto manual=button(discoveryWindow.contentView,text("Manual connection"));CHECK(manual);[manual performClick:nil];auto nameField=(NSTextField*)field(discoveryWindow.contentView,text("Local device name"));CHECK(nameField&&!nameField.hidden);nameField.stringValue=@"Preserve draft";
+ lan::DiscoveryDevice found;found.device_id="found";found.name="Same name";found.platform="windows";auto sameName=found;sameName.device_id="another-found";snapshot.devices={found,sameName};CHECK(discoveredNetwork.process_events());CHECK([nameField.stringValue isEqualToString:@"Preserve draft"]);CHECK(button(discoveryWindow.contentView,text("Connect")));
+ snapshot.pairing=lan::PairingEvent::Kind::Incoming;snapshot.session_id="ui-session";snapshot.peer_name="Test PC";CHECK(discoveredNetwork.process_events());auto allow=button(discoveryWindow.contentView,text("Allow pairing"));CHECK(allow);[allow performClick:nil];CHECK(approvals==1);
+ snapshot.pairing=lan::PairingEvent::Kind::Code;snapshot.code="012345";CHECK(discoveredNetwork.process_events());CHECK(button(discoveryWindow.contentView,text("Cancel pairing")));
+ snapshot.pairing=lan::PairingEvent::Kind::EnterCode;snapshot.code.clear();CHECK(discoveredNetwork.process_events());auto input=codeField(discoveryWindow.contentView);CHECK(input);input.stringValue=@"123456";snapshot.message="Search complete.";CHECK(discoveredNetwork.process_events());CHECK([codeField(discoveryWindow.contentView).stringValue isEqualToString:@"123456"]);[button(discoveryWindow.contentView,text("Pair device")) performClick:nil];CHECK(submitted==1);
+ [discoveryWindow performClose:nil];CHECK(closes==1);snapshot.message="Late result";CHECK(discoveredNetwork.process_events());
+ std::cout<<"PASS embedded macOS Network settings: draft, keys, repeated save, cancel, layout and reopen\n";return 0;
  }catch(const std::exception &error){std::cerr<<error.what()<<'\n';return 1;} } }

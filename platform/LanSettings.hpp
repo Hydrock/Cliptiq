@@ -1,5 +1,6 @@
 #pragma once
 #include "cliptiq/lan.hpp"
+#include "DiscoveryUi.hpp"
 #include <map>
 namespace cliptiq {
 class NativeLanSettings {
@@ -15,5 +16,6 @@ public:
   Result<void> apply();
 #endif
   void status(std::string);
+  void discovery(DiscoveryUiCallbacks);
 };
 } // namespace cliptiq

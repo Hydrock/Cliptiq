@@ -425,6 +425,7 @@ int host(int argc, char **argv) {
 #ifdef CLIPTIQ_WITH_LAN
     std::unique_ptr<lan::Service> network_service;
     NativeLanSettings network_window;
+    std::unique_ptr<lan::DiscoveryService> network_discovery;
     std::string last_network_status;
     if(!smoke && clipboard && path!=":memory:") {
       lan::ClipboardHooks hooks;
@@ -455,13 +456,24 @@ int host(int argc, char **argv) {
       network_service->history_policy(settings_history(preferences));
       auto started=network_service->initialize();if(!started)std::cerr<<started.error().message<<'\n';
       network=network_service.get();
+      network_discovery=std::make_unique<lan::DiscoveryService>(store,*network_service,clipboard->capabilities().platform);
+      auto discovery_started=network_discovery->initialize();if(!discovery_started)std::cerr<<discovery_started.error().message<<'\n';
+      DiscoveryUiCallbacks discovery_ui;
+      discovery_ui.snapshot=[&]{return network_discovery->snapshot();};
+      discovery_ui.available=[&](bool value){return network_discovery->available(value);};
+      discovery_ui.select_interface=[&](std::string id){return network_discovery->select_interface(std::move(id));};
+      discovery_ui.search=[&]{return network_discovery->search();};discovery_ui.stop_search=[&]{network_discovery->stop_search();};
+      discovery_ui.connect=[&](std::string id){return network_discovery->connect(id);};discovery_ui.accept=[&](std::string id){return network_discovery->accept(id);};
+      discovery_ui.enter_code=[&](std::string id,std::string code){return network_discovery->enter_code(id,std::move(code));};
+      discovery_ui.cancel=[&](std::string id){network_discovery->cancel(id);};discovery_ui.close_view=[&]{network_discovery->close_view();};
+      network_window.discovery(std::move(discovery_ui));
 #ifdef __APPLE__
       settings_window.advanced_apply([&]{return network_window.apply();});
 #endif
       settings_window.advanced([&](void* parent){
         auto config=network_service->config();if(!config){settings_window.status(config.error().message);return;}
         auto shown=network_window.show(std::move(config.value()),
-          [&](lan::Config& draft,std::map<std::string,std::string> keys)->Result<void>{auto saved=network_service->save(draft,std::move(keys));if(!saved)return saved;auto current=network_service->config();if(!current)return current.error();draft=std::move(current.value());return {};},
+          [&](lan::Config& draft,std::map<std::string,std::string> keys)->Result<void>{auto saved=network_service->save(draft,std::move(keys));if(!saved)return saved;auto current=network_service->config();if(!current)return current.error();draft=std::move(current.value());auto discovery=network_discovery->initialize();if(!discovery)return discovery;return {};},
           []{return lan::generate_key();},[&](std::string key){return network_service->copy_secret(key);},parent);
         if(!shown)settings_window.status(shown.error().message);
         else {last_network_status=network_service->status();network_window.status(last_network_status);}
@@ -932,6 +944,7 @@ int host(int argc, char **argv) {
 #endif
       ok(settings_window.process_events());
 #ifdef CLIPTIQ_WITH_LAN
+      if(network_discovery)network_discovery->poll();
       ok(network_window.process_events());
       if(network_service){
         if(network_service->poll())refresh=true;
@@ -1141,6 +1154,7 @@ int host(int argc, char **argv) {
     (void)tray;
 #endif
 #ifdef CLIPTIQ_WITH_LAN
+    if(network_discovery)network_discovery->stop();
     network=nullptr;if(network_service)network_service->stop();
 #endif
     if (session)
