@@ -389,5 +389,6 @@
   "Send clipboard": "Отправлять",
   "Receive clipboard": "Получать",
   "Device reconnected.": "Связь с устройством восстановлена.",
-  "Device endpoint could not be verified.": "Не удалось подтвердить новый адрес устройства."
+  "Device endpoint could not be verified.": "Не удалось подтвердить новый адрес устройства.",
+  "Finish or cancel pairing before removing a device.": "Завершите или отмените сопряжение, прежде чем удалять устройство."
 }

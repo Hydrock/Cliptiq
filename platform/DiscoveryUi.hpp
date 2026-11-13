@@ -5,6 +5,7 @@ struct DiscoveryUiCallbacks {
  std::function<lan::DiscoverySnapshot()> snapshot;
  std::function<Result<void>(bool)> available;
  std::function<Result<void>(std::string,bool,bool,bool)> peer_options;
+ std::function<Result<lan::Config>(std::string)> remove_peer;
  std::function<Result<void>(std::string)> select_interface;
  std::function<Result<void>()> search;std::function<void()> stop_search;
  std::function<Result<void>(std::string)> connect,accept;

@@ -35,6 +35,7 @@ public:
  DiscoveryService(Store&,DiscoveryHooks);~DiscoveryService();
  Result<void> initialize();DiscoverySnapshot snapshot() const;
  Result<void> available(bool);Result<void> select_interface(std::string);
+ Result<Config> remove_peer(const std::string&);
  Result<void> peer_options(const std::string&,bool enabled,bool send,bool receive);
  Result<void> search();void stop_search();Result<void> connect(const std::string& device_id);
  Result<void> accept(const std::string&);Result<void> enter_code(const std::string&,std::string);

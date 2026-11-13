@@ -460,6 +460,7 @@ int host(int argc, char **argv) {
       auto discovery_started=network_discovery->initialize();if(!discovery_started)std::cerr<<discovery_started.error().message<<'\n';
       DiscoveryUiCallbacks discovery_ui;
       discovery_ui.snapshot=[&]{return network_discovery->snapshot();};
+      discovery_ui.remove_peer=[&](std::string id){return network_discovery->remove_peer(id);};
       discovery_ui.peer_options=[&](std::string id,bool enabled,bool send,bool receive){return network_discovery->peer_options(id,enabled,send,receive);};
       discovery_ui.available=[&](bool value){return network_discovery->available(value);};
       discovery_ui.select_interface=[&](std::string id){return network_discovery->select_interface(std::move(id));};

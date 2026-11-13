@@ -389,5 +389,6 @@
   "Send clipboard": "Send clipboard",
   "Receive clipboard": "Receive clipboard",
   "Device reconnected.": "Device reconnected.",
-  "Device endpoint could not be verified.": "Device endpoint could not be verified."
+  "Device endpoint could not be verified.": "Device endpoint could not be verified.",
+  "Finish or cancel pairing before removing a device.": "Finish or cancel pairing before removing a device."
 }
