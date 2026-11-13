@@ -556,3 +556,27 @@ unchanged tree for the same session/locale; rebuild on structural/locale changes
 The audit also corrected the old CPU sampler: RUSAGE_INFO_V2 CPU counters require
 Mach timebase conversion (125/3 here). Previous ~0.07% claims were wrong; fresh
 background CPU is around 3% of one core. Footprint measurements were unaffected.
+
+
+## Unified snippets workspace (13 November 2026, Windows implementation pass)
+
+Main window Snippets now mounts the existing native editor: folder/snippet tree,
+inline rename, editable body, autosave, undo/redo, enable-in-menu, folder hotkeys,
+drag/drop and Copy. Sidebar Edit Snippets is removed. Editor launch command opens
+this page. History remains read-only. Linux keeps its standalone editor fallback.
+
+AppKit code keeps the same outline/view graph across close/reopen for the same
+session/locale; unmount removes the panel and releases its host-window reference.
+The panel must never close/orderOut its host window. Main close/settings rebuild
+uses the pending-save/draft guard. Copy waits for persistence and uses the existing
+copy-only selection pipeline, including snippets hidden from the quick menu.
+Outline Return/Cmd+C copies the snippet; Cmd+C in body/rename copies selected text.
+
+Windows build and 62 available tests passed, plus six targeted checks after review.
+macOS changes have only been reviewed from Windows; they are NOT build-verified.
+On Mac, build and run CTest `snippets_workspace`, `snippets_workspace_ru`,
+`workspace_native`, `workspace_native_ru`, `editor_inline_rename` and other editor
+reuse/structure/locale checks. Check repeated close/reopen retains the outline,
+undo and current text, folder shortcuts, normal text-selection Copy, and Keychain
+permissions using the existing persistent-signing installation workflow. Do not
+infer a macOS performance result from Windows tests.

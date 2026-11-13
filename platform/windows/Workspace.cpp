@@ -4,7 +4,12 @@
 #include <stdexcept>
 namespace cliptiq::windows {
 namespace {
-constexpr int History=7101,Snippets=7102,Settings=7103,Editor=7104,Copy=7105,Erase=7106,Clear=7107,Filter=7109,List=7110;
+constexpr int History=7101,Snippets=7102,Settings=7103,Copy=7105,Erase=7106,Clear=7107,Filter=7109,List=7110;
+LRESULT CALLBACK panel_proc(HWND w,UINT m,WPARAM wp,LPARAM lp,UINT_PTR id,DWORD_PTR){
+ if(m==WM_SIZE){if(auto child=GetWindow(w,GW_CHILD)){RECT r{};GetClientRect(w,&r);MoveWindow(child,0,0,r.right,r.bottom,TRUE);}}
+ if(m==WM_NCDESTROY)RemoveWindowSubclass(w,panel_proc,id);
+ return DefSubclassProc(w,m,wp,lp);
+}
 LRESULT CALLBACK preview_proc(HWND window,UINT message,WPARAM wp,LPARAM lp,UINT_PTR id,DWORD_PTR){
  // Retain native focus, selection, scrolling and copying. The read-only EDIT
  // creates its caret during default focus handling; hide that caret once.
@@ -35,7 +40,7 @@ Workspace::Workspace(HWND owner,const NativeMenuOptions& options,std::function<v
  history_=control(L"BUTTON",L"История",BS_OWNERDRAW|WS_TABSTOP,History);
  snippets_=control(L"BUTTON",L"Сниппеты",BS_OWNERDRAW|WS_TABSTOP,Snippets);
  settings_=control(L"BUTTON",L"Настройки",BS_PUSHBUTTON|WS_TABSTOP,Settings);
- editor_=control(L"BUTTON",L"Редактор сниппетов",BS_PUSHBUTTON|WS_TABSTOP,Editor);
+
  quit_=control(L"BUTTON",L"Выйти из Cliptiq",BS_PUSHBUTTON|WS_TABSTOP,WorkspaceQuit);
  heading_=control(L"STATIC",L"История буфера",0,7192);SendMessageW(heading_,WM_SETFONT,reinterpret_cast<WPARAM>(bold_font_),TRUE);
  summary_=control(L"STATIC",L"",0,7193);
@@ -53,21 +58,33 @@ Workspace::Workspace(HWND owner,const NativeMenuOptions& options,std::function<v
  copy_=control(L"BUTTON",L"Копировать",WS_TABSTOP|BS_DEFPUSHBUTTON,Copy);
  erase_=control(L"BUTTON",L"Удалить запись",WS_TABSTOP,Erase);
  clear_=control(L"BUTTON",L"Очистить историю…",WS_TABSTOP,Clear);
+ snippet_panel_=control(L"STATIC",L"",WS_CLIPCHILDREN,7198,WS_EX_CONTROLPARENT);
+ SetWindowSubclass(snippet_panel_,panel_proc,1,0);ShowWindow(snippet_panel_,SW_HIDE);
  status_=control(L"STATIC",wide(options.workspace_status).c_str(),0,7197);
  layout(dpi_);
 }
 Workspace::~Workspace(){
+ if(editor_mounted_&&options_.workspace_snippets)options_.workspace_snippets(0,{});
  if(options_.workspace_image)options_.workspace_image(std::nullopt);
  for(auto w:children_)if(IsWindow(w))DestroyWindow(w);
  if(bitmap_)DeleteObject(bitmap_);if(row_images_)ImageList_Destroy(row_images_);
  if(font_)DeleteObject(font_);if(title_font_)DeleteObject(title_font_);if(bold_font_)DeleteObject(bold_font_);
 }
 void Workspace::layout(unsigned dpi){
+ if(dpi && dpi!=dpi_){
+  auto make=[&](int size,int weight){return CreateFontW(-MulDiv(size,dpi,72),0,0,0,weight,FALSE,FALSE,FALSE,DEFAULT_CHARSET,0,0,CLEARTYPE_QUALITY,0,L"Segoe UI");};
+  auto normal=make(10,FW_NORMAL),title=make(22,FW_SEMIBOLD),bold=make(11,FW_SEMIBOLD);
+  if(normal&&title&&bold){
+   for(auto child:children_)SendMessageW(child,WM_SETFONT,reinterpret_cast<WPARAM>(child==GetDlgItem(owner_,7190)?title:child==heading_?bold:normal),TRUE);
+   DeleteObject(font_);DeleteObject(title_font_);DeleteObject(bold_font_);font_=normal;title_font_=title;bold_font_=bold;
+  }else {if(normal)DeleteObject(normal);if(title)DeleteObject(title);if(bold)DeleteObject(bold);}
+ }
  dpi_=dpi?dpi:96;RECT r{};GetClientRect(owner_,&r);const int w=MulDiv(r.right,96,dpi_),h=MulDiv(r.bottom,96,dpi_);
  auto place=[&](HWND c,int x,int y,int cw,int ch){MoveWindow(c,px(x),px(y),px(std::max(1,cw)),px(std::max(1,ch)),TRUE);};
  place(GetDlgItem(owner_,7190),24,14,180,40);place(GetDlgItem(owner_,7191),25,59,w-50,24);
- place(history_,14,112,164,42);place(snippets_,14,160,164,42);place(settings_,14,h-146,164,34);place(editor_,14,h-104,164,34);place(quit_,14,h-62,164,34);
+ place(history_,14,112,164,42);place(snippets_,14,160,164,42);place(settings_,14,h-104,164,34);place(quit_,14,h-62,164,34);
  const int left=212,body=std::max(460,w-left-24),listw=std::max(250,(body*53)/100),detail=left+listw+24,detailw=w-detail-24;
+ place(snippet_panel_,left,144,w-left-24,h-180);
  place(heading_,left,108,listw,28);place(summary_,left,139,listw,22);place(filter_,left,172,listw,32);
  place(list_,left,216,listw,h-304);place(preview_heading_,detail,112,detailw,24);place(preview_,detail,149,detailw,h-291);place(image_,detail,149,detailw,h-291);
  place(copy_,detail,h-122,detailw,36);place(erase_,detail,h-78,detailw,32);place(clear_,left,h-78,listw,32);place(status_,212,h-31,w-236,23);
@@ -75,7 +92,26 @@ void Workspace::layout(unsigned dpi){
  InvalidateRect(owner_,nullptr,TRUE);
 }
 const WorkspaceRow* Workspace::selection()const{int n=ListView_GetNextItem(list_,-1,LVNI_SELECTED);return n>=0&&size_t(n)<visible_.size()?&rows_[visible_[n]]:nullptr;}
-void Workspace::update(MenuModel m){model_=std::move(m);filter();}
+Result<void> Workspace::select_page(MenuKind page){
+ if(page!=MenuKind::History&&page!=MenuKind::Snippets)return Error{ErrorCode::InvalidArgument,"Invalid workspace page"};
+ if(page==MenuKind::Snippets && options_.workspace_snippets && !editor_mounted_){
+  auto mounted=options_.workspace_snippets(reinterpret_cast<std::uintptr_t>(snippet_panel_),[this](const std::string& id){
+   auto latest=options_.workspace_model?options_.workspace_model():Result<MenuModel>(model_);
+   if(!latest){status(latest.error().message);return;}
+   MenuCommand command{MenuAction::SelectSnippet,id,latest.value().revision};command.invocation.copy_only=true;action_(std::move(command));
+  });
+  if(!mounted){status(mounted.error().message);return mounted;}
+  editor_mounted_=true;
+ }
+ page_=page;
+ bool editing=page_==MenuKind::Snippets&&editor_mounted_;
+ for(auto w:{summary_,filter_,list_,preview_heading_,preview_,image_,copy_,erase_,clear_})ShowWindow(w,editing?SW_HIDE:SW_SHOW);
+ ShowWindow(snippet_panel_,editing?SW_SHOW:SW_HIDE);
+ if(editing){SetWindowTextW(heading_,L"Сниппеты");if(options_.workspace_image)options_.workspace_image(std::nullopt);if(bitmap_){DeleteObject(bitmap_);bitmap_=nullptr;}if(auto child=GetWindow(snippet_panel_,GW_CHILD))SetFocus(GetDlgItem(child,501));}
+ else filter();
+ InvalidateRect(history_,nullptr,TRUE);InvalidateRect(snippets_,nullptr,TRUE);return {};
+}
+void Workspace::update(MenuModel m){model_=std::move(m);if(page_!=MenuKind::Snippets||!editor_mounted_)filter();}
 void Workspace::filter(){
  auto old=selection();std::string id=old?old->item.id:"";
  changing_=true;rows_=workspace_rows(model_,page_);visible_.clear();SendMessageW(list_,WM_SETREDRAW,FALSE,0);ListView_DeleteAllItems(list_);
@@ -106,11 +142,13 @@ void Workspace::selected(){
 }
 void Workspace::status(const std::string& s){SetWindowTextW(status_,wide(s).c_str());}
 void Workspace::execute(bool erase){
+ if(page_==MenuKind::Snippets&&editor_mounted_)return;
  auto row=selection();if(!row||(erase&&page_!=MenuKind::History))return;
  if(erase&&MessageBoxW(owner_,L"Удалить эту запись из истории?",L"Cliptiq",MB_YESNO|MB_ICONQUESTION|MB_DEFBUTTON2)!=IDYES)return;
  MenuCommand c{row->item.action,row->item.id,model_.revision};c.invocation.copy_only=true;c.invocation.delete_only=erase;action_(std::move(c));
 }
 bool Workspace::key(MSG& m){
+ if(page_==MenuKind::Snippets&&editor_mounted_)return false;
  if(m.message!=WM_KEYDOWN)return false;
  if((GetKeyState(VK_CONTROL)&0x8000)&&m.wParam=='F'){SetFocus(filter_);return true;}
  if(m.hwnd==list_&&m.wParam==VK_RETURN){execute(false);return true;}
@@ -121,9 +159,9 @@ bool Workspace::key(MSG& m){
 bool Workspace::message(UINT msg,WPARAM wp,LPARAM lp,LRESULT& result){
  if(msg==WM_COMMAND){int id=LOWORD(wp);if(id==Filter&&HIWORD(wp)==EN_CHANGE){filter();result=0;return true;}
   if(HIWORD(wp)!=BN_CLICKED)return false;
-  if(id==History||id==Snippets){page_=id==History?MenuKind::History:MenuKind::Snippets;filter();}
+  if(id==History||id==Snippets){select_page(id==History?MenuKind::History:MenuKind::Snippets);}
   else if(id==Copy)execute(false);else if(id==Erase)execute(true);
-  else if(id==Settings||id==Editor||id==Clear||id==WorkspaceQuit){auto action=id==Settings?MenuAction::OpenSettings:id==Editor?MenuAction::OpenEditor:id==Clear?MenuAction::ClearHistory:MenuAction::Quit;action_({action,"",model_.revision});}
+  else if(id==Settings||id==Clear||id==WorkspaceQuit){auto action=id==Settings?MenuAction::OpenSettings:id==Clear?MenuAction::ClearHistory:MenuAction::Quit;action_({action,"",model_.revision});}
   else return false;result=0;return true;
  }
  if(msg==WM_NOTIFY&&reinterpret_cast<NMHDR*>(lp)->hwndFrom==list_){auto h=reinterpret_cast<NMHDR*>(lp);if(h->code==LVN_ITEMCHANGED)selected();else if(h->code==NM_DBLCLK)execute(false);result=0;return true;}

@@ -230,6 +230,7 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
     [window makeKeyAndOrderFront:nil];[NSApp activateIgnoringOtherApps:YES];status.launcher_visible=true;
   }
   void hide_workspace() {
+    if(options.workspace_can_close){auto close=options.workspace_can_close();if(!close||!close.value())return;}
     [window orderOut:nil];status.launcher_visible=false;
     std::weak_ptr<State> weak=shared_from_this();
     dispatch_async(dispatch_get_main_queue(), ^{if(auto s=weak.lock())if(!s->window.visible&&s->options.workspace_enabled){s->workspace.reset();s->window.contentView=[NSView new];}});
@@ -372,6 +373,10 @@ Result<void> NativeMenu::set_options(NativeMenuOptions options) {
       !options.preview_width || !options.preview_height ||
       options.preview_width > 512 || options.preview_height > 512)
     return Error{ErrorCode::InvalidArgument, "Invalid live menu options"};
+  if(s->workspace && s->options.workspace_can_close){
+    auto close=s->options.workspace_can_close();if(!close)return close.error();
+    if(!close.value())return Error{ErrorCode::Busy,"Snippet draft retained"};
+  }
   s->workspace.reset();
   s->options = std::move(options);
   if(s->window.visible&&s->options.workspace_enabled)s->open_workspace();
@@ -411,7 +416,7 @@ Result<void> NativeMenu::process_events(unsigned wait) {
   }
   return {};
 }
-Result<void> NativeMenu::show_workspace(){auto s=state_;if(!s->thread()||!s->window)return Error{ErrorCode::InvalidArgument,"Workspace requires AppKit owner"};s->open_workspace();return {};}
+Result<void> NativeMenu::show_workspace(std::optional<MenuKind> page){auto s=state_;if(!s->thread()||!s->window)return Error{ErrorCode::InvalidArgument,"Workspace requires AppKit owner"};s->open_workspace();if(page&&s->workspace)return s->workspace->select_page(*page);return {};}
 void NativeMenu::workspace_status(const std::string &value){auto s=state_;if(s->thread()&&s->workspace)s->workspace->status(value);}
 NativeMenuStatus NativeMenu::status() const { return state_->status; }
 NativeMenuHandles NativeMenu::native_handles() const {

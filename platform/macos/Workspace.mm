@@ -39,7 +39,10 @@ NSImage *wsImage(const cliptiq::MenuImage &i) {
  std::vector<cliptiq::WorkspaceRow> rows;
  std::vector<size_t> visible;
  cliptiq::MenuKind page;
- NSView *root;
+ NSView *root,*snippetPanel;
+ NSScrollView *listScroll;
+ NSTextField *previewHeading;
+ bool editorMounted;
  NSTableView *table;
  NSSearchField *search;
  NSTextField *heading,*summary,*statusLabel;
@@ -49,11 +52,36 @@ NSImage *wsImage(const cliptiq::MenuImage &i) {
  NSButton *history,*snippets,*copy,*erase,*clear;
  BOOL changing;
 }
+- (cliptiq::Result<void>)selectPage:(cliptiq::MenuKind)value;
 - (void)filter;
 - (void)selected;
 - (void)clicked:(NSButton *)sender;
 @end
 @implementation CliptiqWorkspaceController
+- (cliptiq::Result<void>)selectPage:(cliptiq::MenuKind)value {
+ using namespace cliptiq;
+ if(value!=MenuKind::History&&value!=MenuKind::Snippets)return Error{ErrorCode::InvalidArgument,"Invalid workspace page"};
+ if(value==MenuKind::Snippets && options.workspace_snippets && !editorMounted){
+  __weak CliptiqWorkspaceController *weakSelf=self;
+  auto result=options.workspace_snippets(reinterpret_cast<std::uintptr_t>((__bridge void *)snippetPanel),[weakSelf](const std::string& id){
+   auto c=weakSelf;if(!c)return;
+   auto latest=c->options.workspace_model?c->options.workspace_model():Result<MenuModel>(c->model);
+   if(!latest){c->statusLabel.stringValue=wsString(latest.error().message);return;}
+   MenuCommand command{MenuAction::SelectSnippet,id,latest.value().revision};command.invocation.copy_only=true;
+   auto cb=c->action;if(cb)cb(std::move(command));
+  });
+  if(!result){statusLabel.stringValue=wsString(result.error().message);return result;}
+  editorMounted=true;
+ }
+ page=value;bool editing=page==MenuKind::Snippets&&editorMounted;
+ for(NSView *view in @[summary,search,listScroll,previewHeading,textScroll,image,copy,erase,clear])view.hidden=editing;
+ snippetPanel.hidden=!editing;
+ history.state=page==MenuKind::History?NSControlStateValueOn:NSControlStateValueOff;
+ snippets.state=page==MenuKind::Snippets?NSControlStateValueOn:NSControlStateValueOff;
+ if(editing){heading.stringValue=cliptiq::loc(@"Snippets");if(options.workspace_image)options.workspace_image(std::nullopt);image.image=nil;}
+ else [self filter];
+ return {};
+}
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)view { (void)view;return visible.size(); }
 - (NSView *)tableView:(NSTableView *)view viewForTableColumn:(NSTableColumn *)column row:(NSInteger)n {
  (void)view;auto &r=rows[visible[n]];
@@ -88,7 +116,7 @@ NSImage *wsImage(const cliptiq::MenuImage &i) {
 }
 - (void)clicked:(NSButton *)sender {
  using namespace cliptiq;
- if(sender.tag==1||sender.tag==2){page=sender.tag==1?MenuKind::History:MenuKind::Snippets;[self filter];return;}
+ if(sender.tag==1||sender.tag==2){[self selectPage:sender.tag==1?MenuKind::History:MenuKind::Snippets];return;}
  if(sender.tag==5||sender.tag==6){auto n=table.selectedRow;if(n<0||size_t(n)>=visible.size()||(sender.tag==6&&page!=MenuKind::History))return;
  if(sender.tag==6){auto alert=[NSAlert new];alert.messageText=cliptiq::loc(@"Delete this history entry?");[alert addButtonWithTitle:cliptiq::loc(@"Cancel")];[alert addButtonWithTitle:cliptiq::loc(@"Delete")];if([alert runModal]!=NSAlertSecondButtonReturn)return;}
  auto &row=rows[visible[n]];MenuCommand command{row.item.action,row.item.id,model.revision};command.invocation.copy_only=true;command.invocation.delete_only=sender.tag==6;auto cb=action;if(cb)cb(std::move(command));return;}
@@ -105,25 +133,28 @@ Workspace::Workspace(NSWindow *window,const NativeMenuOptions &o,std::function<v
  auto button=[&](NSString *title,int tag,CGFloat x,CGFloat y,CGFloat w){auto b=[NSButton buttonWithTitle:title target:c action:@selector(clicked:)];b.tag=tag;add(b,x,y,w,34,(tag==5||tag==6?NSViewWidthSizable:NSViewMaxXMargin)|(tag<=2?NSViewMinYMargin:NSViewMaxYMargin));return b;};
  add(label(@"Cliptiq",28),24,622,400,40,NSViewMinYMargin);add(label(cliptiq::loc(@"Everything you copied, within reach"),13),25,595,800,24,NSViewMinYMargin);
  c->history=button(cliptiq::loc(@"History"),1,14,516,164);c->snippets=button(cliptiq::loc(@"Snippets"),2,14,468,164);[c->history setButtonType:NSButtonTypePushOnPushOff];[c->snippets setButtonType:NSButtonTypePushOnPushOff];
- button(cliptiq::loc(@"Settings"),3,14,112,164);button(cliptiq::loc(@"Edit Snippets"),4,14,70,164);button(cliptiq::loc(@"Quit Cliptiq"),8,14,28,164);
+ button(cliptiq::loc(@"Settings"),3,14,112,164);button(cliptiq::loc(@"Quit Cliptiq"),8,14,28,164);
  c->heading=label(cliptiq::loc(@"Clipboard history"),18);add(c->heading,212,538,410,28,NSViewMinYMargin);c->summary=label(@"",12);add(c->summary,212,511,410,22,NSViewMinYMargin);
  c->search=[[NSSearchField alloc] init];c->search.placeholderString=cliptiq::loc(@"Filter by title and list text");c->search.delegate=c;add(c->search,212,476,410,28,NSViewMinYMargin);
  c->table=[[CliptiqWorkspaceTable alloc] init];c->table.delegate=c;c->table.dataSource=c;c->table.rowHeight=34;c->table.allowsMultipleSelection=NO;c->table.target=c;c->table.doubleAction=@selector(clicked:);
  // A separate tagged target preserves the same copy command on double click.
  c->copy=button(cliptiq::loc(@"Copy"),5,646,86,370);c->table.target=c->copy;c->table.doubleAction=@selector(performClick:);
  auto col=[[NSTableColumn alloc] initWithIdentifier:@"content"];col.title=cliptiq::loc(@"Content");col.width=200;[c->table addTableColumn:col];col=[[NSTableColumn alloc] initWithIdentifier:@"kind"];col.title=cliptiq::loc(@"Type / folder");col.width=110;[c->table addTableColumn:col];col=[[NSTableColumn alloc] initWithIdentifier:@"source"];col.title=cliptiq::loc(@"Source");col.width=100;[c->table addTableColumn:col];
- auto scroll=[[NSScrollView alloc] init];scroll.documentView=c->table;scroll.hasVerticalScroller=YES;scroll.hasHorizontalScroller=YES;scroll.borderType=NSBezelBorder;add(scroll,212,152,410,312,NSViewHeightSizable|NSViewMaxXMargin);
- add(label(cliptiq::loc(@"PREVIEW"),12),646,540,370,24,NSViewWidthSizable|NSViewMinYMargin);
+ auto scroll=[[NSScrollView alloc] init];c->listScroll=scroll;scroll.documentView=c->table;scroll.hasVerticalScroller=YES;scroll.hasHorizontalScroller=YES;scroll.borderType=NSBezelBorder;add(scroll,212,152,410,312,NSViewHeightSizable|NSViewMaxXMargin);
+ c->previewHeading=label(cliptiq::loc(@"PREVIEW"),12);add(c->previewHeading,646,540,370,24,NSViewWidthSizable|NSViewMinYMargin);
  c->preview=[[NSTextView alloc] initWithFrame:NSMakeRect(0,0,370,370)];c->preview.editable=NO;c->preview.selectable=YES;c->preview.richText=NO;c->preview.font=[NSFont systemFontOfSize:14];c->preview.textContainerInset=NSMakeSize(10,10);c->preview.autoresizingMask=NSViewWidthSizable;c->preview.textContainer.widthTracksTextView=YES;
  c->textScroll=[[NSScrollView alloc] init];c->textScroll.documentView=c->preview;c->textScroll.hasVerticalScroller=YES;add(c->textScroll,646,152,370,378,NSViewHeightSizable|NSViewWidthSizable);
  c->image=[[NSImageView alloc] init];c->image.imageScaling=NSImageScaleProportionallyUpOrDown;add(c->image,646,152,370,378,NSViewHeightSizable|NSViewWidthSizable);
  c->erase=button(cliptiq::loc(@"Delete entry"),6,646,42,370);c->clear=button(cliptiq::loc(@"Clear history…"),7,212,42,410);
  auto keys=(CliptiqWorkspaceTable *)c->table;keys.actionCopyButton=c->copy;keys.deleteButton=c->erase;keys.filterField=c->search;
+ c->snippetPanel=[[NSView alloc] init];c->snippetPanel.identifier=@"workspace-snippets-editor";
+ add(c->snippetPanel,212,40,804,490,NSViewHeightSizable|NSViewWidthSizable);c->snippetPanel.hidden=YES;
  c->statusLabel=label(wsString(o.workspace_status),12);add(c->statusLabel,212,8,804,24,NSViewWidthSizable|NSViewMaxYMargin);
  c->table.identifier=@"workspace-list";c->search.identifier=@"workspace-filter";c->preview.identifier=@"workspace-preview";c->image.identifier=@"workspace-image";c->statusLabel.identifier=@"workspace-status";
  [c filter];
 }
-Workspace::~Workspace(){auto c=impl_->controller;c->action={};c->table.delegate=nil;c->table.dataSource=nil;c->search.delegate=nil;if(c->options.workspace_image)c->options.workspace_image(std::nullopt);[c->root removeFromSuperview];}
-void Workspace::update(MenuModel model){auto c=impl_->controller;c->model=std::move(model);[c filter];}
+Workspace::~Workspace(){auto c=impl_->controller;if(c->editorMounted&&c->options.workspace_snippets)c->options.workspace_snippets(0,{});c->action={};c->table.delegate=nil;c->table.dataSource=nil;c->search.delegate=nil;if(c->options.workspace_image)c->options.workspace_image(std::nullopt);[c->root removeFromSuperview];}
+void Workspace::update(MenuModel model){auto c=impl_->controller;c->model=std::move(model);if(c->page!=MenuKind::Snippets||!c->editorMounted)[c filter];}
+Result<void> Workspace::select_page(MenuKind page){return [impl_->controller selectPage:page];}
 void Workspace::status(const std::string &s){impl_->controller->statusLabel.stringValue=wsString(s);}
 }

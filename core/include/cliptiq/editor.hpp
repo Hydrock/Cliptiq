@@ -60,6 +60,13 @@ public:
   NativeSnippetEditor();
   ~NativeSnippetEditor();
   Result<void> show(std::shared_ptr<SnippetEditorSession>);
+#if defined(_WIN32) || defined(__APPLE__)
+  // Parent is an HWND/NSView. Mounting never opens another top-level window.
+  Result<void> show_embedded(std::shared_ptr<SnippetEditorSession>, std::uintptr_t parent,
+                            std::function<void(const SnippetId &)> copy);
+  Result<bool> can_close();
+  void unmount();
+#endif
   Result<void> process_events();
 #ifdef _WIN32
   bool pre_translate(std::uintptr_t message);

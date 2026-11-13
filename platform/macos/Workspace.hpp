@@ -9,6 +9,7 @@ public:
   Workspace(NSWindow *, const NativeMenuOptions &, std::function<void(MenuCommand)>, MenuPreviewProvider);
   ~Workspace();
   void update(MenuModel);
+  Result<void> select_page(MenuKind);
   void status(const std::string &);
 };
 }

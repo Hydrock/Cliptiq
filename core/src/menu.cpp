@@ -386,7 +386,7 @@ Result<void> validate_menu_command(Store &store, const MenuCommand &c) {
     if (c.action == MenuAction::SelectHistory)
       sql = "SELECT 1 FROM history WHERE id=?";
     else if (c.action == MenuAction::SelectSnippet)
-      sql = "SELECT 1 FROM snippets s LEFT JOIN snippet_states v ON v.id=s.id LEFT JOIN snippet_folder_states f ON f.id=s.folder_id WHERE s.id=? AND coalesce(v.enabled,1)=1 AND coalesce(f.enabled,1)=1";
+      sql = c.invocation.copy_only ? "SELECT 1 FROM snippets WHERE id=?" : "SELECT 1 FROM snippets s LEFT JOIN snippet_states v ON v.id=s.id LEFT JOIN snippet_folder_states f ON f.id=s.folder_id WHERE s.id=? AND coalesce(v.enabled,1)=1 AND coalesce(f.enabled,1)=1";
     else if (c.action == MenuAction::ClearHistory)
       sql = "SELECT 1 FROM history LIMIT 1";
     else if (c.action == MenuAction::OpenEditor ||

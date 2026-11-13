@@ -191,6 +191,16 @@ int main() {
     CHECK(g.run().status == SelectionStatus::NeedsManualPaste &&
           g.paste.calls == 0);
   });
+  test("workspace_can_copy_snippet_hidden_from_quick_menu", [] {
+    Fixture f;
+    CHECK(sqlite3_exec(f.store.connection(),"INSERT INTO snippet_folders VALUES('f','Folder',0);INSERT INTO snippets VALUES('s','f','Snippet','hidden text',0);INSERT INTO snippet_states(id,enabled,revision) VALUES('s',0,1);INSERT INTO snippet_folder_states(id,enabled,revision) VALUES('f',0,1)",nullptr,nullptr,nullptr)==SQLITE_OK);
+    f.intent.command={MenuAction::SelectSnippet,"s",take(data_revision(f.store))};
+    CHECK(!validate_menu_command(f.store,f.intent.command));
+    f.intent.command.invocation.copy_only=true;
+    CHECK(validate_menu_command(f.store,f.intent.command));
+    CHECK(f.run().status==SelectionStatus::Copied);
+    CHECK(f.paste.calls==0 && f.clipboard.writes==1);
+  });
   test("snippets_copied_without_history_deletion", [] {
     Fixture f;
     CHECK(sqlite3_exec(

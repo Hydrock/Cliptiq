@@ -172,6 +172,7 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
        enabled = nullptr, shortcut = nullptr, bind = nullptr, message = nullptr,
        undo = nullptr, redo = nullptr, addSnippet = nullptr;
   HFONT font = nullptr;
+  unsigned font_dpi=0;
   HMODULE rich = nullptr;
   HRESULT ole = E_FAIL;
   std::shared_ptr<SnippetEditorSession> model;
@@ -279,6 +280,9 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
       return S_OK;
     }
   } *target = nullptr;
+  bool embedded = false;
+  int pending_command = 0;
+  std::function<void(const SnippetId &)> copy;
   void close() {
     if (tree && target)
       RevokeDragDrop(tree);
@@ -292,9 +296,9 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
       if (images)
         ImageList_Destroy(images);
     }
-    if (window)
+    if (window && IsWindow(window))
       DestroyWindow(window);
-    window = tree = nullptr;
+    window = tree = body = shortcut = enabled = bind = undo = redo = addSnippet = message = nullptr;
   }
   ~State() {
     close();
@@ -318,13 +322,19 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
   void poll() {
     if(!model || !window) return;
     auto result=model->poll_saves();
-    if(!result) status(result.error());
+    if(!result) {pending_command=0;status(result.error());}
     else if(result.value()) {status({});selected_label();}
     history();
+    if(pending_command && !model->saving()) {
+      int command=pending_command;pending_command=0;
+      if(!model->has_unsaved())perform(command);
+    }
   }
   void history() {
     EnableWindow(undo, model->can_undo());
     EnableWindow(redo, model->can_redo());
+    auto selected=model->selected();
+    if(auto button=GetDlgItem(window,515))EnableWindow(button,selected && selected->kind==SnippetItemKind::Snippet);
   }
   bool confirm_close() {
     if(model && model->saving()) {status(Error{ErrorCode::Busy,"Save pending; wait before closing"});return false;}
@@ -439,6 +449,14 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
 
     auto keep = shared_from_this();
     Result<void> r;
+    if(command==515) {
+      if(TreeView_GetEditControl(tree))TreeView_EndEditLabelNow(tree,FALSE);
+      if(model->saving()){pending_command=515;status({});return;}
+      if(model->has_unsaved()){status(Error{ErrorCode::Busy,"Unsaved draft retained; correct the save error before copying"});return;}
+      auto selected=model->selected();
+      if(selected && selected->kind==SnippetItemKind::Snippet && copy)copy(selected->value);
+      return;
+    }
     if (command == 507 || command == 508) {
       auto added = command == 507 ? model->add_folder() : model->add_snippet();
       if (!added)
@@ -493,6 +511,13 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
     RECT area{};
     GetClientRect(window, &area);
     auto dpi=GetDpiForWindow(window);if(!dpi)dpi=96;
+    if(dpi!=font_dpi){
+      auto next=CreateFontW(-MulDiv(10,dpi,72),0,0,0,FW_NORMAL,FALSE,FALSE,FALSE,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,CLEARTYPE_QUALITY,DEFAULT_PITCH,L"Segoe UI");
+      if(next){auto previousFont=font;font=next;font_dpi=dpi;
+        for(auto child=GetWindow(window,GW_CHILD);child;child=GetWindow(child,GW_HWNDNEXT))SendMessageW(child,WM_SETFONT,reinterpret_cast<WPARAM>(font),TRUE);
+        if(previousFont)DeleteObject(previousFont);
+      }
+    }
     auto px=[&](int n){return MulDiv(n,dpi,96);};
     int width=int(area.right),height=int(area.bottom),margin=px(12),gap=px(8);
     auto dc=GetDC(window);auto previous=SelectObject(dc,font);
@@ -521,7 +546,10 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
     int bind_width=std::max(px(120),int(text_size(bind).cx)+px(28));
     MoveWindow(shortcut,x,content_top+px(38),std::max(1,right-bind_width-gap),px(32),TRUE);
     MoveWindow(bind,width-margin-bind_width,content_top+px(38),bind_width,px(32),TRUE);
-    MoveWindow(body,x,content_top+px(82),right,std::max(1,bottom-content_top-px(82)),TRUE);
+    auto copy_button=GetDlgItem(window,515);
+    int copy_height=copy_button?px(44):0;
+    MoveWindow(body,x,content_top+px(82),right,std::max(1,bottom-content_top-px(82)-copy_height),TRUE);
+    if(copy_button)MoveWindow(copy_button,x,bottom-px(34),right,px(34),TRUE);
     MoveWindow(message,margin,height-footer+margin,width-2*margin,footer-2*margin,TRUE);
     SelectObject(dc,previous);ReleaseDC(window,dc);
   }
@@ -651,6 +679,7 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
         }
       }
       if (w == s->tree) {
+        if(s->copy && (key==VK_RETURN || (control&&key=='C'))){s->perform(515);return 0;}
         if (key == VK_SPACE) {
           auto selected = TreeView_GetSelection(s->tree);
           if (selected) {
@@ -728,7 +757,7 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
             s->history();
             return 0;
           }
-          if (id >= 503 && id <= 514 && id != 504 && id != 505) {
+          if (id >= 503 && id <= 515 && id != 504 && id != 505) {
             s->perform(id);
             return 0;
           }
@@ -845,6 +874,10 @@ NativeSnippetEditor::NativeSnippetEditor()
 NativeSnippetEditor::~NativeSnippetEditor() = default;
 Result<void>
 NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
+  return show_embedded(std::move(model),0,{});
+}
+Result<void> NativeSnippetEditor::show_embedded(std::shared_ptr<SnippetEditorSession> model,
+    std::uintptr_t parent, std::function<void(const SnippetId &)> copy) {
   auto s = state_;
   if (GetCurrentThreadId() != s->owner)
     return Error{ErrorCode::InvalidArgument, "Editor requires owner thread"};
@@ -854,6 +887,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
     return Error{ErrorCode::Busy, "Unsaved draft retained in existing editor"};
   s->close();
   s->model = std::move(model);
+  s->embedded=parent!=0;s->copy=std::move(copy);s->pending_command=0;
   auto background=s->model->background_saves();if(!background) return background;
   if (!s->rich)
     s->rich =
@@ -873,14 +907,15 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
   wc.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1);
   RegisterClassW(&wc);
   s->window = CreateWindowExW(WS_EX_CONTROLPARENT, wc.lpszClassName,
-                              lw(L"Cliptiq Snippets"), WS_OVERLAPPEDWINDOW,
-                              CW_USEDEFAULT, CW_USEDEFAULT, 920, 700, nullptr,
+                              lw(L"Cliptiq Snippets"), parent ? WS_CHILD|WS_CLIPCHILDREN : WS_OVERLAPPEDWINDOW,
+                              parent?0:CW_USEDEFAULT, parent?0:CW_USEDEFAULT, 920, 700, reinterpret_cast<HWND>(parent),
                               nullptr, wc.hInstance, s.get());
   if (!s->window)
     return Error{ErrorCode::Io, "Cannot create editor window"};
   windows::set_application_icons(s->window);
   if(s->font)DeleteObject(s->font);
   s->font=CreateFontW(-MulDiv(10,GetDpiForWindow(s->window),72),0,0,0,FW_NORMAL,FALSE,FALSE,FALSE,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,CLEARTYPE_QUALITY,DEFAULT_PITCH,L"Segoe UI");
+  s->font_dpi=GetDpiForWindow(s->window);
   auto font=s->font;
   auto control = [&](const wchar_t *type, const wchar_t *text, int id,
                      DWORD style, DWORD extra = 0) -> HWND {
@@ -925,6 +960,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
   SendMessageW(s->body, EM_SETUNDOLIMIT, 0, 0);
   SendMessageW(s->body, EM_EXLIMITTEXT, 0, 16 * 1024 * 1024);
   SendMessageW(s->body, EM_SETEVENTMASK, 0, ENM_CHANGE);
+  if(parent)control(L"BUTTON",lw(L"Copy"),515,BS_PUSHBUTTON);
   s->message = control(L"STATIC",
                        lw(L"Changes save locally. Undo history resets when you change selected item."),
                        513, 0);
@@ -941,6 +977,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
       s->target = nullptr;
     }
   }
+  if(parent){RECT bounds{};GetClientRect(reinterpret_cast<HWND>(parent),&bounds);MoveWindow(s->window,0,0,bounds.right,bounds.bottom,TRUE);}
   s->layout();
   s->rebuild();
   if (!s->target)
@@ -978,6 +1015,8 @@ Result<void> NativeSnippetEditor::process_events() {
   s->poll();
   return {};
 }
+Result<bool> NativeSnippetEditor::can_close() { return !state_->window || state_->confirm_close(); }
+void NativeSnippetEditor::unmount() {state_->close();state_->pending_command=0;state_->copy={};}
 Result<bool> NativeSnippetEditor::request_close() {
   auto s = state_;
   if (!s->window)
@@ -994,7 +1033,7 @@ bool NativeSnippetEditor::record_chord(const KeyChord &chord) {
   auto s = state_;
 
   if (!s->window || !IsWindowVisible(s->window) ||
-      GetForegroundWindow() != s->window || GetFocus() != s->shortcut ||
+      GetForegroundWindow() != GetAncestor(s->window,GA_ROOT) || GetFocus() != s->shortcut ||
       !IsWindowEnabled(s->shortcut))
     return false;
   SetWindowTextW(s->shortcut, wide(format_chord(chord)).c_str());

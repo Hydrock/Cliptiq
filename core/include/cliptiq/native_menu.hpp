@@ -22,6 +22,9 @@ struct NativeMenuOptions {
   std::function<Result<std::string>(const MenuCommand &)> workspace_preview;
   std::function<std::optional<MenuImage>(std::optional<PreviewRef>)> workspace_image;
   std::string workspace_status;
+  // Parent is the lazily allocated native page container; zero detaches it.
+  std::function<Result<void>(std::uintptr_t, std::function<void(const std::string &)>)> workspace_snippets;
+  std::function<Result<bool>()> workspace_can_close;
 #ifdef _WIN32
   // Owner-thread pretranslation shared by bounded and blocking message pumps.
   std::function<bool(std::uintptr_t)> windows_message_filter;
@@ -55,7 +58,7 @@ public:
   NativeMenuStatus status() const;
   NativeMenuHandles native_handles() const;
 #if defined(_WIN32) || defined(__APPLE__)
-  Result<void> show_workspace();
+  Result<void> show_workspace(std::optional<MenuKind> page = {});
   void workspace_status(const std::string &);
 #endif
 };

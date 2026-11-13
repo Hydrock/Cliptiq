@@ -192,7 +192,9 @@ Result<SelectionOutcome> execute_selection(Store &store,
       } else {
         detail::Statement q(
             store.connection(),
-            "SELECT length(CAST(content AS BLOB)),content FROM "
+            intent.command.invocation.copy_only
+              ? "SELECT length(CAST(content AS BLOB)),content FROM snippets WHERE id=?"
+              : "SELECT length(CAST(content AS BLOB)),content FROM "
             "snippets s LEFT JOIN snippet_states v ON v.id=s.id LEFT JOIN "
             "snippet_folder_states f ON f.id=s.folder_id WHERE s.id=? AND "
             "coalesce(v.enabled,1)=1 AND coalesce(f.enabled,1)=1");

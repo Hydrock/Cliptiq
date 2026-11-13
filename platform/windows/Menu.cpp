@@ -409,6 +409,7 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
         break;
       case WM_CLOSE: {
         if(s->options.workspace_enabled && s->status.tray_available){
+          if(s->options.workspace_can_close){auto close=s->options.workspace_can_close();if(!close||!close.value())return 0;}
           ShowWindow(w,SW_HIDE);s->workspace.reset();s->status.launcher_visible=false;return 0;
         }
         if (!s->closing && s->callback) {
@@ -457,7 +458,6 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
         return 0;
       case WM_DPICHANGED: {
         const bool restore_workspace=bool(s->workspace);
-        s->workspace.reset();
         auto new_dpi = unsigned(HIWORD(wp));
         if (new_dpi >= 48)
           s->dpi = new_dpi;
@@ -631,9 +631,9 @@ Result<void> NativeMenu::process_events(unsigned wait) {
   return {};
 }
 NativeMenuStatus NativeMenu::status() const { return state_->status; }
-Result<void> NativeMenu::show_workspace(){
+Result<void> NativeMenu::show_workspace(std::optional<MenuKind> page){
   auto s=state_;if(!s->thread()||!s->window)return Error{ErrorCode::InvalidArgument,"Workspace requires GUI owner"};
-  s->open_workspace();ShowWindow(s->window,SW_SHOWNORMAL);SetForegroundWindow(s->window);s->status.launcher_visible=true;return {};
+  s->open_workspace();if(page&&s->workspace){auto selected=s->workspace->select_page(*page);if(!selected)return selected;}ShowWindow(s->window,SW_SHOWNORMAL);SetForegroundWindow(s->window);s->status.launcher_visible=true;return {};
 }
 void NativeMenu::workspace_status(const std::string& value){if(state_->workspace)state_->workspace->status(value);}
 NativeMenuHandles NativeMenu::native_handles() const {

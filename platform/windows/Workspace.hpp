@@ -9,8 +9,10 @@ namespace cliptiq::windows {
 // Public control IDs also let the process-level test use real UI commands.
 constexpr int WorkspaceQuit = 7108;
 class Workspace {
-  HWND owner_, history_, snippets_, settings_, editor_, filter_, list_, heading_,
+  HWND owner_, history_, snippets_, settings_, filter_, list_, heading_,
        summary_, preview_heading_, preview_, image_, copy_, erase_, clear_, quit_, status_;
+  HWND snippet_panel_ = nullptr;
+  bool editor_mounted_ = false;
   HFONT font_ = nullptr, title_font_ = nullptr, bold_font_ = nullptr;
   HBITMAP bitmap_ = nullptr;
   HIMAGELIST row_images_ = nullptr;
@@ -35,6 +37,7 @@ public:
   ~Workspace();
   void layout(unsigned dpi);
   void update(MenuModel);
+  Result<void> select_page(MenuKind);
   void status(const std::string&);
   bool message(UINT,WPARAM,LPARAM,LRESULT&);
   bool key(MSG&);

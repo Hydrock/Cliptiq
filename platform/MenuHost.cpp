@@ -489,6 +489,9 @@ int host(int argc, char **argv) {
     NativeSnippetEditor editor_window;
     std::shared_ptr<SnippetEditorSession> editor_session;
     std::function<void()> show_editor;
+#if defined(_WIN32) || defined(__APPLE__)
+    std::function<Result<void>(std::uintptr_t,std::function<void(const std::string&)>)> mount_editor;
+#endif
 #endif
     std::optional<std::pair<ActionId, InvocationContext>> pending_action;
     NativeHotkeys hotkeys([&](ActionId action, InvocationContext ctx) {
@@ -614,6 +617,14 @@ int host(int argc, char **argv) {
         : std::string(tr("History is stored only on this computer"));
     };
     options.workspace_status=workspace_status_text();
+#ifdef CLIPTIQ_WITH_EDITOR
+    options.workspace_snippets=[&](std::uintptr_t parent,std::function<void(const std::string&)> copy)->Result<void>{
+      if(!parent){editor_window.unmount();return {};}
+      if(!mount_editor)return Error{ErrorCode::Busy,"Snippet editor is not ready"};
+      return mount_editor(parent,std::move(copy));
+    };
+    options.workspace_can_close=[&]{return editor_window.can_close();};
+#endif
 #endif
     NativeMenu ui(options, [&](MenuCommand command) {
       auto valid = validate_menu_command(store, command);
@@ -835,7 +846,7 @@ int host(int argc, char **argv) {
 #endif
     };
 #ifdef CLIPTIQ_WITH_EDITOR
-    show_editor = [&] {
+    auto ensure_editor = [&]() -> Result<void> {
       if (!editor_session) {
         SnippetEditorCallbacks callbacks;
         // Text autosave completion only invalidates the menu. Folder routing
@@ -887,10 +898,24 @@ int host(int argc, char **argv) {
         if (!loaded) {
           std::cerr << loaded.error().message << '\n';
           editor_session.reset();
-          return;
+          return loaded;
         }
       }
+      return {}; // Keep undo/redo when reopening the unchanged editor session.
+    };
+#if defined(_WIN32) || defined(__APPLE__)
+    mount_editor=[&](std::uintptr_t parent,std::function<void(const std::string&)> copy)->Result<void>{
+      auto ready=ensure_editor();if(!ready)return ready;
+      return editor_window.show_embedded(editor_session,parent,std::move(copy));
+    };
+#endif
+    show_editor = [&] {
+#if defined(_WIN32) || defined(__APPLE__)
+      auto opened=ui.show_workspace(MenuKind::Snippets);
+#else
+      auto ready=ensure_editor();if(!ready){std::cerr<<ready.error().message<<'\n';return;}
       auto opened = editor_window.show(editor_session);
+#endif
       if (!opened)
         std::cerr << opened.error().message << '\n';
     };

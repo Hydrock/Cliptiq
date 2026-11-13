@@ -17,6 +17,7 @@ using namespace cliptiq;
 @public
   NSArray<CliptiqSnippetNode *> *roots;
   std::function<void(int)> action;
+  bool copy_enabled;
   std::function<void(CliptiqSnippetNode *)> select;
   std::function<void(int, NSString *)> edit;
   std::function<NSPasteboardItem *(CliptiqSnippetNode *)> drag;
@@ -32,6 +33,7 @@ using namespace cliptiq;
 }
 - (void)rename:(id)sender;
 - (void)cancelRename;
+- (void)copySnippet:(id)sender;
 - (void)addFolder:(id)sender;
 - (void)addSnippet:(id)sender;
 - (void)remove:(id)sender;
@@ -47,7 +49,12 @@ using namespace cliptiq;
 @implementation CliptiqSnippetOutline
 - (void)keyDown:(NSEvent *)event {
   if (event.keyCode == 120) { [self.bridge rename:nil]; return; }
+  if(self.bridge && self.bridge->copy_enabled && (event.keyCode==36||event.keyCode==76)){[self.bridge copySnippet:nil];return;}
   [super keyDown:event];
+}
+- (BOOL)performKeyEquivalent:(NSEvent *)event {
+  if(self.window.firstResponder==self && self.bridge && self.bridge->copy_enabled && (event.modifierFlags&NSEventModifierFlagCommand) && [event.charactersIgnoringModifiers.lowercaseString isEqualToString:@"c"]){[self.bridge copySnippet:nil];return YES;}
+  return [super performKeyEquivalent:event];
 }
 @end
 @interface CliptiqSnippetText : NSTextView
@@ -111,6 +118,7 @@ using namespace cliptiq;
 }
 @end
 @implementation CliptiqSnippetBridge
+- (void)copySnippet:(id)sender { (void)sender;if(action)action(515); }
 - (NSInteger)outlineView:(NSOutlineView *)view numberOfChildrenOfItem:(id)item {
   (void)view;
   return item ? [(CliptiqSnippetNode *)item children].count : roots.count;
@@ -320,6 +328,10 @@ std::string utf8(NSString *s) {
 struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
   std::thread::id owner = std::this_thread::get_id();
   NSWindow *window = nil;
+  NSView *panel = nil;
+  bool embedded = false;
+  NSButton *copyButton = nil;
+  std::function<void(const SnippetId &)> copy;
   NSOutlineView *tree = nil;
   NSTextField *shortcut = nil, *message = nil;
   CliptiqSnippetText *body = nil;
@@ -343,7 +355,7 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
       bridge->cancel = {};
       bridge->can_close = {};
     }
-    [window close];
+    if(embedded)[panel removeFromSuperview];else [window close];
   }
   void status(Result<void> r) {
     message.stringValue =
@@ -367,6 +379,7 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
   void history() {
     undo.enabled = model->can_undo();
     redo.enabled = model->can_redo();
+    auto selected=model->selected();copyButton.enabled=selected && selected->kind==SnippetItemKind::Snippet;
   }
   void restore_selection() {
     auto selected = model->selected();
@@ -518,6 +531,13 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
       }
     }
     Result<void> r;
+    if(command==515) {
+      if(model->saving()){pending_command=515;status({});return;}
+      if(model->has_unsaved()){status(Error{ErrorCode::Busy,"Unsaved draft retained; correct the save error before copying"});return;}
+      auto selected=model->selected();
+      if(selected && selected->kind==SnippetItemKind::Snippet && copy)copy(selected->value);
+      return;
+    }
     if (command == 507 || command == 508) {
       auto added = command == 507 ? model->add_folder() : model->add_snippet();
       if (!added)
@@ -574,6 +594,10 @@ NativeSnippetEditor::NativeSnippetEditor()
 NativeSnippetEditor::~NativeSnippetEditor() = default;
 Result<void>
 NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
+  return show_embedded(std::move(model),0,{});
+}
+Result<void> NativeSnippetEditor::show_embedded(std::shared_ptr<SnippetEditorSession> model,
+    std::uintptr_t parent, std::function<void(const SnippetId &)> copy) {
   @autoreleasepool {
   auto s = state_;
   if (s->owner != std::this_thread::get_id() || !NSThread.isMainThread)
@@ -585,10 +609,13 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
   [NSApplication sharedApplication];
   // Reuse the outline for an unchanged session/locale. Discarding a populated
   // outline on every opening accumulates AppKit disclosure-button observers.
-  if(s->window && s->model==model && s->window_locale==active_locale()) {
+  auto container=parent?(__bridge NSView *)(void *)parent:nil;
+  if(s->panel && s->model==model && s->window_locale==active_locale() && s->embedded==bool(parent)) {
+    s->copy=std::move(copy);
+    if(parent){s->window=container.window;[container addSubview:s->panel];s->panel.frame=container.bounds;s->panel.hidden=NO;}
     if(s->rendered_structure!=s->structure()) s->rebuild();
     else {s->restore_selection();s->detail();}
-    [s->window makeKeyAndOrderFront:nil];
+    if(!parent)[s->window makeKeyAndOrderFront:nil];
     return {};
   }
   s->window_locale=active_locale();
@@ -602,21 +629,26 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
     s->bridge->cancel = {};
     s->bridge->can_close = {};
   }
-  [s->window close];
+  if(s->embedded)[s->panel removeFromSuperview];else [s->window close];
+  s->window=nil;s->panel=nil;
   s->model = std::move(model);
   auto background=s->model->background_saves();if(!background) return background;
-  s->window = [[NSWindow alloc]
+  s->embedded=bool(parent);s->copy=std::move(copy);s->pending_command=0;
+  if(parent)s->window=container.window;
+  else s->window = [[NSWindow alloc]
       initWithContentRect:NSMakeRect(100, 100, 900, 650)
                 styleMask:NSWindowStyleMaskTitled | NSWindowStyleMaskClosable |
                           NSWindowStyleMaskResizable
                   backing:NSBackingStoreBuffered
                     defer:NO];
-  s->window.releasedWhenClosed = NO;
+  if(!parent){s->window.releasedWhenClosed = NO;
   s->window.title = loc(@"Cliptiq Snippets");
-  s->window.minSize = NSMakeSize(700, 400);
-  s->bridge = [CliptiqSnippetBridge new];
-  s->window.delegate = s->bridge;
-  auto root = s->window.contentView;
+  s->window.minSize = NSMakeSize(700, 400);}
+  s->bridge = [CliptiqSnippetBridge new];s->bridge->copy_enabled=bool(parent);
+  if(!parent)s->window.delegate = s->bridge;
+  auto root=parent?[[NSView alloc] initWithFrame:NSMakeRect(0,0,900,650)]:s->window.contentView;
+  s->panel=root;root.autoresizingMask=NSViewWidthSizable|NSViewHeightSizable;
+  if(parent)[container addSubview:root];
   auto tools = [[NSStackView alloc] initWithFrame:NSMakeRect(12, 600, 876, 36)];
   tools.orientation = NSUserInterfaceLayoutOrientationHorizontal;
   tools.spacing = 6;
@@ -731,6 +763,13 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
     [inspector.bottomAnchor constraintEqualToAnchor:right.bottomAnchor constant:-12],
     [scroll.heightAnchor constraintGreaterThanOrEqualToConstant:80]
   ]];
+  s->copyButton=nil;
+  if(parent){
+    s->copyButton=[NSButton buttonWithTitle:loc(@"Copy") target:s->bridge action:@selector(copySnippet:)];
+    s->copyButton.identifier=@"editor-copy";s->copyButton.translatesAutoresizingMaskIntoConstraints=NO;
+    [inspector addArrangedSubview:s->copyButton];
+    [s->copyButton.widthAnchor constraintEqualToAnchor:inspector.widthAnchor].active=YES;
+  }
   s->message = [NSTextField
       wrappingLabelWithString:loc(@"Changes save locally. Undo history resets when you change the selected item.")];
   s->message.identifier = @"editor-status";
@@ -871,7 +910,7 @@ NativeSnippetEditor::show(std::shared_ptr<SnippetEditorSession> model) {
     }
   };
   s->rebuild();
-  [s->window makeKeyAndOrderFront:nil];
+  if(parent)root.frame=container.bounds;else [s->window makeKeyAndOrderFront:nil];
   return {};
   }
 }
@@ -881,13 +920,18 @@ Result<void> NativeSnippetEditor::process_events() {
   auto keep=state_;keep->poll();
   return {};
 }
+Result<bool> NativeSnippetEditor::can_close() {return !state_->window || state_->confirm_close();}
+void NativeSnippetEditor::unmount() {
+  auto s=state_;if(!s->embedded)return;
+  [s->bridge cancelRename];[s->panel removeFromSuperview];s->window=nil;s->copy={};s->pending_command=0;
+}
 Result<bool> NativeSnippetEditor::request_close() {
   auto s = state_;
   if (!s->window)
     return true;
   if (!s->confirm_close())
     return false;
-  [s->window orderOut:nil];
+  if(s->embedded)s->panel.hidden=YES;else [s->window orderOut:nil];
   return true;
 }
 std::uintptr_t NativeSnippetEditor::native_handle() const {
