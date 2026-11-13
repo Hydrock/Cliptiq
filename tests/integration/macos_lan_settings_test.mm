@@ -95,8 +95,9 @@ int main(int argc,char **argv) { @autoreleasepool { try {
  [compactWindow.contentView layoutSubtreeIfNeeded];[NSApp updateWindows];
  auto available=button(compactWindow.contentView,text("Available for discovery"));CHECK(available);
  NSView* clip=available.superview;while(clip&&![clip isKindOfClass:NSClipView.class])clip=clip.superview;CHECK(clip);
- auto location=[available convertRect:available.bounds toView:clip];CGFloat gap=clip.isFlipped?NSMinY(location)-NSMinY(clip.bounds):NSMaxY(clip.bounds)-NSMaxY(location);
- if(gap>60)std::cerr<<"Discovery top gap: "<<gap<<"\n";CHECK(gap>=0&&gap<60);
+ CHECK([available.superview isKindOfClass:NSStackView.class]);auto first=((NSStackView*)available.superview).arrangedSubviews.firstObject;CHECK(first);
+ auto location=[first convertRect:first.bounds toView:clip];CGFloat gap=clip.isFlipped?NSMinY(location)-NSMinY(clip.bounds):NSMaxY(clip.bounds)-NSMaxY(location);
+ if(gap>24)std::cerr<<"Discovery top gap: "<<gap<<"\n";CHECK(gap>=0&&gap<24);
  [compactWindow performClose:nil];
  std::cout<<"PASS embedded macOS Network settings: draft, keys, repeated save, cancel, layout and reopen\n";return 0;
  }catch(const std::exception &error){std::cerr<<error.what()<<'\n';return 1;} } }

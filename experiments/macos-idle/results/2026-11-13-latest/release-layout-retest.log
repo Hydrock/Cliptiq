@@ -1,0 +1,9 @@
+Test project /Users/smitevils/Projects/cliptiq/Cliptiq/out/core-Darwin-release
+    Start 72: lan_settings_native
+1/2 Test #72: lan_settings_native ..............   Passed    1.45 sec
+    Start 73: lan_settings_native_ru
+2/2 Test #73: lan_settings_native_ru ...........   Passed    0.93 sec
+
+100% tests passed out of 2
+
+Total Test time (real) =   2.38 sec
