@@ -1,0 +1,164 @@
+Test project /Users/smitevils/Projects/cliptiq/Cliptiq/out/core-Darwin-release
+      Start  1: lan_core
+ 1/73 Test  #1: lan_core .........................   Passed    0.03 sec
+      Start  2: editor_native
+ 2/73 Test  #2: editor_native ....................   Passed    0.39 sec
+      Start  3: snippets_menu_hotkeys
+ 3/73 Test  #3: snippets_menu_hotkeys ............   Passed    0.00 sec
+      Start  4: editor
+ 4/73 Test  #4: editor ...........................   Passed    0.05 sec
+      Start  5: snippets
+ 5/73 Test  #5: snippets .........................   Passed    0.01 sec
+      Start  6: workspace_native
+ 6/73 Test  #6: workspace_native .................   Passed    1.90 sec
+      Start  7: workspace_native_ru
+ 7/73 Test  #7: workspace_native_ru ..............   Passed    1.39 sec
+      Start  8: editor_inline_rename
+ 8/73 Test  #8: editor_inline_rename .............   Passed    0.36 sec
+      Start  9: editor_inline_rename_ru
+ 9/73 Test  #9: editor_inline_rename_ru ..........   Passed    0.35 sec
+      Start 10: settings_native
+10/73 Test #10: settings_native ..................   Passed    0.73 sec
+      Start 11: lifecycle_ui_ru
+11/73 Test #11: lifecycle_ui_ru ..................   Passed    0.31 sec
+      Start 12: hotkeys_native
+12/73 Test #12: hotkeys_native ...................   Passed    0.42 sec
+      Start 13: settings
+13/73 Test #13: settings .........................   Passed    0.01 sec
+      Start 14: hotkeys
+14/73 Test #14: hotkeys ..........................   Passed    0.00 sec
+      Start 15: paste_native
+15/73 Test #15: paste_native .....................   Passed    0.00 sec
+      Start 16: startup_permissions
+16/73 Test #16: startup_permissions ..............   Passed    0.42 sec
+      Start 17: startup_permissions_ru
+17/73 Test #17: startup_permissions_ru ...........   Passed    0.42 sec
+      Start 18: paste_native_boundary
+18/73 Test #18: paste_native_boundary ............   Passed    0.05 sec
+      Start 19: paste
+19/73 Test #19: paste ............................   Passed    0.01 sec
+      Start 20: menu_unicode_conformance
+20/73 Test #20: menu_unicode_conformance .........   Passed    0.00 sec
+      Start 21: menu_regression_context
+21/73 Test #21: menu_regression_context ..........   Passed    0.15 sec
+      Start 22: menu_fullscreen_owner
+22/73 Test #22: menu_fullscreen_owner ............   Passed    0.17 sec
+      Start 23: paste_menu_status_lifecycle
+23/73 Test #23: paste_menu_status_lifecycle ......   Passed    0.25 sec
+      Start 24: menu_native
+24/73 Test #24: menu_native ......................   Passed    0.23 sec
+      Start 25: lifecycle
+25/73 Test #25: lifecycle ........................   Passed    0.18 sec
+      Start 26: lifecycle_process
+26/73 Test #26: lifecycle_process ................   Passed    0.64 sec
+      Start 27: application_icon_parity
+27/73 Test #27: application_icon_parity ..........   Passed    0.03 sec
+      Start 28: lifecycle_locale_schema
+28/73 Test #28: lifecycle_locale_schema ..........   Passed    0.02 sec
+      Start 29: lifecycle_bundle
+29/73 Test #29: lifecycle_bundle .................   Passed    0.74 sec
+      Start 30: media_review_clear
+30/73 Test #30: media_review_clear ...............   Passed    1.13 sec
+      Start 31: media_review_root
+31/73 Test #31: media_review_root ................   Passed    1.13 sec
+      Start 32: media_review_error
+32/73 Test #32: media_review_error ...............   Passed    0.28 sec
+      Start 33: native_media
+33/73 Test #33: native_media .....................   Passed    7.70 sec
+      Start 34: media
+34/73 Test #34: media ............................   Passed    0.00 sec
+      Start 35: menu_preview
+35/73 Test #35: menu_preview .....................   Passed    0.00 sec
+      Start 36: menu
+36/73 Test #36: menu .............................   Passed    0.04 sec
+      Start 37: macos_clipboard
+37/73 Test #37: macos_clipboard ..................   Passed    9.27 sec
+      Start 38: policy
+38/73 Test #38: policy ...........................   Passed    0.01 sec
+      Start 39: history
+39/73 Test #39: history ..........................   Passed    0.03 sec
+      Start 40: history_crash
+40/73 Test #40: history_crash ....................   Passed    0.06 sec
+      Start 41: update
+41/73 Test #41: update ...........................   Passed    0.00 sec
+      Start 42: update_native
+42/73 Test #42: update_native ....................   Passed    0.00 sec
+      Start 43: ocr
+43/73 Test #43: ocr ..............................   Passed    0.00 sec
+      Start 44: fts
+44/73 Test #44: fts ..............................   Passed    0.00 sec
+      Start 45: ocr_queue
+45/73 Test #45: ocr_queue ........................   Passed    0.50 sec
+      Start 46: distribution_tools
+46/73 Test #46: distribution_tools ...............   Passed    0.11 sec
+      Start 47: feature_coverage
+47/73 Test #47: feature_coverage .................   Passed    0.03 sec
+      Start 48: package_entry
+48/73 Test #48: package_entry ....................   Passed    0.03 sec
+      Start 49: bounded_fuzz_smoke
+49/73 Test #49: bounded_fuzz_smoke ...............   Passed    0.01 sec
+      Start 50: release_blocked
+50/73 Test #50: release_blocked ..................   Passed    0.03 sec
+      Start 51: sound_wave
+51/73 Test #51: sound_wave .......................   Passed    0.00 sec
+      Start 52: workspace
+52/73 Test #52: workspace ........................   Passed    0.00 sec
+      Start 53: idle_media_revision
+53/73 Test #53: idle_media_revision ..............   Passed    0.92 sec
+      Start 54: idle_mailbox_readonly
+54/73 Test #54: idle_mailbox_readonly ............   Passed    0.01 sec
+      Start 55: lan_discovery_native
+55/73 Test #55: lan_discovery_native .............   Passed    0.12 sec
+      Start 56: lan_pairing_storage
+56/73 Test #56: lan_pairing_storage ..............   Passed    0.01 sec
+      Start 57: lan_discovery_boundary
+57/73 Test #57: lan_discovery_boundary ...........   Passed    0.00 sec
+      Start 58: lan_discovery
+58/73 Test #58: lan_discovery ....................   Passed    0.00 sec
+      Start 59: lan_pairing_wire
+59/73 Test #59: lan_pairing_wire .................   Passed    0.00 sec
+      Start 60: lan_service
+60/73 Test #60: lan_service ......................   Passed    0.04 sec
+      Start 61: lan_scoped_bind
+61/73 Test #61: lan_scoped_bind ..................   Passed    0.00 sec
+      Start 62: lan_pairing_control
+62/73 Test #62: lan_pairing_control ..............   Passed    0.76 sec
+      Start 63: lan_pairing_session
+63/73 Test #63: lan_pairing_session ..............   Passed    0.14 sec
+      Start 64: lan_pairing_crypto
+64/73 Test #64: lan_pairing_crypto ...............   Passed    0.27 sec
+      Start 65: lan_pairing_end_to_end
+65/73 Test #65: lan_pairing_end_to_end ...........   Passed    0.75 sec
+      Start 66: lan_endpoint_probe
+66/73 Test #66: lan_endpoint_probe ...............   Passed    5.33 sec
+      Start 67: lan_discovery_service
+67/73 Test #67: lan_discovery_service ............   Passed    0.25 sec
+      Start 68: lan_end_to_end
+68/73 Test #68: lan_end_to_end ...................***Failed   15.99 sec
+three device mesh A=LAN sharing active
+Device: Received into clipboard and history
+B: Connected (TLS 1.3)
+C: Received into history; clipboard pending B=LAN sharing active
+C: Connected (TLS 1.3)
+A: Connected (TLS 1.3) C=LAN sharing active
+A: Connected (TLS 1.3)
+B: Connected (TLS 1.3)
+
+      Start 69: lan_tls_transport
+69/73 Test #69: lan_tls_transport ................   Passed   25.17 sec
+      Start 70: lan_dns
+70/73 Test #70: lan_dns ..........................   Passed    0.02 sec
+      Start 71: lan_secrets
+71/73 Test #71: lan_secrets ......................   Passed    0.23 sec
+      Start 72: lan_settings_native
+72/73 Test #72: lan_settings_native ..............   Passed    1.38 sec
+      Start 73: lan_settings_native_ru
+73/73 Test #73: lan_settings_native_ru ...........   Passed    1.03 sec
+
+99% tests passed, 1 tests failed out of 73
+
+Total Test time (real) =  82.07 sec
+
+The following tests FAILED:
+	 68 - lan_end_to_end (Failed)
+Errors while running CTest

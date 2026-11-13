@@ -476,3 +476,72 @@ docs/LAN_DISCOVERY_IMPLEMENTATION.md.
 не тронут, staging .app архивированы в .noindex, одна production-регистрация.
 Процесс 90976 ожидает StartupPermissions::run; доступ пока не подтверждён.
 Реальная приёмка Mac↔Windows остаётся открыта.
+
+### Persistent identity for local Mac installations (13 November 2026)
+
+Do not install with `codesign --sign -`: its designated requirement pins the
+binary hash, so recompiling invalidates Accessibility and login Keychain access.
+The user approved a persistent local identity, `Cliptiq Local Development`, whose
+private key lives in this Mac's login Keychain, with codesign access. Do not
+export the key, recreate the identity on each build, or commit key material.
+Self-signed code-signing trust, if approved, must be limited to the user domain
+and codeSign policy; never add general SSL/VPN or system-wide trust.
+
+Use the installer after configuring/building/testing Release:
+
+```
+python3 tools/install-macos-local.py
+```
+
+It stages and signs the complete bundle, verifies the signature and the previous
+installation's designated requirement, stops only the installed process, moves
+its previous package to Trash before copying the replacement, unregisters build
+bundle duplicates and registers only the installed package. It preserves the
+profile and LAN keys. There is no ad-hoc fallback. A different identity fails
+before stopping/removing the old package. `--check-only` stages and validates
+without installation.
+
+For the single explicitly approved transition from ad-hoc signing use
+`--migrate-identity`. This resets only Cliptiq's Accessibility bundle record;
+macOS requires one new authorization for the persistent identity (and may ask
+for access to the existing LAN Keychain item). Normal subsequent installations
+must omit this flag and must not reset TCC permissions.
+
+A self-signed local identity is for this Mac's development builds, not public
+Developer ID distribution/notarization. Losing its private key requires a new
+identity and a new user grant. A real Apple-issued identity may be supplied via
+`--identity` or `CLIPTIQ_MACOS_SIGNING_IDENTITY`.
+
+Validation completed on this Mac: user approved codeSign-only user-domain trust
+and authorized codesign's key access. Two different compiled binaries with the
+same bundle identifier satisfied the first binary's certificate-pinned DR.
+The first migration required a grant and an unchanged-binary relaunch to refresh
+macOS's process cache. A subsequent real install using the normal installer
+(without --migrate-identity) removed the previous app package, retained the exact
+Accessibility auth_value/csreq, and entered NativeMenu::process_events without
+StartupPermissions or SecItemCopyMatching blocking startup. Check-only staging
+also passed. Existing profile, peers and secrets were retained. No global TCC
+reset was used.
+
+
+### macOS UI memory optimization (13 November 2026)
+
+Code commit: `6371925`. Settings controls now load once per visited tab, manual
+LAN fields load when expanded, and closed settings release their view graphs.
+Background discovery does not render detached controls; incoming pairing still
+opens its panel. Observe actual NSWindowWillClose for LAN view cleanup: hiding a
+window or switching tabs must preserve its controls and unsaved draft.
+
+Final Release tests: 73/73, including hide/return, closed-view cleanup, EN/RU,
+partial settings Apply, lazy advanced fields and background incoming pairing.
+The final package is installed with the persistent local certificate; no TCC reset
+was needed. PC TLS 1.3 connectivity and tab round-trip were verified after normal
+launch. Final page sanity: General 44.8 MiB footprint, Network 45.6 MiB, CPU about
+0.065–0.075% of one core; controlled baseline pages were 55.4/59.1 MiB.
+
+See `docs/support/macos-idle/2026-11-13-memory-optimization.md` and raw aggregate
+artifacts under `experiments/macos-idle/results/2026-11-13-memory/`. Instruments
+was unavailable; heap/vmmap profiles contain no object contents. Do not compare
+unready Keychain-blocked startup samples or the unstable main-window interval as
+steady-state improvements. A direct background launch showed a Keychain startup
+delay; the normal Launch Services restart was verified ready and connected.

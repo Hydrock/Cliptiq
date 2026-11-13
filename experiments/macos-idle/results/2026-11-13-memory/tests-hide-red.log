@@ -1,0 +1,13 @@
+Test project /Users/smitevils/Projects/cliptiq/Cliptiq/out/core-Darwin-release
+    Start 72: lan_settings_native
+1/1 Test #72: lan_settings_native ..............***Failed    1.24 sec
+field(discoveryWindow.contentView,text("Local device name"))==nameField
+
+
+0% tests passed, 1 tests failed out of 1
+
+Total Test time (real) =   1.24 sec
+
+The following tests FAILED:
+	 72 - lan_settings_native (Failed)
+Errors while running CTest

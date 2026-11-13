@@ -1,0 +1,143 @@
+{
+  "nodes": 169853,
+  "allocated_bytes": 25053835,
+  "largest_types": [
+    {
+      "count": 60639,
+      "bytes": 11934564,
+      "type": "non-object"
+    },
+    {
+      "count": 87,
+      "bytes": 1362176,
+      "type": "Swift Metadata"
+    },
+    {
+      "count": 1297,
+      "bytes": 966720,
+      "type": "Class.methodCache._buckets (bucket_t)"
+    },
+    {
+      "count": 1060,
+      "bytes": 646848,
+      "type": "Swift._DictionaryStorage<Swift.ObjectIdentifier, SwiftUI.(AnyTrackedValue in $19663ce54)>"
+    },
+    {
+      "count": 4300,
+      "bytes": 424560,
+      "type": "Closure context"
+    },
+    {
+      "count": 1093,
+      "bytes": 374352,
+      "type": "NSMutableDictionary (Storage)"
+    },
+    {
+      "count": 6599,
+      "bytes": 349648,
+      "type": "CFString"
+    },
+    {
+      "count": 193,
+      "bytes": 342912,
+      "type": "icu::UnicodeSet (list Storage)"
+    },
+    {
+      "count": 1804,
+      "bytes": 289696,
+      "type": "PropertyList.Element"
+    },
+    {
+      "count": 484,
+      "bytes": 244160,
+      "type": "CFDictionary (Value Storage)"
+    },
+    {
+      "count": 2,
+      "bytes": 152576,
+      "type": "Swift._DictionaryStorage<Swift.String, Swift.String>"
+    },
+    {
+      "count": 334,
+      "bytes": 149632,
+      "type": "_NSViewLayoutAux"
+    },
+    {
+      "count": 176,
+      "bytes": 140896,
+      "type": "CFDictionary (Weak Key Storage)"
+    },
+    {
+      "count": 4119,
+      "bytes": 131808,
+      "type": "NSKeyValueDependency"
+    },
+    {
+      "count": 387,
+      "bytes": 131184,
+      "type": "NSDictionary"
+    },
+    {
+      "count": 586,
+      "bytes": 115216,
+      "type": "Swift._ContiguousArrayStorage<SwiftUI.ViewTraitCollection.(Entry in $196611974)>"
+    },
+    {
+      "count": 2322,
+      "bytes": 111456,
+      "type": "CFSet"
+    },
+    {
+      "count": 2258,
+      "bytes": 110384,
+      "type": "__NSMallocBlock__"
+    },
+    {
+      "count": 2308,
+      "bytes": 104512,
+      "type": "CFSet (Value Storage)"
+    },
+    {
+      "count": 9,
+      "bytes": 104448,
+      "type": "NSConcreteMutableData (Bytes Storage)"
+    }
+  ],
+  "controls": [
+    {
+      "count": 696,
+      "bytes": 55680,
+      "type": "NSLayoutConstraint"
+    },
+    {
+      "count": 33,
+      "bytes": 29568,
+      "type": "NSTextField"
+    },
+    {
+      "count": 37,
+      "bytes": 18944,
+      "type": "ViewGraph"
+    },
+    {
+      "count": 25,
+      "bytes": 16000,
+      "type": "NSStackView"
+    },
+    {
+      "count": 15,
+      "bytes": 9600,
+      "type": "NSButton"
+    },
+    {
+      "count": 15,
+      "bytes": 4800,
+      "type": "NSButtonCell"
+    },
+    {
+      "count": 1,
+      "bytes": 1280,
+      "type": "NSTextView"
+    }
+  ]
+}

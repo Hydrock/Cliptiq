@@ -1,0 +1,143 @@
+{
+  "nodes": 296936,
+  "allocated_bytes": 35374936,
+  "largest_types": [
+    {
+      "count": 99469,
+      "bytes": 14760262,
+      "type": "non-object"
+    },
+    {
+      "count": 87,
+      "bytes": 1362176,
+      "type": "Swift Metadata"
+    },
+    {
+      "count": 1779,
+      "bytes": 1047552,
+      "type": "Swift._DictionaryStorage<Swift.ObjectIdentifier, SwiftUI.(AnyTrackedValue in $19663ce54)>"
+    },
+    {
+      "count": 1304,
+      "bytes": 998784,
+      "type": "Class.methodCache._buckets (bucket_t)"
+    },
+    {
+      "count": 8103,
+      "bytes": 818480,
+      "type": "Closure context"
+    },
+    {
+      "count": 4024,
+      "bytes": 646784,
+      "type": "PropertyList.Element"
+    },
+    {
+      "count": 1644,
+      "bytes": 454832,
+      "type": "NSMutableDictionary (Storage)"
+    },
+    {
+      "count": 7027,
+      "bytes": 379040,
+      "type": "CFString"
+    },
+    {
+      "count": 11420,
+      "bytes": 365440,
+      "type": "NSKeyValueDependency"
+    },
+    {
+      "count": 799,
+      "bytes": 357952,
+      "type": "_NSViewLayoutAux"
+    },
+    {
+      "count": 193,
+      "bytes": 342912,
+      "type": "icu::UnicodeSet (list Storage)"
+    },
+    {
+      "count": 838,
+      "bytes": 318272,
+      "type": "CFDictionary (Value Storage)"
+    },
+    {
+      "count": 6284,
+      "bytes": 301632,
+      "type": "CFSet"
+    },
+    {
+      "count": 6270,
+      "bytes": 259232,
+      "type": "CFSet (Value Storage)"
+    },
+    {
+      "count": 5208,
+      "bytes": 252000,
+      "type": "__NSMallocBlock__"
+    },
+    {
+      "count": 324,
+      "bytes": 204160,
+      "type": "PropertyList.Element Storage"
+    },
+    {
+      "count": 2357,
+      "bytes": 197988,
+      "type": "SwiftUI.AnimatableFrameAttribute"
+    },
+    {
+      "count": 1947,
+      "bytes": 186912,
+      "type": "SwiftUI.MutableBox<SwiftUI.CachedEnvironment>"
+    },
+    {
+      "count": 3669,
+      "bytes": 175760,
+      "type": "__NSExactBlockVariable__"
+    },
+    {
+      "count": 1342,
+      "bytes": 171776,
+      "type": "NSMapTable"
+    }
+  ],
+  "controls": [
+    {
+      "count": 177,
+      "bytes": 158592,
+      "type": "NSTextField"
+    },
+    {
+      "count": 1598,
+      "bytes": 127840,
+      "type": "NSLayoutConstraint"
+    },
+    {
+      "count": 116,
+      "bytes": 59392,
+      "type": "ViewGraph"
+    },
+    {
+      "count": 89,
+      "bytes": 56960,
+      "type": "NSStackView"
+    },
+    {
+      "count": 67,
+      "bytes": 42880,
+      "type": "NSButton"
+    },
+    {
+      "count": 67,
+      "bytes": 21440,
+      "type": "NSButtonCell"
+    },
+    {
+      "count": 2,
+      "bytes": 2560,
+      "type": "NSTextView"
+    }
+  ]
+}
