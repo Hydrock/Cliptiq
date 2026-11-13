@@ -39,6 +39,36 @@ std::string new_id(){std::random_device rd;std::string s;const char*h="012345678
 Result<std::string> key_fingerprint(const std::string& s){return guarded<std::string>([&]()->Result<std::string>{if(s.size()!=64)invalid("key must contain 64 hex digits");Bytes b;for(size_t i=0;i<64;i+=2){auto hex=[](char c){if(c>='0'&&c<='9')return c-'0';if(c>='a'&&c<='f')return c-'a'+10;if(c>='A'&&c<='F')return c-'A'+10;invalid("invalid key hex");return 0;};b.push_back(uint8_t((hex(s[i])<<4)|hex(s[i+1])));}Sha256 hash;hash.update(b.data(),b.size());return hash.finish();});}
 Result<void> validate_config(const Config& c){return guarded<void>([&]()->Result<void>{if(!id(c.device_id)||!c.port||c.peers.size()>16||unsigned(c.receive_mode)>1||c.revision>=INT64_MAX)invalid("invalid LAN configuration");str(c.device_name,256);str(c.bind_address,255);if(c.bind_address.empty())invalid("empty bind address");std::set<std::string> ids,remote,auth,refs;for(auto&p:c.peers){if(!id(p.id)||!ids.insert(p.id).second||!p.port||p.host.empty()||(!p.remote_device_id.empty()&&(!id(p.remote_device_id)||p.remote_device_id==c.device_id||!remote.insert(p.remote_device_id).second)))invalid("invalid LAN peer");str(p.name,256);str(p.host,255);str(p.secret_ref,256);str(p.auth_id,128);if(!p.auth_id.empty()&&(p.auth_id.size()!=64||!std::all_of(p.auth_id.begin(),p.auth_id.end(),[](char x){return (x>='0'&&x<='9')||(x>='a'&&x<='f');})||!auth.insert(p.auth_id).second))invalid("invalid or duplicate authentication id");if(!p.secret_ref.empty()&&!refs.insert(p.secret_ref).second)invalid("duplicate secret reference");}return {};});}
 bool active(const Config& c){return !c.paused&&std::any_of(c.peers.begin(),c.peers.end(),[](auto&p){return p.enabled&&(p.send||p.receive)&&!p.secret_ref.empty()&&!p.auth_id.empty();});}
+Result<DiscoveryPreferences> load_discovery_preferences(Store& s){return guarded<DiscoveryPreferences>([&]()->Result<DiscoveryPreferences>{
+ DiscoveryPreferences result;unsigned count=0;
+ Statement q(s.connection(),"SELECT key,typeof(value),length(CAST(value AS BLOB)),value FROM settings WHERE key IN ('lan.discovery.enabled','lan.discovery.interface','lan.discovery.revision')");
+ while(q.row()){
+  ++count;auto key=q.text(0),type=q.text(1);
+  if(q.number(2)>255)throw Failure{{ErrorCode::Corrupt,"Invalid discovery preferences"}};
+  if(key=="lan.discovery.interface"){
+   if(type!="text")throw Failure{{ErrorCode::Corrupt,"Invalid discovery interface"}};
+   result.interface_id=q.text(3);str(result.interface_id,255);
+  }else{
+   if(type!="integer"||q.number(3)<0)throw Failure{{ErrorCode::Corrupt,"Invalid discovery preferences"}};
+   if(key=="lan.discovery.enabled"){
+    if(q.number(3)>1)throw Failure{{ErrorCode::Corrupt,"Invalid discovery availability"}};
+    result.enabled=q.number(3)!=0;
+   }else result.revision=std::uint64_t(q.number(3));
+  }
+ }
+ if(count!=0&&count!=3)throw Failure{{ErrorCode::Corrupt,"Incomplete discovery preferences"}};
+ return result;
+});}
+Result<void> save_discovery_preferences(Store& s,const DiscoveryPreferences& value){return guarded<void>([&]()->Result<void>{
+ str(value.interface_id,255);
+ if(value.revision>=INT64_MAX)return Error{ErrorCode::TooLarge,"Discovery revision exhausted"};
+ Transaction tx(s.connection());auto previous=load_discovery_preferences(s);if(!previous)return previous.error();
+ if(previous.value().revision!=value.revision)return Error{ErrorCode::Busy,"Discovery preferences changed; reload settings"};
+ auto number=[&](const char* key,std::int64_t n){Statement q(s.connection(),"INSERT INTO settings(key,value) VALUES(?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value");q.bind(1,std::string(key));q.bind(2,n);q.done();};
+ number("lan.discovery.enabled",value.enabled?1:0);
+ {Statement q(s.connection(),"INSERT INTO settings(key,value) VALUES('lan.discovery.interface',?) ON CONFLICT(key) DO UPDATE SET value=excluded.value");q.bind(1,value.interface_id);q.done();}
+ number("lan.discovery.revision",std::int64_t(value.revision+1));revision(s.connection());tx.commit();return {};
+});}
 Result<Config> load_config(Store&s){return guarded<Config>([&]()->Result<Config>{Transaction tx(s.connection());Statement q(s.connection(),"SELECT length(config) FROM lan_state WHERE id=1");q.row();if(q.number(0)==0){Config c;c.device_id=new_id();Statement u(s.connection(),"UPDATE lan_state SET config=? WHERE id=1");u.bind(1,pack(c));u.done();}auto c=config(s.connection());auto v=validate_config(c);if(!v)return v.error();tx.commit();return c;});}
 Result<void> save_config(Store&s,const Config&c){auto valid=validate_config(c);if(!valid)return valid;return guarded<void>([&]()->Result<void>{Transaction tx(s.connection());auto old=config(s.connection());if(old.revision!=c.revision)return Error{ErrorCode::Busy,"LAN settings changed; reload settings"};if(old.device_id!=c.device_id)invalid("device identity is immutable");for(auto&p:c.peers)for(auto&o:old.peers)if(p.id==o.id&&!o.remote_device_id.empty()&&p.remote_device_id!=o.remote_device_id&&!(p.remote_device_id.empty()&&p.auth_id!=o.auth_id&&p.secret_ref!=o.secret_ref))invalid("peer identity cannot change");write(s.connection(),c);revision(s.connection());tx.commit();return {};});}
 Result<Bytes> encode_event(const Event&e){return guarded<Bytes>([&]()->Result<Bytes>{if(!id(e.origin_device_id)||!id(e.event_id)||!e.sequence||e.sequence>INT64_MAX||e.created_ms<0)invalid("invalid LAN event identity");reps(e.representations);Bytes b{'C','T','L',1};field(b,e.origin_device_id);field(b,e.event_id);put(b,e.sequence,8);put(b,e.created_ms,8);put(b,e.representations.size(),1);for(auto&r:e.representations){put(b,r.item_index,4);field(b,r.native_type);field(b,r.data);}if(b.size()>max_event_bytes)throw Failure{{ErrorCode::TooLarge,"LAN frame too large"}};return b;});}

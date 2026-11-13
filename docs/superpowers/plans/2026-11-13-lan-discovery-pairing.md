@@ -54,11 +54,11 @@ The DTOs below live in namespace cliptiq::lan. Use existing Result<T>, Bytes and
 - DiscoveryRegistry(local_id: string); update(DiscoveryDevice, now_ms: int64_t) -> Result<void>; remove(device_id: string, interface_index: uint32_t); expire(now_ms: int64_t); devices() -> vector<DiscoveryDevice>.
 - Preserve endpoint alternatives for one device rather than trusting the newest address; expose one selected compatible endpoint per ID to UI. Maximum 64 devices; name 256 UTF-8 bytes; service metadata 1024 bytes; resolve lifetime 30 s unless native removal arrives sooner.
 
-- [ ] Write tests/unit/lan_discovery_test.cpp: opt-in false and absent keys, old Config round-trip unchanged, expiry/removal, self rejection, equal names/different IDs, forged ID/invalid UTF-8/control characters, duplicate endpoints, capacity 64.
-- [ ] Register lan_discovery test in cmake/Lan.cmake; run it and observe missing APIs/failure.
-- [ ] Implement registry/validation and preferences under settings keys lan.discovery.enabled/interface/revision. Availability changes are explicit immediate actions; opening/editing other fields has no network side effects.
-- [ ] Run lan_discovery, lan and settings tests; confirm existing profile/peer fixtures unchanged.
-- [ ] Commit the independently tested registry/preferences change.
+- [x] Write tests/unit/lan_discovery_test.cpp: opt-in false and absent keys, old Config round-trip unchanged, expiry/removal, self rejection, equal names/different IDs, forged ID/invalid UTF-8/control characters, duplicate endpoints, capacity 64.
+- [x] Register lan_discovery test in cmake/Lan.cmake; run it and observe missing APIs/failure.
+- [x] Implement registry/validation and preferences under settings keys lan.discovery.enabled/interface/revision. Availability changes are explicit immediate actions; opening/editing other fields has no network side effects.
+- [x] Run lan_discovery, lan and settings tests; confirm existing profile/peer fixtures unchanged.
+- [x] Commit the independently tested registry/preferences change.
 
 ### Task 2: PAKE and exact wire protocol
 
