@@ -12,7 +12,7 @@ int main(){try{
  auto hostile=txt.value();std::string fake="address=203.0.113.9";hostile.push_back(static_cast<std::uint8_t>(fake.size()));hostile.insert(hostile.end(),fake.begin(),fake.end());auto safe=decode_discovery_txt(hostile,resolved);CHECK(safe&&safe.value().address==resolved.address);
  auto bad=txt.value();bad.insert(bad.end(),{4,'v','=','9','9'});CHECK(!decode_discovery_txt(bad,resolved));
  bad=txt.value();bad[0]=255;CHECK(!decode_discovery_txt(bad,resolved));
- resolved.address="example.com";CHECK(!decode_discovery_txt(txt.value(),resolved));resolved.address="fe80::1";resolved.interface_index=0;CHECK(!decode_discovery_txt(txt.value(),resolved));resolved.interface_index=7;CHECK(decode_discovery_txt(txt.value(),resolved));
+ resolved.address="example.com";CHECK(!decode_discovery_txt(txt.value(),resolved));resolved.address="fe80::1";resolved.interface_index=0;CHECK(!decode_discovery_txt(txt.value(),resolved));resolved.interface_index=7;auto ipv6=d;ipv6.address="fe80::2";auto txt6=encode_discovery_txt(ipv6);CHECK(txt6&&decode_discovery_txt(txt6.value(),resolved));
  DiscoveryInbox inbox("self");auto generation=inbox.begin();CHECK(inbox.accept(generation,{DiscoveryEvent::Kind::Found,d,{}}));
  auto other=d;other.interface_index=3;other.address="192.168.2.3";CHECK(inbox.accept(generation,{DiscoveryEvent::Kind::Found,other,{}}));CHECK(inbox.drain().size()==2);
  inbox.cancel();CHECK(!inbox.accept(generation,{DiscoveryEvent::Kind::Found,d,{}}));auto next=inbox.begin();CHECK(next!=generation);CHECK(!inbox.accept(generation,{DiscoveryEvent::Kind::Failure,{},"late"}));

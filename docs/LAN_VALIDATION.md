@@ -172,3 +172,26 @@ consecutive repeats. Debug full suite: 61/61 (56.66 s). Log bundle:
 `docs/support/macos-native/2026-11-13-arm64-startup-network/`.
 Physical Mac↔Windows exchange, VPN/firewall and Windows rebuild of this common
 transport change remain unverified on this Mac.
+
+## Discovery and code pairing, 2026-11-13
+
+New protocol: native DNS-SD `_cliptiq._tcp.local.`, separate bounded TCP control
+listener, pinned Mbed TLS EC J-PAKE, transcript-bound mutual proof, authenticated
+sequenced commit messages. See LAN_PAIRING_PROTOCOL.md for wire definitions.
+TXT additionally advertises `af=4|6` so a resolved address matches the listener's
+address family. No key, code or clipboard content is announced.
+
+Locally verified on macOS: pure hostile metadata/cancellation fixtures, isolated
+local-only Bonjour with two announcements, PAKE upstream vectors and wrong-code
+checks, real loopback control exchange, concurrent requests, storage rollback,
+prepared/committed recovery, cancellation and code expiry, EN/RU AppKit discovery
+controls with retained drafts/code input. A two-profile end-to-end test discovers,
+pairs by code, saves credentials to a fake store, exchanges new text and PNG over
+TLS, and reconnects after restarting the data services. Automated tests never read
+normal-profile Keychain entries or mutate the real clipboard.
+
+Windows DNS-SD and Win32 UI have source implementation and native fixtures;
+Windows compilation/runtime verification and physical Mac↔Windows acceptance are
+still open. No Windows pass is inferred from a Mac run. Linux discovery is explicitly
+unsupported, with the existing manual path retained. Existing-peer address changes
+remain manual; unauthenticated announcements cannot replace a trusted endpoint.

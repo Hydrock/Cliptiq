@@ -6,7 +6,7 @@ namespace cliptiq::lan {
 namespace {Error invalid(){return {ErrorCode::InvalidArgument,"Invalid Cliptiq discovery metadata"};}}
 Result<Bytes> encode_discovery_txt(const DiscoveryDevice& d){
  if(!valid_device_id(d.device_id)||!valid_display_text(d.name,250)||!valid_display_text(d.platform,32)||!d.data_port)return invalid();
- Bytes out;for(const auto& s:{std::string("v=1"),"id="+d.device_id,"name="+d.name,"os="+d.platform,"dp="+std::to_string(d.data_port)}){
+ Bytes out;for(const auto& s:{std::string("v=1"),"id="+d.device_id,"name="+d.name,"os="+d.platform,"dp="+std::to_string(d.data_port),std::string("af=")+(d.address.find(':')==std::string::npos?"4":"6")}){
   if(s.size()>255)return invalid();out.push_back(static_cast<std::uint8_t>(s.size()));out.insert(out.end(),s.begin(),s.end());
  }return out;
 }
@@ -17,7 +17,7 @@ Result<DiscoveryDevice> decode_discovery_txt(const Bytes& bytes,DiscoveryDevice 
   std::string s(bytes.begin()+at,bytes.begin()+at+n);at+=n;auto eq=s.find('=');if(eq==std::string::npos||eq==0)return invalid();
   auto k=s.substr(0,eq);if(!valid_display_text(k,32)||!values.emplace(k,s.substr(eq+1)).second)return invalid();
  }
- if(values["v"]!="1"||!valid_device_id(values["id"])||!valid_display_text(values["name"],250)||!valid_display_text(values["os"],32))return invalid();
+ if((values["af"]!="4"&&values["af"]!="6")||((d.address.find(':')==std::string::npos)!=(values["af"]=="4"))||values["v"]!="1"||!valid_device_id(values["id"])||!valid_display_text(values["name"],250)||!valid_display_text(values["os"],32))return invalid();
  unsigned port=0;const auto& p=values["dp"];auto r=std::from_chars(p.data(),p.data()+p.size(),port);
  if(p.empty()||r.ec!=std::errc{}||r.ptr!=p.data()+p.size()||port==0||port>65535)return invalid();
  d.device_id=values["id"];d.name=values["name"];d.platform=values["os"];d.data_port=static_cast<std::uint16_t>(port);return d;

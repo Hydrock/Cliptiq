@@ -74,7 +74,7 @@ Result<void> NativeDiscovery::publish(std::optional<DiscoveryAnnouncement> annou
  auto& s=*impl_;s.ops.erase(std::remove_if(s.ops.begin(),s.ops.end(),[](const auto& op){return op->kind==Impl::Kind::Publish;}),s.ops.end());
  if(!announcement)return {};auto txt=encode_discovery_txt(announcement->device);if(!txt)return txt.error();if(!announcement->device.control_port)return Error{ErrorCode::InvalidArgument,"Missing pairing listener"};
  auto op=s.operation(Impl::Kind::Publish);op->txt=txt.value();auto name="Cliptiq-"+s.id.substr(0,40)+"-"+std::to_string(std::hash<std::string>{}(s.id)%1000000);
- auto result=DNSServiceRegister(&op->ref,0,s.local_only?kDNSServiceInterfaceIndexLocalOnly:announcement->device.interface_index,name.c_str(),"_cliptiq._tcp","local.",nullptr,htons(announcement->device.control_port),static_cast<std::uint16_t>(op->txt.size()),op->txt.data(),Impl::registered,op.get());
+ auto result=DNSServiceRegister(&op->ref,0,s.local_only?kDNSServiceInterfaceIndexLocalOnly:announcement->device.interface_index,name.c_str(),"_cliptiq._tcp","local.",s.local_only?"localhost.":nullptr,htons(announcement->device.control_port),static_cast<std::uint16_t>(op->txt.size()),op->txt.data(),Impl::registered,op.get());
  if(result)return Error{ErrorCode::Io,"Bonjour publication failed ("+std::to_string(result)+")."};s.ops.push_back(std::move(op));return {};
 }
 Result<void> NativeDiscovery::browse(std::int64_t duration){

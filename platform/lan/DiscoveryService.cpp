@@ -34,7 +34,7 @@ struct DiscoveryService::State {
  Result<void> publish(){
   view.published=false;auto off=hooks.publish({});hooks.stop_pairing();if(!off)return off;if(!prefs.enabled)return {};
   auto iface=selected();if(!iface)return iface.error();auto port=hooks.listen(iface.value(),config.port);if(!port)return port.error();
-  DiscoveryDevice d;d.device_id=config.device_id;d.name=label(config.device_name);d.platform=system.empty()?"test":system;d.interface_index=iface.value().index;d.control_port=port.value();d.data_port=config.port;
+  DiscoveryDevice d;d.device_id=config.device_id;d.name=label(config.device_name);d.platform=system.empty()?"test":system;d.address=iface.value().address;d.interface_index=iface.value().index;d.control_port=port.value();d.data_port=config.port;
   auto result=hooks.publish(DiscoveryAnnouncement{std::move(d)});if(!result){hooks.stop_pairing();return result;}view.published=true;return {};
  }
  void clear_pair(){view.pairing.reset();view.session_id.clear();view.peer_name.clear();if(!view.code.empty())mbedtls_platform_zeroize(view.code.data(),view.code.size());view.code.clear();}
