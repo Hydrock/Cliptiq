@@ -169,7 +169,7 @@ struct DragSource final : IDropSource {
 struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
   DWORD owner = GetCurrentThreadId();
   HWND window = nullptr, tree = nullptr, body = nullptr,
-       enabled = nullptr, shortcut = nullptr, bind = nullptr, message = nullptr,
+       enabled = nullptr, message = nullptr,
        undo = nullptr, redo = nullptr, addSnippet = nullptr;
   HFONT font = nullptr;
   unsigned font_dpi=0;
@@ -298,7 +298,7 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
     }
     if (window && IsWindow(window))
       DestroyWindow(window);
-    window = tree = body = shortcut = enabled = bind = undo = redo = addSnippet = message = nullptr;
+    window = tree = body = enabled = undo = redo = addSnippet = message = nullptr;
   }
   ~State() {
     close();
@@ -314,7 +314,7 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
           message,
           r ? wide((model->saving()
                         ? std::string(lc("Saving locally..."))
-                        : lc("Saved locally. ") + model->binding_status()))
+                        : lc("Saved locally.")))
                   .c_str()
             : wide(tr(r.error().message)).c_str());
     layout();
@@ -362,10 +362,6 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
     EnableWindow(body, selected && !folder);
     SetWindowTextW(body, wide(model->content()).c_str());
     SendMessageW(body, EM_EMPTYUNDOBUFFER, 0, 0);
-    EnableWindow(shortcut, folder);
-    EnableWindow(bind, folder);
-    auto chord = model->folder_chord();
-    SetWindowTextW(shortcut, chord ? wide(format_chord(*chord)).c_str() : L"");
     EnableWindow(addSnippet, bool(selected));
     history();
     updating = false;
@@ -478,10 +474,7 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
       r = command == 510 ? model->undo() : model->redo();
       if (r)
         detail();
-    } else if (command == 512) {
-      r = model->reload();
-      if (r)
-        rebuild();
+
     } else if (command == 503) {
       r = model->enable(SendMessageW(enabled, BM_GETCHECK, 0, 0) ==
                         BST_CHECKED);
@@ -490,18 +483,6 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
       else
         SendMessageW(enabled, BM_SETCHECK,
                      model->enabled() ? BST_CHECKED : BST_UNCHECKED, 0);
-    } else if (command == 506) {
-      auto value = text(shortcut);
-      std::optional<KeyChord> chord;
-      if (!value.empty()) {
-        auto c = parse_chord(value);
-        if (!c) {
-          status(c.error());
-          return;
-        }
-        chord = c.value();
-      }
-      r = model->bind_folder(chord);
     }
     status(r);
   }
@@ -528,7 +509,7 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
       return SIZE{bounds.right,bounds.bottom};
     };
     int top=margin,x=margin,row_height=px(34);
-    for(int id=507;id<=512;++id){
+    for(int id=507;id<=511;++id){
       auto button=GetDlgItem(window,id);auto size=text_size(button);
       int w=std::max(px(80),int(size.cx)+px(28));
       if(x>margin && x+w>width-margin){x=margin;top+=row_height+gap;}
@@ -543,12 +524,9 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
     MoveWindow(tree,margin,content_top,left-margin-gap,bottom-content_top,TRUE);
     x=left+gap;int right=width-x-margin;
     MoveWindow(enabled,x,content_top,right,px(28),TRUE);
-    int bind_width=std::max(px(120),int(text_size(bind).cx)+px(28));
-    MoveWindow(shortcut,x,content_top+px(38),std::max(1,right-bind_width-gap),px(32),TRUE);
-    MoveWindow(bind,width-margin-bind_width,content_top+px(38),bind_width,px(32),TRUE);
     auto copy_button=GetDlgItem(window,515);
     int copy_height=copy_button?px(44):0;
-    MoveWindow(body,x,content_top+px(82),right,std::max(1,bottom-content_top-px(82)-copy_height),TRUE);
+    MoveWindow(body,x,content_top+px(38),right,std::max(1,bottom-content_top-px(38)-copy_height),TRUE);
     if(copy_button)MoveWindow(copy_button,x,bottom-px(34),right,px(34),TRUE);
     MoveWindow(message,margin,height-footer+margin,width-2*margin,footer-2*margin,TRUE);
     SelectObject(dc,previous);ReleaseDC(window,dc);
@@ -656,28 +634,7 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
         s->perform(key == 'Y' || (GetKeyState(VK_SHIFT) & 0x8000) ? 511 : 510);
         return 0;
       }
-      if (w == s->shortcut) {
-        unsigned mods =
-            ((GetKeyState(VK_CONTROL) & 0x8000) ? 1u : 0u) |
-            ((GetKeyState(VK_SHIFT) & 0x8000) ? 2u : 0u) |
-            ((GetKeyState(VK_MENU) & 0x8000) ? 4u : 0u) |
-            (((GetKeyState(VK_LWIN) | GetKeyState(VK_RWIN)) & 0x8000) ? 8u
-                                                                      : 0u);
-        if (mods) {
-          std::string name;
-          if ((key >= 'A' && key <= 'Z') || (key >= '0' && key <= '9'))
-            name = char(key);
-          else if (key >= VK_F1 && key <= VK_F11)
-            name = "F" + std::to_string(key - VK_F1 + 1);
-          if (!name.empty()) {
-            auto chord = format_chord({mods, name});
-            if (parse_chord(chord)) {
-              SetWindowTextW(w, wide(chord).c_str());
-              return 0;
-            }
-          }
-        }
-      }
+
       if (w == s->tree) {
         if(s->copy && (key==VK_RETURN || (control&&key=='C'))){s->perform(515);return 0;}
         if (key == VK_SPACE) {
@@ -708,10 +665,6 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
     }
     if (w == s->body && msg == WM_CHAR && (GetKeyState(VK_CONTROL) & 0x8000) &&
         (key == 26 || key == 25))
-      return 0;
-    if (w == s->shortcut &&
-        (msg == WM_SYSCHAR ||
-         (msg == WM_CHAR && (GetKeyState(VK_CONTROL) & 0x8000))))
       return 0;
     return DefSubclassProc(w, msg, key, lp);
   }
@@ -792,7 +745,7 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
             if (header->code == TVN_SELCHANGINGW && s->model->has_unsaved()) {
               s->status(Error{
                   ErrorCode::Busy,
-                  "Unsaved draft: correct it or Reload before navigating"});
+                  "Unsaved draft: correct it before navigating"});
               return TRUE;
             }
             if (header->code == TVN_SELCHANGEDW) {
@@ -930,8 +883,7 @@ Result<void> NativeSnippetEditor::show_embedded(std::shared_ptr<SnippetEditorSes
                             lw(L"Add Snippet"),
                             lw(L"Delete…"),
                             lw(L"Undo"),
-                            lw(L"Redo"),
-                            lw(L"Reload")
+                            lw(L"Redo")
   };
   for (int n = 0; n < int(sizeof(names) / sizeof(names[0])); ++n) {
     auto button = control(L"BUTTON", names[n], 507 + n, BS_PUSHBUTTON);
@@ -948,9 +900,6 @@ Result<void> NativeSnippetEditor::show_embedded(std::shared_ptr<SnippetEditorSes
                         TVS_SHOWSELALWAYS | TVS_CHECKBOXES,
                     WS_EX_CLIENTEDGE);
   s->enabled = control(L"BUTTON", lw(L"Enabled in menu"), 503, BS_AUTOCHECKBOX);
-  s->shortcut = control(L"EDIT", L"", 505, ES_AUTOHSCROLL, WS_EX_CLIENTEDGE);
-  SendMessageW(s->shortcut, EM_SETLIMITTEXT, 128, 0);
-  s->bind = control(L"BUTTON", lw(L"Bind / Clear"), 506, BS_PUSHBUTTON);
   s->body = control(MSFTEDIT_CLASS, L"", 504,
                     ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN | WS_VSCROLL,
                     WS_EX_CLIENTEDGE);
@@ -967,8 +916,6 @@ Result<void> NativeSnippetEditor::show_embedded(std::shared_ptr<SnippetEditorSes
   SetWindowSubclass(s->tree, State::edit_proc, 1,
                     reinterpret_cast<DWORD_PTR>(s.get()));
   SetWindowSubclass(s->body, State::edit_proc, 1,
-                    reinterpret_cast<DWORD_PTR>(s.get()));
-  SetWindowSubclass(s->shortcut, State::edit_proc, 1,
                     reinterpret_cast<DWORD_PTR>(s.get()));
   if (SUCCEEDED(s->ole)) {
     s->target = new State::DropTarget(s);
@@ -1029,14 +976,5 @@ Result<bool> NativeSnippetEditor::request_close() {
 std::uintptr_t NativeSnippetEditor::native_handle() const {
   return reinterpret_cast<std::uintptr_t>(state_->window);
 }
-bool NativeSnippetEditor::record_chord(const KeyChord &chord) {
-  auto s = state_;
-
-  if (!s->window || !IsWindowVisible(s->window) ||
-      GetForegroundWindow() != GetAncestor(s->window,GA_ROOT) || GetFocus() != s->shortcut ||
-      !IsWindowEnabled(s->shortcut))
-    return false;
-  SetWindowTextW(s->shortcut, wide(format_chord(chord)).c_str());
-  return true;
-}
+bool NativeSnippetEditor::record_chord(const KeyChord &) { return false; }
 } // namespace cliptiq

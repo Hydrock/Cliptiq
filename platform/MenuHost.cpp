@@ -852,6 +852,7 @@ int host(int argc, char **argv) {
         // Text autosave completion only invalidates the menu. Folder routing
         // is reconciled by the existing periodic host pass, not per keystroke.
         callbacks.changed = [&] { refresh = true; };
+#if !defined(_WIN32) && !defined(__APPLE__)
         callbacks.bind_folder =
             [&](const FolderId &id,
                 std::optional<KeyChord> chord) -> Result<void> {
@@ -892,6 +893,7 @@ int host(int argc, char **argv) {
                  hotkeys.capability().reason +
                  "; use Settings to inspect/authorize.";
         };
+#endif
         editor_session =
             std::make_shared<SnippetEditorSession>(store, std::move(callbacks));
         auto loaded = editor_session->reload();

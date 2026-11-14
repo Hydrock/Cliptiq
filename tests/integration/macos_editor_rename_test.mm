@@ -93,12 +93,12 @@ int main(int argc, char **argv) { @autoreleasepool {
     [window makeFirstResponder:tree]; settle();
     rename(@"Renamed snippet", @selector(insertNewline:));
     CHECK(session->title() == "Renamed snippet");
-    beginTyping(@"Snippet committed by Reload");
-    auto reloadButton = (NSButton *)find(window.contentView, @"editor-reload");
-    [reloadButton performClick:nil];
+    CHECK(!find(window.contentView,@"editor-reload"));
+    beginTyping(@"Snippet committed on focus change");
+    CHECK([window makeFirstResponder:tree]);
     settle();
-    CHECK(session->title() == "Snippet committed by Reload");
-    // A rebuild must release the old field editor so another rename can start.
+    CHECK(session->title() == "Snippet committed on focus change");
+    // Ending an edit must release its field editor so another rename can start.
     rename(@"Renamed snippet", @selector(insertNewline:));
     CHECK(session->title() == "Renamed snippet");
     rename(@"", @selector(insertNewline:));

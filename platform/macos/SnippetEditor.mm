@@ -24,7 +24,6 @@ using namespace cliptiq;
   std::function<NSDragOperation(id<NSDraggingInfo>, id, NSInteger, BOOL)> drop;
   std::function<void()> cancel;
   std::function<bool()> can_close;
-  NSTextView *shortcutEditor;
   NSOutlineView *outline;
   BOOL undo_enabled, redo_enabled;
   NSTextField *renaming;
@@ -40,9 +39,7 @@ using namespace cliptiq;
 - (void)remove:(id)sender;
 - (void)undo:(id)sender;
 - (void)redo:(id)sender;
-- (void)reload:(id)sender;
 - (void)enable:(id)sender;
-- (void)bind:(id)sender;
 @end
 @interface CliptiqSnippetOutline : NSOutlineView
 @property(nonatomic, weak) CliptiqSnippetBridge *bridge;
@@ -88,46 +85,6 @@ using namespace cliptiq;
     }
   }
   return [super performKeyEquivalent:event];
-}
-@end
-@interface CliptiqFolderShortcutField : NSTextField
-@end
-@implementation CliptiqFolderShortcutField
-@end
-@interface CliptiqFolderShortcutEditor : NSTextView
-@property(nonatomic, weak) NSTextField *field;
-@end
-@implementation CliptiqFolderShortcutEditor
-- (void)keyDown:(NSEvent *)event {
-  unsigned mods =
-      ((event.modifierFlags & NSEventModifierFlagControl) ? Control : 0) |
-      ((event.modifierFlags & NSEventModifierFlagShift) ? Shift : 0) |
-      ((event.modifierFlags & NSEventModifierFlagOption) ? Alt : 0) |
-      ((event.modifierFlags & NSEventModifierFlagCommand) ? Super : 0);
-  if (!mods && event.keyCode == 51) {
-    self.string = @"";
-    self.field.stringValue = @"";
-    return;
-  }
-  auto text = event.charactersIgnoringModifiers.uppercaseString;
-  std::string key;
-  if (text.length == 1) {
-    auto c = [text characterAtIndex:0];
-    if ((c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9'))
-      key = char(c);
-    else if (c >= NSF1FunctionKey && c <= NSF11FunctionKey)
-      key = "F" + std::to_string(c - NSF1FunctionKey + 1);
-  }
-  if (mods && !key.empty()) {
-    auto value = format_chord({mods, key});
-    if (parse_chord(value)) {
-      auto string = [[NSString alloc] initWithUTF8String:value.c_str()];
-      self.string = string;
-      self.field.stringValue = string;
-      return;
-    }
-  }
-  [super keyDown:event];
 }
 @end
 @implementation CliptiqSnippetBridge
@@ -254,39 +211,19 @@ using namespace cliptiq;
   if (action)
     action(511);
 }
-- (void)reload:(id)sender {
-  (void)sender;
-  if (action)
-    action(512);
-}
 - (void)enable:(id)sender {
   (void)sender;
   if (action)
     action(503);
 }
-- (void)bind:(id)sender {
-  (void)sender;
-  if (action)
-    action(506);
-}
+
 - (BOOL)windowShouldClose:(NSWindow *)window {
   if (can_close && !can_close())
     return NO;
   [window orderOut:nil];
   return NO;
 }
-- (id)windowWillReturnFieldEditor:(NSWindow *)window toObject:(id)object {
-  (void)window;
-  if ([object isKindOfClass:CliptiqFolderShortcutField.class]) {
-    if (!shortcutEditor) {
-      shortcutEditor = [CliptiqFolderShortcutEditor new];
-      shortcutEditor.fieldEditor = YES;
-    }
-    [(CliptiqFolderShortcutEditor *)shortcutEditor setField:object];
-    return shortcutEditor;
-  }
-  return nil;
-}
+
 - (id<NSPasteboardWriting>)outlineView:(NSOutlineView *)view
                pasteboardWriterForItem:(id)item {
   (void)view;
@@ -346,10 +283,9 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
   NSButton *copyButton = nil;
   std::function<void(const SnippetId &)> copy;
   NSOutlineView *tree = nil;
-  NSTextField *shortcut = nil, *message = nil;
+  NSTextField *message = nil;
   CliptiqSnippetText *body = nil;
-  NSButton *enabled = nil, *undo = nil, *redo = nil, *addSnippet = nil,
-           *bind = nil;
+  NSButton *enabled = nil, *undo = nil, *redo = nil, *addSnippet = nil;
   CliptiqSnippetBridge *bridge = nil;
   std::shared_ptr<SnippetEditorSession> model;
   std::string window_locale, rendered_structure;
@@ -374,7 +310,7 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
     message.stringValue =
         r ? str((model->saving()
                      ? std::string(lc("Saving locally..."))
-                     : lc("Saved locally. ") + model->binding_status()))
+                     : lc("Saved locally.")))
           : str(r.error().message);
   }
   void poll() {
@@ -442,10 +378,6 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
     body.editable = selected && !folder;
     body.string = str(model->content());
     [body.undoManager removeAllActions];
-    shortcut.enabled = folder;
-    bind.enabled = folder;
-    auto chord = model->folder_chord();
-    shortcut.stringValue = chord ? str(format_chord(*chord)) : @"";
     addSnippet.enabled = bool(selected);
     history();
     updating = false;
@@ -539,7 +471,7 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
       // Toolbar buttons need not take first-responder status themselves.
       // Commit the field editor while its original node is still selected.
       if (![window makeFirstResponder:tree]) return;
-      if (command >= 507 && command <= 512 && model->saving()) {
+      if (command >= 507 && command <= 511 && model->saving()) {
         // Finish structural actions after asynchronous title persistence.
         pending_command = command;
         status({});
@@ -583,10 +515,7 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
         detail();
         selected_label();
       }
-    } else if (command == 512) {
-      r = model->reload();
-      if (r)
-        rebuild();
+
     } else if (command == 503) {
       r = model->enable(enabled.state == NSControlStateValueOn);
       if (r)
@@ -594,18 +523,6 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
       else
         enabled.state =
             model->enabled() ? NSControlStateValueOn : NSControlStateValueOff;
-    } else if (command == 506) {
-      auto value = utf8(shortcut.stringValue);
-      std::optional<KeyChord> chord;
-      if (!value.empty()) {
-        auto c = parse_chord(value);
-        if (!c) {
-          status(c.error());
-          return;
-        }
-        chord = c.value();
-      }
-      r = model->bind_folder(chord);
     }
     status(r);
   }
@@ -695,7 +612,6 @@ Result<void> NativeSnippetEditor::show_embedded(std::shared_ptr<SnippetEditorSes
   s->undo = button(loc(@"Undo"), @"editor-undo", @selector(undo:));
   s->redo = button(loc(@"Redo"), @"editor-redo", @selector(redo:));
   button(loc(@"Rename"), @"editor-rename", @selector(rename:));
-  button(loc(@"Reload"), @"editor-reload", @selector(reload:));
   [tools layoutSubtreeIfNeeded];
   tools.frame = NSMakeRect(0, 0, tools.fittingSize.width, 36);
   auto split = [[NSSplitView alloc] initWithFrame:NSMakeRect(12, 64, 876, 528)];
@@ -730,23 +646,8 @@ Result<void> NativeSnippetEditor::show_embedded(std::shared_ptr<SnippetEditorSes
   s->enabled.frame = NSMakeRect(12, 454, 571, 24);
   s->enabled.autoresizingMask = NSViewWidthSizable | NSViewMinYMargin;
 
-  s->shortcut = [[CliptiqFolderShortcutField alloc]
-      initWithFrame:NSMakeRect(12, 418, 441, 26)];
-  s->shortcut.identifier = @"editor-shortcut";
-  s->shortcut.placeholderString =
-      loc(@"Folder shortcut: press chord, then Bind");
-  s->shortcut.accessibilityLabel = loc(@"Folder shortcut");
-  s->shortcut.autoresizingMask = NSViewWidthSizable | NSViewMinYMargin;
-
-  s->bind = [NSButton buttonWithTitle:loc(@"Bind / Clear")
-                               target:s->bridge
-                               action:@selector(bind:)];
-  s->bind.identifier = @"editor-bind";
-  s->bind.frame = NSMakeRect(465, 418, 118, 26);
-  s->bind.autoresizingMask = NSViewMinXMargin | NSViewMinYMargin;
-
   auto scroll =
-      [[NSScrollView alloc] initWithFrame:NSMakeRect(12, 12, 571, 394)];
+      [[NSScrollView alloc] initWithFrame:NSMakeRect(12, 12, 571, 438)];
   scroll.hasVerticalScroller = YES;
   scroll.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
   s->body = [[CliptiqSnippetText alloc] initWithFrame:scroll.bounds];
@@ -772,7 +673,7 @@ Result<void> NativeSnippetEditor::show_embedded(std::shared_ptr<SnippetEditorSes
   inspector.spacing = 10;
   inspector.translatesAutoresizingMaskIntoConstraints = NO;
   [right addSubview:inspector];
-  for (NSView *view in @[s->enabled, s->shortcut, s->bind, scroll]) {
+  for (NSView *view in @[s->enabled, scroll]) {
     view.translatesAutoresizingMaskIntoConstraints = NO;
     [inspector addArrangedSubview:view];
     [view.widthAnchor constraintEqualToAnchor:inspector.widthAnchor].active = YES;
@@ -958,22 +859,5 @@ Result<bool> NativeSnippetEditor::request_close() {
 std::uintptr_t NativeSnippetEditor::native_handle() const {
   return reinterpret_cast<std::uintptr_t>((__bridge void *)state_->window);
 }
-bool NativeSnippetEditor::record_chord(const KeyChord &chord) {
-  auto s = state_;
-
-  if (!s->window.isVisible || !s->window.isKeyWindow)
-    return false;
-  auto responder = s->window.firstResponder;
-  NSTextField *field = nil;
-  if ([responder isKindOfClass:CliptiqFolderShortcutEditor.class])
-    field = [(CliptiqFolderShortcutEditor *)responder field];
-  else if (responder == s->shortcut)
-    field = s->shortcut;
-  if (field != s->shortcut || !field.enabled)
-    return false;
-  field.stringValue = str(format_chord(chord));
-  if ([responder isKindOfClass:NSTextView.class])
-    [(NSTextView *)responder setString:field.stringValue];
-  return true;
-}
+bool NativeSnippetEditor::record_chord(const KeyChord &) { return false; }
 } // namespace cliptiq

@@ -126,6 +126,10 @@ CapturePlatform native_platform() {
   return CapturePlatform::X11;
 #endif
 }
+bool folder_hotkeys_enabled(CapturePlatform platform) {
+  if(platform==CapturePlatform::Unknown)platform=native_platform();
+  return platform!=CapturePlatform::MacOS && platform!=CapturePlatform::Windows;
+}
 std::string setting_description(const std::string &key) {
   static const std::map<std::string, const char *> help = {
     {"history_count", "How many recent copies to keep. Older entries are removed when this limit is reached."},
@@ -358,6 +362,7 @@ Result<Settings> load_settings(Store &store, CapturePlatform platform) {
         // Retired preference: the tray now has one automatically usable icon.
         continue;
       } else if (key.rfind("hotkey:", 0) == 0) {
+        if(key.rfind("hotkey:folder:",0)==0 && !folder_hotkeys_enabled(platform))continue;
         if (value.empty())
           result.hotkeys[key.substr(7)] = {};
         else {
@@ -381,13 +386,13 @@ Result<Settings> load_settings(Store &store, CapturePlatform platform) {
       return folders.error();
     for (auto it = result.hotkeys.begin(); it != result.hotkeys.end();) {
       if (it->first.rfind("folder:", 0) == 0 &&
-          !folders.value().count(it->first.substr(7)))
+          (!folder_hotkeys_enabled(platform) || !folders.value().count(it->first.substr(7))))
         it = result.hotkeys.erase(it);
       else
         ++it;
     }
     for (auto &p : folders.value())
-      if (!result.hotkeys.count("folder:" + p.first))
+      if (folder_hotkeys_enabled(platform) && !result.hotkeys.count("folder:" + p.first))
         result.hotkeys["folder:" + p.first] = {};
     detail::Statement titles(store.connection(),"SELECT id,substr(title,1,65536) FROM snippet_folders");
     while(titles.row())result.folder_titles[titles.text(0)]=titles.text(1);
@@ -461,6 +466,11 @@ Result<HotkeyMap> available_hotkeys(Store &store, const HotkeyMap &requested) {
   if (!catalog)
     return catalog.error();
   auto keys = requested;
+  if(!folder_hotkeys_enabled(native_platform())) {
+    for(auto it=keys.begin();it!=keys.end();) {
+      if(it->first.rfind("folder:",0)==0)it=keys.erase(it);else ++it;
+    }
+  }
   for (auto &p : keys)
     if (p.first.rfind("folder:", 0) == 0) {
       auto found = catalog.value().find(p.first.substr(7));
@@ -474,7 +484,7 @@ Result<void> synchronize_folder_hotkeys(Store &store,
   auto catalog = settings_folders(store);
   if (!catalog)
     return catalog.error();
-  registry.reconcile_folders(catalog.value());
+  registry.reconcile_folders(folder_hotkeys_enabled(native_platform())?catalog.value():std::map<FolderId,bool>{});
   auto settings = load_settings(store);
   if (!settings)
     return settings.error();
@@ -598,7 +608,7 @@ std::vector<SettingField> settings_fields(const Settings &s,
     out.push_back(std::move(f));
   }
   for (auto &p : s.hotkeys) {
-    if(p.first=="snippets")continue;
+    if(p.first=="snippets" || (p.first.rfind("folder:",0)==0 && !folder_hotkeys_enabled(caps.platform)))continue;
     auto label=tr(p.first);
     if(p.first=="main")label=tr("Quick menu");
     else if(p.first=="history")label=tr("Quick menu - alternate 1");

@@ -101,6 +101,12 @@ int run() {
     NativeSnippetEditor ui;
     CHECK(ui.show(session));
     CHECK(ui.native_handle());
+#ifdef _WIN32
+    CHECK(!GetDlgItem(reinterpret_cast<HWND>(ui.native_handle()),512));
+#elif defined(__APPLE__)
+    CHECK(!find(((__bridge NSWindow*)(void*)ui.native_handle()).contentView,@"editor-reload"));
+#endif
+
     auto settle=[&] {
       for(unsigned i=0;i<400 && session->saving();++i) {CHECK(ui.process_events());std::this_thread::sleep_for(std::chrono::milliseconds(5));}
       CHECK(!session->saving());
@@ -201,16 +207,11 @@ int run() {
     CHECK(ui.show(session));
 #ifdef _WIN32
     window = reinterpret_cast<HWND>(ui.native_handle());
-    CHECK(SetWindowTextW(GetDlgItem(window, 505), L"Ctrl+Alt+Q"));
-    SendMessageW(window, WM_COMMAND, 506, 0);
+    CHECK(!GetDlgItem(window,505)&&!GetDlgItem(window,506));
 #elif defined(__APPLE__)
     window = (__bridge NSWindow *)(void *)ui.native_handle();
-    auto shortcut = (NSTextField *)find(window.contentView, @"editor-shortcut");
-    CHECK(shortcut);
-    shortcut.stringValue = @"Ctrl+Alt+Q";
-    auto bind = (NSButton *)find(window.contentView, @"editor-bind");
-    CHECK(bind);
-    [bind performClick:nil];
+    CHECK(!find(window.contentView,@"editor-shortcut"));
+    CHECK(!find(window.contentView,@"editor-bind"));
 #else
     window = reinterpret_cast<GtkWidget *>(ui.native_handle());
     auto shortcut = find(window, "editor-shortcut");
@@ -218,6 +219,7 @@ int run() {
     gtk_entry_set_text(GTK_ENTRY(shortcut), "Ctrl+Alt+Q");
     gtk_button_clicked(GTK_BUTTON(find(window, "editor-bind")));
 #endif
+#if !defined(_WIN32) && !defined(__APPLE__)
     CHECK(format_chord(
               *take(load_settings(store)).hotkeys.at("folder:" + other)) ==
           "Ctrl+Alt+Q");
@@ -227,6 +229,7 @@ int run() {
           format_chord(
               *take(load_settings(store)).hotkeys.at("folder:" + other)) ==
               "Ctrl+Alt+Q");
+#endif
     auto drag = take(session->begin_drag({SnippetItemKind::Snippet, id}));
     auto rev = take(data_revision(store));
     CHECK(session->finish_drag(drag, other, 0, false));

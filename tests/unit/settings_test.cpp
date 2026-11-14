@@ -1,4 +1,5 @@
 #include "cliptiq/settings.hpp"
+#include "cliptiq/snippets.hpp"
 #include "cliptiq/locale.hpp"
 #include "sqlite3.h"
 #include <iostream>
@@ -25,6 +26,20 @@ int main() {
       std::cerr << "FAIL " << n << ": " << e.what() << '\n';
     }
   };
+  test("desktop_folder_shortcuts_are_retired", [] {
+    auto store=take(open_store(":memory:"));auto folder=take(create_folder(store,"Folder"));
+    auto key="folder:"+folder;
+    auto legacy=default_settings(CapturePlatform::X11);legacy.hotkeys[key]=take(parse_chord("Ctrl+Alt+Q"));CHECK(save_settings(store,legacy));
+    for(auto platform:{CapturePlatform::MacOS,CapturePlatform::Windows}) {
+      auto settings=take(load_settings(store,platform));CHECK(!settings.hotkeys.count(key));
+      Capabilities caps;caps.platform=platform;
+      for(const auto& field:settings_fields(legacy,caps))CHECK(field.key!="hotkey:"+key);
+    }
+    CHECK(take(load_settings(store,CapturePlatform::X11)).hotkeys.count(key));
+#if defined(__APPLE__) || defined(_WIN32)
+    CHECK(!take(available_hotkeys(store,legacy.hotkeys)).count(key));
+#endif
+  });
   test("every_setting_has_plain_language_help", [] {
     auto settings=default_settings(CapturePlatform::Windows);
     settings.hotkeys["folder:test"]={};
@@ -71,8 +86,9 @@ int main() {
   test("shortcut_labels_hide_internal_folder_ids", [] {
     auto store=take(open_store(":memory:"));
     CHECK(sqlite3_exec(store.connection(),"INSERT INTO snippet_folders VALUES('internal-id','Work',0)",nullptr,nullptr,nullptr)==SQLITE_OK);
-    auto settings=take(load_settings(store,CapturePlatform::Windows));
-    auto fields=settings_fields(settings,{});
+    auto settings=take(load_settings(store,CapturePlatform::X11));
+    Capabilities caps;caps.platform=CapturePlatform::X11;
+    auto fields=settings_fields(settings,caps);
     bool folder=false,clear=false,editor=false;
     for(auto& field:fields){
       if(field.key=="hotkey:folder:internal-id"){CHECK(field.label=="Folder: Work");folder=true;}

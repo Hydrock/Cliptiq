@@ -580,3 +580,28 @@ reuse/structure/locale checks. Check repeated close/reopen retains the outline,
 undo and current text, folder shortcuts, normal text-selection Copy, and Keychain
 permissions using the existing persistent-signing installation workflow. Do not
 infer a macOS performance result from Windows tests.
+
+
+## Folder shortcut assignment removed (14 November 2026)
+
+Mac and Windows editors no longer expose folder shortcut entry/bind controls.
+The general Shortcuts page also hides per-folder assignments. Existing persisted
+folder hotkeys are ignored on those platforms and excluded from registration;
+reconciliation unregisters any already-held folder bindings. The editor keeps
+Enabled in menu, text editing, Undo/Redo and Copy. The freed row belongs to the
+text editor. Linux retains its existing folder-shortcut UI and behavior.
+
+Regression coverage checks absence of native controls, loading old assignments,
+settings-field filtering, and unregistering/reapplying legacy folder keys.
+Windows source was reviewed on Mac; Windows compilation/runtime still needs its
+normal Windows verification pass.
+
+
+## Reload button removed (14 November 2026)
+
+Mac and Windows snippet editors no longer expose a Reload toolbar button.
+Initial menu loading and the editor session's first-open database read remain
+automatic; normal edits still autosave. Internal session reload remains available
+for recovery/discard handling and Linux. Native regression tests check that the
+button is absent, existing snippet content loads on opening, and a rename commits
+on focus change without requiring a toolbar Reload action.

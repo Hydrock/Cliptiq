@@ -25,8 +25,10 @@ int main(){try{
  options.windows_message_filter=[&](std::uintptr_t m){return editor.pre_translate(m);};
  NativeMenu ui(options,[](MenuCommand){});check(bool(ui.initialize()),"initialize");check(bool(ui.show_workspace(MenuKind::Snippets)),"open snippets");
  auto root=reinterpret_cast<HWND>(ui.native_handles().window);auto panel=reinterpret_cast<HWND>(editor.native_handle());
+ check(!GetDlgItem(panel,512),"reload button must be absent");
  check(panel&&IsChild(root,panel)&&GetAncestor(panel,GA_ROOT)==root,"editor must be a child of main window");check(!GetDlgItem(root,7104),"duplicate sidebar editor entry");
  auto body=GetDlgItem(panel,504);check(body&&IsWindowEnabled(body),"editable snippet including disabled items");
+ wchar_t initialText[32]{};GetWindowTextW(body,initialText,32);check(std::wstring(initialText)==L"Before","initial snippets loaded from database");
  SetWindowTextW(body,L"Newest unsaved text");SendMessageW(panel,WM_COMMAND,MAKEWPARAM(515,BN_CLICKED),0);
  for(int i=0;i<150&&!copies;++i){ui.process_events(0);editor.process_events();std::this_thread::sleep_for(std::chrono::milliseconds(10));}
  check(copies==1&&copied=="Newest unsaved text","copy must wait for current draft to persist");

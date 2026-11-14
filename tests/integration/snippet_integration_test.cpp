@@ -66,6 +66,19 @@ int main() {
       std::cerr << "FAIL " << n << ": " << e.what() << '\n';
     }
   };
+#if defined(_WIN32) || defined(__APPLE__)
+  test("retired_folder_shortcuts_are_unregistered", [] {
+    auto db=take(open_store(":memory:"));auto folder=take(create_folder(db,"Folder"));
+    Backend backend;HotkeyRegistry registry(backend);auto action="folder:"+folder;
+    auto chord=take(parse_chord("Ctrl+Alt+Q"));
+    CHECK(registry.bind_hotkey(action,chord));CHECK(registry.registered(action));
+    auto preferences=take(load_settings(db));preferences.hotkeys[action]=chord;CHECK(save_settings(db,preferences));
+    CHECK(synchronize_folder_hotkeys(db,registry));CHECK(!registry.registered(action));
+    CHECK(!take(load_settings(db)).hotkeys.count(action));
+    preferences=take(load_settings(db));preferences.hotkeys[action]=chord;
+    auto applied=apply_settings(db,registry,preferences);if(!applied)throw std::runtime_error(applied.error().message);CHECK(!registry.registered(action));
+  });
+#else
   test("disabled_folder_preferences_never_register_and_reenable_restores", [] {
     auto db = take(open_store(":memory:"));
     auto f = take(create_folder(db, "F"));
@@ -88,6 +101,7 @@ int main() {
     CHECK(synchronize_folder_hotkeys(db, registry));
     CHECK(!take(load_settings(db)).hotkeys.count("folder:" + f));
   });
+#endif
   test("menu_selection_and_paste_cannot_replay_disabled_or_deleted_snippets",
        [] {
          auto db = take(open_store(":memory:"));

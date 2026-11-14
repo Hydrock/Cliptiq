@@ -32,13 +32,14 @@ int main(int argc,char** argv){@autoreleasepool{try{
  options.workspace_can_close=[&]{return editor.can_close();};
  NativeMenu ui(options,[](MenuCommand){});CHECK(ui.initialize());CHECK(ui.show_workspace(MenuKind::Snippets));
  auto window=(__bridge NSWindow*)(void*)ui.native_handles().window;
- auto outline=find(window.contentView,@"editor-tree");auto body=(NSTextView*)find(window.contentView,@"editor-content");CHECK(outline&&body.editable);CHECK(body.window==window);CHECK((__bridge NSWindow*)(void*)editor.native_handle()==window);
+ auto outline=find(window.contentView,@"editor-tree");auto body=(NSTextView*)find(window.contentView,@"editor-content");CHECK(outline&&body.editable);CHECK([body.string isEqualToString:@"Before"]);CHECK(body.window==window);CHECK((__bridge NSWindow*)(void*)editor.native_handle()==window);
  body.string=@"After";[body.delegate textDidChange:[NSNotification notificationWithName:NSTextDidChangeNotification object:body]];
  [(NSButton*)find(window.contentView,@"editor-copy") performClick:nil];
  for(int n=0;n<200&&!copies;++n){CHECK(ui.process_events(1));CHECK(editor.process_events());std::this_thread::sleep_for(std::chrono::milliseconds(5));}CHECK(copies==1);
  CHECK(ui.show_workspace(MenuKind::History));CHECK(find(window.contentView,@"workspace-snippets-editor").hidden);
  CHECK(ui.show_workspace(MenuKind::Snippets));CHECK(mounts==1&&find(window.contentView,@"editor-tree")==outline);
  auto commandCopy=[NSEvent keyEventWithType:NSEventTypeKeyDown location:NSZeroPoint modifierFlags:NSEventModifierFlagCommand timestamp:0 windowNumber:window.windowNumber context:nil characters:@"c" charactersIgnoringModifiers:@"c" isARepeat:NO keyCode:8];
+ CHECK(!find(window.contentView,@"editor-reload"));
  CHECK([window makeFirstResponder:body]);
  CHECK([NSApp targetForAction:@selector(copy:)]==body);
  CHECK([NSApp targetForAction:@selector(paste:)]==body);
