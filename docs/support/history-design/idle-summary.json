@@ -1,0 +1,26 @@
+{
+  "before": {
+    "startup_hidden": {
+      "cpu_percent_one_core": 0.10416340496324318,
+      "working_set_mib": 20.73046875,
+      "private_mib": 9.0546875
+    },
+    "workspace_visible": {
+      "cpu_percent_one_core": 0.20832980144875277,
+      "working_set_mib": 38.97265625,
+      "private_mib": 14.27734375
+    }
+  },
+  "after": {
+    "startup_hidden": {
+      "cpu_percent_one_core": 0.20833088475100092,
+      "working_set_mib": 20.73046875,
+      "private_mib": 9.0859375
+    },
+    "workspace_visible": {
+      "cpu_percent_one_core": 0.10416328969281853,
+      "working_set_mib": 39.109375,
+      "private_mib": 14.4375
+    }
+  }
+}

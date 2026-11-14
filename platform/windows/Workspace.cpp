@@ -21,6 +21,8 @@ LRESULT CALLBACK preview_proc(HWND window,UINT message,WPARAM wp,LPARAM lp,UINT_
 std::wstring wide(const std::string& s){int n=MultiByteToWideChar(CP_UTF8,MB_ERR_INVALID_CHARS,s.data(),int(s.size()),nullptr,0);std::wstring r(n,L'\0');MultiByteToWideChar(CP_UTF8,MB_ERR_INVALID_CHARS,s.data(),int(s.size()),r.data(),n);return r;}
 std::wstring lower(std::wstring s){int n=LCMapStringEx(LOCALE_NAME_INVARIANT,LCMAP_LOWERCASE,s.data(),int(s.size()),nullptr,0,nullptr,nullptr,0);if(n>0){std::wstring r(n,L'\0');LCMapStringEx(LOCALE_NAME_INVARIANT,LCMAP_LOWERCASE,s.data(),int(s.size()),r.data(),n,nullptr,nullptr,0);return r;}return s;}
 std::wstring multiline(const std::string& text){auto source=wide(text);std::wstring out;for(auto c:source){if(c==L'\n'&&(out.empty()||out.back()!=L'\r'))out+=L'\r';out+=c;}return out;}
+bool high_contrast(){HIGHCONTRASTW value{sizeof(value)};return SystemParametersInfoW(SPI_GETHIGHCONTRAST,sizeof(value),&value,0)&&(value.dwFlags&HCF_HIGHCONTRASTON);}
+void fill(HDC dc,RECT rect,COLORREF color){SetDCBrushColor(dc,color);FillRect(dc,&rect,reinterpret_cast<HBRUSH>(GetStockObject(DC_BRUSH)));}
 const wchar_t* type(CanonicalKind k){switch(k){case CanonicalKind::Image:return L"Изображение";case CanonicalKind::Files:return L"Файлы";case CanonicalKind::Url:return L"Ссылка";case CanonicalKind::Rtf:return L"RTF";case CanonicalKind::Html:return L"HTML";case CanonicalKind::Pdf:return L"PDF";default:return L"Текст";}}
 }
 int Workspace::px(int v)const{return MulDiv(v,dpi_,96);}
@@ -32,11 +34,12 @@ HWND Workspace::control(const wchar_t* cls,const wchar_t* text,DWORD style,int i
 Workspace::Workspace(HWND owner,const NativeMenuOptions& options,std::function<void(MenuCommand)> action,MenuPreviewProvider provider)
  :owner_(owner),action_(std::move(action)),options_(options),provider_(std::move(provider)),dpi_(GetDpiForWindow(owner)){
  if(!dpi_)dpi_=96;
+ high_contrast_=high_contrast();
  font_=CreateFontW(-MulDiv(10,dpi_,72),0,0,0,FW_NORMAL,FALSE,FALSE,FALSE,DEFAULT_CHARSET,0,0,CLEARTYPE_QUALITY,0,L"Segoe UI");
- title_font_=CreateFontW(-MulDiv(22,dpi_,72),0,0,0,FW_SEMIBOLD,FALSE,FALSE,FALSE,DEFAULT_CHARSET,0,0,CLEARTYPE_QUALITY,0,L"Segoe UI");
+ title_font_=CreateFontW(-MulDiv(16,dpi_,72),0,0,0,FW_SEMIBOLD,FALSE,FALSE,FALSE,DEFAULT_CHARSET,0,0,CLEARTYPE_QUALITY,0,L"Segoe UI");
  bold_font_=CreateFontW(-MulDiv(11,dpi_,72),0,0,0,FW_SEMIBOLD,FALSE,FALSE,FALSE,DEFAULT_CHARSET,0,0,CLEARTYPE_QUALITY,0,L"Segoe UI");
  auto brand=control(L"STATIC",L"Cliptiq",0,7190);SendMessageW(brand,WM_SETFONT,reinterpret_cast<WPARAM>(title_font_),TRUE);
- control(L"STATIC",L"Всё, что вы копировали, — под рукой",0,7191);
+
  history_=control(L"BUTTON",L"История",BS_OWNERDRAW|WS_TABSTOP,History);
  snippets_=control(L"BUTTON",L"Сниппеты",BS_OWNERDRAW|WS_TABSTOP,Snippets);
  settings_=control(L"BUTTON",L"Настройки",BS_PUSHBUTTON|WS_TABSTOP,Settings);
@@ -45,18 +48,18 @@ Workspace::Workspace(HWND owner,const NativeMenuOptions& options,std::function<v
  heading_=control(L"STATIC",L"История буфера",0,7192);SendMessageW(heading_,WM_SETFONT,reinterpret_cast<WPARAM>(bold_font_),TRUE);
  summary_=control(L"STATIC",L"",0,7193);
  filter_=control(L"EDIT",L"",WS_TABSTOP|ES_AUTOHSCROLL,Filter,WS_EX_CLIENTEDGE);
- SendMessageW(filter_,EM_SETCUEBANNER,TRUE,reinterpret_cast<LPARAM>(L"Фильтр по названию и тексту списка"));SendMessageW(filter_,EM_SETLIMITTEXT,256,0);
+ SendMessageW(filter_,EM_SETCUEBANNER,TRUE,reinterpret_cast<LPARAM>(L"Фильтр записей · Ctrl+F"));SendMessageW(filter_,EM_SETLIMITTEXT,256,0);
  INITCOMMONCONTROLSEX init{sizeof(init),ICC_LISTVIEW_CLASSES};InitCommonControlsEx(&init);
- list_=control(WC_LISTVIEWW,L"",WS_TABSTOP|LVS_REPORT|LVS_SINGLESEL|LVS_SHOWSELALWAYS|LVS_NOSORTHEADER,List,WS_EX_CLIENTEDGE);
+ list_=control(WC_LISTVIEWW,L"",WS_TABSTOP|LVS_REPORT|LVS_OWNERDATA|LVS_SINGLESEL|LVS_SHOWSELALWAYS|LVS_NOSORTHEADER|LVS_NOCOLUMNHEADER|WS_BORDER,List);
  ListView_SetExtendedListViewStyle(list_,LVS_EX_FULLROWSELECT|LVS_EX_DOUBLEBUFFER|LVS_EX_LABELTIP);
- row_images_=ImageList_Create(1,px(34),ILC_COLOR32,1,1);ListView_SetImageList(list_,row_images_,LVSIL_SMALL);
+ row_images_=ImageList_Create(1,px(56),ILC_COLOR32,1,1);ListView_SetImageList(list_,row_images_,LVSIL_SMALL);
  LVCOLUMNW col{};col.mask=LVCF_TEXT|LVCF_WIDTH;col.pszText=const_cast<wchar_t*>(L"Содержимое");col.cx=px(300);ListView_InsertColumn(list_,0,&col);col.pszText=const_cast<wchar_t*>(L"Тип / папка");col.cx=px(110);ListView_InsertColumn(list_,1,&col);col.pszText=const_cast<wchar_t*>(L"Источник");col.cx=px(100);ListView_InsertColumn(list_,2,&col);
- preview_heading_=control(L"STATIC",L"ПРЕДПРОСМОТР",0,7194);
+ preview_heading_=control(L"STATIC",L"Предпросмотр",0,7194);
  preview_=control(L"EDIT",L"Выберите запись слева.",ES_MULTILINE|ES_READONLY|ES_AUTOVSCROLL|WS_VSCROLL|WS_TABSTOP,7195);
  if(!SetWindowSubclass(preview_,preview_proc,1,0))throw std::runtime_error("Cannot configure workspace preview");
  image_=control(L"STATIC",L"",SS_OWNERDRAW,7196);ShowWindow(image_,SW_HIDE);
- copy_=control(L"BUTTON",L"Копировать",WS_TABSTOP|BS_DEFPUSHBUTTON,Copy);
- erase_=control(L"BUTTON",L"Удалить запись",WS_TABSTOP,Erase);
+ copy_=control(L"BUTTON",L"Копировать",WS_TABSTOP|BS_OWNERDRAW,Copy);
+ erase_=control(L"BUTTON",L"Удалить…",WS_TABSTOP,Erase);
  clear_=control(L"BUTTON",L"Очистить историю…",WS_TABSTOP,Clear);
  snippet_panel_=control(L"STATIC",L"",WS_CLIPCHILDREN,7198,WS_EX_CONTROLPARENT);
  SetWindowSubclass(snippet_panel_,panel_proc,1,0);ShowWindow(snippet_panel_,SW_HIDE);
@@ -73,7 +76,7 @@ Workspace::~Workspace(){
 void Workspace::layout(unsigned dpi){
  if(dpi && dpi!=dpi_){
   auto make=[&](int size,int weight){return CreateFontW(-MulDiv(size,dpi,72),0,0,0,weight,FALSE,FALSE,FALSE,DEFAULT_CHARSET,0,0,CLEARTYPE_QUALITY,0,L"Segoe UI");};
-  auto normal=make(10,FW_NORMAL),title=make(22,FW_SEMIBOLD),bold=make(11,FW_SEMIBOLD);
+  auto normal=make(10,FW_NORMAL),title=make(16,FW_SEMIBOLD),bold=make(11,FW_SEMIBOLD);
   if(normal&&title&&bold){
    for(auto child:children_)SendMessageW(child,WM_SETFONT,reinterpret_cast<WPARAM>(child==GetDlgItem(owner_,7190)?title:child==heading_?bold:normal),TRUE);
    DeleteObject(font_);DeleteObject(title_font_);DeleteObject(bold_font_);font_=normal;title_font_=title;bold_font_=bold;
@@ -81,14 +84,16 @@ void Workspace::layout(unsigned dpi){
  }
  dpi_=dpi?dpi:96;RECT r{};GetClientRect(owner_,&r);const int w=MulDiv(r.right,96,dpi_),h=MulDiv(r.bottom,96,dpi_);
  auto place=[&](HWND c,int x,int y,int cw,int ch){MoveWindow(c,px(x),px(y),px(std::max(1,cw)),px(std::max(1,ch)),TRUE);};
- place(GetDlgItem(owner_,7190),24,14,180,40);place(GetDlgItem(owner_,7191),25,59,w-50,24);
- place(history_,14,112,164,42);place(snippets_,14,160,164,42);place(settings_,14,h-104,164,34);place(quit_,14,h-62,164,34);
- const int left=212,body=std::max(460,w-left-24),listw=std::max(250,(body*53)/100),detail=left+listw+24,detailw=w-detail-24;
- place(snippet_panel_,left,144,w-left-24,h-180);
- place(heading_,left,108,listw,28);place(summary_,left,139,listw,22);place(filter_,left,172,listw,32);
- place(list_,left,216,listw,h-304);place(preview_heading_,detail,112,detailw,24);place(preview_,detail,149,detailw,h-291);place(image_,detail,149,detailw,h-291);
- place(copy_,detail,h-122,detailw,36);place(erase_,detail,h-78,detailw,32);place(clear_,left,h-78,listw,32);place(status_,212,h-31,w-236,23);
- ListView_SetColumnWidth(list_,0,px(std::max(130,listw-232)));ListView_SetColumnWidth(list_,1,px(116));ListView_SetColumnWidth(list_,2,px(100));
+ place(GetDlgItem(owner_,7190),20,16,144,32);
+ place(history_,12,80,152,42);place(snippets_,12,128,152,42);place(settings_,12,h-104,152,34);place(quit_,12,h-62,152,34);
+ const int left=200,body=std::max(460,w-left-24),listw=std::max(250,(body*55)/100),detail=left+listw+24,detailw=w-detail-24;
+ place(snippet_panel_,left,80,w-left-24,h-116);
+ place(heading_,left,20,body,28);place(summary_,left,50,listw,22);place(filter_,left,84,listw,32);
+ place(list_,left,124,listw,h-220);place(preview_heading_,detail,84,detailw,28);place(preview_,detail,124,detailw,h-220);place(image_,detail,124,detailw,h-220);
+ const int secondary=100,gap=12,primary=std::max(100,detailw-secondary-gap);
+ place(copy_,detail,h-80,primary,40);place(erase_,detail+primary+gap,h-76,secondary,32);place(clear_,left,h-76,164,32);place(status_,left,h-31,w-left-24,23);
+ if(row_images_){ImageList_SetIconSize(row_images_,1,px(56));}
+ fit_column();
  InvalidateRect(owner_,nullptr,TRUE);
 }
 const WorkspaceRow* Workspace::selection()const{int n=ListView_GetNextItem(list_,-1,LVNI_SELECTED);return n>=0&&size_t(n)<visible_.size()?&rows_[visible_[n]]:nullptr;}
@@ -108,21 +113,37 @@ Result<void> Workspace::select_page(MenuKind page){
  for(auto w:{summary_,filter_,list_,preview_heading_,preview_,image_,copy_,erase_,clear_})ShowWindow(w,editing?SW_HIDE:SW_SHOW);
  ShowWindow(snippet_panel_,editing?SW_SHOW:SW_HIDE);
  if(editing){SetWindowTextW(heading_,L"Сниппеты");if(options_.workspace_image)options_.workspace_image(std::nullopt);if(bitmap_){DeleteObject(bitmap_);bitmap_=nullptr;}if(auto child=GetWindow(snippet_panel_,GW_CHILD))SetFocus(GetDlgItem(child,501));}
- else filter();
+ else filter(true);
  InvalidateRect(history_,nullptr,TRUE);InvalidateRect(snippets_,nullptr,TRUE);return {};
 }
-void Workspace::update(MenuModel m){model_=std::move(m);if(page_!=MenuKind::Snippets||!editor_mounted_)filter();}
-void Workspace::filter(){
+void Workspace::update(MenuModel m){model_=std::move(m);if(page_!=MenuKind::Snippets||!editor_mounted_)filter(true);}
+void Workspace::fit_column(){
+ RECT area{};GetClientRect(list_,&area);
+ ListView_SetColumnWidth(list_,1,0);ListView_SetColumnWidth(list_,2,0);
+ ListView_SetColumnWidth(list_,0,std::max(1,int(area.right)));
+}
+void Workspace::filter(bool rebuild){
  auto old=selection();std::string id=old?old->item.id:"";
- changing_=true;rows_=workspace_rows(model_,page_);visible_.clear();SendMessageW(list_,WM_SETREDRAW,FALSE,0);ListView_DeleteAllItems(list_);
- wchar_t buffer[257]{};GetWindowTextW(filter_,buffer,257);auto query=lower(buffer);int selected_index=-1;
- for(size_t i=0;i<rows_.size();++i){const auto& row=rows_[i];if(!query.empty()&&lower(wide(row.item.label+" "+row.item.tooltip+" "+row.group+" "+row.item.source_device)).find(query)==std::wstring::npos)continue;
-  auto label=wide(row.item.label);LVITEMW item{};item.mask=LVIF_TEXT;item.iItem=int(visible_.size());item.pszText=label.data();ListView_InsertItem(list_,&item);
-  auto group=page_==MenuKind::Snippets?wide(row.group):std::wstring(type(row.item.kind));ListView_SetItemText(list_,item.iItem,1,group.data());
-  auto source=row.item.source_device.empty()?std::wstring(L"Это устройство"):wide(row.item.source_device);ListView_SetItemText(list_,item.iItem,2,source.data());if(row.item.id==id)selected_index=item.iItem;visible_.push_back(i);
+ changing_=true;
+ if(rebuild){
+  rows_=workspace_rows(model_,page_);text_.clear();text_.reserve(rows_.size());
+  for(const auto& row:rows_){
+   RowText text;text.title=wide(row.item.label);
+   text.metadata=(page_==MenuKind::Snippets?wide(row.group):std::wstring(type(row.item.kind)))+L" · "+(row.item.source_device.empty()?std::wstring(L"Это устройство"):wide(row.item.source_device));
+   text.accessible=text.title+L" — "+text.metadata;text_.push_back(std::move(text));
+  }
  }
+ visible_.clear();SendMessageW(list_,WM_SETREDRAW,FALSE,0);ListView_SetItemCountEx(list_,0,0);
+ wchar_t buffer[257]{};GetWindowTextW(filter_,buffer,257);auto query=lower(buffer);int selected_index=-1;
+ for(size_t i=0;i<rows_.size();++i){const auto& row=rows_[i];
+  // Keep only short display strings cached. Tooltips may contain 64 KiB of
+  // payload; materialize their search text only while a nonempty filter runs.
+  if(!query.empty()&&lower(wide(row.item.label+" "+row.item.tooltip+" "+row.group+" "+row.item.source_device)).find(query)==std::wstring::npos)continue;
+  if(row.item.id==id)selected_index=int(visible_.size());visible_.push_back(i);
+ }
+ ListView_SetItemCountEx(list_,int(visible_.size()),LVSICF_NOINVALIDATEALL);
  if(selected_index<0&&!visible_.empty())selected_index=0;if(selected_index>=0)ListView_SetItemState(list_,selected_index,LVIS_SELECTED|LVIS_FOCUSED,LVIS_SELECTED|LVIS_FOCUSED);
- SendMessageW(list_,WM_SETREDRAW,TRUE,0);InvalidateRect(list_,nullptr,TRUE);changing_=false;
+ fit_column();SendMessageW(list_,WM_SETREDRAW,TRUE,0);InvalidateRect(list_,nullptr,TRUE);changing_=false;
  auto count=std::to_wstring(visible_.size())+L" из "+std::to_wstring(rows_.size())+L" записей";SetWindowTextW(summary_,count.c_str());
  SetWindowTextW(heading_,page_==MenuKind::Snippets?L"Текстовые заготовки":L"История буфера");
  EnableWindow(clear_,page_==MenuKind::History&&!rows_.empty());InvalidateRect(history_,nullptr,TRUE);InvalidateRect(snippets_,nullptr,TRUE);selected();
@@ -157,6 +178,7 @@ bool Workspace::key(MSG& m){
  return false;
 }
 bool Workspace::message(UINT msg,WPARAM wp,LPARAM lp,LRESULT& result){
+ if(msg==WM_SETTINGCHANGE||msg==WM_THEMECHANGED){high_contrast_=high_contrast();InvalidateRect(owner_,nullptr,TRUE);InvalidateRect(list_,nullptr,TRUE);InvalidateRect(copy_,nullptr,TRUE);}
  if(msg==WM_COMMAND){int id=LOWORD(wp);if(id==Filter&&HIWORD(wp)==EN_CHANGE){filter();result=0;return true;}
   if(HIWORD(wp)!=BN_CLICKED)return false;
   if(id==History||id==Snippets){select_page(id==History?MenuKind::History:MenuKind::Snippets);}
@@ -164,7 +186,53 @@ bool Workspace::message(UINT msg,WPARAM wp,LPARAM lp,LRESULT& result){
   else if(id==Settings||id==Clear||id==WorkspaceQuit){auto action=id==Settings?MenuAction::OpenSettings:id==Clear?MenuAction::ClearHistory:MenuAction::Quit;action_({action,"",model_.revision});}
   else return false;result=0;return true;
  }
- if(msg==WM_NOTIFY&&reinterpret_cast<NMHDR*>(lp)->hwndFrom==list_){auto h=reinterpret_cast<NMHDR*>(lp);if(h->code==LVN_ITEMCHANGED)selected();else if(h->code==NM_DBLCLK)execute(false);result=0;return true;}
+ if(msg==WM_NOTIFY&&reinterpret_cast<NMHDR*>(lp)->hwndFrom==list_){
+  auto h=reinterpret_cast<NMHDR*>(lp);
+  if(h->code==LVN_ODFINDITEMW){
+   const auto find=reinterpret_cast<NMLVFINDITEMW*>(lp);result=-1;
+   if((find->lvfi.flags&LVFI_STRING)&&find->lvfi.psz&&!visible_.empty()){
+    const auto length=wcslen(find->lvfi.psz);const size_t start=std::min(size_t(std::max(0,find->iStart)),visible_.size());
+    const size_t count=(find->lvfi.flags&LVFI_WRAP)?visible_.size():visible_.size()-start;
+    for(size_t offset=0;offset<count;++offset){
+     const size_t index=(start+offset)%visible_.size();const auto& title=text_[visible_[index]].title;
+     if(title.size()<length||(!(find->lvfi.flags&LVFI_PARTIAL)&&title.size()!=length))continue;
+     if(CompareStringOrdinal(title.c_str(),int(length),find->lvfi.psz,int(length),TRUE)==CSTR_EQUAL){result=LRESULT(index);break;}
+    }
+   }
+   return true;
+  }
+  if(h->code==LVN_GETDISPINFOW){
+   auto info=reinterpret_cast<NMLVDISPINFOW*>(lp);auto index=size_t(info->item.iItem);
+   if((info->item.mask&LVIF_TEXT)&&index<visible_.size()){
+    const auto& text=text_[visible_[index]];
+    info->item.pszText=const_cast<wchar_t*>(info->item.iSubItem==0?text.accessible.c_str():info->item.iSubItem==1?text.metadata.c_str():L"");
+   }
+   result=0;return true;
+  }
+  if(h->code==NM_CUSTOMDRAW){
+   auto d=reinterpret_cast<NMLVCUSTOMDRAW*>(lp);
+   if(high_contrast_){result=CDRF_DODEFAULT;return true;}
+   if(d->nmcd.dwDrawStage==CDDS_PREPAINT){result=CDRF_NOTIFYITEMDRAW;return true;}
+   if(d->nmcd.dwDrawStage==CDDS_ITEMPREPAINT){
+    auto index=size_t(d->nmcd.dwItemSpec);
+    if(index>=visible_.size()){result=CDRF_DODEFAULT;return true;}
+    const auto& text=text_[visible_[index]];RECT r{};ListView_GetItemRect(list_,int(index),&r,LVIR_BOUNDS);
+    const auto state=ListView_GetItemState(list_,int(index),LVIS_SELECTED|LVIS_FOCUSED);bool selected=(state&LVIS_SELECTED)!=0;
+    fill(d->nmcd.hdc,r,selected?RGB(232,241,255):RGB(255,255,255));
+    if(selected){RECT accent=r;accent.right=accent.left+px(3);fill(d->nmcd.hdc,accent,RGB(0,86,180));}
+    int saved=SaveDC(d->nmcd.hdc);SetBkMode(d->nmcd.hdc,TRANSPARENT);SelectObject(d->nmcd.hdc,font_);
+    RECT title{r.left+px(12),r.top+px(7),r.right-px(12),r.top+px(29)};
+    SetTextColor(d->nmcd.hdc,RGB(32,34,38));DrawTextW(d->nmcd.hdc,text.title.c_str(),int(text.title.size()),&title,DT_SINGLELINE|DT_VCENTER|DT_END_ELLIPSIS|DT_NOPREFIX);
+    RECT meta{title.left,r.top+px(29),title.right,r.bottom-px(5)};
+    SetTextColor(d->nmcd.hdc,selected?RGB(44,73,109):RGB(86,96,110));DrawTextW(d->nmcd.hdc,text.metadata.c_str(),int(text.metadata.size()),&meta,DT_SINGLELINE|DT_VCENTER|DT_END_ELLIPSIS|DT_NOPREFIX);
+    if((state&LVIS_FOCUSED)&&GetFocus()==list_){RECT focus=r;InflateRect(&focus,-2,-2);DrawFocusRect(d->nmcd.hdc,&focus);}
+    RestoreDC(d->nmcd.hdc,saved);result=CDRF_SKIPDEFAULT;return true;
+   }
+   result=CDRF_DODEFAULT;return true;
+  }
+  if(h->code==LVN_ITEMCHANGED){auto change=reinterpret_cast<NMLISTVIEW*>(lp);if((change->uChanged&LVIF_STATE)&&((change->uOldState^change->uNewState)&LVIS_SELECTED)&&((change->uNewState&LVIS_SELECTED)||ListView_GetSelectedCount(list_)==0))selected();}
+  else if(h->code==NM_DBLCLK)execute(false);result=0;return true;
+ }
  if(msg==WM_DRAWITEM){auto d=reinterpret_cast<DRAWITEMSTRUCT*>(lp);
   if(d->CtlID==7196){
    FillRect(d->hDC,&d->rcItem,reinterpret_cast<HBRUSH>(GetStockObject(WHITE_BRUSH)));
@@ -178,10 +246,17 @@ bool Workspace::message(UINT msg,WPARAM wp,LPARAM lp,LRESULT& result){
     RestoreDC(d->hDC,saved);SelectObject(source,old);DeleteDC(source);
    }result=TRUE;return true;
   }
+  if(d->CtlID==Copy){
+   bool enabled=(d->itemState&ODS_DISABLED)==0,pressed=(d->itemState&ODS_SELECTED)!=0,hc=high_contrast_;
+   fill(d->hDC,d->rcItem,hc?GetSysColor(enabled?COLOR_HIGHLIGHT:COLOR_BTNFACE):!enabled?RGB(235,238,242):pressed?RGB(0,64,140):RGB(0,86,180));
+   int saved=SaveDC(d->hDC);SetBkMode(d->hDC,TRANSPARENT);SetTextColor(d->hDC,hc?GetSysColor(enabled?COLOR_HIGHLIGHTTEXT:COLOR_GRAYTEXT):enabled?RGB(255,255,255):RGB(100,108,118));SelectObject(d->hDC,bold_font_);
+   RECT label=d->rcItem;DrawTextW(d->hDC,L"Копировать",-1,&label,DT_SINGLELINE|DT_CENTER|DT_VCENTER|DT_NOPREFIX);
+   if(d->itemState&ODS_FOCUS){InflateRect(&label,-4,-4);DrawFocusRect(d->hDC,&label);}RestoreDC(d->hDC,saved);result=TRUE;return true;
+  }
   if(d->CtlID!=History&&d->CtlID!=Snippets)return false;
   bool active=(d->CtlID==History)==(page_==MenuKind::History);auto brush=CreateSolidBrush(active?RGB(224,237,255):RGB(246,247,249));FillRect(d->hDC,&d->rcItem,brush);DeleteObject(brush);SetBkMode(d->hDC,TRANSPARENT);SetTextColor(d->hDC,active?RGB(0,86,180):RGB(45,55,65));auto old=SelectObject(d->hDC,bold_font_);RECT r=d->rcItem;r.left+=px(14);DrawTextW(d->hDC,d->CtlID==History?L"История":L"Сниппеты",-1,&r,DT_SINGLELINE|DT_VCENTER);SelectObject(d->hDC,old);if(d->itemState&ODS_FOCUS)DrawFocusRect(d->hDC,&d->rcItem);result=TRUE;return true;}
  if(msg==WM_CTLCOLORSTATIC){SetTextColor(reinterpret_cast<HDC>(wp),RGB(45,55,65));SetBkColor(reinterpret_cast<HDC>(wp),RGB(255,255,255));result=reinterpret_cast<LRESULT>(GetStockObject(WHITE_BRUSH));return true;}
- if(msg==WM_PAINT){PAINTSTRUCT ps;auto dc=BeginPaint(owner_,&ps);RECT r{};GetClientRect(owner_,&r);FillRect(dc,&r,reinterpret_cast<HBRUSH>(GetStockObject(WHITE_BRUSH)));RECT nav{0,px(96),px(190),r.bottom};auto b=CreateSolidBrush(RGB(246,247,249));FillRect(dc,&nav,b);DeleteObject(b);auto pen=CreatePen(PS_SOLID,1,RGB(225,229,235));auto old=SelectObject(dc,pen);MoveToEx(dc,0,px(95),nullptr);LineTo(dc,r.right,px(95));SelectObject(dc,old);DeleteObject(pen);EndPaint(owner_,&ps);result=0;return true;}
+ if(msg==WM_PAINT){PAINTSTRUCT ps;auto dc=BeginPaint(owner_,&ps);RECT r{};GetClientRect(owner_,&r);FillRect(dc,&r,reinterpret_cast<HBRUSH>(GetStockObject(WHITE_BRUSH)));RECT nav{0,px(64),px(176),r.bottom};auto b=CreateSolidBrush(RGB(246,247,249));FillRect(dc,&nav,b);DeleteObject(b);auto pen=CreatePen(PS_SOLID,1,RGB(225,229,235));auto old=SelectObject(dc,pen);MoveToEx(dc,0,px(63),nullptr);LineTo(dc,r.right,px(63));SelectObject(dc,old);DeleteObject(pen);EndPaint(owner_,&ps);result=0;return true;}
  return false;
 }
 }

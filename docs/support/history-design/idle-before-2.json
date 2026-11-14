@@ -1,0 +1,88 @@
+{
+  "exe_sha256": "fb0cd95da310fd8cc22019114f2357d032a96c397cca6381fadc1d593a1020cd",
+  "exe_bytes": 1813504,
+  "environment": {
+    "os": "Windows-11-10.0.26200-SP0",
+    "logical_cpus": 32
+  },
+  "fixture": {
+    "synthetic_entries": 1000,
+    "clipboard_payload_retention": false,
+    "capture_listener": true,
+    "ocr": false,
+    "updates": false
+  },
+  "initial_visible_windows": [
+    {
+      "hwnd": 2364086,
+      "visible": true,
+      "window_class": "Cliptiq.NativeMenu"
+    }
+  ],
+  "windows_after": [],
+  "settings_destroyed_and_reopened": false,
+  "scenarios": {
+    "startup_hidden": {
+      "duration_seconds": 15.000546000001123,
+      "cpu_seconds": 0.0,
+      "cpu_percent_one_core": 0.0,
+      "samples": [
+        {
+          "elapsed_seconds": 5.00014370000099,
+          "cpu_percent_one_core": 0.0,
+          "handle_count": 162,
+          "working_set_bytes": 21745664,
+          "private_bytes": 9502720,
+          "peak_working_set_bytes": 24932352
+        },
+        {
+          "elapsed_seconds": 10.000585200001296,
+          "cpu_percent_one_core": 0.0,
+          "handle_count": 162,
+          "working_set_bytes": 21733376,
+          "private_bytes": 9490432,
+          "peak_working_set_bytes": 24932352
+        },
+        {
+          "elapsed_seconds": 15.000546000001123,
+          "cpu_percent_one_core": 0.0,
+          "handle_count": 162,
+          "working_set_bytes": 21737472,
+          "private_bytes": 9494528,
+          "peak_working_set_bytes": 24932352
+        }
+      ]
+    },
+    "workspace_visible": {
+      "duration_seconds": 15.000436600001194,
+      "cpu_seconds": 0.0,
+      "cpu_percent_one_core": 0.0,
+      "samples": [
+        {
+          "elapsed_seconds": 5.000337000001309,
+          "cpu_percent_one_core": 0.0,
+          "handle_count": 390,
+          "working_set_bytes": 40886272,
+          "private_bytes": 14995456,
+          "peak_working_set_bytes": 44359680
+        },
+        {
+          "elapsed_seconds": 10.000579200001084,
+          "cpu_percent_one_core": 0.0,
+          "handle_count": 391,
+          "working_set_bytes": 40902656,
+          "private_bytes": 15007744,
+          "peak_working_set_bytes": 44359680
+        },
+        {
+          "elapsed_seconds": 15.000436600001194,
+          "cpu_percent_one_core": 0.0,
+          "handle_count": 391,
+          "working_set_bytes": 40865792,
+          "private_bytes": 14970880,
+          "peak_working_set_bytes": 44359680
+        }
+      ]
+    }
+  }
+}

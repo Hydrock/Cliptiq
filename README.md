@@ -20,5 +20,5 @@ OCR/FTS — отдельные опциональные сборки; польз
 - [Сборка и контракты ядра](core/README.md)
 - [Простой Windows: замеры и оптимизация](docs/support/windows-idle-results.md)
 - [Воспроизведение замеров](experiments/windows-idle/README.md)
-- [Эксперимент Raven / Win32](experiments/raven-settings/README.md)
+- [Обновление истории Win32: дизайн и замеры](docs/support/history-design-results.md)
 - [Условия выпуска](docs/support/release-checklist.md)

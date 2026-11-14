@@ -14,7 +14,7 @@ p.add_argument('--settle',type=float,default=5)
 p.add_argument('--output',type=Path,required=True)
 a=p.parse_args()
 if a.pid<=0 or a.seconds<=0 or a.settle<0:p.error("pid/seconds must be positive and settle nonnegative")
-shared=runpy.run_path(str(Path(__file__).resolve().parents[1]/'raven-settings/measure.py'))
+shared=runpy.run_path(str(Path(__file__).resolve().parent/'process_counters.py'))
 kernel,snapshot=shared['kernel'],shared['snapshot']
 handle=kernel.OpenProcess(0x410,False,a.pid)
 if not handle:raise C.WinError()
