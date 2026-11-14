@@ -18,7 +18,7 @@ import subprocess
 import time
 
 ROOT = Path(__file__).resolve().parents[2]
-shared = runpy.run_path(str(ROOT / "experiments/raven-settings/measure.py"))
+shared = runpy.run_path(str(ROOT / "experiments/windows-idle/process_counters.py"))
 snapshot, kernel, user = (shared[x] for x in ("snapshot", "kernel", "user"))
 enum_callback = C.WINFUNCTYPE(W.BOOL, W.HWND, W.LPARAM)
 user.EnumWindows.argtypes = [enum_callback, W.LPARAM]
@@ -166,7 +166,7 @@ def main():
         content=dict(exe_sha256=hashlib.sha256(exe.read_bytes()).hexdigest(),
                      exe_bytes=exe.stat().st_size,environment=dict(os=platform.platform(),logical_cpus=os.cpu_count()),
                      fixture=dict(synthetic_entries=args.entries,clipboard_payload_retention=False,
-                                  capture_listener=True,ocr=False,raven=False,updates=False),
+                                  capture_listener=True,ocr=False,updates=False),
                      initial_visible_windows=initial_visible,windows_after=windows(process.pid),
                      settings_destroyed_and_reopened=bool(args.open_settings and args.expect_settings_destroyed),scenarios=rows)
         args.output.write_text(json.dumps(content,indent=2)+'\n')

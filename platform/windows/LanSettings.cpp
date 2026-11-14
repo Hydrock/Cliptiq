@@ -16,6 +16,39 @@ struct NativeLanSettings::State {
  struct Input { LanSettingsDraft::Field field;HWND window; };std::vector<Input> inputs;
  struct Action { int kind; std::string peer; };std::map<int,Action> actions;
  struct Placement { HWND window;int x,y,w,h;bool discovery=false; };std::vector<Placement> children;int offset=0,height=0,content_height=0;
+ // Rebuilding inside BN_CLICKED destroys a control that is still executing
+ // its native input procedure. Defer only the view refresh, not the action.
+ static constexpr UINT refresh_message=WM_APP+94;
+ unsigned command_depth=0;
+ bool pending_build=false,pending_discovery=false,refresh_queued=false;
+ std::optional<std::string> pending_status;
+ HWND refresh_target=nullptr;
+ void request_refresh(bool whole_form){
+  if(whole_form)pending_build=true;else pending_discovery=true;
+  auto target=window?window:prompt;
+  if(!refresh_queued&&target&&PostMessageW(target,refresh_message,0,0)){
+   refresh_queued=true;refresh_target=target;
+  }
+ }
+ void flush_refresh(){
+  refresh_queued=false;refresh_target=nullptr;
+  // A callback may run a nested message pump. The outer command will requeue
+  // after returning; reposting here would keep that nested pump busy forever.
+  if(command_depth)return;
+  bool whole_form=pending_build,discovery_view=pending_discovery;
+  auto status_after_refresh=std::move(pending_status);pending_status.reset();
+  pending_build=pending_discovery=false;
+  if(whole_form&&window)build();else if(discovery_view)renderDiscovery();
+  if(status_after_refresh)status(std::move(*status_after_refresh));
+ }
+ void forget_refresh(HWND target){
+  if(refresh_target==target){refresh_target=nullptr;refresh_queued=pending_build=pending_discovery=false;pending_status.reset();}
+ }
+ void dispatch_command(int id,bool pairing=false){
+  ++command_depth;
+  struct Scope {State& state;~Scope(){if(!--state.command_depth&&(state.pending_build||state.pending_discovery))state.request_refresh(state.pending_build);}} scope{*this};
+  if(pairing)discoveryAction(id);else action(id);
+ }
  ~State(){if(prompt)DestroyWindow(prompt);if(window)DestroyWindow(window);if(font)DeleteObject(font);if(help_font)DeleteObject(help_font);if(heading_font)DeleteObject(heading_font);}
  HWND control(const wchar_t* cls,const std::string& value,DWORD style,int x,int y,int w,int h,int id=0){auto c=CreateWindowExW(cls==std::wstring(L"EDIT")?WS_EX_CLIENTEDGE:0,cls,wide(value).c_str(),WS_CHILD|WS_VISIBLE|style,px(x),px(y-offset),px(w),px(h),window,reinterpret_cast<HMENU>(INT_PTR(id)),GetModuleHandleW(nullptr),nullptr);SendMessageW(c,WM_SETFONT,reinterpret_cast<WPARAM>(font),TRUE);children.push_back({c,x,y,w,h});return c;}
  int px(int n)const{auto dpi=window?GetDpiForWindow(window):GetDpiForSystem();return MulDiv(n,dpi?dpi:96,96);}
@@ -24,7 +57,7 @@ struct NativeLanSettings::State {
  // Do not retain copied pixels from intermediate child-window moves.
  RedrawWindow(window,nullptr,nullptr,RDW_INVALIDATE|RDW_ERASE|RDW_ALLCHILDREN);
  }
- void status(std::string s){if(message)SetWindowTextW(message,wide(tr(s)).c_str());}
+ void status(std::string s){if(pending_build){pending_status=std::move(s);return;}if(message)SetWindowTextW(message,wide(tr(s)).c_str());}
  Result<void> collect(){std::map<std::string,std::string> values;for(auto& i:inputs)values[i.field.key]=i.field.check?(SendMessageW(i.window,BM_GETCHECK,0,0)==BST_CHECKED?"1":"0"):utf(i.window);return draft.collect(values);}
  DiscoveryUiCallbacks discovery;lan::DiscoverySnapshot snapshot;std::string signature;bool manualExpanded=false,viewVisible=false;int discoveryHeight=0;HWND code_edit=nullptr,prompt=nullptr;std::vector<HWND> promptChildren;std::map<int,Action> discoveryActions;std::map<std::string,std::string> manualValues;int discoveryId=10000;
  HWND topControl(HWND host,const wchar_t* cls,const std::string& value,DWORD style,int x,int y,int w,int h,int id=0){
@@ -47,8 +80,8 @@ struct NativeLanSettings::State {
   if(pending){topButton(host,"Cancel pairing",15,snapshot.session_id,16,y);y+=44;}
   if(host==prompt&&!snapshot.message.empty()){topControl(host,L"STATIC",tr(snapshot.message),0,16,y,450,64);y+=72;}return y;
  }
- static LRESULT CALLBACK promptProc(HWND w,UINT m,WPARAM wp,LPARAM lp){auto s=reinterpret_cast<State*>(GetWindowLongPtrW(w,GWLP_USERDATA));if(m==WM_NCCREATE){s=static_cast<State*>(reinterpret_cast<CREATESTRUCTW*>(lp)->lpCreateParams);SetWindowLongPtrW(w,GWLP_USERDATA,reinterpret_cast<LONG_PTR>(s));}if(s){if(m==WM_COMMAND&&HIWORD(wp)==BN_CLICKED){s->discoveryAction(LOWORD(wp));return 0;}if(m==WM_CLOSE){if(s->discovery.cancel&&s->snapshot.pairing!=lan::PairingEvent::Kind::Complete&&s->snapshot.pairing!=lan::PairingEvent::Kind::Failed)s->discovery.cancel(s->snapshot.session_id);ShowWindow(w,SW_HIDE);return 0;}if(m==WM_NCDESTROY){s->prompt=nullptr;s->promptChildren.clear();}}return DefWindowProcW(w,m,wp,lp);}
- void renderDiscovery(){if(!discovery.snapshot)return;std::string entered=code_edit?utf(code_edit):"";bool focus=code_edit&&GetFocus()==code_edit;code_edit=nullptr;
+ static LRESULT CALLBACK promptProc(HWND w,UINT m,WPARAM wp,LPARAM lp){auto s=reinterpret_cast<State*>(GetWindowLongPtrW(w,GWLP_USERDATA));if(m==WM_NCCREATE){s=static_cast<State*>(reinterpret_cast<CREATESTRUCTW*>(lp)->lpCreateParams);SetWindowLongPtrW(w,GWLP_USERDATA,reinterpret_cast<LONG_PTR>(s));}if(s){if(m==refresh_message){s->flush_refresh();return 0;}if(m==WM_COMMAND&&HIWORD(wp)==BN_CLICKED){s->dispatch_command(LOWORD(wp),true);return 0;}if(m==WM_CLOSE){if(s->discovery.cancel&&s->snapshot.pairing!=lan::PairingEvent::Kind::Complete&&s->snapshot.pairing!=lan::PairingEvent::Kind::Failed)s->discovery.cancel(s->snapshot.session_id);ShowWindow(w,SW_HIDE);return 0;}if(m==WM_NCDESTROY){s->forget_refresh(w);s->prompt=nullptr;s->promptChildren.clear();}}return DefWindowProcW(w,m,wp,lp);}
+ void renderDiscovery(){if(command_depth){request_refresh(false);return;}if(!discovery.snapshot)return;std::string entered=code_edit?utf(code_edit):"";bool focus=code_edit&&GetFocus()==code_edit;code_edit=nullptr;
   for(auto it=children.begin();it!=children.end();)if(it->discovery){DestroyWindow(it->window);it=children.erase(it);}else ++it;
   for(auto c:promptChildren)DestroyWindow(c);promptChildren.clear();discoveryActions.clear();discoveryId=10000;int y=16;
   if(window){discoverySection("This device",y);if(!snapshot.local_name.empty()){topControl(window,L"STATIC",snapshot.local_name,0,16,y,704,28);y+=36;}auto availability=topButton(window,"Available for discovery",10,{},16,y,704,BS_AUTOCHECKBOX);SendMessageW(availability,BM_SETCHECK,snapshot.enabled?BST_CHECKED:BST_UNCHECKED,0);EnableWindow(availability,snapshot.available);y+=40;
@@ -85,7 +118,7 @@ struct NativeLanSettings::State {
   snapshot=discovery.snapshot();if(!result)snapshot.message=result.error().message;signature=discovery_signature(snapshot);renderDiscovery();
  }
  void remember(){for(const auto& input:inputs)manualValues[input.field.key]=input.field.check?(SendMessageW(input.window,BM_GETCHECK,0,0)==BST_CHECKED?"1":"0"):utf(input.window);}
- void build(){for(auto& c:children)DestroyWindow(c.window);children.clear();inputs.clear();actions.clear();int y=16,id=100;discoveryHeight=0;height=0;
+ void build(){if(command_depth){request_refresh(true);return;}for(auto& c:children)DestroyWindow(c.window);children.clear();inputs.clear();actions.clear();int y=16,id=100;discoveryHeight=0;height=0;
  if(discovery.snapshot){snapshot=discovery.snapshot();signature=discovery_signature(snapshot);renderDiscovery();y=discoveryHeight+8;}
  if(manualExpanded||!discovery.snapshot){
  control(L"STATIC",tr("Changes take effect only after Save. No peers means LAN is off."),0,16,y,720,40);y+=44;
@@ -114,7 +147,7 @@ struct NativeLanSettings::State {
  if(kind==5){auto r=save?save(draft.config,draft.keys):Result<void>(Error{ErrorCode::Unsupported,"Save unavailable"});if(!r){status(r.error().message);return;}manualValues.clear();draft.keys.clear();saved=draft.config;if(embedded){build();status(tr("Saved. Unsupported functions remain disabled."));}else ShowWindow(window,SW_HIDE);}
  }
  static LRESULT CALLBACK proc(HWND w,UINT m,WPARAM wp,LPARAM lp){auto s=reinterpret_cast<State*>(GetWindowLongPtrW(w,GWLP_USERDATA));if(m==WM_NCCREATE){s=static_cast<State*>(reinterpret_cast<CREATESTRUCTW*>(lp)->lpCreateParams);SetWindowLongPtrW(w,GWLP_USERDATA,reinterpret_cast<LONG_PTR>(s));s->window=w;}
- if(s){if(m==WM_CTLCOLORSTATIC||m==WM_CTLCOLOREDIT){auto dc=reinterpret_cast<HDC>(wp);SetBkMode(dc,TRANSPARENT);SetTextColor(dc,GetPropW(reinterpret_cast<HWND>(lp),L"Cliptiq.LanHelp")?RGB(100,105,112):GetSysColor(COLOR_WINDOWTEXT));SetBkColor(dc,GetSysColor(COLOR_WINDOW));return reinterpret_cast<LRESULT>(GetSysColorBrush(COLOR_WINDOW));}if(m==WM_COMMAND&&HIWORD(wp)==BN_CLICKED){s->action(LOWORD(wp));return 0;}if(m==WM_CLOSE){ShowWindow(w,SW_HIDE);s->draft.keys.clear();s->viewVisible=false;if(s->discovery.close_view)s->discovery.close_view();return 0;}if(m==WM_SIZE){s->layout();return 0;}if(m==WM_VSCROLL||m==WM_MOUSEWHEEL){RECT r{};GetClientRect(w,&r);int d=m==WM_MOUSEWHEEL?-GET_WHEEL_DELTA_WPARAM(wp)/WHEEL_DELTA*96:LOWORD(wp)==SB_LINEUP?-36:LOWORD(wp)==SB_LINEDOWN?36:LOWORD(wp)==SB_PAGEUP?-int(r.bottom):LOWORD(wp)==SB_PAGEDOWN?int(r.bottom):0;if(m==WM_VSCROLL&&(LOWORD(wp)==SB_THUMBTRACK||LOWORD(wp)==SB_THUMBPOSITION)){SCROLLINFO si{sizeof(si),SIF_TRACKPOS};GetScrollInfo(w,SB_VERT,&si);s->offset=si.nTrackPos;}else s->offset+=d;s->offset=std::clamp(s->offset,0,std::max(0,s->content_height-MulDiv(int(r.bottom),96,GetDpiForWindow(w))));s->layout();return 0;}if(m==WM_NCDESTROY){s->window=nullptr;s->message=nullptr;s->inputs.clear();s->children.clear();s->draft.keys.clear();}}
+ if(s){if(m==refresh_message){s->flush_refresh();return 0;}if(m==WM_CTLCOLORSTATIC||m==WM_CTLCOLOREDIT){auto dc=reinterpret_cast<HDC>(wp);SetBkMode(dc,TRANSPARENT);SetTextColor(dc,GetPropW(reinterpret_cast<HWND>(lp),L"Cliptiq.LanHelp")?RGB(100,105,112):GetSysColor(COLOR_WINDOWTEXT));SetBkColor(dc,GetSysColor(COLOR_WINDOW));return reinterpret_cast<LRESULT>(GetSysColorBrush(COLOR_WINDOW));}if(m==WM_COMMAND&&HIWORD(wp)==BN_CLICKED){s->dispatch_command(LOWORD(wp));return 0;}if(m==WM_CLOSE){ShowWindow(w,SW_HIDE);s->draft.keys.clear();s->viewVisible=false;if(s->discovery.close_view)s->discovery.close_view();return 0;}if(m==WM_SIZE){s->layout();return 0;}if(m==WM_VSCROLL||m==WM_MOUSEWHEEL){RECT r{};GetClientRect(w,&r);int d=m==WM_MOUSEWHEEL?-GET_WHEEL_DELTA_WPARAM(wp)/WHEEL_DELTA*96:LOWORD(wp)==SB_LINEUP?-36:LOWORD(wp)==SB_LINEDOWN?36:LOWORD(wp)==SB_PAGEUP?-int(r.bottom):LOWORD(wp)==SB_PAGEDOWN?int(r.bottom):0;if(m==WM_VSCROLL&&(LOWORD(wp)==SB_THUMBTRACK||LOWORD(wp)==SB_THUMBPOSITION)){SCROLLINFO si{sizeof(si),SIF_TRACKPOS};GetScrollInfo(w,SB_VERT,&si);s->offset=si.nTrackPos;}else s->offset+=d;s->offset=std::clamp(s->offset,0,std::max(0,s->content_height-MulDiv(int(r.bottom),96,GetDpiForWindow(w))));s->layout();return 0;}if(m==WM_NCDESTROY){s->forget_refresh(w);s->window=nullptr;s->message=nullptr;s->inputs.clear();s->children.clear();s->draft.keys.clear();}}
  return DefWindowProcW(w,m,wp,lp);}
 };
 NativeLanSettings::NativeLanSettings():state_(std::make_shared<State>()){}NativeLanSettings::~NativeLanSettings()=default;

@@ -18,6 +18,8 @@ class Workspace {
   HIMAGELIST row_images_ = nullptr;
   std::vector<HWND> children_;
   std::vector<WorkspaceRow> rows_;
+  struct RowText { std::wstring title, metadata, accessible; };
+  std::vector<RowText> text_;
   std::vector<size_t> visible_;
   MenuModel model_;
   MenuKind page_ = MenuKind::History;
@@ -26,9 +28,11 @@ class Workspace {
   MenuPreviewProvider provider_;
   unsigned dpi_;
   bool changing_ = false;
+  bool high_contrast_ = false;
   HWND control(const wchar_t*,const wchar_t*,DWORD,int,DWORD=0);
   int px(int) const;
-  void filter();
+  void filter(bool rebuild = false);
+  void fit_column();
   void selected();
   void execute(bool);
   const WorkspaceRow* selection() const;

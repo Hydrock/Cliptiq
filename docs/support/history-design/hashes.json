@@ -1,0 +1,10 @@
+{
+  "platform/windows/Workspace.cpp": "6be652db2ce35efd5c2f9c056645f996cc0d3aa2a9cb8a98c703205fd7b94d2e",
+  "platform/windows/Workspace.hpp": "010ad00a54d86c9abef51e0b506f59f4120445dd61ab26b217d076d580073bd7",
+  "experiments/windows-idle/workspace-benchmark.cpp": "3007b0be5783b3fd0ddfc81e0f4952640a597b6b4b6d9b2148d9a35dd745d912",
+  "experiments/windows-idle/process_counters.py": "de3310f25d9007a90ece8bd220080524d83afb426ffacaabf7202f2af3afa08f",
+  "out/history-before/Cliptiq.exe": "fb0cd95da310fd8cc22019114f2357d032a96c397cca6381fadc1d593a1020cd",
+  "out/history-design/Cliptiq.exe": "63615924c6a354138ef2758423416b670021beb59455b8b7d882c8017f9e4ecd",
+  "out/history-before/workspace_benchmark.exe": "2da2ce2219f763646fc0cdf88ef6de3238ac3f7f2febd84d5205ad0ed6a90436",
+  "out/history-design/workspace_benchmark.exe": "2a97e7c64ed552adef4e3eaeb27096be53b2b3dd0fbe540d6fd890c53ff32b48"
+}
