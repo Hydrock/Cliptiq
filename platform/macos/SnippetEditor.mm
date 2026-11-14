@@ -26,6 +26,7 @@ using namespace cliptiq;
   std::function<bool()> can_close;
   NSTextView *shortcutEditor;
   NSOutlineView *outline;
+  BOOL undo_enabled, redo_enabled;
   NSTextField *renaming;
   NSString *originalTitle;
   CliptiqSnippetNode *renamedNode;
@@ -61,8 +62,20 @@ using namespace cliptiq;
 @property(nonatomic, weak) CliptiqSnippetBridge *bridge;
 @end
 @implementation CliptiqSnippetText
+- (void)undo:(id)sender {[self.bridge undo:sender];}
+- (void)redo:(id)sender {[self.bridge redo:sender];}
+- (BOOL)validateMenuItem:(NSMenuItem*)item {
+  if(item.action==@selector(undo:) || item.action==@selector(redo:))
+    return [self validateUserInterfaceItem:item];
+  return [super validateMenuItem:item];
+}
+- (BOOL)validateUserInterfaceItem:(id<NSValidatedUserInterfaceItem>)item {
+  if(item.action==@selector(undo:))return self.bridge && self.bridge->undo_enabled;
+  if(item.action==@selector(redo:))return self.bridge && self.bridge->redo_enabled;
+  return [super validateUserInterfaceItem:item];
+}
 - (BOOL)performKeyEquivalent:(NSEvent *)event {
-  if (event.modifierFlags & NSEventModifierFlagCommand) {
+  if (self.window.firstResponder==self && (event.modifierFlags & NSEventModifierFlagCommand)) {
     auto key = event.charactersIgnoringModifiers.lowercaseString;
     if ([key isEqualToString:@"z"] || [key isEqualToString:@"y"]) {
       BOOL redo = [key isEqualToString:@"y"] ||
@@ -379,6 +392,9 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
   void history() {
     undo.enabled = model->can_undo();
     redo.enabled = model->can_redo();
+    // A key command can wait for the in-flight save before changing history.
+    bridge->undo_enabled=undo.enabled || model->saving();
+    bridge->redo_enabled=redo.enabled || model->saving();
     auto selected=model->selected();copyButton.enabled=selected && selected->kind==SnippetItemKind::Snippet;
   }
   void restore_selection() {
@@ -529,6 +545,11 @@ struct NativeSnippetEditor::State : std::enable_shared_from_this<State> {
         status({});
         return;
       }
+    }
+    if((command==510 || command==511) && model->saving()) {
+      pending_command=command;
+      status({});
+      return;
     }
     Result<void> r;
     if(command==515) {

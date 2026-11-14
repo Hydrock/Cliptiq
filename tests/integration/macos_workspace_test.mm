@@ -43,7 +43,8 @@ int main(int argc, char **argv) { @autoreleasepool { try {
  CHECK(ui.show_workspace());CHECK(window.visible);
  auto list=(NSTableView *)find(window.contentView,@"workspace-list");CHECK(list);CHECK(list.numberOfRows==1);
  CHECK([button(window.contentView,1).title isEqualToString:russian?@"История":@"History"]);
- CHECK([button(window.contentView,4).title isEqualToString:russian?@"Редактор сниппетов":@"Edit Snippets"]);
+ CHECK(!button(window.contentView,4)); // Snippets editing lives in the main page.
+ CHECK([button(window.contentView,2).title isEqualToString:russian?@"Сниппеты":@"Snippets"]);
  CHECK([button(window.contentView,5).title isEqualToString:russian?@"Копировать":@"Copy"]);
  CHECK([list.tableColumns[0].title isEqualToString:russian?@"Содержимое":@"Content"]);
  CHECK([list.tableColumns[1].title isEqualToString:russian?@"Тип / папка":@"Type / folder"]);

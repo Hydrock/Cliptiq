@@ -160,6 +160,7 @@ int run() {
     release_input();settle();
     CHECK(session->content() == u8"  Привет\nline2 😀  ");
     auto undo_event=[NSEvent keyEventWithType:NSEventTypeKeyDown location:NSZeroPoint modifierFlags:NSEventModifierFlagCommand timestamp:0 windowNumber:window.windowNumber context:nil characters:@"z" charactersIgnoringModifiers:@"z" isARepeat:NO keyCode:6];
+    CHECK([window makeFirstResponder:body]);
     CHECK([body performKeyEquivalent:undo_event]);
     CHECK(session->content().empty());
     click(@"editor-redo");

@@ -280,6 +280,32 @@ Result<void> NativeMenu::initialize() {
     return Error{ErrorCode::InvalidArgument,
                  "AppKit menu requires main thread"};
   [NSApplication sharedApplication];
+  // Cocoa text commands need a main-menu key equivalent to reach the current
+  // responder. There is no nib/main menu in this accessory application.
+  if(!NSApp.mainMenu) {
+    auto main=[NSMenu new];
+    auto application=[NSMenuItem new];application.submenu=[[NSMenu alloc] initWithTitle:@"Cliptiq"];
+    [main addItem:application];
+    NSApp.mainMenu=main;
+  }
+  bool hasEditingMenu=false;
+  for(NSMenuItem* item in NSApp.mainMenu.itemArray)
+    if([item.identifier isEqualToString:@"cliptiq-edit-menu"]) hasEditingMenu=true;
+  if(!hasEditingMenu) {
+    auto item=[[NSMenuItem alloc] initWithTitle:loc(@"Edit") action:nil keyEquivalent:@""];
+    item.identifier=@"cliptiq-edit-menu";
+    auto edit=[[NSMenu alloc] initWithTitle:loc(@"Edit")];
+    [edit addItemWithTitle:loc(@"Undo") action:@selector(undo:) keyEquivalent:@"z"];
+    auto redo=[edit addItemWithTitle:loc(@"Redo") action:@selector(redo:) keyEquivalent:@"Z"];
+    redo.keyEquivalentModifierMask=NSEventModifierFlagCommand|NSEventModifierFlagShift;
+    [edit addItem:[NSMenuItem separatorItem]];
+    [edit addItemWithTitle:loc(@"Cut") action:@selector(cut:) keyEquivalent:@"x"];
+    [edit addItemWithTitle:loc(@"Copy") action:@selector(copy:) keyEquivalent:@"c"];
+    [edit addItemWithTitle:loc(@"Paste") action:@selector(paste:) keyEquivalent:@"v"];
+    [edit addItem:[NSMenuItem separatorItem]];
+    [edit addItemWithTitle:loc(@"Select All") action:@selector(selectAll:) keyEquivalent:@"a"];
+    item.submenu=edit;[NSApp.mainMenu addItem:item];
+  }
   [NSApp setActivationPolicy:NSApplicationActivationPolicyAccessory];
   s->target = [CliptiqMenuTarget new];
   std::weak_ptr<State> weak = s;
