@@ -120,6 +120,10 @@ int main(int argc, char **argv) {
       SessionInstance local_only;
       CHECK(!local_only.start(options, std::nullopt));
       CHECK(take(owner.receive()).empty());
+      auto quiet_options=options;quiet_options.quiet_if_running=true;
+      SessionInstance quiet;
+      CHECK(take(quiet.start(quiet_options,std::nullopt))==InstanceRole::Forwarded);
+      CHECK(take(owner.receive()).empty()); // No implicit Main action on repeat launch.
       for (unsigned n = 0; n < 16; ++n) {
         SessionInstance second;
         CHECK(take(second.start(options, LaunchAction::Settings)) ==
@@ -211,6 +215,16 @@ int main(int argc, char **argv) {
       return Error{ErrorCode::Full,
                    "fixture full with stale disabled preference"};
     }));
+    CHECK(take(native.inspect()).enabled);
+    CHECK(native.set_autostart(false));
+    // First-run choice reconciles against the OS, not the fresh profile default.
+    CHECK(native.set_autostart(true));
+    unsigned first_run_commits=0;
+    CHECK(native.apply_first_run(false,[&]()->Result<void>{++first_run_commits;return {};}));
+    CHECK(first_run_commits==1&&!take(native.inspect()).enabled);
+    CHECK(!native.apply_first_run(true,[]()->Result<void>{return Error{ErrorCode::Full,"first-run disk full"};}));
+    CHECK(!take(native.inspect()).enabled);
+    CHECK(native.apply_first_run(true,[]()->Result<void>{return {};}));
     CHECK(take(native.inspect()).enabled);
     CHECK(native.set_autostart(false));
 #endif

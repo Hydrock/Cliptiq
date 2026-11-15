@@ -1,4 +1,5 @@
 #include "../LifecycleNative.hpp"
+#include "../LocaleNative.hpp"
 #import <AppKit/AppKit.h>
 #import <ServiceManagement/ServiceManagement.h>
 #include <filesystem>
@@ -67,5 +68,30 @@ Result<AutostartStatus> native_autostart_status(const AutostartOptions &o) {
                          : status == SMAppServiceStatusEnabled
                              ? "Autostart enabled"
                              : "Autostart disabled"};
+}
+Result<std::optional<bool>> show_first_run_autostart() {
+  @autoreleasepool {
+    if(!NSThread.isMainThread)return Error{ErrorCode::InvalidArgument,"Autostart setup requires the main thread"};
+    [NSApplication sharedApplication];
+    [NSApp setActivationPolicy:NSApplicationActivationPolicyAccessory];
+    NSAlert *alert=[NSAlert new];
+    alert.messageText=loc(@"Keep Cliptiq ready when you sign in");
+    alert.informativeText=loc(@"Start Cliptiq when you sign in so clipboard history is ready. You can change this later in Settings.");
+    [alert addButtonWithTitle:loc(@"Continue")];[alert addButtonWithTitle:loc(@"Quit")];
+    NSButton *choice=[NSButton checkboxWithTitle:loc(@"Launch at login") target:nil action:nil];
+    choice.identifier=@"first-run-autostart";choice.state=NSControlStateValueOn;
+    [choice sizeToFit];alert.accessoryView=choice;
+    [NSApp activateIgnoringOtherApps:YES];
+    if([alert runModal]!=NSAlertFirstButtonReturn)return std::optional<bool>{};
+    return std::optional<bool>{choice.state==NSControlStateValueOn};
+  }
+}
+void show_first_run_autostart_approval() {
+  @autoreleasepool {
+    NSAlert *alert=[NSAlert new];alert.messageText=loc(@"Set up Cliptiq");
+    alert.informativeText=loc(@"Autostart requires approval in System Settings > General > Login Items");
+    [alert addButtonWithTitle:loc(@"Open Login Items")];[alert addButtonWithTitle:loc(@"Continue")];
+    if([alert runModal]==NSAlertFirstButtonReturn)[SMAppService openSystemSettingsLoginItems];
+  }
 }
 } // namespace cliptiq

@@ -39,7 +39,9 @@ int main(int argc, char **argv) { @autoreleasepool { try {
   commands.push_back(std::move(c));
  });CHECK(ui.initialize());CHECK(ui.update(model));CHECK(ui.native_handles().menu==0);
  auto window=(__bridge NSWindow *)(void *)ui.native_handles().window;
- if(ui.status().tray_available){CHECK(!window.visible);CHECK(!find(window.contentView,@"workspace-list"));CHECK(previews==0);}
+ if(ui.status().tray_available){
+    [NSApp.delegate applicationShouldHandleReopen:NSApp hasVisibleWindows:NO];
+    CHECK(!window.visible);CHECK(!find(window.contentView,@"workspace-list"));CHECK(previews==0);}
  CHECK(ui.show_workspace());CHECK(window.visible);
  auto list=(NSTableView *)find(window.contentView,@"workspace-list");CHECK(list);CHECK(list.numberOfRows==1);
  CHECK([button(window.contentView,1).title isEqualToString:russian?@"История":@"History"]);

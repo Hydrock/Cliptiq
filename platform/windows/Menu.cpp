@@ -18,6 +18,10 @@ extern "C" UINT cliptiq_test_track_popup(HMENU, UINT, int, int, HWND,
                                          LPTPMPARAMS);
 #define TrackPopupMenuEx cliptiq_test_track_popup
 #endif
+#ifdef CLIPTIQ_TEST_TRAY_BOUNDARY
+extern "C" BOOL WINAPI cliptiq_test_tray_notify(DWORD, PNOTIFYICONDATAW);
+#define Shell_NotifyIconW cliptiq_test_tray_notify
+#endif
 namespace cliptiq {
 namespace {
 std::wstring wide(const std::string &s) {
@@ -243,10 +247,12 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
   void tray() {
     remove_icon();
     if (options.tray_style == TrayStyle::Hidden) {
-      open_workspace();
-      ShowWindow(window, SW_SHOWNOACTIVATE);
-      status.launcher_visible = true;
-      status.tray_reason = "Tray hidden; launcher visible";
+      if (!options.start_hidden) {
+        open_workspace();
+        ShowWindow(window, SW_SHOWNOACTIVATE);
+        status.launcher_visible = true;
+      }
+      status.tray_reason = "Tray hidden";
       return;
     }
     auto pixels=tray_icon(unsigned(GetSystemMetricsForDpi(SM_CXSMICON,dpi)));
@@ -273,14 +279,14 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
       n.uVersion = NOTIFYICON_VERSION_4;
       Shell_NotifyIconW(NIM_SETVERSION, &n);
     }
-    if (!status.tray_available) {
+    if (!status.tray_available && !options.start_hidden) {
       open_workspace();
       ShowWindow(window, SW_SHOWNOACTIVATE);
       status.launcher_visible = true;
     }
     status.tray_reason = status.tray_available
                              ? "Shell_NotifyIcon registered"
-                             : "Explorer tray unavailable; launcher visible";
+                             : "Explorer tray unavailable; waiting for taskbar";
   }
   static LRESULT CALLBACK popup_procedure(HWND w,UINT message,WPARAM wp,LPARAM lp){
     auto s=reinterpret_cast<State*>(GetWindowLongPtrW(w,GWLP_USERDATA));

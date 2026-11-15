@@ -121,7 +121,7 @@ def main():
         assert not any(w['visible'] for w in windows(process.pid))
         rows={'startup_hidden':measure(process,args.seconds,5)}
         if args.workspace_visible:
-            subprocess.run([str(exe),'--database',str(db)],env=env,check=True,timeout=15)
+            subprocess.run([str(exe),'--database',str(db),'--show-main'],env=env,check=True,timeout=15)
             deadline=time.perf_counter()+10
             while time.perf_counter()<deadline:
                 if any(w['visible'] and w['window_class']=='Cliptiq.NativeMenu' for w in windows(process.pid)):break

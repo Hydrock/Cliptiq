@@ -26,6 +26,28 @@ int main() {
       std::cerr << "FAIL " << n << ": " << e.what() << '\n';
     }
   };
+  test("first_run_autostart_choice_survives_settings_updates", [] {
+    for(auto platform:{CapturePlatform::Windows,CapturePlatform::MacOS}){
+      auto store=take(open_store(":memory:"));
+      auto fresh=take(load_settings(store,platform));CHECK(!fresh.login_configured);
+      // A stored false is a completed choice, not permission to enable on upgrade.
+      fresh.values["login"]="0";CHECK(save_settings(store,fresh));
+      auto opted_out=take(load_settings(store,platform));
+      CHECK(opted_out.login_configured&&opted_out.values.at("login")=="0");
+      opted_out.values["duplicates"]="0";CHECK(save_settings(store,opted_out));
+      auto updated=take(load_settings(store,platform));
+      CHECK(updated.login_configured&&updated.values.at("login")=="0");
+      updated.values["login"]="1";CHECK(save_settings(store,updated));
+      auto opted_in=take(load_settings(store,platform));
+      CHECK(opted_in.login_configured&&opted_in.values.at("login")=="1");
+    }
+  });
+  test("legacy_login_preference_is_already_configured", [] {
+    auto store=take(open_store(":memory:"));
+    CHECK(sqlite3_exec(store.connection(),"INSERT INTO settings VALUES('t09.login','0')",nullptr,nullptr,nullptr)==SQLITE_OK);
+    auto legacy=take(load_settings(store,CapturePlatform::Windows));
+    CHECK(legacy.login_configured&&legacy.values.at("login")=="0");
+  });
   test("desktop_folder_shortcuts_are_retired", [] {
     auto store=take(open_store(":memory:"));auto folder=take(create_folder(store,"Folder"));
     auto key="folder:"+folder;

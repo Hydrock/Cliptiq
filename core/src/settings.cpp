@@ -371,8 +371,10 @@ Result<Settings> load_settings(Store &store, CapturePlatform platform) {
             return c.error();
           result.hotkeys[key.substr(7)] = c.value();
         }
-      } else if (result.values.count(key))
+      } else if (result.values.count(key)) {
         result.values[key] = value;
+        if(key=="login")result.login_configured=true;
+      }
       else
         return Error{ErrorCode::Unsupported, "Unknown stored setting"};
     }

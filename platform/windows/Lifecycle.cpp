@@ -1,10 +1,12 @@
 #include "../LifecycleNative.hpp"
+#include "../LocaleNative.hpp"
 #define NOMINMAX
 #include <aclapi.h>
 #include <filesystem>
 #include <sddl.h>
 #include <vector>
 #include <windows.h>
+#include <commctrl.h>
 namespace cliptiq {
 namespace {
 std::wstring wide(const std::string &s) {
@@ -226,5 +228,20 @@ Result<AutostartStatus> native_autostart_status(const AutostartOptions &o) {
       enabled
           ? "Autostart registered; Windows policy may disable or delay launch"
           : "Autostart disabled or belongs to another installation"};
+}
+Result<std::optional<bool>> show_first_run_autostart() {
+  TASKDIALOG_BUTTON buttons[]={{100,lw(L"Continue")},{101,lw(L"Quit")}};
+  TASKDIALOGCONFIG dialog{};dialog.cbSize=sizeof(dialog);
+  dialog.dwFlags=TDF_ALLOW_DIALOG_CANCELLATION|TDF_VERIFICATION_FLAG_CHECKED|TDF_SIZE_TO_CONTENT;
+  dialog.pszWindowTitle=lw(L"Set up Cliptiq");
+  dialog.pszMainInstruction=lw(L"Keep Cliptiq ready when you sign in");
+  dialog.pszContent=lw(L"Start Cliptiq when you sign in so clipboard history is ready. You can change this later in Settings.");
+  dialog.pszVerificationText=lw(L"Launch at login");
+  dialog.cButtons=2;dialog.pButtons=buttons;dialog.nDefaultButton=100;
+  int button=0;BOOL enabled=TRUE;
+  auto result=TaskDialogIndirect(&dialog,&button,nullptr,&enabled);
+  if(FAILED(result))return Error{ErrorCode::Io,"Cannot open first-run autostart setup"};
+  if(button!=100)return std::optional<bool>{};
+  return std::optional<bool>{enabled!=FALSE};
 }
 } // namespace cliptiq

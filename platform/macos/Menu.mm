@@ -251,7 +251,7 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
     }
     if (options.tray_style == TrayStyle::Hidden) {
       status.tray_available = false;
-      status.tray_reason = "Status item hidden; launcher visible";
+      status.tray_reason = "Status item hidden";
       return;
     }
     status_item = [NSStatusBar.systemStatusBar
@@ -266,7 +266,7 @@ struct NativeMenu::State : std::enable_shared_from_this<State> {
     status.tray_available = status_item != nil && status_item.visible;
     status.tray_reason = status.tray_available
                              ? "NSStatusItem visible"
-                             : "Status item unavailable; launcher visible";
+                             : "Status item unavailable";
   }
 };
 NativeMenu::NativeMenu(NativeMenuOptions o, std::function<void(MenuCommand)> c,
@@ -333,7 +333,11 @@ Result<void> NativeMenu::initialize() {
         });
       }
   };
-  s->target->reopen=[weak]{if(auto s=weak.lock())s->open_workspace();};
+  s->target->reopen=[weak]{if(auto s=weak.lock()){
+    // Finder/login relaunch must not reveal a hidden tray-only application.
+    // Explicit tray actions and --show-* routes still open the workspace.
+    if(!s->options.start_hidden||s->window.visible)s->open_workspace();
+  }};
   if(!NSApp.delegate)NSApp.delegate=s->target;
   s->target->tray_click=[weak]{if(auto s=weak.lock())s->tray_click();};
   s->target->close_workspace=[weak]{if(auto s=weak.lock())s->hide_workspace();};
@@ -365,7 +369,7 @@ Result<void> NativeMenu::initialize() {
   // Complete the launch handshake once, as -run normally does, before UI use.
   static dispatch_once_t launched;
   dispatch_once(&launched, ^{[NSApp finishLaunching];});
-  if(!s->options.start_hidden||!s->status.tray_available)s->open_workspace();
+  if(!s->options.start_hidden)s->open_workspace();
   return r;
   }
 }
@@ -417,7 +421,7 @@ Result<void> NativeMenu::set_tray_style(TrayStyle style) {
     return Error{ErrorCode::InvalidArgument, "Invalid tray style"};
   s->options.tray_style = style;
   s->tray();
-  if(!s->status.tray_available)s->open_workspace();
+  if(!s->status.tray_available&&!s->options.start_hidden)s->open_workspace();
   return {};
 }
 Result<void> NativeMenu::process_events(unsigned wait) {

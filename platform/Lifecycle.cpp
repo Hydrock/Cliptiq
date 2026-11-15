@@ -106,6 +106,8 @@ SessionInstance::start(InstanceOptions options,
       return locked.error();
     impl_->guard = std::move(locked.value());
     impl_->primary = bool(impl_->guard);
+    if (!impl_->primary && !action && options.quiet_if_running)
+      return InstanceRole::Forwarded;
     if (!impl_->primary && !action)
       return Error{ErrorCode::Unsupported, "Only window-opening actions can be "
                                            "forwarded to an existing instance"};
@@ -269,6 +271,17 @@ Result<void> Autostart::apply(bool requested, bool previous,
     }
   }
   return saved;
+}
+Result<void> Autostart::apply_first_run(bool requested, const std::function<Result<void>()>& commit) {
+  if(!commit)return Error{ErrorCode::InvalidArgument,"Missing settings commit"};
+  auto actual=inspect();
+  if(!actual){
+    // An unbundled development app cannot register a macOS login item, but
+    // choosing not to register must still allow first-run setup to finish.
+    if(!requested&&actual.error().code==ErrorCode::Unsupported)return commit();
+    return actual.error();
+  }
+  return apply(requested,actual.value().enabled||actual.value().requires_approval,commit);
 }
 Result<AutostartStatus> Autostart::inspect() {
   auto result = native_autostart_status(options_);

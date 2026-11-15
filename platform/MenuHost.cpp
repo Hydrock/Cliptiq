@@ -277,6 +277,11 @@ int host(int argc, char **argv) {
     SessionInstance instance;
     if (!smoke && !demo) {
       std::optional<LaunchAction> route = LaunchAction::Main;
+      bool quiet_launch=false;
+#if defined(_WIN32) || defined(__APPLE__)
+      quiet_launch=launch_action.empty();
+      if(quiet_launch)route.reset();
+#endif
       if (!launch_action.empty()) {
         auto parsed = parse_launch_action(launch_action);
         if (parsed)
@@ -288,7 +293,7 @@ int host(int argc, char **argv) {
           throw std::runtime_error(parsed.error().message);
       }
       auto role = take(instance.start(
-          {take(lifecycle_directory()), lifecycle_scope()}, route));
+          {take(lifecycle_directory()), lifecycle_scope(), quiet_launch}, route));
       if (role == InstanceRole::Forwarded)
         return 0;
       capture = true;
@@ -309,6 +314,21 @@ int host(int argc, char **argv) {
 #ifdef __APPLE__
     // No capture, hotkeys, LAN or main UI before the required access is ready.
     if(!smoke && !demo){macos::StartupPermissions permissions;if(!permissions.run())return 0;}
+#endif
+#if defined(_WIN32) || defined(__APPLE__)
+    // A persisted false is a deliberate choice too. Never re-enable at upgrade,
+    // in background launches or in explicit database/test profiles.
+    if(!smoke&&!demo&&!background&&!explicit_database&&!preferences.login_configured){
+      auto draft=preferences;draft.values["login"]="1";
+      auto saved=startup.apply_first_run(true,[&]{return save_settings(store,draft);});
+      // Preserve the default preference even if the OS rejects registration;
+      // Settings can then display the failure without a startup dialog.
+      if(!saved){
+        std::cerr << "Autostart: " << saved.error().message << '\n';
+        ok(save_settings(store,draft));
+      }
+      preferences=take(load_settings(store));
+    }
 #endif
     if (!smoke) {
       auto inspected = startup.inspect();
@@ -540,7 +560,9 @@ int host(int argc, char **argv) {
     options.windows_message_filter=[&](std::uintptr_t message){return editor_window.pre_translate(message);};
 #endif
 #if (defined(_WIN32) || defined(__APPLE__)) && defined(CLIPTIQ_WITH_LIFECYCLE)
-    options.start_hidden = background && !smoke;
+    // Desktop startup is quiet regardless of whether --background was supplied.
+    // Explicit --show-* actions are dispatched after initialization.
+    options.start_hidden = !smoke && !demo;
 #endif
     options.tray_style = tray;
 #ifdef CLIPTIQ_WITH_SETTINGS

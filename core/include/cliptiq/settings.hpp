@@ -18,6 +18,8 @@ struct Settings {
   std::uint64_t revision = 0;
   // Display metadata loaded with settings, never persisted as preferences.
   std::map<FolderId,std::string> folder_titles;
+  // Derived from a persisted login row; false and true are both completed choices.
+  bool login_configured = false;
 };
 struct SettingField {
   SettingsGroup group;

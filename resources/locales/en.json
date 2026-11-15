@@ -401,5 +401,8 @@
   "Edit": "Edit",
   "Cut": "Cut",
   "Paste": "Paste",
-  "Select All": "Select All"
+  "Select All": "Select All",
+  "Keep Cliptiq ready when you sign in": "Keep Cliptiq ready when you sign in",
+  "Open Login Items": "Open Login Items",
+  "Start Cliptiq when you sign in so clipboard history is ready. You can change this later in Settings.": "Start Cliptiq when you sign in so clipboard history is ready. You can change this later in Settings."
 }

@@ -10,6 +10,8 @@ enum class InstanceRole { Primary, Forwarded };
 // Options are an embedding/test API; they are never accepted as IPC messages.
 struct InstanceOptions {
   std::string directory, scope;
+  // Ordinary desktop launches may acknowledge a running owner without UI IPC.
+  bool quiet_if_running = false;
 };
 class SessionInstance {
   struct Impl;
@@ -37,10 +39,18 @@ public:
   explicit Autostart(AutostartOptions);
   Result<AutostartStatus> set_autostart(bool);
   Result<AutostartStatus> inspect();
+  Result<void> apply_first_run(bool requested, const std::function<Result<void>()> &commit);
   Result<void> apply(bool requested, bool previous,
                      const std::function<Result<void>()> &commit);
   const AutostartStatus &status() const { return status_; }
 };
+#if defined(_WIN32) || defined(__APPLE__)
+// Native first-run choice; checked by default. Closing returns no choice.
+Result<std::optional<bool>> show_first_run_autostart();
+#endif
+#ifdef __APPLE__
+void show_first_run_autostart_approval();
+#endif
 Result<std::string> lifecycle_directory();
 std::string lifecycle_scope();
 Result<std::string> executable_path();

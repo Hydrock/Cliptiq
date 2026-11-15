@@ -2,6 +2,7 @@
 #define NOMINMAX
 #include <windows.h>
 #include <commctrl.h>
+#include <shellapi.h>
 #include <mmsystem.h>
 #include <atomic>
 #include <chrono>
@@ -10,13 +11,30 @@
 #include <stdexcept>
 using namespace cliptiq;
 using Clock=std::chrono::steady_clock;
+static bool tray_available=true;
+extern "C" BOOL WINAPI cliptiq_test_tray_notify(DWORD message,PNOTIFYICONDATAW){return message==NIM_ADD ? tray_available : TRUE;}
 static unsigned delivered=0;
 void check(bool ok,const char* why){if(!ok)throw std::runtime_error(why);}
 LRESULT CALLBACK observer(HWND w,UINT m,WPARAM wp,LPARAM lp,UINT_PTR,DWORD_PTR){if(m==WM_APP+49)return 0;if(m==WM_APP+47){++delivered;return 0;}return DefSubclassProc(w,m,wp,lp);}
 int main(){try{
+ {
+  tray_available=false;
+  NativeMenuOptions quiet;quiet.workspace_enabled=true;quiet.start_hidden=true;
+  NativeMenu waiting(quiet,[](MenuCommand){});check(bool(waiting.initialize()),"initialize without Explorer");
+  auto window=reinterpret_cast<HWND>(waiting.native_handles().window);
+  check(!waiting.status().tray_available&&!IsWindowVisible(window)&&!GetDlgItem(window,7110),"missing tray revealed workspace");
+  tray_available=true;SendMessageW(window,RegisterWindowMessageW(L"TaskbarCreated"),0,0);
+  check(waiting.status().tray_available&&!IsWindowVisible(window)&&!GetDlgItem(window,7110),"tray recovery revealed workspace");
+ }
  unsigned filtered=0;
  NativeMenuOptions options;options.windows_message_filter=[&](std::uintptr_t message){auto& m=*reinterpret_cast<MSG*>(message);if(m.message==WM_APP+48){++filtered;return true;}return false;};options.workspace_enabled=true;options.start_hidden=true;options.transient_popup=true;
  unsigned copied=0;NativeMenu ui(options,[&](MenuCommand c){if(c.action==MenuAction::SelectHistory)++copied;});check(bool(ui.initialize()),"initialize");
+ auto launcher=reinterpret_cast<HWND>(ui.native_handles().window);
+ check(ui.status().tray_available&&!ui.status().launcher_visible,"quiet tray startup status");
+ check(!IsWindowVisible(launcher)&&!GetDlgItem(launcher,7110),"quiet startup revealed/allocated workspace");
+ // Exercise the real tray notification route, not only show_workspace().
+ SendMessageW(launcher,WM_APP+1,0,MAKELPARAM(NIN_SELECT,0));
+ check(IsWindowVisible(launcher)&&GetDlgItem(launcher,7110),"tray click must open history");
  MenuModel model;model.revision=1;MenuItem item;item.id="fixture";item.label="Synthetic row";item.tooltip="Synthetic preview";item.action=MenuAction::SelectHistory;model.items.push_back(item);check(bool(ui.update(model))&&bool(ui.show_workspace()),"workspace");
  auto root=reinterpret_cast<HWND>(ui.native_handles().window);check(SetWindowSubclass(root,observer,1,0)!=FALSE,"subclass");
  for(int i=0;i<20;++i)check(bool(ui.process_events(0)),"drain");

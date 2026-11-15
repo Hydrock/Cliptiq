@@ -401,5 +401,8 @@
   "Edit": "Правка",
   "Cut": "Вырезать",
   "Paste": "Вставить",
-  "Select All": "Выделить всё"
+  "Select All": "Выделить всё",
+  "Keep Cliptiq ready when you sign in": "Cliptiq будет готов после входа в систему",
+  "Open Login Items": "Открыть объекты входа",
+  "Start Cliptiq when you sign in so clipboard history is ready. You can change this later in Settings.": "Запускать Cliptiq при входе в систему, чтобы история буфера была доступна сразу. Позже этот параметр можно изменить в настройках."
 }
