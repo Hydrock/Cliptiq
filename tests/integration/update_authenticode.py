@@ -12,7 +12,10 @@ with tempfile.TemporaryDirectory(prefix='cliptiq-update-') as directory:
  for root in roots:
   for f in root.glob('**/vcruntime140.dll'):
    if f.stat().st_size<5*1024*1024:
-    command="$s=Get-AuthenticodeSignature -LiteralPath '"+str(f).replace("'","''")+"'; if($s.Status -eq 'Valid' -and $s.SignerCertificate){[BitConverter]::ToString([Security.Cryptography.SHA256]::Create().ComputeHash($s.SignerCertificate.RawData)).Replace('-','')}"
+    # Get-AuthenticodeSignature prefers catalog signatures when both exist.
+    # The utility verifies the embedded signature, so derive its pin independently
+    # from the embedded certificate, then let the real verifier establish trust.
+    command="$c=[Security.Cryptography.X509Certificates.X509Certificate]::CreateFromSignedFile('"+str(f).replace("'","''")+"'); [BitConverter]::ToString([Security.Cryptography.SHA256]::Create().ComputeHash($c.GetRawCertData())).Replace('-','')"
     # Do not pass a PowerShell 7 module path into Windows PowerShell 5.
     env={k:v for k,v in os.environ.items() if k.lower()!='psmodulepath'}
     r=subprocess.run(['powershell','-NoProfile','-Command',command],capture_output=True,text=True,env=env)
@@ -20,7 +23,8 @@ with tempfile.TemporaryDirectory(prefix='cliptiq-update-') as directory:
     if len(pin)==64:candidate=f;break
   if candidate:break
  assert candidate,'No embedded-signed CRT fixture found'
- assert run(candidate,pin).returncode==0
+ verified=run(candidate,pin)
+ assert verified.returncode==0, (str(candidate), verified.stdout, verified.stderr)
  assert run(candidate,'0'*64).returncode==1
  p.write_bytes(candidate.read_bytes());raw=bytearray(p.read_bytes());raw[1024]^=1;p.write_bytes(raw)
  assert run(p,pin).returncode==1

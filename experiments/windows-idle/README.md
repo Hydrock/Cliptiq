@@ -109,3 +109,19 @@ python experiments/windows-idle/measure-running.py --pid <PID> --gui-thread <GUI
 означает, что метаданные проверить не удалось; не выдавайте такой интервал за
 подтверждённый foreground. Стандартные ID: фильтр 7109, список 7110, предпросмотр
 7195, кнопка копирования 7105. Для работающего приложения нет эмуляции clipboard.
+
+
+## Обычный тихий запуск
+
+`--normal-launch` запускает изолированный профиль без `--background`, затем
+трижды повторяет ту же команду. Проверяется сохранение процесса-владельца и
+отсутствие видимого окна после каждого повтора. Явные `--show-main` и
+`--show-settings` по-прежнему проверяются параметрами ниже.
+
+```powershell
+python experiments/windows-idle/measure.py --build-dir out/windows-idle --output out/normal-start.json --entries 1000 --seconds 30 --normal-launch --expect-background --workspace --workspace-visible --open-settings --expect-settings-destroyed
+```
+
+JSON также содержит `normal_launch`, `quiet_repeat_launches` и время до
+обнаружения HWND (`startup_ready_seconds`). Это время включает запуск процесса
+и опрос с шагом 50 мс; оно не является точным временем первой отрисовки.

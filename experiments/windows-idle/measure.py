@@ -84,6 +84,7 @@ def main():
     p.add_argument('--seconds',type=float,default=30)
     p.add_argument('--settle',type=float,default=5)
     p.add_argument('--open-settings',action='store_true')
+    p.add_argument('--normal-launch',action='store_true',help='Omit --background and verify three ordinary repeat launches stay quiet')
     p.add_argument('--expect-background',action='store_true')
     p.add_argument('--expect-settings-destroyed',action='store_true')
     p.add_argument('--workspace-visible',action='store_true',help='Also measure the main window opened through IPC')
@@ -98,7 +99,10 @@ def main():
     env=os.environ.copy(); env['LOCALAPPDATA']=str(root)
     exe=build/'Cliptiq.exe'
     log=open(root/'app.log','w')
-    process=subprocess.Popen([str(exe),'--database',str(db),'--background','--no-auto-paste'],env=env,stdout=log,stderr=log)
+    command=[str(exe),'--database',str(db),'--no-auto-paste']
+    if not args.normal_launch:command.append('--background')
+    launch_started=time.perf_counter()
+    process=subprocess.Popen(command,env=env,stdout=log,stderr=log)
     own=[]
     try:
         deadline=time.perf_counter()+30
@@ -109,11 +113,20 @@ def main():
             if launcher:break
             time.sleep(.05)
         else:raise TimeoutError('Launcher HWND not created')
+        startup_ready_seconds=time.perf_counter()-launch_started
         time.sleep(1)
         initial=windows(process.pid)
         initial_visible=[w for w in initial if w['visible']]
         if args.expect_background and initial_visible:
             raise AssertionError(f'--background left visible windows: {initial_visible}')
+        repeat_launches=0
+        if args.normal_launch:
+            for _ in range(3):
+                subprocess.run(command,env=env,stdout=log,stderr=log,check=True,timeout=15)
+                time.sleep(.2)
+                assert process.poll() is None,'Original owner exited after repeat launch'
+                assert not any(w['visible'] for w in windows(process.pid)),'Ordinary repeat launch revealed a window'
+                repeat_launches+=1
         # Baseline ignores --background. Hide its launcher without destroying
         # it, preserving the same native object set and live capture listener.
         for w in initial_visible:user.ShowWindow(w['hwnd'],0)
@@ -163,7 +176,8 @@ def main():
                 while time.perf_counter()<deadline and any(w['window_class']=='Cliptiq.Settings.v1' for w in windows(process.pid)):
                     time.sleep(.05)
                 assert not any(w['window_class']=='Cliptiq.Settings.v1' for w in windows(process.pid))
-        content=dict(exe_sha256=hashlib.sha256(exe.read_bytes()).hexdigest(),
+        content=dict(normal_launch=args.normal_launch,quiet_repeat_launches=repeat_launches,
+                     startup_ready_seconds=startup_ready_seconds,exe_sha256=hashlib.sha256(exe.read_bytes()).hexdigest(),
                      exe_bytes=exe.stat().st_size,environment=dict(os=platform.platform(),logical_cpus=os.cpu_count()),
                      fixture=dict(synthetic_entries=args.entries,clipboard_payload_retention=False,
                                   capture_listener=True,ocr=False,updates=False),
