@@ -38,34 +38,36 @@
 - [x] Identify whether failure is harness, environment or product. Do not weaken trust validation or clipboard isolation.
 - [x] For a demonstrated fix, establish red reproduction, implement the smallest correction and rerun affected tests.
 - [x] If environment privileges or signing infrastructure are required, record blocker and continue.
-- [ ] Commit independently validated corrections.
+- [x] Commit independently validated corrections.
 
 ### Task 3: Startup/autostart audit (1:30–3:00)
 **Files:** platform/MenuHost.cpp; platform/Lifecycle.cpp; platform/windows/Lifecycle.cpp; platform/macos/Lifecycle.mm; tests/unit/lifecycle_test.cpp; tests/unit/settings_test.cpp.
 **Interfaces:** Autostart::apply_first_run / apply / inspect; existing Settings login checkbox/status.
 - [x] Trace normal, background, repeated and explicit-show startup, save failures and OS-disabled registration.
 - [x] SKIPPED: welcome-dialog cleanup rejected by automatic approval review; functionality preserved.
-- [ ] Add behavioral regression coverage for any demonstrated defect before changing production code.
-- [ ] Build all Windows targets and run lifecycle/settings/quiet-start tests.
+- [x] No demonstrated production defect requiring a behavior change; preserved production code.
+- [x] Build all Windows targets and run lifecycle/settings/quiet-start tests.
 - [x] Statically review macOS changes and record runtime limitation. Commit validated changes.
 
 ### Task 4: Performance baseline and improvements (3:00–4:30)
 **Files:** experiments/windows-idle/measure.py; workspace-benchmark.cpp; relevant source only if evidence identifies a bottleneck.
 **Interfaces:** existing JSON counters, isolated synthetic profiles and workspace benchmark CLI.
 - [x] Preserve checkpoint binary/hash before rebuilding.
-- [ ] Sequential measurements: hidden empty history; hidden 1000 entries; workspace 1000 entries; settings open/close. Same fixtures, durations and warmup.
+- [x] Sequential measurements: hidden empty history; hidden 1000 entries; workspace 1000 entries; settings open/close. Same fixtures, durations and warmup.
 - [x] Inspect measured hot paths; optimize only with a reproducible performance case and behavior tests.
-- [ ] Repeat identical measurements after changes; report CPU, private bytes, working set and workspace latency without overstating noise.
+- [x] Repeat identical measurements after changes; report CPU, private bytes, working set and workspace latency without overstating noise.
 - [x] If no reliable gain is available, preserve implementation and publish baseline rather than speculative changes.
 
 ### Task 5: Final verification and handoff (4:30–6:00)
 **Files:** docs/support/overnight-2026-11-16.md; final changes only.
 **Interfaces:** build.ps1, full CTest, Git history and installed binary.
-- [ ] Build all targets; run full suite with clean test TEMP; compare failures to checkpoint.
-- [ ] Fresh whole-branch code review, fix important findings and rerun relevant suite.
-- [ ] Record exact commands, results, benchmarks, blockers and unverified platforms.
-- [ ] Commit results and push feature branch normally, no force push or merge.
-- [ ] Update installed Windows build only after validation; leave it quiet in tray and preserve settings/history.
+- [x] Build all targets; run full suite with clean test TEMP; compare failures to checkpoint.
+- [x] Fresh whole-branch code review, fix important findings and rerun relevant suite.
+- [x] Record exact commands, results, benchmarks, blockers and unverified platforms.
+- [x] Commit results and push feature branch normally, no force push or merge.
+- [x] No product binary change; verified installed/checkpoint/final hashes match. Existing installed process remains hidden.
 
 ## Progress
 Checkpoint pushed successfully before product changes. Subsequent decisions and evidence go in the support report.
+
+Available stages completed early; blocked platform/permission operations and rejected cleanup were explicitly skipped. See support report for evidence and exact limitations.

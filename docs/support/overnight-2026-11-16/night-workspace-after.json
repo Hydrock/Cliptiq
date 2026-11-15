@@ -1,0 +1,62 @@
+[
+  {
+    "open_dispatch_paint_ms": 47.6528,
+    "working_set_bytes": 18305024,
+    "private_bytes": 4485120,
+    "gdi_objects": 30,
+    "filter_median_ms": 3.3128,
+    "filter_p95_ms": 4.0533,
+    "selection_median_ms": 7.4109,
+    "selection_p95_ms": 9.1707,
+    "scroll_median_ms": 1.6238,
+    "scroll_p95_ms": 3.1366
+  },
+  {
+    "open_dispatch_paint_ms": 56.096,
+    "working_set_bytes": 18288640,
+    "private_bytes": 4489216,
+    "gdi_objects": 30,
+    "filter_median_ms": 3.277,
+    "filter_p95_ms": 4.0355,
+    "selection_median_ms": 6.0483,
+    "selection_p95_ms": 9.9486,
+    "scroll_median_ms": 1.5771,
+    "scroll_p95_ms": 4.0247
+  },
+  {
+    "open_dispatch_paint_ms": 60.3579,
+    "working_set_bytes": 18296832,
+    "private_bytes": 4497408,
+    "gdi_objects": 30,
+    "filter_median_ms": 3.6622,
+    "filter_p95_ms": 4.4605,
+    "selection_median_ms": 7.8564,
+    "selection_p95_ms": 10.5177,
+    "scroll_median_ms": 1.5643,
+    "scroll_p95_ms": 2.975
+  },
+  {
+    "open_dispatch_paint_ms": 56.8586,
+    "working_set_bytes": 18288640,
+    "private_bytes": 4493312,
+    "gdi_objects": 30,
+    "filter_median_ms": 3.4567,
+    "filter_p95_ms": 4.6407,
+    "selection_median_ms": 7.6385,
+    "selection_p95_ms": 10.4226,
+    "scroll_median_ms": 1.5636,
+    "scroll_p95_ms": 3.1029
+  },
+  {
+    "open_dispatch_paint_ms": 56.2203,
+    "working_set_bytes": 18255872,
+    "private_bytes": 4489216,
+    "gdi_objects": 30,
+    "filter_median_ms": 3.2298,
+    "filter_p95_ms": 4.0654,
+    "selection_median_ms": 5.7108,
+    "selection_p95_ms": 7.1092,
+    "scroll_median_ms": 1.5603,
+    "scroll_p95_ms": 2.6119
+  }
+]
