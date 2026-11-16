@@ -1,0 +1,113 @@
+{
+  "baseline": {
+    "exe_bytes": 2350080,
+    "app_bytes": 2391266,
+    "archive_bytes": 1180635,
+    "version_exit": 0,
+    "version_output": "Cliptiq 0.1.0\n"
+  },
+  "no-inline": {
+    "exe_bytes": 2302976,
+    "app_bytes": 2344162,
+    "archive_bytes": 1129777,
+    "version_exit": 0,
+    "version_output": "Cliptiq 0.1.0\n"
+  },
+  "no-rtti": {
+    "exe_bytes": 2292736,
+    "app_bytes": 2333922,
+    "archive_bytes": 1169161,
+    "version_exit": 0,
+    "version_output": "Cliptiq 0.1.0\n"
+  },
+  "additional_experiments": {
+    "shared_exception_conversion": {
+      "exe_bytes": 2336256,
+      "adopted": false,
+      "functional_verification": "not performed"
+    },
+    "erased_guarded_boundary": {
+      "exe_bytes": 2362368,
+      "adopted": false,
+      "functional_verification": "not performed"
+    },
+    "ICF_10_passes": {
+      "exe_bytes": 2349568,
+      "comparison_raw_relink_baseline_bytes": 2349568,
+      "adopted": false
+    },
+    "global_Gy_Gw": {
+      "exe_bytes": 2349568,
+      "adopted": false
+    },
+    "historical_baseline": {
+      "source_commit": "a4deefee84bc14aacae88e63c2d94c59dbb502d8",
+      "compiler": "MSVC14.51.36231",
+      "crt": "static",
+      "flags": "/O1 /Ob1 /DNDEBUG",
+      "LAN_present": false
+    },
+    "current_code_attribution_approx_bytes": {
+      "SQLite": 542931,
+      "core": 253169,
+      "LAN_native": 149831,
+      "LAN_TLS": 85927,
+      "mbedcrypto": 68660,
+      "mbedtls": 35140,
+      "discovery_native": 34501,
+      "discovery_model": 19806,
+      "static_CRT_total": 177140
+    }
+  },
+  "matched_LAN_scope_comparison": {
+    "ON": {
+      "exe_bytes": 2350080,
+      "exe_sha256": "cdb5e89ad9bcc934cffbe483ec5eaf64a2ec3702eae90413c7aaf6eb49194223",
+      "raw_exe_zip_bytes_t16_method": 1204634,
+      "version_exit": 0,
+      "version_output": "Cliptiq 0.1.0\n",
+      "app_bytes": 2391266,
+      "archive_bytes": 1180637
+    },
+    "OFF": {
+      "exe_bytes": 1814016,
+      "exe_sha256": "afd6a087d95e8a867316aa8a2a50ed50305f583f544a29fd80e03696211c8c78",
+      "raw_exe_zip_bytes_t16_method": 935393,
+      "version_exit": 0,
+      "version_output": "Cliptiq 0.1.0\n",
+      "app_bytes": 1855202,
+      "archive_bytes": 920504
+    },
+    "delta_ON_minus_OFF": {
+      "exe_bytes": 536064,
+      "raw_exe_zip_bytes_t16_method": 269241,
+      "app_bytes": 536064,
+      "archive_bytes": 260133
+    },
+    "scope": "OFF strictly diagnostic, not shipping or CI configuration. Both packages retain identical current manifest and every license to isolate executable delta. Same build directory reconfigured OFF then ON; normal /O1 /Ob1, RTTI, exceptions, static CRT and LTO. No product or gate edits.",
+    "source_commit": "009e4cdfa6da1108a076ead0669e4d68d5b93c3d",
+    "historical_baseline": {
+      "commit": "a4deefee84bc14aacae88e63c2d94c59dbb502d8",
+      "exe_bytes": 1685504,
+      "exe_zip_bytes": 858535,
+      "sha256": "b03d2b2007e304f2f170ee03f39675242e528d234b2b8d75edd3bfcc6aa3c7ea",
+      "configure": "cmake --preset release -DCLIPTIQ_BUILD_SIZE_PROBE=ON",
+      "build": "cmake --build --preset release",
+      "measurement": "python tests/size/report.py",
+      "LAN_present": false,
+      "CRT": "static",
+      "compiler": "MSVC 14.51.36231",
+      "flags": "/O1 /Ob1 /DNDEBUG"
+    },
+    "workspace_estimate": {
+      "first_commit": "dd84b7c",
+      "initial_diff": "25 files, 921 insertions, 54 deletions",
+      "direct_current_text_approx_bytes": {
+        "Windows_Workspace": 23008,
+        "core_workspace": 3756,
+        "Sound": 1902
+      },
+      "limitation": "Excludes shared MenuHost/Menu/Settings, unwind/data and subsequent UI changes; not a matched before/after total."
+    }
+  }
+}

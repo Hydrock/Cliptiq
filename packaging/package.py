@@ -33,7 +33,11 @@ for source,name in [('THIRD_PARTY_NOTICES.md','THIRD_PARTY_NOTICES.md'),('third_
 installed_notice=prefix/'share/cliptiq/THIRD_PARTY_NOTICES.md'
 if installed_notice.is_file():installed_notice.unlink()
 if args.variant=='ocr' and target!='macos':shutil.copytree(ROOT/'packaging/ocr/licenses',licenses/'ocr');shutil.copy2(ROOT/'packaging/ocr/pins.json',licenses/'ocr/pins.json')
-if target=='macos':print(run('codesign','--force','--deep','--sign','-',payload/'Cliptiq.app'));print(run('codesign','--verify','--deep','--strict',payload/'Cliptiq.app'))
+if target=='macos':
+ from macos_strip import strip_staged_binary
+ print(strip_staged_binary(binary,build_binary=build/'Cliptiq.app/Contents/MacOS/Cliptiq'))
+ print(run('codesign','--force','--deep','--sign','-',payload/'Cliptiq.app'))
+ print(run('codesign','--verify','--deep','--strict',payload/'Cliptiq.app'))
 print(run(binary,'--version'))
 cache=(build/'CMakeCache.txt').read_text(encoding='utf-8');compiler=[line for line in cache.splitlines() if line.startswith(('CMAKE_CXX_COMPILER:','CMAKE_CXX_FLAGS_MINSIZEREL:','CMAKE_MSVC_RUNTIME_LIBRARY:','CMAKE_OSX_DEPLOYMENT_TARGET:','CLIPTIQ_OCR_ENGINE:','ocr_index:'))]
 manifest={'schema_version':1,'target':target,'arch':arch,'variant':args.variant,'version':'0.1.0','source_commit':run('git','rev-parse','HEAD',cwd=ROOT).strip(),'source_dirty':bool(run('git','status','--porcelain',cwd=ROOT).strip()),'manual_acceptance':'open','release_ready':False,'signature':'ad-hoc only' if target=='macos' else 'unsigned candidate','project_license':'OPEN: no new project license selected by packaging','clean_machine_dependency_delta_bytes':None,'toolchain':{'cmake':run(cmake,'--version').splitlines()[0],'platform':platform.platform(),'configuration':compiler},'files':[],'symlinks':[],'binaries':[],'system_dependencies':[]}
