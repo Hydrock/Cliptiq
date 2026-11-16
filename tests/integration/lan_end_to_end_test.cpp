@@ -62,13 +62,26 @@ int main(){std::string stage="initialize";try{Device a,b;if(a.port==b.port)b.por
  lan::Peer cpa;cpa.id=lan::new_id();cpa.name="A";cpa.host="localhost";cpa.port=a.port;
  lan::Peer cpb=cpa;cpb.id=lan::new_id();cpb.name="B";cpb.port=b.port;cc.device_name="C";cc.port=c.port;cc.peers={cpa,cpb};
  ok(a.service->save(ca,{{ac.id,std::string(64,'b')}}));ok(b.service->save(cb,{{bc.id,std::string(64,'c')}}));ok(c.service->save(cc,{{cpa.id,std::string(64,'b')},{cpb.id,std::string(64,'c')}}));
- // Receiving a queued event can replace the peer's UI status immediately
- // after handshake. Wait on the durable HELLO identity bindings instead of
- // requiring all six temporary "Connected" labels in the same poll.
+ // Identity bindings survive restarts and cannot establish live readiness.
+ // Receipt statuses also imply an authenticated live peer, so a queued event
+ // need not leave all six peers displaying the transient Connected label.
  auto paired=[](Device& device){auto cfg=take(device.service->config());return cfg.peers.size()==2&&std::all_of(cfg.peers.begin(),cfg.peers.end(),[](const lan::Peer& peer){return !peer.remote_device_id.empty();});};
+ auto mesh_ready=[&](Device& device){
+  if(!paired(device))return false;
+  auto cfg=take(device.service->config());auto statuses=device.service->peer_statuses();
+  return std::all_of(cfg.peers.begin(),cfg.peers.end(),[&](const lan::Peer& peer){
+   auto status=statuses.find(peer.id);
+   return status!=statuses.end()&&(status->second=="Connected (TLS 1.3)"||
+    status->second.find("Received into history")==0||status->second=="Received into clipboard and history");
+  });
+ };
  auto describe=[](Device& d){auto cfg=take(d.service->config());auto bound=std::count_if(cfg.peers.begin(),cfg.peers.end(),[](const lan::Peer& p){return !p.remote_device_id.empty();});return "history="+std::to_string(d.count())+" writes="+std::to_string(d.writes.size())+" token="+d.token+" paired="+std::to_string(bound)+"/"+std::to_string(cfg.peers.size())+" status="+d.service->status();};
  auto mesh=[&](auto predicate){auto deadline=std::chrono::steady_clock::now()+std::chrono::seconds(15);while(!predicate()){a.service->poll();b.service->poll();c.service->poll();if(std::chrono::steady_clock::now()>=deadline)throw std::runtime_error(stage+" A={"+describe(a)+"} B={"+describe(b)+"} C={"+describe(c)+"}");std::this_thread::sleep_for(std::chrono::milliseconds(2));}};
- stage="mesh HELLO: expected paired=2/2 on A,B,C";mesh([&]{return paired(a)&&paired(b)&&paired(c);});
+ stage="mesh HELLO: expected paired=2/2 and live peers on A,B,C";mesh([&]{return mesh_ready(a)&&mesh_ready(b)&&mesh_ready(c);});
+ // A stopped service still has paired identities but cannot receive a live
+ // publication. Verify the distinction, then reconnect before the one-shot copy.
+ stage="mesh restart readiness";c.service->stop();CHECK(paired(c));CHECK(!mesh_ready(c));ok(c.service->initialize());
+ mesh([&]{return mesh_ready(a)&&mesh_ready(b)&&mesh_ready(c);});
  auto an=a.count(),bn=b.count();std::string third="copy from C";c.send({{0,"portable","text/plain",CanonicalKind::Text,Bytes(third.begin(),third.end())}});
  stage="mesh C delivery: expected history="+std::to_string(an+1)+","+std::to_string(bn+1)+",1 writes=2,1,0";
  mesh([&]{return a.count()==an+1&&b.count()==bn+1&&a.writes.size()==2;});
