@@ -28,3 +28,27 @@ Apple documents strip -x as removing non-global symbols while preserving externa
 ## Pending evidence
 
 Full-test Windows clang-cl/LLVM -Oz and macOS -Oz experiments run separately from the existing compiler lanes. No compiler switch is adopted without measured size and functional evidence. All original limits and the10% growth allowance remain unchanged. CI is not claimed green while any lane fails.
+
+## Further measured Windows candidates
+
+Unused SQLite API compilation options saved only11776 raw package bytes and5998 ZIP bytes. They were tested in an isolated build and are not adopted. UTF16 support was explicitly retained because removing it changes compatibility with existing databases. Core tests and six FTS5 tests passed after isolating TEMP; stale gate-file failures also reproduced in the unmodified baseline.
+
+CI43801578215 (0895fcb) Windows clang-cl completed all Release tests after retaining the explicit UAC manifest. Package2371154B and ZIP1064272B still exceed the original1867254/957588 thresholds. The compiler switch is not adopted.
+
+The runner LLVM20 linker has the known trustInfo namespace defect documented in https://github.com/llvm/llvm-project/issues/120394 and fixed in https://github.com/llvm/llvm-project/pull/165285 . A local identical executable reproduced14001 with the malformed qualified level attribute and launched normally with the correct XML. The workaround applies only to targets already supplying the full application manifest, suppressing the redundant auto-generated node. Embedded asm.v3 asInvoker/uiAccess=false and Common Controls v6 are checked explicitly in the experimental lane.
+
+CI43799890809 Linux Base progressed past Pango validation to the unchanged size gate: app1921119B>1682648 and ZIP890877B>801109. Thus Pango is fixed but does not alone make the Linux distribution green.
+
+## Reconnect test prerequisite
+
+The macOS URL/history-only E2E failure after a settings save was a directional HELLO readiness problem in the test. A deterministic real-TLS regression proves that one endpoint may receive HELLO while the sender lacks a live recipient; offline events intentionally do not replay. The E2E fixture now coordinates a fresh restart of both endpoints before its one-shot URL publication. Exact delivery/history/write assertions and deadlines remain. Both Debug and MinSizeRel TLS/E2E passed locally; production transport code is unchanged.
+
+## macOS native discovery and Linux fixture follow-up
+
+Optimized macOS builds exposed Bonjour local-only NameConflict (-65548) during authenticated endpoint migration. The old adapter reused a deterministic service instance while mDNSResponder registration teardown is asynchronous. Each publication now gets an opaque unique instance; device identity remains the validated TXT UUID and authenticated pairing/TLS identity. A native overlap regression keeps two publications of the same UUID on distinct control ports alive simultaneously.
+
+Review also found that a late goodbye removed all endpoints on an interface, including the replacement. DiscoveryRegistry now supports endpoint-specific removal; the native event path matches UUID/interface/address/control/data ports. The existing explicit interface-wide API is retained. A controller regression was red before the change and green after it. Debug and MinSizeRel model/boundary/controller/authenticated endpoint probe/real TLS E2E all passed. Native macOS confirmation is pending CI.
+
+The new Linux wire failure was fixture atom query. Every case disconnects all X clients, allowing the private Xvfb server to reset while the next case connects. The wrapper now uses documented -noreset within its fresh per-test server; authentication, -nolisten tcp, environment isolation, deadlines and cleanup remain. Diagnostics report case/atom/connection/protocol errors. Linux CI confirmation is required before attributing the observed flake conclusively.
+
+The macOS ARM optimized hidden-visibility experiment (c0d7d0c) passed Release tests and the staged strip/code-data/global-symbol/signature/version checks. Its stripped executable is1719688B, single-binary ZIP864781B. The complete distribution still exceeds the original ZIP gate once licenses and metadata are included. No production compiler/visibility flag switch is adopted yet. Disposable standard executable strip-u-r profiling is being compared next; no application code/data may be removed.

@@ -127,6 +127,7 @@ jobs:
             -DCMAKE_C_VISIBILITY_PRESET=hidden -DCMAKE_CXX_VISIBILITY_PRESET=hidden \
             -DCMAKE_VISIBILITY_INLINES_HIDDEN=ON \
             -DCMAKE_LINKER_TYPE=LLD \
+            '-DCMAKE_EXE_LINKER_FLAGS=-Wl,--as-needed' \
             -DCMAKE_POLICY_DEFAULT_CMP0137=NEW \
             -DCMAKE_TRY_COMPILE_PLATFORM_VARIABLES=CMAKE_LINKER_TYPE \
             -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
@@ -148,6 +149,19 @@ jobs:
       - name: Report all CTest failures
         if: always()
         run: python tools/ci-test-report.py 'out/core-*/ci-tests.xml'
+      - name: Record Linux executable-only size
+        if: always() && steps.linux-build.outcome == 'success'
+        run: |
+          python - <<'PY'
+          import io, pathlib, zipfile
+          data = pathlib.Path('out/core-Linux-release/cliptiq').read_bytes()
+          stream = io.BytesIO()
+          with zipfile.ZipFile(stream, 'w') as archive:
+              info = zipfile.ZipInfo('cliptiq', date_time=(2026, 1, 1, 0, 0, 0))
+              info.compress_type = zipfile.ZIP_DEFLATED
+              archive.writestr(info, data, compresslevel=9)
+          print(f'::notice title=Experimental Linux executable size::bytes={len(data)} zip_bytes={len(stream.getvalue())}; executable only, not distribution validation')
+          PY
       - name: Validate unchanged distribution and original size gates
         if: always() && steps.linux-build.outcome == 'success'
         run: python tools/ci-run.py python packaging/package.py

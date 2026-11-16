@@ -109,5 +109,87 @@
       },
       "limitation": "Excludes shared MenuHost/Menu/Settings, unwind/data and subsequent UI changes; not a matched before/after total."
     }
+  },
+  "sqlite_unused_options": {
+    "deprecated": {
+      "defines": [
+        "SQLITE_OMIT_DEPRECATED"
+      ],
+      "link_exit": 0,
+      "exe_bytes": 2348544
+    },
+    "get_table": {
+      "defines": [
+        "SQLITE_OMIT_GET_TABLE"
+      ],
+      "link_exit": 0,
+      "exe_bytes": 2349568
+    },
+    "shared_cache": {
+      "defines": [
+        "SQLITE_OMIT_SHARED_CACHE"
+      ],
+      "link_exit": 0,
+      "exe_bytes": 2343936
+    },
+    "deserialize": {
+      "defines": [
+        "SQLITE_OMIT_DESERIALIZE"
+      ],
+      "link_exit": 0,
+      "exe_bytes": 2346496
+    },
+    "compileoption_diags": {
+      "defines": [
+        "SQLITE_OMIT_COMPILEOPTION_DIAGS"
+      ],
+      "link_exit": 0,
+      "exe_bytes": 2347008
+    },
+    "combined": {
+      "defines": [
+        "SQLITE_OMIT_DEPRECATED",
+        "SQLITE_OMIT_GET_TABLE",
+        "SQLITE_OMIT_SHARED_CACHE",
+        "SQLITE_OMIT_DESERIALIZE",
+        "SQLITE_OMIT_COMPILEOPTION_DIAGS"
+      ],
+      "link_exit": 0,
+      "exe_bytes": 2337792
+    },
+    "baseline_raw_relink_exe_bytes": 2349568,
+    "combined_wrapped_exe_bytes": 2338304,
+    "baseline_wrapped_exe_bytes": 2350080,
+    "combined_package_bytes": 2379490,
+    "combined_archive_bytes": 1174639,
+    "savings": {
+      "exe_and_package_bytes": 11776,
+      "archive_bytes_vs_matched_ON": 5998
+    },
+    "tests": {
+      "all_160_build_steps": "passed; all product/test targets compiled",
+      "base_core_suites": "32/35 initially passed; remaining editor/snippets/history plus history_crash passed with isolated TEMP/TMP",
+      "core_probe": "passed exit0",
+      "core_policy_probe": "passed exit0",
+      "FTS5_enabled": "6/6 passed with isolated TEMP/TMP: editor,snippets,history,history_crash,fts,ocr_queue",
+      "initial_failure_cause": "Pre-existing system TEMP .cliptiq-index-gate ACL; identical failures reproduced in unmodified baseline history/snippets executables. No gate edits; resolved test environment by isolated TEMP/TMP."
+    },
+    "safety_audit": {
+      "unreferenced_apis": [
+        "sqlite3_get_table",
+        "sqlite3_free_table",
+        "sqlite3_enable_shared_cache",
+        "sqlite3_serialize",
+        "sqlite3_deserialize",
+        "sqlite3_compileoption_get",
+        "sqlite3_compileoption_used",
+        "deprecated C APIs"
+      ],
+      "shared_cache": "No product URI or SQLITE_OPEN_SHAREDCACHE flags; all current connection paths use private cache defaults. Thread safety retained.",
+      "UTF16_omission": "Excluded: would change accepted SQLite database encoding compatibility despite no *16 API calls.",
+      "preserved": "authorizer, defensive mode, trusted_schema, quick_check/integrity, foreign keys/constraints, full mutex, WAL, SQL grammar, backup API and FTS5",
+      "production_changes": "none",
+      "recommendation": "Do not adopt alone; 11.8KB reduction is too small to close current budget gap."
+    }
   }
 }

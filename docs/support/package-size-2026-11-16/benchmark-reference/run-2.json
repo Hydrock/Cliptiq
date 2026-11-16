@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "workload": "synthetic-memory-history-v1",
+  "count": 1000,
+  "payload_bytes": 3111680,
+  "loaded_bytes": 3111680,
+  "rows_observed": 30000,
+  "phases": [
+    {
+      "name": "capture_ingest",
+      "operations": 1000,
+      "elapsed_ms": 126.255,
+      "cpu_ms": 140.625
+    },
+    {
+      "name": "list_recent_30",
+      "operations": 1000,
+      "elapsed_ms": 13.801,
+      "cpu_ms": 0
+    },
+    {
+      "name": "load_snapshot",
+      "operations": 1000,
+      "elapsed_ms": 13.806,
+      "cpu_ms": 15.625
+    },
+    {
+      "name": "duplicate_ingest",
+      "operations": 1000,
+      "elapsed_ms": 218.102,
+      "cpu_ms": 218.75
+    },
+    {
+      "name": "touch_history",
+      "operations": 1000,
+      "elapsed_ms": 5.285,
+      "cpu_ms": 15.625
+    }
+  ],
+  "correct": true
+}

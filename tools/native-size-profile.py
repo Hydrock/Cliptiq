@@ -2,6 +2,7 @@
 import argparse
 import hashlib
 import io
+import importlib.util
 import json
 from pathlib import Path
 import shutil
@@ -37,9 +38,18 @@ def profile(binary, runner=command):
               'sha256': hashlib.sha256(original).hexdigest(),
               'scope': 'Disposable unsigned-size experiments; no signature or runtime validity claims. ZIP measures one binary only.',
               'variants': []}
+    spec = importlib.util.spec_from_file_location('macos_strip_profile', Path(__file__).with_name('macos_strip.py'))
+    inspector = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(inspector)
+    try:
+        original_sections = inspector.sections(original)
+        section_error = None
+    except ValueError as error:
+        original_sections, section_error = None, str(error)
     with tempfile.TemporaryDirectory(prefix='cliptiq-native-size-') as folder:
         for name, flags in [('original', None), ('strip-local', ['-x']),
-                            ('strip-debug', ['-S']), ('strip-local-debug', ['-x', '-S'])]:
+                            ('strip-debug', ['-S']), ('strip-local-debug', ['-x', '-S']),
+                            ('strip-executable', ['-u', '-r'])]:
             copy = Path(folder) / name / 'Cliptiq'
             copy.parent.mkdir()
             shutil.copyfile(binary, copy)
@@ -48,10 +58,27 @@ def profile(binary, runner=command):
                 row['strip'] = runner(['xcrun', 'strip', *flags, str(copy)])
             row['sections'] = runner(['xcrun', 'size', '-m', str(copy)])
             row['load_commands'] = runner(['xcrun', 'otool', '-l', str(copy)])
+            if name in ('original', 'strip-executable'):
+                row['undefined_symbols'] = runner(['xcrun', 'nm', '-u', str(copy)])
+                # Includes REFERENCED_DYNAMICALLY annotations for comparison.
+                row['external_symbol_details'] = runner(['xcrun', 'nm', '-m', '-g', str(copy)])
             data = copy.read_bytes()
+            try:
+                row['code_data_sections_unchanged'] = inspector.sections(data) == original_sections if original_sections is not None else None
+                if section_error:
+                    row['section_verification_error'] = section_error
+            except ValueError as error:
+                row['code_data_sections_unchanged'] = False
+                row['section_verification_error'] = str(error)
             row.update(bytes=len(data), zip_bytes=zipped_bytes(data),
                        sha256=hashlib.sha256(data).hexdigest())
             result['variants'].append(row)
+        baseline = result['variants'][0]['undefined_symbols']
+        stripped = result['variants'][-1]
+        observed = stripped['undefined_symbols']
+        stripped['undefined_symbols_unchanged'] = (
+            baseline['output'] == observed['output']
+            if baseline['returncode'] == observed['returncode'] == 0 else None)
     if binary.read_bytes() != original:
         raise RuntimeError('input changed during profiling')
     result['input_unchanged'] = True
@@ -71,7 +98,7 @@ def main():
     base = report['variants'][0]
     for row in report['variants']:
         status = row.get('strip', {}).get('returncode', 0)
-        print(f"::notice title=Native size {row['name']}::bytes={row['bytes']} zip_bytes={row['zip_bytes']} saved={base['bytes']-row['bytes']} zip_saved={base['zip_bytes']-row['zip_bytes']} strip_exit={status}; diagnostic copies only")
+        print(f"::notice title=Native size {row['name']}::bytes={row['bytes']} zip_bytes={row['zip_bytes']} saved={base['bytes']-row['bytes']} zip_saved={base['zip_bytes']-row['zip_bytes']} strip_exit={status} sections_unchanged={row.get('code_data_sections_unchanged')} imports_unchanged={row.get('undefined_symbols_unchanged')}; diagnostic copies only")
 
 
 if __name__ == '__main__':
