@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   push:
     branches: [feature/windows-workspace]
-    paths: ['.github/workflows/native-size-experiments.yml', 'tools/macos_strip.py', 'packaging/package.py']
+    paths: ['.github/workflows/native-size-experiments.yml', 'tools/macos_strip.py', 'packaging/package.py', 'tools/install-linux-backend-deps.sh']
 permissions:
   contents: read
 jobs:
@@ -24,6 +24,10 @@ jobs:
           '-DCMAKE_C_FLAGS_MINSIZEREL=-Oz -DNDEBUG'
           '-DCMAKE_CXX_FLAGS_MINSIZEREL=-Oz -DNDEBUG'
           '-DCMAKE_OBJCXX_FLAGS_MINSIZEREL=-Oz -DNDEBUG'
+          -DCMAKE_C_VISIBILITY_PRESET=hidden
+          -DCMAKE_CXX_VISIBILITY_PRESET=hidden
+          -DCMAKE_OBJCXX_VISIBILITY_PRESET=hidden
+          -DCMAKE_VISIBILITY_INLINES_HIDDEN=ON
           -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
       - name: Record actual Objective-C++ optimization and IPO flags
         run: |
@@ -34,7 +38,7 @@ jobs:
           selected = [row for row in commands if row['file'].endswith(('platform/macos/Menu.mm', 'platform/MenuHost.cpp', 'platform/macos/Application.mm', 'core/src/storage.cpp'))]
           (root / 'size-compile-evidence.json').write_text(json.dumps(selected, indent=2) + '\n')
           for row in selected:
-              print(row['command'])
+              print('::notice title=Compile flags::' + row['command'].replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A'))
           PY
       - id: macos-build
         run: cmake --build --preset release
@@ -108,7 +112,7 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - name: Linux backend and isolated-test dependencies
-        run: bash tools/install-linux-backend-deps.sh
+        run: bash tools/install-linux-backend-deps.sh --llvm
       - run: python tools/fetch-footprint-deps.py
       - run: python tools/fetch-lan-deps.py
       - name: Configure isolated Linux Clang size experiment
@@ -120,6 +124,8 @@ jobs:
             -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ \
             '-DCMAKE_C_FLAGS_MINSIZEREL=-Oz -DNDEBUG' \
             '-DCMAKE_CXX_FLAGS_MINSIZEREL=-Oz -DNDEBUG' \
+            -DCMAKE_C_VISIBILITY_PRESET=hidden -DCMAKE_CXX_VISIBILITY_PRESET=hidden \
+            -DCMAKE_VISIBILITY_INLINES_HIDDEN=ON \
             -DCMAKE_LINKER_TYPE=LLD \
             -DCMAKE_POLICY_DEFAULT_CMP0137=NEW \
             -DCMAKE_TRY_COMPILE_PLATFORM_VARIABLES=CMAKE_LINKER_TYPE \
@@ -133,7 +139,7 @@ jobs:
           selected = [row for row in commands if row['file'].endswith(('platform/linux/Menu.cpp', 'platform/MenuHost.cpp', 'platform/linux/Application.cpp', 'core/src/storage.cpp'))]
           (root / 'size-compile-evidence.json').write_text(json.dumps(selected, indent=2) + '\n')
           for row in selected:
-              print(row['command'])
+              print('::notice title=Compile flags::' + row['command'].replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A'))
           PY
       - id: linux-build
         run: cmake --build --preset release
