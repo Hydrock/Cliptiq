@@ -34,9 +34,9 @@ int main(int argc,char** argv){@autoreleasepool{try{
  struct Temp{std::filesystem::path p;~Temp(){std::error_code e;std::filesystem::remove(p,e);}} temp{path};
  auto store=take(open_store(path.u8string()));auto folder=take(create_folder(store,"Folder"));Snippet doc;doc.folder_id=folder;doc.title="Snippet";doc.content="Before";doc.enabled=false;auto id=take(save_snippet(store,doc));
  auto session=std::make_shared<SnippetEditorSession>(store);CHECK(session->reload());CHECK(session->select(SnippetItemId{SnippetItemKind::Snippet,id}));
- NativeSnippetEditor editor;unsigned copies=0,mounts=0;
+ NativeSnippetEditor editor;unsigned copies=0,mounts=0,unmounts=0;
  NativeMenuOptions options;options.workspace_enabled=true;options.start_hidden=true;
- options.workspace_snippets=[&](std::uintptr_t parent,std::function<void(const std::string&)>){if(!parent){editor.unmount();return Result<void>{};}++mounts;return editor.show_embedded(session,parent,[&](const SnippetId& copied){CHECK(copied==id);CHECK(session->content()=="After");++copies;});};
+ options.workspace_snippets=[&](std::uintptr_t parent,std::function<void(const std::string&)>){if(!parent){editor.unmount();++unmounts;return Result<void>{};}++mounts;return editor.show_embedded(session,parent,[&](const SnippetId& copied){CHECK(copied==id);CHECK(session->content()=="After");++copies;});};
  options.workspace_can_close=[&]{return editor.can_close();};
  NativeMenu ui(options,[](MenuCommand){});CHECK(ui.initialize());CHECK(ui.show_workspace(MenuKind::Snippets));
  auto window=(__bridge NSWindow*)(void*)ui.native_handles().window;
@@ -72,8 +72,15 @@ int main(int argc,char** argv){@autoreleasepool{try{
  settleSave();CHECK(session->can_redo());CHECK(window.firstResponder==body);CHECK([NSApp targetForAction:@selector(redo:)]==body);shortcut(@"z",6,NSEventModifierFlagCommand|NSEventModifierFlagShift);settleSave();CHECK(session->content()=="After");
  // Undo typed text even while its asynchronous save has not completed.
  [body setSelectedRange:NSMakeRange(body.string.length,0)];[body insertText:@" extra" replacementRange:body.selectedRange];
- CHECK([body.string isEqualToString:@"After extra"]&&session->saving());shortcut(@"z",6);settleSave();CHECK(session->content()=="After");
- auto canUndo=session->can_undo();[window performClose:nil];CHECK(!window.visible);CHECK(ui.process_events(1));
- CHECK(ui.show_workspace(MenuKind::Snippets));CHECK(find(window.contentView,@"editor-tree")==outline);CHECK(mounts==2);CHECK(session->can_undo()==canUndo);
+ CHECK([body.string isEqualToString:@"After extra"]&&session->saving());
+ [window performClose:nil];CHECK(window.visible);CHECK(mounts==1&&unmounts==0);CHECK(find(window.contentView,@"editor-tree")==outline);
+ shortcut(@"z",6);settleSave();CHECK(session->content()=="After");
+ auto canUndo=session->can_undo();[window performClose:nil];CHECK(!window.visible);
+ // Hiding is synchronous; releasing the workspace/editor is queued on the
+ // main thread. Observe that release before testing a fresh explicit mount.
+ for(unsigned n=0;n<200&&!unmounts;++n){CHECK(ui.process_events(10));}
+ CHECK(unmounts==1);CHECK(!editor.native_handle());CHECK(!find(window.contentView,@"editor-tree"));
+ [NSApp.delegate applicationShouldHandleReopen:NSApp hasVisibleWindows:NO];CHECK(!window.visible);CHECK(mounts==1&&unmounts==1);
+ CHECK(ui.show_workspace(MenuKind::Snippets));CHECK(window.visible);CHECK(find(window.contentView,@"editor-tree")==outline);CHECK(mounts==2&&unmounts==1);CHECK(session->can_undo()==canUndo);
  std::cout<<"PASS unified editor, current copy and cached outline across close/reopen\n";return 0;
 }catch(const std::exception& e){std::cerr<<e.what()<<'\n';return 1;}}}

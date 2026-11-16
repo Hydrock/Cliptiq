@@ -118,7 +118,7 @@ jobs:
         if: always()
         run: python tools/ci-test-report.py 'out/core-*/ci-tests.xml'
       - name: Package and validate Base distribution
-        run: python packaging/package.py
+        run: python tools/ci-run.py python packaging/package.py
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: distribution-base-${{ matrix.os }}
@@ -243,7 +243,7 @@ jobs:
       - run: python tools/ci-run.py python tools/test-ocr.py --engine ${{ matrix.engine }}
       - name: Package and validate OCR distribution
         if: runner.os != 'Windows' || matrix.engine == 'tesseract'
-        run: python packaging/package.py --variant ocr
+        run: python tools/ci-run.py python packaging/package.py --variant ocr
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: runner.os != 'Windows' || matrix.engine == 'tesseract'
         with:
