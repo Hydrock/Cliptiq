@@ -1,0 +1,58 @@
+{
+  "duration_seconds": 30.00029729999369,
+  "cpu_seconds": 0.015625,
+  "cpu_percent_one_core": 0.05208281719262591,
+  "samples": [
+    {
+      "elapsed_seconds": 5.000272199991741,
+      "cpu_percent_one_core": 0.0,
+      "handle_count": 217,
+      "working_set_bytes": 14032896,
+      "private_bytes": 4558848,
+      "peak_working_set_bytes": 14237696
+    },
+    {
+      "elapsed_seconds": 10.000470099999802,
+      "cpu_percent_one_core": 0.312487631739032,
+      "handle_count": 218,
+      "working_set_bytes": 14036992,
+      "private_bytes": 4558848,
+      "peak_working_set_bytes": 14237696
+    },
+    {
+      "elapsed_seconds": 15.00078059999214,
+      "cpu_percent_one_core": 0.0,
+      "handle_count": 218,
+      "working_set_bytes": 14036992,
+      "private_bytes": 4558848,
+      "peak_working_set_bytes": 14237696
+    },
+    {
+      "elapsed_seconds": 20.00111719999404,
+      "cpu_percent_one_core": 0.0,
+      "handle_count": 218,
+      "working_set_bytes": 14036992,
+      "private_bytes": 4558848,
+      "peak_working_set_bytes": 14237696
+    },
+    {
+      "elapsed_seconds": 25.001518299992313,
+      "cpu_percent_one_core": 0.0,
+      "handle_count": 218,
+      "working_set_bytes": 14036992,
+      "private_bytes": 4558848,
+      "peak_working_set_bytes": 14237696
+    },
+    {
+      "elapsed_seconds": 30.00029729999369,
+      "cpu_percent_one_core": 0.0,
+      "handle_count": 218,
+      "working_set_bytes": 14036992,
+      "private_bytes": 4558848,
+      "peak_working_set_bytes": 14237696
+    }
+  ],
+  "exe_sha256": "346ed88aa30e18bf794d343e954ca48aaadb0ff0653467d1ded368aba1d168cb",
+  "exe_bytes": 1325568,
+  "fixture": "three connected Services, one test process; fake clipboard and key store"
+}
