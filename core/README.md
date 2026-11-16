@@ -64,3 +64,5 @@ T13: [desktop lifecycle, autostart, locale and accessibility boundaries](LIFECYC
 T14: [optional offline migration and source-preservation contract](MIGRATION.md).
 
 T15: [native update routes, bounded optional Sparkle and local diagnostics](UPDATES.md).
+
+SQLite build profile omits unused JSON SQL functions. Cliptiq JSON clipboard and settings payloads remain ordinary lossless stored bytes; schema/migrations do not use JSON SQL. The internal SQLite connection is not a general-purpose SQL/plugin API. UTF-16 database support, FTS5, integrity/security checks, WAL and backup remain unchanged. Future JSON SQL queries require reviewing the build profile.

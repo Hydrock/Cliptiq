@@ -6,6 +6,10 @@ on:
     paths: ['.github/workflows/native-size-experiments.yml', 'tools/macos_strip.py', 'packaging/package.py', 'tools/install-linux-backend-deps.sh']
 permissions:
   contents: read
+# Coalesce repeated pushes; keep explicit/manual validation runs independent.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name == 'push' && 'push' || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'push' }}
 jobs:
   macos-oz:
     strategy:
@@ -21,7 +25,7 @@ jobs:
       - name: Configure isolated macOS size experiment
         run: >-
           cmake --preset release
-          '-DCMAKE_C_FLAGS_MINSIZEREL=-Oz -DNDEBUG -DSQLITE_OMIT_JSON'
+          '-DCMAKE_C_FLAGS_MINSIZEREL=-Oz -DNDEBUG'
           '-DCMAKE_CXX_FLAGS_MINSIZEREL=-Oz -DNDEBUG'
           '-DCMAKE_OBJCXX_FLAGS_MINSIZEREL=-Oz -DNDEBUG'
           -DCMAKE_C_VISIBILITY_PRESET=hidden
@@ -92,7 +96,7 @@ jobs:
         run: |
           $llvm = 'C:/Program Files/LLVM/bin'
           & "$llvm/clang-cl.exe" --version
-          cmake --preset release "-DCMAKE_C_COMPILER=$llvm/clang-cl.exe" "-DCMAKE_CXX_COMPILER=$llvm/clang-cl.exe" "-DCMAKE_LINKER=$llvm/lld-link.exe" "-DCMAKE_PROJECT_Cliptiq_INCLUDE=${{ github.workspace }}/experiments/package-size/full-lto.cmake" "-DCMAKE_C_FLAGS_MINSIZEREL=/O1 /DNDEBUG /DSQLITE_OMIT_JSON /clang:-Oz" "-DCMAKE_CXX_FLAGS_MINSIZEREL=/O1 /DNDEBUG /clang:-Oz"
+          cmake --preset release "-DCMAKE_C_COMPILER=$llvm/clang-cl.exe" "-DCMAKE_CXX_COMPILER=$llvm/clang-cl.exe" "-DCMAKE_LINKER=$llvm/lld-link.exe" "-DCMAKE_PROJECT_Cliptiq_INCLUDE=${{ github.workspace }}/experiments/package-size/full-lto.cmake" "-DCMAKE_C_FLAGS_MINSIZEREL=/O1 /DNDEBUG /clang:-Oz" "-DCMAKE_CXX_FLAGS_MINSIZEREL=/O1 /DNDEBUG /clang:-Oz"
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
       - id: windows-build
         run: cmake --build --preset release
@@ -130,7 +134,7 @@ jobs:
           g++ --version
           cmake --preset release \
             -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ \
-            '-DCMAKE_C_FLAGS_MINSIZEREL=-Oz -DNDEBUG -DSQLITE_OMIT_JSON' \
+            '-DCMAKE_C_FLAGS_MINSIZEREL=-Oz -DNDEBUG' \
             '-DCMAKE_CXX_FLAGS_MINSIZEREL=-Oz -DNDEBUG' \
             -DCMAKE_C_VISIBILITY_PRESET=hidden -DCMAKE_CXX_VISIBILITY_PRESET=hidden \
             -DCMAKE_VISIBILITY_INLINES_HIDDEN=ON \

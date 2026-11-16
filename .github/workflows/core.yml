@@ -74,6 +74,10 @@ on:
       - '.github/workflows/core.yml'
 permissions:
   contents: read
+# Coalesce repeated pushes; keep explicit/manual validation runs independent.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name == 'push' && 'push' || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'push' }}
 jobs:
   history:
     strategy:

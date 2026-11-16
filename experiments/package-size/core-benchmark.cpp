@@ -1,6 +1,7 @@
 // Synthetic in-memory workload: no clipboard or personal history access.
 #include "cliptiq/history.hpp"
 #include "cliptiq/policy.hpp"
+#include "sqlite3.h"
 #include <chrono>
 #include <ctime>
 #include <iomanip>
@@ -127,7 +128,9 @@ int main() {
         std::cout << std::fixed << std::setprecision(3)
                   << "{\"schema_version\":1,\"workload\":\"synthetic-memory-history-v1\",\"count\":" << count
                   << ",\"payload_bytes\":" << payload_bytes << ",\"loaded_bytes\":" << loaded_bytes
-                  << ",\"rows_observed\":" << rows_observed << ",\"phases\":[";
+                  << ",\"rows_observed\":" << rows_observed
+                  << ",\"sqlite_json_sql_enabled\":" << (sqlite3_compileoption_used("OMIT_JSON") ? "false" : "true")
+                  << ",\"phases\":[";
         for (std::size_t i=0; i<timings.size(); ++i) {
             const auto& t = timings[i];
             if (i) std::cout << ',';

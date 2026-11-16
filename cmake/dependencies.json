@@ -10,6 +10,7 @@
   "features": {
     "fts5": false,
     "load_extension": false,
-    "threadsafe": true
+    "threadsafe": true,
+    "json_sql": false
   }
 }

@@ -13,7 +13,9 @@ foreach(source sqlite3.c sqlite3.h)
 endforeach()
 add_library(cliptiq_sqlite STATIC "${CLIPTIQ_SQLITE_DIR}/sqlite3.c")
 target_include_directories(cliptiq_sqlite PUBLIC "${CLIPTIQ_SQLITE_DIR}")
-target_compile_definitions(cliptiq_sqlite PRIVATE SQLITE_THREADSAFE=1 SQLITE_OMIT_LOAD_EXTENSION SQLITE_DQS=0 SQLITE_DEFAULT_MEMSTATUS=0)
+# Cliptiq stores JSON clipboard/settings bytes opaquely; its schema and queries
+# do not use SQLite JSON SQL functions. Revisit this profile before adding them.
+target_compile_definitions(cliptiq_sqlite PRIVATE SQLITE_THREADSAFE=1 SQLITE_OMIT_LOAD_EXTENSION SQLITE_DQS=0 SQLITE_DEFAULT_MEMSTATUS=0 SQLITE_OMIT_JSON)
 if(UNIX)
   find_package(Threads REQUIRED)
   target_link_libraries(cliptiq_sqlite PRIVATE Threads::Threads ${CMAKE_DL_LIBS} m)
