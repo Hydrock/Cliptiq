@@ -60,6 +60,41 @@ class NativeSizeProfileTests(unittest.TestCase):
             self.assertEqual(report['variants'][1]['strip']['returncode'], 1)
             self.assertEqual(report['variants'][1]['bytes'], len(b'original'))
 
+    def test_dyld_path_header_normalized_but_export_changes_are_detected(self):
+        with tempfile.TemporaryDirectory() as folder:
+            binary = Path(folder) / 'binary'
+            binary.write_bytes(b'input')
+
+            def runner(argv):
+                output = 'symbols'
+                if argv[1] == 'dyld_info':
+                    symbol = '_needed'
+                    if argv[2] == '-exports' and Path(argv[-1]).parent.name == 'strip-executable':
+                        symbol = '_different'
+                    output = f'{argv[-1]} [arm64]:\n    {argv[2]}:\n        0x1234 {symbol}\n'
+                elif argv[1:3] == ['nm', '-m']:
+                    output = '00000000 (__TEXT,__text) [referenced dynamically] external _needed\n'
+                return {'returncode': 0, 'output': output}
+
+            report = module.profile(binary, runner)
+            stripped = report['variants'][-1]
+            self.assertFalse(stripped['dyld_exports_unchanged'])
+            self.assertTrue(stripped['dyld_imports_unchanged'])
+            self.assertTrue(stripped['referenced_dynamic_globals_unchanged'])
+            self.assertEqual(binary.read_bytes(), b'input')
+
+    def test_missing_dyld_tool_or_table_is_unverified(self):
+        good = {'returncode': 0, 'recognized_table': True, 'normalized_output': 'table'}
+        for failure in [dict(good, returncode=72), dict(good, recognized_table=False)]:
+            self.assertIsNone(module.same_dyld_view(good, failure))
+            self.assertIsNone(module.same_dyld_view(failure, good))
+
+    def test_dynamic_references_detect_missing_binding_symbol(self):
+        before = {'returncode': 0, 'output': '0000 [referenced dynamically] external _needed\n0001 external _ordinary\n'}
+        after = {'returncode': 0, 'output': '0001 external _ordinary\n'}
+        self.assertNotEqual(module.dynamic_references(before), module.dynamic_references(after))
+        self.assertIsNone(module.dynamic_references(dict(before, returncode=1)))
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -9,6 +9,7 @@ on:
       - 'tools/verify-coverage.py'
       - 'tools/distribution.py'
       - 'tools/size-report.py'
+      - 'tools/native-size-profile.py'
       - 'tools/verify-release.py'
       - 'tests/integration/package_entry.py'
       - 'tests/integration/fuzz_smoke.cpp'

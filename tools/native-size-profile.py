@@ -29,6 +29,32 @@ def command(argv):
             'output': result.stdout}
 
 
+def dyld_view(binary, flag, runner):
+    result = runner(['xcrun', 'dyld_info', flag, str(binary)])
+    lines = result['output'].splitlines(keepends=True)
+    # Apple dyld_info prints '<input path> [<arch>]:' before the actual table.
+    # Normalize only that exact heading prefix, preserving the arch and tables.
+    if lines and lines[0].startswith(str(binary) + ' ['):
+        lines[0] = '<binary>' + lines[0][len(str(binary)):]
+    result['normalized_output'] = ''.join(lines)
+    result['recognized_table'] = any(line.strip() == flag + ':' for line in lines)
+    return result
+
+
+def same_dyld_view(before, after):
+    if (before['returncode'] or after['returncode'] or
+            not before['recognized_table'] or not after['recognized_table']):
+        return None
+    return before['normalized_output'] == after['normalized_output']
+
+
+def dynamic_references(view):
+    if view['returncode']:
+        return None
+    return [line for line in view['output'].splitlines()
+            if '[referenced dynamically]' in line]
+
+
 def profile(binary, runner=command):
     binary = Path(binary).resolve(strict=True)
     if not binary.is_file():
@@ -62,6 +88,8 @@ def profile(binary, runner=command):
                 row['undefined_symbols'] = runner(['xcrun', 'nm', '-u', str(copy)])
                 # Includes REFERENCED_DYNAMICALLY annotations for comparison.
                 row['external_symbol_details'] = runner(['xcrun', 'nm', '-m', '-g', str(copy)])
+                row['dyld_exports'] = dyld_view(copy, '-exports', runner)
+                row['dyld_imports'] = dyld_view(copy, '-imports', runner)
             data = copy.read_bytes()
             try:
                 row['code_data_sections_unchanged'] = inspector.sections(data) == original_sections if original_sections is not None else None
@@ -79,6 +107,15 @@ def profile(binary, runner=command):
         stripped['undefined_symbols_unchanged'] = (
             baseline['output'] == observed['output']
             if baseline['returncode'] == observed['returncode'] == 0 else None)
+        original_row = result['variants'][0]
+        for kind in ('exports', 'imports'):
+            stripped['dyld_' + kind + '_unchanged'] = same_dyld_view(
+                original_row['dyld_' + kind], stripped['dyld_' + kind])
+        before_dynamic = dynamic_references(original_row['external_symbol_details'])
+        after_dynamic = dynamic_references(stripped['external_symbol_details'])
+        stripped['referenced_dynamic_globals_unchanged'] = (
+            before_dynamic == after_dynamic
+            if before_dynamic is not None and after_dynamic is not None else None)
     if binary.read_bytes() != original:
         raise RuntimeError('input changed during profiling')
     result['input_unchanged'] = True
@@ -98,7 +135,7 @@ def main():
     base = report['variants'][0]
     for row in report['variants']:
         status = row.get('strip', {}).get('returncode', 0)
-        print(f"::notice title=Native size {row['name']}::bytes={row['bytes']} zip_bytes={row['zip_bytes']} saved={base['bytes']-row['bytes']} zip_saved={base['zip_bytes']-row['zip_bytes']} strip_exit={status} sections_unchanged={row.get('code_data_sections_unchanged')} imports_unchanged={row.get('undefined_symbols_unchanged')}; diagnostic copies only")
+        print(f"::notice title=Native size {row['name']}::bytes={row['bytes']} zip_bytes={row['zip_bytes']} saved={base['bytes']-row['bytes']} zip_saved={base['zip_bytes']-row['zip_bytes']} strip_exit={status} sections_unchanged={row.get('code_data_sections_unchanged')} imports_unchanged={row.get('undefined_symbols_unchanged')} dyld_exports_unchanged={row.get('dyld_exports_unchanged')} dyld_imports_unchanged={row.get('dyld_imports_unchanged')} referenced_dynamic_globals_unchanged={row.get('referenced_dynamic_globals_unchanged')}; diagnostic copies only")
 
 
 if __name__ == '__main__':
