@@ -1,0 +1,222 @@
+{
+  "macos-os-hidden (macos-15)": [
+    {
+      "path": ".github",
+      "blob_href": "https://github.com/Hydrock/Cliptiq/blob/f077849c1a7da2e8f5fe5e65b05eceeddd34bfe5/.github",
+      "start_line": 6,
+      "start_column": null,
+      "end_line": 6,
+      "end_column": null,
+      "annotation_level": "failure",
+      "title": "Distribution size budget",
+      "message": "archive_bytes: 974754 > 866157",
+      "raw_details": ""
+    },
+    {
+      "path": ".github",
+      "blob_href": "https://github.com/Hydrock/Cliptiq/blob/f077849c1a7da2e8f5fe5e65b05eceeddd34bfe5/.github",
+      "start_line": 114,
+      "start_column": null,
+      "end_line": 114,
+      "end_column": null,
+      "annotation_level": "notice",
+      "title": "Core benchmark touch_history",
+      "message": "median candidate/reference wall=0.993x CPU=0.993x; descriptive only",
+      "raw_details": ""
+    },
+    {
+      "path": ".github",
+      "blob_href": "https://github.com/Hydrock/Cliptiq/blob/f077849c1a7da2e8f5fe5e65b05eceeddd34bfe5/.github",
+      "start_line": 113,
+      "start_column": null,
+      "end_line": 113,
+      "end_column": null,
+      "annotation_level": "notice",
+      "title": "Core benchmark duplicate_ingest",
+      "message": "median candidate/reference wall=1.009x CPU=1.009x; descriptive only",
+      "raw_details": ""
+    },
+    {
+      "path": ".github",
+      "blob_href": "https://github.com/Hydrock/Cliptiq/blob/f077849c1a7da2e8f5fe5e65b05eceeddd34bfe5/.github",
+      "start_line": 112,
+      "start_column": null,
+      "end_line": 112,
+      "end_column": null,
+      "annotation_level": "notice",
+      "title": "Core benchmark load_snapshot",
+      "message": "median candidate/reference wall=0.988x CPU=0.988x; descriptive only",
+      "raw_details": ""
+    },
+    {
+      "path": ".github",
+      "blob_href": "https://github.com/Hydrock/Cliptiq/blob/f077849c1a7da2e8f5fe5e65b05eceeddd34bfe5/.github",
+      "start_line": 111,
+      "start_column": null,
+      "end_line": 111,
+      "end_column": null,
+      "annotation_level": "notice",
+      "title": "Core benchmark list_recent_30",
+      "message": "median candidate/reference wall=0.986x CPU=0.986x; descriptive only",
+      "raw_details": ""
+    },
+    {
+      "path": ".github",
+      "blob_href": "https://github.com/Hydrock/Cliptiq/blob/f077849c1a7da2e8f5fe5e65b05eceeddd34bfe5/.github",
+      "start_line": 110,
+      "start_column": null,
+      "end_line": 110,
+      "end_column": null,
+      "annotation_level": "notice",
+      "title": "Core benchmark capture_ingest",
+      "message": "median candidate/reference wall=1.005x CPU=1.004x; descriptive only",
+      "raw_details": ""
+    },
+    {
+      "path": ".github",
+      "blob_href": "https://github.com/Hydrock/Cliptiq/blob/f077849c1a7da2e8f5fe5e65b05eceeddd34bfe5/.github",
+      "start_line": 109,
+      "start_column": null,
+      "end_line": 109,
+      "end_column": null,
+      "annotation_level": "notice",
+      "title": "Core benchmark scope",
+      "message": "synthetic in-memory core workload only; no UI or system-memory measurement",
+      "raw_details": ""
+    },
+    {
+      "path": ".github",
+      "blob_href": "https://github.com/Hydrock/Cliptiq/blob/f077849c1a7da2e8f5fe5e65b05eceeddd34bfe5/.github",
+      "start_line": 8,
+      "start_column": null,
+      "end_line": 8,
+      "end_column": null,
+      "annotation_level": "notice",
+      "title": "Native size strip-local-debug",
+      "message": "bytes=2011752 zip_bytes=953534 saved=683472 zip_saved=106016 strip_exit=0 sections_unchanged=True imports_unchanged=None; diagnostic copies only",
+      "raw_details": ""
+    },
+    {
+      "path": ".github",
+      "blob_href": "https://github.com/Hydrock/Cliptiq/blob/f077849c1a7da2e8f5fe5e65b05eceeddd34bfe5/.github",
+      "start_line": 6,
+      "start_column": null,
+      "end_line": 6,
+      "end_column": null,
+      "annotation_level": "notice",
+      "title": "Native size strip-local",
+      "message": "bytes=2011752 zip_bytes=953534 saved=683472 zip_saved=106016 strip_exit=0 sections_unchanged=True imports_unchanged=None; diagnostic copies only",
+      "raw_details": ""
+    }
+  ],
+  "macos-os-hidden (macos-15-intel)": [
+    {
+      "path": ".github",
+      "blob_href": "https://github.com/Hydrock/Cliptiq/blob/f077849c1a7da2e8f5fe5e65b05eceeddd34bfe5/.github",
+      "start_line": 6,
+      "start_column": null,
+      "end_line": 6,
+      "end_column": null,
+      "annotation_level": "failure",
+      "title": "Distribution size budget",
+      "message": "app_bytes: 2143369 > 2082590; archive_bytes: 1048564 > 900205",
+      "raw_details": ""
+    },
+    {
+      "path": ".github",
+      "blob_href": "https://github.com/Hydrock/Cliptiq/blob/f077849c1a7da2e8f5fe5e65b05eceeddd34bfe5/.github",
+      "start_line": 114,
+      "start_column": null,
+      "end_line": 114,
+      "end_column": null,
+      "annotation_level": "notice",
+      "title": "Core benchmark touch_history",
+      "message": "median candidate/reference wall=0.806x CPU=0.805x; descriptive only",
+      "raw_details": ""
+    },
+    {
+      "path": ".github",
+      "blob_href": "https://github.com/Hydrock/Cliptiq/blob/f077849c1a7da2e8f5fe5e65b05eceeddd34bfe5/.github",
+      "start_line": 113,
+      "start_column": null,
+      "end_line": 113,
+      "end_column": null,
+      "annotation_level": "notice",
+      "title": "Core benchmark duplicate_ingest",
+      "message": "median candidate/reference wall=0.929x CPU=0.929x; descriptive only",
+      "raw_details": ""
+    },
+    {
+      "path": ".github",
+      "blob_href": "https://github.com/Hydrock/Cliptiq/blob/f077849c1a7da2e8f5fe5e65b05eceeddd34bfe5/.github",
+      "start_line": 112,
+      "start_column": null,
+      "end_line": 112,
+      "end_column": null,
+      "annotation_level": "notice",
+      "title": "Core benchmark load_snapshot",
+      "message": "median candidate/reference wall=1.137x CPU=1.137x; descriptive only",
+      "raw_details": ""
+    },
+    {
+      "path": ".github",
+      "blob_href": "https://github.com/Hydrock/Cliptiq/blob/f077849c1a7da2e8f5fe5e65b05eceeddd34bfe5/.github",
+      "start_line": 111,
+      "start_column": null,
+      "end_line": 111,
+      "end_column": null,
+      "annotation_level": "notice",
+      "title": "Core benchmark list_recent_30",
+      "message": "median candidate/reference wall=0.865x CPU=0.865x; descriptive only",
+      "raw_details": ""
+    },
+    {
+      "path": ".github",
+      "blob_href": "https://github.com/Hydrock/Cliptiq/blob/f077849c1a7da2e8f5fe5e65b05eceeddd34bfe5/.github",
+      "start_line": 110,
+      "start_column": null,
+      "end_line": 110,
+      "end_column": null,
+      "annotation_level": "notice",
+      "title": "Core benchmark capture_ingest",
+      "message": "median candidate/reference wall=0.878x CPU=0.879x; descriptive only",
+      "raw_details": ""
+    },
+    {
+      "path": ".github",
+      "blob_href": "https://github.com/Hydrock/Cliptiq/blob/f077849c1a7da2e8f5fe5e65b05eceeddd34bfe5/.github",
+      "start_line": 109,
+      "start_column": null,
+      "end_line": 109,
+      "end_column": null,
+      "annotation_level": "notice",
+      "title": "Core benchmark scope",
+      "message": "synthetic in-memory core workload only; no UI or system-memory measurement",
+      "raw_details": ""
+    },
+    {
+      "path": ".github",
+      "blob_href": "https://github.com/Hydrock/Cliptiq/blob/f077849c1a7da2e8f5fe5e65b05eceeddd34bfe5/.github",
+      "start_line": 8,
+      "start_column": null,
+      "end_line": 8,
+      "end_column": null,
+      "annotation_level": "notice",
+      "title": "Native size strip-local-debug",
+      "message": "bytes=2059360 zip_bytes=1010408 saved=661016 zip_saved=92734 strip_exit=0 sections_unchanged=True imports_unchanged=None; diagnostic copies only",
+      "raw_details": ""
+    },
+    {
+      "path": ".github",
+      "blob_href": "https://github.com/Hydrock/Cliptiq/blob/f077849c1a7da2e8f5fe5e65b05eceeddd34bfe5/.github",
+      "start_line": 6,
+      "start_column": null,
+      "end_line": 6,
+      "end_column": null,
+      "annotation_level": "notice",
+      "title": "Native size strip-local",
+      "message": "bytes=2059360 zip_bytes=1010408 saved=661016 zip_saved=92734 strip_exit=0 sections_unchanged=True imports_unchanged=None; diagnostic copies only",
+      "raw_details": ""
+    }
+  ]
+}

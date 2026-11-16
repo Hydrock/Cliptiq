@@ -76,3 +76,24 @@ Core/footprint/size-experiment workflows coalesce repeated push runs by workflow
 CI43805711500 measured full IPO+JSON Windows2288722/1025917 and GCC-Oz+JSON Linux1856861/864923; both still fail the original budgets. Linux core median candidate/reference ratios were1.004 capture,1.020 list,1.044 load,1.001 duplicate and1.032 touch, descriptive only.
 
 The macOS ARM Oz+hidden+JSON candidate reduced the stripped executable to1686408B and its ZIP to844657B, but matched core measurements regressed substantially: capture1.188wall/1.197CPU, list1.284/1.285, load1.370/1.372, duplicate1.183/1.186, touch1.381/1.381. These flags are rejected for production despite the size savings. The next macOS experiment retains ordinary-Os and tests hidden visibility alone; RTTI/exceptions remain enabled. No macOS compiler flag has been adopted into the production path.
+
+## Current production CI result
+
+[Full production run43806903121](https://github.com/Hydrock/Cliptiq/actions/runs/43806903121), source7d08966: every Windows/Linux/macOS Debug+Release CTest stage succeeded. Windows ASAN, Linux/macOS sanitizers, both Sparkle lanes and all OCR functional stages succeeded. Six packaging jobs fail solely on original size budgets:
+
+| Production distribution | Measured app / gate | Measured ZIP / gate |
+|---|---:|---:|
+| Windows Base |2358415 /1867254 |1166169 /957588 |
+| Linux Base |1881441 /1682648 |869168 /801109 |
+| macOS ARM Base |2169481 /2101519 |1002324 /866157 |
+| macOS Intel Base |2259049 /2082590 |1079007 /900205 |
+| macOS ARM OCR |2375895 /2350777 |1105545 /987169 |
+| macOS Intel OCR |2451255 /2340296 |1188662 /1026273 |
+
+Overall CI is therefore still failure, not green. Baselines, growth allowance and absolute ceilings remain untouched. Compared with the earlier e32338d CI, safe changes reduced Windows Base app33280B, Linux Base app39678B, Intel macOS Base app647536B, and ARM macOS OCR app695184B. These are measured production-package differences, not a claim of runtime speedup.
+
+The ordinary-Os plus hidden-symbol candidate also did not meet budgets. ARM ZIP974754>866157; Intel app2143369>2082590 and ZIP1048564>900205. ARM core ratios stayed around0.986–1.009; Intel was mixed (load1.137, other phases0.806–0.929). No blanket no-regression claim is justified, and these compiler visibility flags are not adopted. Production keeps its previous compiler/visibility defaults.
+
+Further bounded Windows experiments were discarded: stronger inlining/O2 grew executable size from2317312 to2429440–3361280B. Sharing guarded exception conversion preserved tested semantics and had no material benchmark change, but saved only14336raw/3044ZIP bytes. Production error handling remains unchanged. A map review found no credible low-risk refactor approaching the remaining491161B Windows production deficit; most added LAN code implements real functionality, lifecycle, authentication and TLS. Broad rewrites are not treated as a safe overnight size fix.
+
+The final diagnostic follow-up corrects the Linux build-tree executable name (cliptiq_menu_host, installed as cliptiq) and emits measured numeric package sizes even for passing gates. Functional code is unchanged by that follow-up; its fresh CI run must still complete. Raw captures are adjacent. Installed user application was not replaced during this investigation.

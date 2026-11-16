@@ -1,0 +1,11 @@
+{
+  "name": "candidate",
+  "app_bytes": 2302976,
+  "binary_zip_bytes": 1142861,
+  "semantics": {
+    "success_once": true,
+    "exact_error_maps": true,
+    "exception_lifetime": true,
+    "unknown_propagation": true
+  }
+}

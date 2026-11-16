@@ -172,7 +172,7 @@ jobs:
         run: |
           python - <<'PY'
           import io, pathlib, zipfile
-          data = pathlib.Path('out/core-Linux-release/cliptiq').read_bytes()
+          data = pathlib.Path('out/core-Linux-release/cliptiq_menu_host').read_bytes()
           stream = io.BytesIO()
           with zipfile.ZipFile(stream, 'w') as archive:
               info = zipfile.ZipInfo('cliptiq', date_time=(2026, 1, 1, 0, 0, 0))

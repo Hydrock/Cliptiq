@@ -1,0 +1,45 @@
+{
+  "scope": "Isolated JSON-only SQLite source f077849; guarded header restored. Removed core target redundant O1 override only in copied CMake so O2 takes effect. Static CRT, IPO/GL, EHsc, RTTI, security defaults unchanged. Only app build and version check; no test/performance/adoption claim.",
+  "variants": [
+    {
+      "name": "baseline-O1-Ob1",
+      "c_and_cxx_minsizerel_flags": "/O1 /Ob1 /DNDEBUG",
+      "app_bytes": 2317312,
+      "single_binary_zip_bytes": 1145905,
+      "version": "Cliptiq 0.1.0",
+      "elapsed_seconds": 12.185
+    },
+    {
+      "name": "O1-Ob2",
+      "c_and_cxx_minsizerel_flags": "/O1 /Ob2 /DNDEBUG",
+      "app_bytes": 2429440,
+      "single_binary_zip_bytes": 1218329,
+      "version": "Cliptiq 0.1.0",
+      "elapsed_seconds": 20.943
+    },
+    {
+      "name": "O1-Ob3",
+      "c_and_cxx_minsizerel_flags": "/O1 /Ob3 /DNDEBUG",
+      "app_bytes": 2422272,
+      "single_binary_zip_bytes": 1215163,
+      "version": "Cliptiq 0.1.0",
+      "elapsed_seconds": 25.364
+    },
+    {
+      "name": "O2-Ob2",
+      "c_and_cxx_minsizerel_flags": "/O2 /Ob2 /DNDEBUG",
+      "app_bytes": 2980864,
+      "single_binary_zip_bytes": 1449757,
+      "version": "Cliptiq 0.1.0",
+      "elapsed_seconds": 21.162
+    },
+    {
+      "name": "O2-Ob3",
+      "c_and_cxx_minsizerel_flags": "/O2 /Ob3 /DNDEBUG",
+      "app_bytes": 3361280,
+      "single_binary_zip_bytes": 1596300,
+      "version": "Cliptiq 0.1.0",
+      "elapsed_seconds": 29.238
+    }
+  ]
+}

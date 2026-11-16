@@ -4,7 +4,7 @@ import hashlib
 import json
 from pathlib import Path
 import zipfile
-import os,stat
+import os,stat,sys
 
 
 def measure(dist, archive, *, target, arch, dependency_delta_bytes=None,
@@ -108,6 +108,7 @@ def main():
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
     print(json.dumps({k: report[k] for k in ('app_bytes', 'archive_bytes', 'total_offline_bytes', 'budget_violations')}))
+    print(f"::notice title=Distribution measured size::app_bytes={report['app_bytes']}; archive_bytes={report['archive_bytes']}", file=sys.stderr, flush=True)
     if violations:
         print('::error title=Distribution size budget::' + '; '.join(violations), flush=True)
     return 1 if violations else 0

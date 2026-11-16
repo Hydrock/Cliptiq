@@ -1,0 +1,11 @@
+{
+  "name": "baseline",
+  "app_bytes": 2317312,
+  "binary_zip_bytes": 1145905,
+  "semantics": {
+    "success_once": true,
+    "exact_error_maps": true,
+    "exception_lifetime": true,
+    "unknown_propagation": true
+  }
+}

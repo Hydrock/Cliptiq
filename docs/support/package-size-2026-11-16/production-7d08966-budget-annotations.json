@@ -1,0 +1,86 @@
+{
+  "history (windows-2025)": [
+    {
+      "path": ".github",
+      "blob_href": "https://github.com/Hydrock/Cliptiq/blob/7d089668630e661ce2e3c306c57ec53b3a1506fe/.github",
+      "start_line": 199,
+      "start_column": null,
+      "end_line": 199,
+      "end_column": null,
+      "annotation_level": "failure",
+      "title": "Distribution size budget",
+      "message": "app_bytes: 2358415 > 1867254; archive_bytes: 1166169 > 957588",
+      "raw_details": ""
+    }
+  ],
+  "history (macos-15-intel)": [
+    {
+      "path": ".github",
+      "blob_href": "https://github.com/Hydrock/Cliptiq/blob/7d089668630e661ce2e3c306c57ec53b3a1506fe/.github",
+      "start_line": 6,
+      "start_column": null,
+      "end_line": 6,
+      "end_column": null,
+      "annotation_level": "failure",
+      "title": "Distribution size budget",
+      "message": "app_bytes: 2259049 > 2082590; archive_bytes: 1079007 > 900205",
+      "raw_details": ""
+    }
+  ],
+  "history (macos-15)": [
+    {
+      "path": ".github",
+      "blob_href": "https://github.com/Hydrock/Cliptiq/blob/7d089668630e661ce2e3c306c57ec53b3a1506fe/.github",
+      "start_line": 6,
+      "start_column": null,
+      "end_line": 6,
+      "end_column": null,
+      "annotation_level": "failure",
+      "title": "Distribution size budget",
+      "message": "app_bytes: 2169481 > 2101519; archive_bytes: 1002324 > 866157",
+      "raw_details": ""
+    }
+  ],
+  "ocr_backends (macos-15, native)": [
+    {
+      "path": ".github",
+      "blob_href": "https://github.com/Hydrock/Cliptiq/blob/7d089668630e661ce2e3c306c57ec53b3a1506fe/.github",
+      "start_line": 6,
+      "start_column": null,
+      "end_line": 6,
+      "end_column": null,
+      "annotation_level": "failure",
+      "title": "Distribution size budget",
+      "message": "app_bytes: 2375895 > 2350777; archive_bytes: 1105545 > 987169",
+      "raw_details": ""
+    }
+  ],
+  "ocr_backends (macos-15-intel, native)": [
+    {
+      "path": ".github",
+      "blob_href": "https://github.com/Hydrock/Cliptiq/blob/7d089668630e661ce2e3c306c57ec53b3a1506fe/.github",
+      "start_line": 6,
+      "start_column": null,
+      "end_line": 6,
+      "end_column": null,
+      "annotation_level": "failure",
+      "title": "Distribution size budget",
+      "message": "app_bytes: 2451255 > 2340296; archive_bytes: 1188662 > 1026273",
+      "raw_details": ""
+    }
+  ],
+  "history (ubuntu-24.04)": [
+    {
+      "path": ".github",
+      "blob_href": "https://github.com/Hydrock/Cliptiq/blob/7d089668630e661ce2e3c306c57ec53b3a1506fe/.github",
+      "start_line": 6,
+      "start_column": null,
+      "end_line": 6,
+      "end_column": null,
+      "annotation_level": "failure",
+      "title": "Distribution size budget",
+      "message": "app_bytes: 1881441 > 1682648; archive_bytes: 869168 > 801109",
+      "raw_details": ""
+    }
+  ]
+}
