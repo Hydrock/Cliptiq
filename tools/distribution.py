@@ -1,7 +1,7 @@
 """Distribution-only validation. Never executes a packaged binary."""
 import os,hashlib,json,pathlib,re,struct
 SYSTEM_WINDOWS={s.lower() for s in ['KERNEL32.dll','USER32.dll','GDI32.dll','COMCTL32.dll','COMDLG32.dll','SHELL32.dll','ole32.dll','OLEAUT32.dll','ADVAPI32.dll','WINHTTP.dll','WS2_32.dll','SHLWAPI.dll','CRYPT32.dll','WINTRUST.dll','bcrypt.dll','ntdll.dll','RPCRT4.dll','VERSION.dll','DWMAPI.dll','UXTHEME.dll','PROPSYS.dll','IMM32.dll','MSIMG32.dll','WTSAPI32.dll','SETUPAPI.dll','IPHLPAPI.dll','DNSAPI.dll']}
-SYSTEM_LINUX={'libwayland-client.so.0','libxcb.so.1','libxcb-xfixes.so.0','libX11.so.6','libXtst.so.6','libgtk-3.so.0','libgdk-3.so.0','libatk-1.0.so.0','libgdk_pixbuf-2.0.so.0','libgio-2.0.so.0','libgobject-2.0.so.0','libglib-2.0.so.0','libstdc++.so.6','libm.so.6','libgcc_s.so.1','libc.so.6','libpthread.so.0','libdl.so.2','librt.so.1','ld-linux-x86-64.so.2','ld-linux-aarch64.so.1'}
+SYSTEM_LINUX={'libwayland-client.so.0','libxcb.so.1','libxcb-xfixes.so.0','libX11.so.6','libXtst.so.6','libgtk-3.so.0','libpango-1.0.so.0','libgdk-3.so.0','libatk-1.0.so.0','libgdk_pixbuf-2.0.so.0','libgio-2.0.so.0','libgobject-2.0.so.0','libglib-2.0.so.0','libstdc++.so.6','libm.so.6','libgcc_s.so.1','libc.so.6','libpthread.so.0','libdl.so.2','librt.so.1','ld-linux-x86-64.so.2','ld-linux-aarch64.so.1'}
 def _unpack(data,fmt,offset):
  size=struct.calcsize(fmt)
  if offset<0 or offset+size>len(data):raise ValueError('truncated binary structure')

@@ -118,12 +118,16 @@ jobs:
       - name: Report CTest failures
         if: always()
         run: python tools/ci-test-report.py 'out/core-*/ci-tests.xml'
+      - name: Profile macOS binary size without modifying build
+        if: runner.os == 'macOS'
+        run: python tools/native-size-profile.py out/core-Darwin-release/Cliptiq.app/Contents/MacOS/Cliptiq --output out/native-size-base.json
       - name: Package and validate Base distribution
         run: python tools/ci-run.py python packaging/package.py
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: distribution-base-${{ matrix.os }}
           path: |
+            out/native-size-*.json
             out/t17-*/size.json
             out/t17-*/package-report.json
             out/t17-*/*.zip
@@ -242,6 +246,9 @@ jobs:
         run: bash tools/install-linux-backend-deps.sh
       - run: python tools/fetch-footprint-deps.py
       - run: python tools/ci-run.py python tools/test-ocr.py --engine ${{ matrix.engine }}
+      - name: Profile macOS OCR binary size without modifying build
+        if: runner.os == 'macOS'
+        run: python tools/native-size-profile.py out/ocr-Darwin-native/Cliptiq.app/Contents/MacOS/Cliptiq --output out/native-size-ocr.json
       - name: Package and validate OCR distribution
         if: runner.os != 'Windows' || matrix.engine == 'tesseract'
         run: python tools/ci-run.py python packaging/package.py --variant ocr
@@ -250,6 +257,7 @@ jobs:
         with:
           name: distribution-ocr-${{ matrix.os }}
           path: |
+            out/native-size-*.json
             out/t17-*/size.json
             out/t17-*/package-report.json
             out/t17-*/*.zip

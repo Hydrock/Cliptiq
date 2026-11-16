@@ -3,6 +3,16 @@ ROOT=pathlib.Path(__file__).resolve().parents[2]
 def module():
  spec=importlib.util.spec_from_file_location('distribution',ROOT/'tools/distribution.py');m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m);return m
 class DistributionTests(unittest.TestCase):
+ def test_linux_pango_is_system_but_private_names_and_paths_are_not(self):
+  m=module()
+  self.assertTrue(m.system_import('linux','libpango-1.0.so.0'))
+  for name in ['libpango-private.so.0','libpango-1.0.so.999','plugins/libpango-1.0.so.0','/tmp/libpango-1.0.so.0']:
+   self.assertFalse(m.system_import('linux',name),name)
+  with tempfile.TemporaryDirectory() as folder:
+   root=pathlib.Path(folder);manifest=self.fixture(root);manifest['target']='linux'
+   inspector=lambda p:dict(format='elf',arch='x86_64',imports=['libpango-1.0.so.0'],rpaths=[])
+   self.assertEqual(m.validate_distribution(root,manifest,inspector=inspector),[])
+
  def test_windows_dns_client_is_system_but_unknown_or_path_imports_are_not(self):
   m=module()
   self.assertTrue(m.system_import('windows','DNSAPI.dll'))
