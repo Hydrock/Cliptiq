@@ -1,0 +1,580 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="Win32-ninja"
+	tests="76"
+	failures="16"
+	disabled="0"
+	skipped="0"
+	hostname="SmiteVils-PC"
+	time="133"
+	timestamp="2026-11-16T09:36:54"
+	>
+	<testcase name="lan_core" classname="lan_core" time="0.555856" status="run">
+		<properties/>
+		<system-out>PASS LAN protocol/config/provenance
+</system-out>
+	</testcase>
+	<testcase name="editor_native" classname="editor_native" time="0.0519632" status="fail">
+		<failure message="Failed"/>
+		<properties/>
+		<system-out>FAIL native_editor: CreateWindowStation failed: 5
+</system-out>
+	</testcase>
+	<testcase name="snippets_menu_hotkeys" classname="snippets_menu_hotkeys" time="0.550536" status="run">
+		<properties/>
+		<system-out>PASS retired_folder_shortcuts_are_unregistered
+PASS menu_selection_and_paste_cannot_replay_disabled_or_deleted_snippets
+</system-out>
+	</testcase>
+	<testcase name="editor" classname="editor" time="0.516992" status="fail">
+		<failure message="Failed"/>
+		<properties/>
+		<system-out>PASS autosave_undo_redo_resets_at_selection_boundary
+PASS cancelled_drag_and_stale_drag_do_not_mutate
+PASS delete_confirmation_empty_folder_and_binding_conflicts
+PASS failed_edit_preserves_document_and_undo
+PASS failed_autosave_blocks_navigation_until_corrected_or_explicit_reload
+FAIL drag_revision_is_checked_inside_write_transaction: Cannot open index gate
+FAIL folder_drop_does_not_overwrite_concurrent_other_folder_reorder: Cannot open index gate
+FAIL committed_snapshot_does_not_adopt_peer_revision: Cannot open index gate
+FAIL background_autosave_keeps_event_loop_responsive_under_write_contention: Cannot open index gate
+</system-out>
+	</testcase>
+	<testcase name="snippets" classname="snippets" time="0.513585" status="fail">
+		<failure message="Failed"/>
+		<properties/>
+		<system-out>PASS folder_snippet_crud_unicode_multiline_and_entity_cas
+PASS reorder_move_normalizes_duplicates_atomically
+PASS disabled_menu_and_folder_hotkeys_cleanup
+PASS limits_invalid_utf8_and_no_partial_revision
+FAIL restart_and_v1_migration_preserve_old_data: Cannot open index gate
+legacy snippet edit=1 folder rename=1
+PASS legacy_sparse_positions_allow_content_edits_and_repair_order
+</system-out>
+	</testcase>
+	<testcase name="hotkeys_native_boundary" classname="hotkeys_native_boundary" time="0.0393312" status="fail">
+		<failure message="Failed"/>
+		<properties/>
+		<system-out>CreateWindowStation failed: 5
+</system-out>
+	</testcase>
+	<testcase name="editor_inline_rename" classname="editor_inline_rename" time="0.132852" status="fail">
+		<failure message="Failed"/>
+		<properties/>
+		<system-out>Cannot open index gate
+</system-out>
+	</testcase>
+	<testcase name="snippets_workspace" classname="snippets_workspace" time="0.248066" status="fail">
+		<failure message="Failed"/>
+		<properties/>
+		<system-out>Cannot open index gate
+</system-out>
+	</testcase>
+	<testcase name="settings_native" classname="settings_native" time="0.0490242" status="fail">
+		<failure message="Failed"/>
+		<properties/>
+		<system-out>FAIL native_settings: CreateWindowStation failed: 5
+</system-out>
+	</testcase>
+	<testcase name="lifecycle_ui_ru" classname="lifecycle_ui_ru" time="0.0122424" status="fail">
+		<failure message="Failed"/>
+		<properties/>
+		<system-out>FAIL native_settings: CreateWindowStation failed: 5
+</system-out>
+	</testcase>
+	<testcase name="hotkeys_native" classname="hotkeys_native" time="0.039323" status="fail">
+		<failure message="Failed"/>
+		<properties/>
+		<system-out>FAIL native_hotkeys: CreateWindowStation failed: 5
+</system-out>
+	</testcase>
+	<testcase name="settings" classname="settings" time="0.51689" status="run">
+		<properties/>
+		<system-out>PASS first_run_autostart_choice_survives_settings_updates
+PASS legacy_login_preference_is_already_configured
+PASS desktop_folder_shortcuts_are_retired
+PASS every_setting_has_plain_language_help
+PASS defaults_audit_and_platform_shortcuts
+PASS tray_style_retired_without_hiding_existing_profiles
+PASS shortcut_labels_hide_internal_folder_ids
+PASS second_quick_shortcut_migrates_to_empty_primary
+PASS sound_defaults_ranges_and_legacy_profile
+PASS atomic_roundtrip_and_privacy_projection
+PASS ranges_rejected_without_partial_write
+PASS settings_cannot_unbind_or_duplicate_and_invalid_values
+PASS nine_groups_and_unknown_capability_disabled_reason
+PASS corrupt_and_future_settings_not_silently_defaulted
+PASS future_schema_save_does_not_overwrite_and_physical_meaning_roundtrip
+PASS count_prunes_now_types_do_not_erase_old_and_folder_route
+</system-out>
+	</testcase>
+	<testcase name="hotkeys" classname="hotkeys" time="0.0492897" status="run">
+		<properties/>
+		<system-out>PASS chord_roundtrip_meaning_and_reserved
+PASS conflict_keeps_previous_and_settings_protected
+PASS batch_os_or_persistence_failure_rolls_back
+PASS throwing_persistence_releases_candidates_preserves_old
+PASS disabled_deleted_folders_release_routes
+PASS registry_lifetime_releases_and_unknown_actions_rejected
+</system-out>
+	</testcase>
+	<testcase name="paste_native" classname="paste_native" time="0.0421673" status="fail">
+		<failure message="Failed"/>
+		<properties/>
+		<system-out>FAIL native_paste: CreateWindowStation failed: 5
+</system-out>
+	</testcase>
+	<testcase name="paste_native_boundary" classname="paste_native_boundary" time="0.488851" status="run">
+		<properties/>
+		<system-out>PASS issued_target_success_and_chords
+PASS closed_replaced_process_and_reused_hwnd_rejected
+PASS uipi_unknown_and_held_modifiers_no_input
+PASS unrelated_focus_and_denied_restore_no_input
+PASS normal_self_restore_then_dispatch
+PASS every_partial_prefix_releases_only_injected_keys
+PASS native_denial_preserves_paste_delete_history
+</system-out>
+	</testcase>
+	<testcase name="paste" classname="paste" time="0.488743" status="run">
+		<properties/>
+		<system-out>PASS auto_off_copies_original_all_formats_and_touches
+PASS workspace_copy_never_injects_even_when_auto_enabled
+PASS plain_keeps_only_text_without_rich_formats
+PASS image_only_plain_never_overwrites_clipboard
+PASS delete_only_removes_history_without_write_or_input
+PASS paste_delete_removes_only_after_backend_acceptance
+PASS denied_paste_delete_keeps_sole_record_and_manual_copy
+PASS auto_off_paste_delete_does_not_delete
+PASS failed_write_never_dispatches_or_deletes
+PASS stale_menu_revision_has_no_side_effect
+PASS concurrent_revision_after_dispatch_does_not_delete
+PASS terminal_shortcut_and_missing_target_manual
+PASS workspace_can_copy_snippet_hidden_from_quick_menu
+PASS snippets_copied_without_history_deletion
+PASS destructive_modifier_never_deletes_snippet
+PASS modifier_binding_unique_single_and_conflicting_held_cancel
+PASS invalid_action_shortcut_or_clock_rejected_before_write
+PASS snippet_encoded_and_entry_limits_before_writer
+</system-out>
+	</testcase>
+	<testcase name="menu_unicode_conformance" classname="menu_unicode_conformance" time="0.036268" status="run">
+		<properties/>
+		<system-out>PASS Unicode17_grapheme_conformance 766 cases
+</system-out>
+	</testcase>
+	<testcase name="menu_idle_wait" classname="menu_idle_wait" time="0.577457" status="run">
+		<properties/>
+		<system-out>PASS bounded idle, spurious wake, backlog, new input, Enter, Tab and selection
+</system-out>
+	</testcase>
+	<testcase name="popup_owner" classname="popup_owner" time="0.15816" status="run">
+		<properties/>
+		<system-out>PASS independent popup owner, hidden workspace and screen anchor
+</system-out>
+	</testcase>
+	<testcase name="menu_regression_keyboard" classname="menu_regression_keyboard" time="0.0460541" status="fail">
+		<failure message="Failed"/>
+		<properties/>
+		<system-out>FAIL menu_review: CreateWindowStation failed: 5
+</system-out>
+	</testcase>
+	<testcase name="menu_regression_dpi" classname="menu_regression_dpi" time="0.0114574" status="fail">
+		<failure message="Failed"/>
+		<properties/>
+		<system-out>FAIL menu_review: CreateWindowStation failed: 5
+</system-out>
+	</testcase>
+	<testcase name="menu_regression_context" classname="menu_regression_context" time="0.0105623" status="fail">
+		<failure message="Failed"/>
+		<properties/>
+		<system-out>FAIL menu_review: CreateWindowStation failed: 5
+</system-out>
+	</testcase>
+	<testcase name="menu_native" classname="menu_native" time="0.0430195" status="fail">
+		<failure message="Failed"/>
+		<properties/>
+		<system-out>FAIL native_menu: CreateWindowStation failed: 5
+</system-out>
+	</testcase>
+	<testcase name="lifecycle" classname="lifecycle" time="0.900958" status="run">
+		<properties/>
+		<system-out>PASS fixed routes, second-instance forwarding, settings recovery, bounded IPC, restart, locale fallback and visible startup failure
+</system-out>
+	</testcase>
+	<testcase name="first_run_autostart_native" classname="first_run_autostart_native" time="0.357982" status="run">
+		<properties/>
+		<system-out>PASS EN/RU native first-run checkbox defaults, opt-out and cancellation; no OS registration
+</system-out>
+	</testcase>
+	<testcase name="lifecycle_process" classname="lifecycle_process" time="0.969262" status="run">
+		<properties/>
+		<system-out>PASS separate processes, four fixed routes, settings recovery, crash/restart lock release
+</system-out>
+	</testcase>
+	<testcase name="application_icon_parity" classname="application_icon_parity" time="0.0723295" status="run">
+		<properties/>
+		<system-out>PASS macOS and Windows application artwork matches exactly
+</system-out>
+	</testcase>
+	<testcase name="lifecycle_locale_schema" classname="lifecycle_locale_schema" time="0.0885531" status="run">
+		<properties/>
+		<system-out>Locale schema: 406 keys; 9 languages; 966 compiled rows
+</system-out>
+	</testcase>
+	<testcase name="lifecycle_gui" classname="lifecycle_gui" time="0.0739828" status="run">
+		<properties/>
+		<system-out>PASS native Windows GUI subsystem; no console on login
+</system-out>
+	</testcase>
+	<testcase name="application_icon" classname="application_icon" time="0.05765" status="run">
+		<properties/>
+		<system-out>PASS embedded application icon sizes: [16, 24, 32, 48, 64]
+</system-out>
+	</testcase>
+	<testcase name="media_review_clear" classname="media_review_clear" time="1.93052" status="run">
+		<properties/>
+		<system-out>PASS clear
+</system-out>
+	</testcase>
+	<testcase name="media_review_root" classname="media_review_root" time="1.43023" status="run">
+		<properties/>
+		<system-out>PASS root
+</system-out>
+	</testcase>
+	<testcase name="media_review_error" classname="media_review_error" time="0.328253" status="run">
+		<properties/>
+		<system-out>PASS error
+</system-out>
+	</testcase>
+	<testcase name="native_media" classname="native_media" time="9.29551" status="run">
+		<properties/>
+		<system-out>PASS native codec, malformed/40MP, partial write, event coalescing, pixel dedup both orders, privacy exclusions/types, stop, deletion race
+</system-out>
+	</testcase>
+	<testcase name="media" classname="media" time="0.4717" status="run">
+		<properties/>
+		<system-out>PASS privacy, aspect-fit, bounds, dimensions, stale generation, deletion race, malformed image
+</system-out>
+	</testcase>
+	<testcase name="menu_preview" classname="menu_preview" time="0.0407588" status="run">
+		<properties/>
+		<system-out>PASS tray_icon_size
+PASS tray_icon_contrast_on_both_themes
+PASS tray_icon_size
+PASS tray_icon_contrast_on_both_themes
+PASS tray_icon_size
+PASS tray_icon_contrast_on_both_themes
+PASS tray_icon_size
+PASS tray_icon_contrast_on_both_themes
+PASS swatch_rgba
+PASS aspect_fit_32
+PASS invalid_provider_dimensions_rejected
+PASS short_provider_buffer_rejected
+PASS empty_reference_no_provider
+PASS preview_dpi_96
+PASS preview_dpi_144
+PASS preview_dpi_192
+</system-out>
+	</testcase>
+	<testcase name="menu" classname="menu" time="0.535763" status="run">
+		<properties/>
+		<system-out>PASS empty_clear_disabled
+PASS grouping_0_1
+PASS grouping_0_10
+PASS grouping_0_100
+PASS grouping_1_1
+PASS grouping_1_10
+PASS grouping_1_100
+PASS grouping_100_1
+PASS grouping_100_10
+PASS grouping_100_100
+PASS zero_one_numbering_and_ten_shortcuts
+PASS numbering_and_shortcuts_independent
+PASS graphemes_first_line_trim_and_ellipsis
+PASS invalid_utf8_controls_are_sanitized
+PASS utf16_history_title_and_tooltip
+PASS snippet_order_above_below_and_kinds
+PASS tooltip_and_title_limits
+PASS hex_swatches_and_image_reference
+PASS revision_and_deleted_ids_reject_stale_commands
+PASS build_does_not_mutate_history
+PASS clear_command_checks_revision_before_deleting
+PASS native_model_depth_and_text_budget
+PASS global_commands_survive_history_refresh
+PASS native_model_rejects_invalid_utf8_and_nul
+PASS settings_history_limit_applies_without_erasing_store
+PASS unified_sections_follow_locale
+</system-out>
+	</testcase>
+	<testcase name="windows_clipboard" classname="windows_clipboard" time="0.0519364" status="fail">
+		<failure message="Failed"/>
+		<properties/>
+		<system-out>ISOLATION/SETUP FAILED: CreateWindowStation failed: 5
+</system-out>
+	</testcase>
+	<testcase name="windows_formats" classname="windows_formats" time="0.0222895" status="run">
+		<properties/>
+		<system-out>PASS native_format_validation
+</system-out>
+	</testcase>
+	<testcase name="policy" classname="policy" time="0.469378" status="run">
+		<properties/>
+		<system-out>PASS transient_always_rejected
+PASS concealed_option
+PASS remote_primary_file_rejected
+PASS remote_secondary_file_removed
+PASS marker_prefix_exclusion
+PASS unknown_source_is_not_known_safe
+PASS screenshot_uses_same_policy
+PASS html_off_keeps_text_rtf_only
+PASS unknown_type_is_not_persisted
+PASS unknown_source_with_exclusions_is_rejected
+PASS foreground_exclusion_and_best_effort
+PASS capabilities_default_unavailable
+PASS unavailable_source_overrides_claimed_identity
+PASS limited_source_downgrades_known
+PASS missing_id_is_unknown
+PASS remote_macos_option_and_platform_scope
+PASS remote_marker_and_original_primary_before_filter
+PASS marker_representation_is_never_payload
+PASS all_kinds_can_be_disabled
+PASS each_supported_kind_and_item_order
+PASS spoofed_registered_kind_is_filtered
+PASS rejected_inputs_call_no_consumers
+PASS filtered_snapshot_only_reaches_consumers
+PASS store_error_or_no_retained_id_skips_derivatives
+PASS ocr_requires_request_and_capability
+PASS invalid_inputs_fail_closed
+PASS reason_messages_are_...
+[This part of the test output was removed since it exceeds the threshold of 1024 bytes.]
+</system-out>
+	</testcase>
+	<testcase name="history" classname="history" time="0.633359" status="fail">
+		<failure message="Failed"/>
+		<properties/>
+		<system-out>PASS preserves_all_representations
+PASS duplicate_mode_switch_keeps_digest
+PASS duplicate_flags
+PASS blank_text_ignored
+PASS last_used_preserves_created
+PASS limit_three
+PASS periodic_clear_is_not_ttl
+PASS clear_preserves_snippets
+PASS oversize_is_atomic
+PASS quota_prunes_by_current_sort
+FAIL reopen_and_periodic_state: Cannot open index gate
+PASS transaction_failure_rolls_back
+PASS read_only_and_full_are_errors
+PASS corrupt_db_not_replaced
+PASS digest_has_unambiguous_boundaries
+PASS invalid_policy_and_empty_snapshot
+PASS revision_clear_compact
+PASS sha256_standard_vectors
+PASS collision_is_not_equality
+PASS source_changes_do_not_create_new_content
+PASS rtf_blank_and_primary_order
+PASS metadata_and_representation_limits
+PASS cleanup_disable_change_and_clock_rewind
+FAIL foreign_and_future_db_preserved: Cannot open index gate
+FAIL load_rechecks_persisted_limits: Cannot open index gate
+PASS duplicate_candidate_limits_checked
+PASS returned_id_survives_pruning
+PASS native_utf16_blank_text_ignored
+PASS utf16_roundtrip_and_big_endian_blank
+FAIL json_mime_payloads_are_lossless_opaque_bytes: Cannot open index gate
+</system-out>
+	</testcase>
+	<testcase name="history_crash" classname="history_crash" time="0.365788" status="run">
+		<properties/>
+		<system-out>PASS process interruption rollback/WAL and reopen
+</system-out>
+	</testcase>
+	<testcase name="update" classname="update" time="0.5077" status="run">
+		<properties/>
+		<system-out>update policy, authentication boundaries, schedule, settings and redacted diagnostics passed
+</system-out>
+	</testcase>
+	<testcase name="update_native" classname="update_native" time="0.0417122" status="run">
+		<properties/>
+		<system-out>unconfigured native route fails closed without side effects
+</system-out>
+	</testcase>
+	<testcase name="update_authenticode" classname="update_authenticode" time="5.25004" status="run">
+		<properties/>
+		<system-out>Authenticode: unsigned, trusted correct/wrong publisher, tampered bytes and invalid pin passed; no installer executed
+</system-out>
+	</testcase>
+	<testcase name="ocr" classname="ocr" time="0.476406" status="run">
+		<properties/>
+		<system-out>OCR Unicode, empty Done, limits, cancel, supersession, privacy and deletion passed
+</system-out>
+	</testcase>
+	<testcase name="fts" classname="fts" time="0.178919" status="run">
+		<properties/>
+		<system-out>companion index isolation, invalidation, recovery and Base compatibility passed
+</system-out>
+	</testcase>
+	<testcase name="ocr_queue" classname="ocr_queue" time="3.6134" status="run">
+		<properties/>
+		<system-out>async privacy revocation prevents publication
+</system-out>
+	</testcase>
+	<testcase name="fts_transaction_race" classname="fts_transaction_race" time="1.09739" status="run">
+		<properties/>
+		<system-out>index gate spans complete main deletion transaction
+</system-out>
+	</testcase>
+	<testcase name="distribution_tools" classname="distribution_tools" time="0.496073" status="run">
+		<properties/>
+		<system-out>...C:\Users\SmiteVils\.codex\worktrees\lan-clipboard\cliptiq\tests\tools\test_ci_run.py:7: ResourceWarning: unclosed file &lt;_io.TextIOWrapper name=3 encoding='utf-8'&gt;
+  output=io.StringIO();code=self.module().run([sys.executable,'-c',"print('diagnostic%value');raise SystemExit(7)"],output)
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+.C:\Users\SmiteVils\.codex\worktrees\lan-clipboard\cliptiq\tests\tools\test_ci_run.py:10: ResourceWarning: unclosed file &lt;_io.TextIOWrapper name=3 encoding='utf-8'&gt;
+  output=io.StringIO();self.assertEqual(self.module().run([sys.executable,'-c',"print('ok')"],output),0);self.assertNotIn('::error::',output.getvalue())
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+..............s................s...s.....
+----------------------------------------------------------------------
+Ran 45 tests in 0.357s
+
+OK (skipped=3)
+</system-out>
+	</testcase>
+	<testcase name="feature_coverage" classname="feature_coverage" time="0.0895899" status="run">
+		<properties/>
+		<system-out>PASS: all audited IDs classified on all four platform backends; manual gates OPEN
+</system-out>
+	</testcase>
+	<testcase name="package_entry" classname="package_entry" time="0.100037" status="run">
+		<properties/>
+		<system-out>PASS noninteractive --version
+</system-out>
+	</testcase>
+	<testcase name="bounded_fuzz_smoke" classname="bounded_fuzz_smoke" time="0.0553236" status="run">
+		<properties/>
+		<system-out>PASS512 deterministic bounded PNG/UTF8 mutations and native codec control
+</system-out>
+	</testcase>
+	<testcase name="release_blocked" classname="release_blocked" time="0.084218" status="run">
+		<properties/>
+		<system-out>BLOCKED AS EXPECTED: production release remains unavailable; T04: OPEN or missing, T05: OPEN or missing, T06: OPEN or missing, T07: OPEN or missing, T08: OPEN or missing, T09: OPEN or missing, T10: OPEN or missing, T12: OPEN or missing, T13: OPEN or missing, T15: OPEN or missing, T16: OPEN or missing, clean-install: OPEN or missing, desktop-support-matrix: OPEN or missing, notarization: OPEN or missing, offline-closure: OPEN or missing, project-license: OPEN or missing, publisher-identity: OPEN or missing, signing: OPEN or missing
+</system-out>
+	</testcase>
+	<testcase name="sound_wave" classname="sound_wave" time="0.035618" status="run">
+		<properties/>
+		<system-out>PASS bounded gentle PCM WAV cues, silence, volume and distinct events
+</system-out>
+	</testcase>
+	<testcase name="sound_playback" classname="sound_playback" time="0.0388819" status="run">
+		<properties/>
+		<system-out>PASS rapid copy/paste cues, playback flags, toggles and mute
+</system-out>
+	</testcase>
+	<testcase name="workspace" classname="workspace" time="0.468025" status="run">
+		<properties/>
+		<system-out>PASS workspace filtering, bounded preview, action and stale-ID checks
+</system-out>
+	</testcase>
+	<testcase name="idle_media_revision" classname="idle_media_revision" time="0.97802" status="run">
+		<properties/>
+		<system-out>PASS media
+</system-out>
+	</testcase>
+	<testcase name="idle_mailbox_readonly" classname="idle_mailbox_readonly" time="2.29704" status="run">
+		<properties/>
+		<system-out>PASS mailbox
+</system-out>
+	</testcase>
+	<testcase name="lan_pairing_storage" classname="lan_pairing_storage" time="0.480327" status="run">
+		<properties/>
+		<system-out>PASS_staging_rollback_idempotent_commit_identity_finish_and_scoped_abort
+</system-out>
+	</testcase>
+	<testcase name="lan_discovery_boundary" classname="lan_discovery_boundary" time="0.0377106" status="run">
+		<properties/>
+		<system-out>PASS_txt_untrusted_endpoint_scope_cancel_generation_and_queue_bounds
+</system-out>
+	</testcase>
+	<testcase name="lan_discovery" classname="lan_discovery" time="0.501063" status="run">
+		<properties/>
+		<system-out>PASS opt_in_default_cas_rollback_and_old_pairs_unchanged
+PASS_duplicate_names_endpoints_expiry_and_removal
+PASS_untrusted_identity_text_ports_and_address_validation
+PASS_bounded_registry
+</system-out>
+	</testcase>
+	<testcase name="lan_pairing_wire" classname="lan_pairing_wire" time="0.0389486" status="run">
+		<properties/>
+		<system-out>PASS_frame_vector_truncation_version_and_bounds
+PASS_hello_and_canonical_transcript_binding
+</system-out>
+	</testcase>
+	<testcase name="lan_service" classname="lan_service" time="0.443672" status="run">
+		<properties/>
+		<system-out>PASS LAN service orchestration
+</system-out>
+	</testcase>
+	<testcase name="lan_scoped_bind" classname="lan_scoped_bind" time="0.0373082" status="run">
+		<properties/>
+		<system-out>LAN listener unavailable
+Bind address must be a numeric IPv4 or IPv6 address
+PASS_scope_validation_before_native_bind
+</system-out>
+	</testcase>
+	<testcase name="lan_pairing_control" classname="lan_pairing_control" time="0.804139" status="run">
+		<properties/>
+		<system-out>PASS_nonblocking_loopback_control_and_staged_completion
+</system-out>
+	</testcase>
+	<testcase name="lan_pairing_session" classname="lan_pairing_session" time="0.224736" status="run">
+		<properties/>
+		<system-out>PASS_approval_code_mutual_proof_staging_commit_expiry_and_rate_caps
+</system-out>
+	</testcase>
+	<testcase name="lan_pairing_crypto" classname="lan_pairing_crypto" time="0.368545" status="run">
+		<properties/>
+		<system-out>PASS_pake_mutual_confirmation_and_separated_keys
+PASS_authenticated_control_tampering_replay_and_reflection
+PASS_wrong_code_context_replay_and_input_bounds
+PASS_upstream_round_one_vectors 36
+</system-out>
+	</testcase>
+	<testcase name="lan_endpoint_probe" classname="lan_endpoint_probe" time="5.13567" status="run">
+		<properties/>
+		<system-out>PASS_tls_only_probe_pins_key_and_device_without_clipboard_access
+</system-out>
+	</testcase>
+	<testcase name="lan_discovery_service" classname="lan_discovery_service" time="0.545461" status="run">
+		<properties/>
+		<system-out>PASS_opt_in_zero_peers_prepare_commit_disconnect_and_authenticated_recovery
+</system-out>
+	</testcase>
+	<testcase name="lan_end_to_end" classname="lan_end_to_end" time="23.8586" status="run">
+		<properties/>
+		<system-out>PASS real TLS Service pair: text/PNG/URL, provenance, no echo, history-only, stop
+</system-out>
+	</testcase>
+	<testcase name="lan_tls_transport" classname="lan_tls_transport" time="45.0337" status="run">
+		<properties/>
+		<system-out>TLS 1.3 PSK: loopback, wrong key/identity, short I/O, 1MiB payload, persistence ACK, oversize and queued-stop passed
+</system-out>
+	</testcase>
+	<testcase name="lan_dns" classname="lan_dns" time="1.62364" status="run">
+		<properties/>
+		<system-out>Numeric IPv4/IPv6, localhost DNS, input validation and cancellation passed
+</system-out>
+	</testcase>
+	<testcase name="lan_secrets" classname="lan_secrets" time="0.0345102" status="run">
+		<properties/>
+		<system-out>PASS LAN native secret validation
+</system-out>
+	</testcase>
+	<testcase name="idle_socket_wait" classname="idle_socket_wait" time="0.316104" status="run">
+		<properties/>
+		<system-out>PASS idle block, command wake, socket read/close and reset
+</system-out>
+	</testcase>
+	<testcase name="lan_settings_native" classname="lan_settings_native" time="2.47697" status="run">
+		<properties/>
+		<system-out>native LAN settings: passed
+</system-out>
+	</testcase>
+</testsuite>

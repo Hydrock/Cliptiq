@@ -21,7 +21,7 @@ jobs:
       - name: Configure isolated macOS size experiment
         run: >-
           cmake --preset release
-          '-DCMAKE_C_FLAGS_MINSIZEREL=-Oz -DNDEBUG'
+          '-DCMAKE_C_FLAGS_MINSIZEREL=-Oz -DNDEBUG -DSQLITE_OMIT_JSON'
           '-DCMAKE_CXX_FLAGS_MINSIZEREL=-Oz -DNDEBUG'
           '-DCMAKE_OBJCXX_FLAGS_MINSIZEREL=-Oz -DNDEBUG'
           -DCMAKE_C_VISIBILITY_PRESET=hidden
@@ -49,6 +49,13 @@ jobs:
       - name: Profile disposable stripping experiments
         if: always() && steps.macos-build.outcome == 'success'
         run: python tools/native-size-profile.py out/core-Darwin-release/Cliptiq.app/Contents/MacOS/Cliptiq --output out/native-size-oz.json
+      - name: Compare synthetic core performance with ordinary release flags
+        run: |
+          cmake --preset release -DCLIPTIQ_BUILD_SIZE_PROBE=ON
+          cmake --build --preset release --target core_package_benchmark
+          cmake -S . -B out/perf-Darwin-reference -G Ninja -DCMAKE_BUILD_TYPE=MinSizeRel -DBUILD_TESTING=OFF -DCLIPTIQ_BUILD_SIZE_PROBE=ON
+          cmake --build out/perf-Darwin-reference --target core_package_benchmark
+          python tools/compare-core-perf.py --reference out/perf-Darwin-reference --candidate out/core-Darwin-release --output out/core-perf-macos.json
       - name: Validate unchanged distribution and original size gates
         run: python tools/ci-run.py python packaging/package.py
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -62,6 +69,8 @@ jobs:
             out/core-Darwin-release/size-compile-evidence.json
             out/core-Darwin-release/build.ninja
             out/native-size-oz.json
+            out/core-perf-macos.json
+            out/perf-Darwin-reference/CMakeCache.txt
             out/t17-*/size.json
             out/t17-*/package-report.json
   windows-clang:
@@ -83,7 +92,7 @@ jobs:
         run: |
           $llvm = 'C:/Program Files/LLVM/bin'
           & "$llvm/clang-cl.exe" --version
-          cmake --preset release "-DCMAKE_C_COMPILER=$llvm/clang-cl.exe" "-DCMAKE_CXX_COMPILER=$llvm/clang-cl.exe" "-DCMAKE_LINKER=$llvm/lld-link.exe" "-DCMAKE_PROJECT_Cliptiq_INCLUDE=${{ github.workspace }}/experiments/package-size/full-lto.cmake" "-DCMAKE_C_FLAGS_MINSIZEREL=/O1 /DNDEBUG /clang:-Oz" "-DCMAKE_CXX_FLAGS_MINSIZEREL=/O1 /DNDEBUG /clang:-Oz"
+          cmake --preset release "-DCMAKE_C_COMPILER=$llvm/clang-cl.exe" "-DCMAKE_CXX_COMPILER=$llvm/clang-cl.exe" "-DCMAKE_LINKER=$llvm/lld-link.exe" "-DCMAKE_PROJECT_Cliptiq_INCLUDE=${{ github.workspace }}/experiments/package-size/full-lto.cmake" "-DCMAKE_C_FLAGS_MINSIZEREL=/O1 /DNDEBUG /DSQLITE_OMIT_JSON /clang:-Oz" "-DCMAKE_CXX_FLAGS_MINSIZEREL=/O1 /DNDEBUG /clang:-Oz"
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
       - id: windows-build
         run: cmake --build --preset release
@@ -106,30 +115,26 @@ jobs:
             out/core-Windows-release/ci-tests.xml
             out/core-Windows-release/CMakeCache.txt
             out/t17-*/size.json
-  linux-clang-oz:
+  linux-gcc-oz:
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - name: Linux backend and isolated-test dependencies
-        run: bash tools/install-linux-backend-deps.sh --llvm
+        run: bash tools/install-linux-backend-deps.sh
       - run: python tools/fetch-footprint-deps.py
       - run: python tools/fetch-lan-deps.py
-      - name: Configure isolated Linux Clang size experiment
+      - name: Configure isolated Linux GCC size experiment
         run: |
-          clang --version
-          clang++ --version
-          ld.lld --version
+          gcc --version
+          g++ --version
           cmake --preset release \
-            -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ \
-            '-DCMAKE_C_FLAGS_MINSIZEREL=-Oz -DNDEBUG' \
+            -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ \
+            '-DCMAKE_C_FLAGS_MINSIZEREL=-Oz -DNDEBUG -DSQLITE_OMIT_JSON' \
             '-DCMAKE_CXX_FLAGS_MINSIZEREL=-Oz -DNDEBUG' \
             -DCMAKE_C_VISIBILITY_PRESET=hidden -DCMAKE_CXX_VISIBILITY_PRESET=hidden \
             -DCMAKE_VISIBILITY_INLINES_HIDDEN=ON \
-            -DCMAKE_LINKER_TYPE=LLD \
             '-DCMAKE_EXE_LINKER_FLAGS=-Wl,--as-needed' \
-            -DCMAKE_POLICY_DEFAULT_CMP0137=NEW \
-            -DCMAKE_TRY_COMPILE_PLATFORM_VARIABLES=CMAKE_LINKER_TYPE \
             -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
       - name: Record actual Linux optimization and IPO flags
         run: |
@@ -146,9 +151,18 @@ jobs:
         run: cmake --build --preset release
       - name: Run full Linux release suite
         run: ctest --preset release --output-on-failure --output-junit ci-tests.xml
+      - name: Repeat previously unstable private X11 wire test
+        run: ctest --preset release -R '^linux_clipboard_x11_wire$' --repeat until-fail:10 --output-on-failure
       - name: Report all CTest failures
         if: always()
         run: python tools/ci-test-report.py 'out/core-*/ci-tests.xml'
+      - name: Compare synthetic core performance with ordinary GCC release flags
+        run: |
+          cmake --preset release -DCLIPTIQ_BUILD_SIZE_PROBE=ON
+          cmake --build --preset release --target core_package_benchmark
+          cmake -S . -B out/perf-Linux-reference -G Ninja -DCMAKE_BUILD_TYPE=MinSizeRel -DBUILD_TESTING=OFF -DCLIPTIQ_BUILD_SIZE_PROBE=ON -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++
+          cmake --build out/perf-Linux-reference --target core_package_benchmark
+          python tools/compare-core-perf.py --reference out/perf-Linux-reference --candidate out/core-Linux-release --output out/core-perf-linux.json
       - name: Record Linux executable-only size
         if: always() && steps.linux-build.outcome == 'success'
         run: |
@@ -168,8 +182,10 @@ jobs:
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
-          name: linux-clang-oz-size-experiment
+          name: linux-gcc-oz-size-experiment
           path: |
+            out/core-perf-linux.json
+            out/perf-Linux-reference/CMakeCache.txt
             out/core-Linux-release/ci-tests.xml
             out/core-Linux-release/Testing/Temporary/LastTest.log
             out/core-Linux-release/CMakeCache.txt

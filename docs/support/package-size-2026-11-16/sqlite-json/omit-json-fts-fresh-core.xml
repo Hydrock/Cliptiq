@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="Win32-ninja"
+	tests="9"
+	failures="0"
+	disabled="0"
+	skipped="0"
+	hostname="SmiteVils-PC"
+	time="2"
+	timestamp="2026-11-16T09:39:15"
+	>
+	<testcase name="editor" classname="editor" time="0.339505" status="run">
+		<properties/>
+		<system-out>PASS autosave_undo_redo_resets_at_selection_boundary
+PASS cancelled_drag_and_stale_drag_do_not_mutate
+PASS delete_confirmation_empty_folder_and_binding_conflicts
+PASS failed_edit_preserves_document_and_undo
+PASS failed_autosave_blocks_navigation_until_corrected_or_explicit_reload
+PASS drag_revision_is_checked_inside_write_transaction
+PASS folder_drop_does_not_overwrite_concurrent_other_folder_reorder
+PASS committed_snapshot_does_not_adopt_peer_revision
+PASS background_autosave_keeps_event_loop_responsive_under_write_contention
+</system-out>
+	</testcase>
+	<testcase name="snippets" classname="snippets" time="0.0432285" status="run">
+		<properties/>
+		<system-out>PASS folder_snippet_crud_unicode_multiline_and_entity_cas
+PASS reorder_move_normalizes_duplicates_atomically
+PASS disabled_menu_and_folder_hotkeys_cleanup
+PASS limits_invalid_utf8_and_no_partial_revision
+PASS restart_and_v1_migration_preserve_old_data
+legacy snippet edit=1 folder rename=1
+PASS legacy_sparse_positions_allow_content_edits_and_repair_order
+</system-out>
+	</testcase>
+	<testcase name="editor_inline_rename" classname="editor_inline_rename" time="0.24086" status="run">
+		<properties/>
+		<system-out>PASS inline rename persists; cancel and empty name preserve original; separate title removed
+</system-out>
+	</testcase>
+	<testcase name="snippets_workspace" classname="snippets_workspace" time="0.317914" status="run">
+		<properties/>
+		<system-out>PASS unified child editor, autosave copy, disabled snippet and page reuse
+</system-out>
+	</testcase>
+	<testcase name="settings" classname="settings" time="0.0211145" status="run">
+		<properties/>
+		<system-out>PASS first_run_autostart_choice_survives_settings_updates
+PASS legacy_login_preference_is_already_configured
+PASS desktop_folder_shortcuts_are_retired
+PASS every_setting_has_plain_language_help
+PASS defaults_audit_and_platform_shortcuts
+PASS tray_style_retired_without_hiding_existing_profiles
+PASS shortcut_labels_hide_internal_folder_ids
+PASS second_quick_shortcut_migrates_to_empty_primary
+PASS sound_defaults_ranges_and_legacy_profile
+PASS atomic_roundtrip_and_privacy_projection
+PASS ranges_rejected_without_partial_write
+PASS settings_cannot_unbind_or_duplicate_and_invalid_values
+PASS nine_groups_and_unknown_capability_disabled_reason
+PASS corrupt_and_future_settings_not_silently_defaulted
+PASS future_schema_save_does_not_overwrite_and_physical_meaning_roundtrip
+PASS count_prunes_now_types_do_not_erase_old_and_folder_route
+</system-out>
+	</testcase>
+	<testcase name="history" classname="history" time="0.125587" status="run">
+		<properties/>
+		<system-out>PASS preserves_all_representations
+PASS duplicate_mode_switch_keeps_digest
+PASS duplicate_flags
+PASS blank_text_ignored
+PASS last_used_preserves_created
+PASS limit_three
+PASS periodic_clear_is_not_ttl
+PASS clear_preserves_snippets
+PASS oversize_is_atomic
+PASS quota_prunes_by_current_sort
+PASS reopen_and_periodic_state
+PASS transaction_failure_rolls_back
+PASS read_only_and_full_are_errors
+PASS corrupt_db_not_replaced
+PASS digest_has_unambiguous_boundaries
+PASS invalid_policy_and_empty_snapshot
+PASS revision_clear_compact
+PASS sha256_standard_vectors
+PASS collision_is_not_equality
+PASS source_changes_do_not_create_new_content
+PASS rtf_blank_and_primary_order
+PASS metadata_and_representation_limits
+PASS cleanup_disable_change_and_clock_rewind
+PASS foreign_and_future_db_preserved
+PASS load_rechecks_persisted_limits
+PASS duplicate_candidate_limits_checked
+PASS returned_id_survives_pruning
+PASS native_utf16_blank_text_ignored
+PASS utf16_roundtrip_and_big_endian_blank
+PASS json_mime_payloads_are_lossless_opaque_byte...
+[This part of the test output was removed since it exceeds the threshold of 1024 bytes.]
+</system-out>
+	</testcase>
+	<testcase name="history_crash" classname="history_crash" time="0.267336" status="run">
+		<properties/>
+		<system-out>PASS process interruption rollback/WAL and reopen
+</system-out>
+	</testcase>
+	<testcase name="fts" classname="fts" time="0.0883129" status="run">
+		<properties/>
+		<system-out>companion index isolation, invalidation, recovery and Base compatibility passed
+</system-out>
+	</testcase>
+	<testcase name="fts_transaction_race" classname="fts_transaction_race" time="1.0443" status="run">
+		<properties/>
+		<system-out>index gate spans complete main deletion transaction
+</system-out>
+	</testcase>
+</testsuite>

@@ -1,0 +1,677 @@
+{
+  "scope": "Same MSVC compiler/runtime/CXX flags; FTS5 ON for both, only SQLITE_OMIT_JSON C define differs. Seven alternating AB/BA pairs after one warmup each. In-memory synthetic workload; no native UI/clipboard/TLS performance claim.",
+  "runs": [
+    {
+      "pair": 1,
+      "name": "baseline",
+      "result": {
+        "schema_version": 1,
+        "workload": "synthetic-memory-history-v1",
+        "count": 1000,
+        "payload_bytes": 3111680,
+        "loaded_bytes": 3111680,
+        "rows_observed": 30000,
+        "phases": [
+          {
+            "name": "capture_ingest",
+            "operations": 1000,
+            "elapsed_ms": 124.589,
+            "cpu_ms": 125.0
+          },
+          {
+            "name": "list_recent_30",
+            "operations": 1000,
+            "elapsed_ms": 13.046,
+            "cpu_ms": 15.625
+          },
+          {
+            "name": "load_snapshot",
+            "operations": 1000,
+            "elapsed_ms": 14.077,
+            "cpu_ms": 15.625
+          },
+          {
+            "name": "duplicate_ingest",
+            "operations": 1000,
+            "elapsed_ms": 210.414,
+            "cpu_ms": 203.125
+          },
+          {
+            "name": "touch_history",
+            "operations": 1000,
+            "elapsed_ms": 5.459,
+            "cpu_ms": 15.625
+          }
+        ],
+        "correct": true
+      }
+    },
+    {
+      "pair": 1,
+      "name": "omit-json",
+      "result": {
+        "schema_version": 1,
+        "workload": "synthetic-memory-history-v1",
+        "count": 1000,
+        "payload_bytes": 3111680,
+        "loaded_bytes": 3111680,
+        "rows_observed": 30000,
+        "phases": [
+          {
+            "name": "capture_ingest",
+            "operations": 1000,
+            "elapsed_ms": 122.127,
+            "cpu_ms": 109.375
+          },
+          {
+            "name": "list_recent_30",
+            "operations": 1000,
+            "elapsed_ms": 12.678,
+            "cpu_ms": 15.625
+          },
+          {
+            "name": "load_snapshot",
+            "operations": 1000,
+            "elapsed_ms": 13.426,
+            "cpu_ms": 15.625
+          },
+          {
+            "name": "duplicate_ingest",
+            "operations": 1000,
+            "elapsed_ms": 206.361,
+            "cpu_ms": 203.125
+          },
+          {
+            "name": "touch_history",
+            "operations": 1000,
+            "elapsed_ms": 5.335,
+            "cpu_ms": 15.625
+          }
+        ],
+        "correct": true
+      }
+    },
+    {
+      "pair": 2,
+      "name": "omit-json",
+      "result": {
+        "schema_version": 1,
+        "workload": "synthetic-memory-history-v1",
+        "count": 1000,
+        "payload_bytes": 3111680,
+        "loaded_bytes": 3111680,
+        "rows_observed": 30000,
+        "phases": [
+          {
+            "name": "capture_ingest",
+            "operations": 1000,
+            "elapsed_ms": 120.657,
+            "cpu_ms": 125.0
+          },
+          {
+            "name": "list_recent_30",
+            "operations": 1000,
+            "elapsed_ms": 13.122,
+            "cpu_ms": 15.625
+          },
+          {
+            "name": "load_snapshot",
+            "operations": 1000,
+            "elapsed_ms": 14.04,
+            "cpu_ms": 15.625
+          },
+          {
+            "name": "duplicate_ingest",
+            "operations": 1000,
+            "elapsed_ms": 206.221,
+            "cpu_ms": 203.125
+          },
+          {
+            "name": "touch_history",
+            "operations": 1000,
+            "elapsed_ms": 5.307,
+            "cpu_ms": 15.625
+          }
+        ],
+        "correct": true
+      }
+    },
+    {
+      "pair": 2,
+      "name": "baseline",
+      "result": {
+        "schema_version": 1,
+        "workload": "synthetic-memory-history-v1",
+        "count": 1000,
+        "payload_bytes": 3111680,
+        "loaded_bytes": 3111680,
+        "rows_observed": 30000,
+        "phases": [
+          {
+            "name": "capture_ingest",
+            "operations": 1000,
+            "elapsed_ms": 124.783,
+            "cpu_ms": 125.0
+          },
+          {
+            "name": "list_recent_30",
+            "operations": 1000,
+            "elapsed_ms": 12.857,
+            "cpu_ms": 15.625
+          },
+          {
+            "name": "load_snapshot",
+            "operations": 1000,
+            "elapsed_ms": 13.585,
+            "cpu_ms": 15.625
+          },
+          {
+            "name": "duplicate_ingest",
+            "operations": 1000,
+            "elapsed_ms": 210.003,
+            "cpu_ms": 218.75
+          },
+          {
+            "name": "touch_history",
+            "operations": 1000,
+            "elapsed_ms": 5.858,
+            "cpu_ms": 0.0
+          }
+        ],
+        "correct": true
+      }
+    },
+    {
+      "pair": 3,
+      "name": "baseline",
+      "result": {
+        "schema_version": 1,
+        "workload": "synthetic-memory-history-v1",
+        "count": 1000,
+        "payload_bytes": 3111680,
+        "loaded_bytes": 3111680,
+        "rows_observed": 30000,
+        "phases": [
+          {
+            "name": "capture_ingest",
+            "operations": 1000,
+            "elapsed_ms": 124.321,
+            "cpu_ms": 125.0
+          },
+          {
+            "name": "list_recent_30",
+            "operations": 1000,
+            "elapsed_ms": 13.002,
+            "cpu_ms": 15.625
+          },
+          {
+            "name": "load_snapshot",
+            "operations": 1000,
+            "elapsed_ms": 13.644,
+            "cpu_ms": 0.0
+          },
+          {
+            "name": "duplicate_ingest",
+            "operations": 1000,
+            "elapsed_ms": 212.858,
+            "cpu_ms": 218.75
+          },
+          {
+            "name": "touch_history",
+            "operations": 1000,
+            "elapsed_ms": 5.307,
+            "cpu_ms": 0.0
+          }
+        ],
+        "correct": true
+      }
+    },
+    {
+      "pair": 3,
+      "name": "omit-json",
+      "result": {
+        "schema_version": 1,
+        "workload": "synthetic-memory-history-v1",
+        "count": 1000,
+        "payload_bytes": 3111680,
+        "loaded_bytes": 3111680,
+        "rows_observed": 30000,
+        "phases": [
+          {
+            "name": "capture_ingest",
+            "operations": 1000,
+            "elapsed_ms": 121.237,
+            "cpu_ms": 125.0
+          },
+          {
+            "name": "list_recent_30",
+            "operations": 1000,
+            "elapsed_ms": 12.927,
+            "cpu_ms": 15.625
+          },
+          {
+            "name": "load_snapshot",
+            "operations": 1000,
+            "elapsed_ms": 13.432,
+            "cpu_ms": 15.625
+          },
+          {
+            "name": "duplicate_ingest",
+            "operations": 1000,
+            "elapsed_ms": 206.371,
+            "cpu_ms": 203.125
+          },
+          {
+            "name": "touch_history",
+            "operations": 1000,
+            "elapsed_ms": 5.281,
+            "cpu_ms": 0.0
+          }
+        ],
+        "correct": true
+      }
+    },
+    {
+      "pair": 4,
+      "name": "omit-json",
+      "result": {
+        "schema_version": 1,
+        "workload": "synthetic-memory-history-v1",
+        "count": 1000,
+        "payload_bytes": 3111680,
+        "loaded_bytes": 3111680,
+        "rows_observed": 30000,
+        "phases": [
+          {
+            "name": "capture_ingest",
+            "operations": 1000,
+            "elapsed_ms": 122.953,
+            "cpu_ms": 125.0
+          },
+          {
+            "name": "list_recent_30",
+            "operations": 1000,
+            "elapsed_ms": 12.836,
+            "cpu_ms": 15.625
+          },
+          {
+            "name": "load_snapshot",
+            "operations": 1000,
+            "elapsed_ms": 13.629,
+            "cpu_ms": 15.625
+          },
+          {
+            "name": "duplicate_ingest",
+            "operations": 1000,
+            "elapsed_ms": 205.884,
+            "cpu_ms": 203.125
+          },
+          {
+            "name": "touch_history",
+            "operations": 1000,
+            "elapsed_ms": 5.353,
+            "cpu_ms": 0.0
+          }
+        ],
+        "correct": true
+      }
+    },
+    {
+      "pair": 4,
+      "name": "baseline",
+      "result": {
+        "schema_version": 1,
+        "workload": "synthetic-memory-history-v1",
+        "count": 1000,
+        "payload_bytes": 3111680,
+        "loaded_bytes": 3111680,
+        "rows_observed": 30000,
+        "phases": [
+          {
+            "name": "capture_ingest",
+            "operations": 1000,
+            "elapsed_ms": 124.8,
+            "cpu_ms": 125.0
+          },
+          {
+            "name": "list_recent_30",
+            "operations": 1000,
+            "elapsed_ms": 13.167,
+            "cpu_ms": 15.625
+          },
+          {
+            "name": "load_snapshot",
+            "operations": 1000,
+            "elapsed_ms": 13.83,
+            "cpu_ms": 15.625
+          },
+          {
+            "name": "duplicate_ingest",
+            "operations": 1000,
+            "elapsed_ms": 209.569,
+            "cpu_ms": 203.125
+          },
+          {
+            "name": "touch_history",
+            "operations": 1000,
+            "elapsed_ms": 5.559,
+            "cpu_ms": 15.625
+          }
+        ],
+        "correct": true
+      }
+    },
+    {
+      "pair": 5,
+      "name": "baseline",
+      "result": {
+        "schema_version": 1,
+        "workload": "synthetic-memory-history-v1",
+        "count": 1000,
+        "payload_bytes": 3111680,
+        "loaded_bytes": 3111680,
+        "rows_observed": 30000,
+        "phases": [
+          {
+            "name": "capture_ingest",
+            "operations": 1000,
+            "elapsed_ms": 123.787,
+            "cpu_ms": 125.0
+          },
+          {
+            "name": "list_recent_30",
+            "operations": 1000,
+            "elapsed_ms": 12.891,
+            "cpu_ms": 0.0
+          },
+          {
+            "name": "load_snapshot",
+            "operations": 1000,
+            "elapsed_ms": 13.636,
+            "cpu_ms": 15.625
+          },
+          {
+            "name": "duplicate_ingest",
+            "operations": 1000,
+            "elapsed_ms": 210.796,
+            "cpu_ms": 218.75
+          },
+          {
+            "name": "touch_history",
+            "operations": 1000,
+            "elapsed_ms": 5.384,
+            "cpu_ms": 0.0
+          }
+        ],
+        "correct": true
+      }
+    },
+    {
+      "pair": 5,
+      "name": "omit-json",
+      "result": {
+        "schema_version": 1,
+        "workload": "synthetic-memory-history-v1",
+        "count": 1000,
+        "payload_bytes": 3111680,
+        "loaded_bytes": 3111680,
+        "rows_observed": 30000,
+        "phases": [
+          {
+            "name": "capture_ingest",
+            "operations": 1000,
+            "elapsed_ms": 121.29,
+            "cpu_ms": 125.0
+          },
+          {
+            "name": "list_recent_30",
+            "operations": 1000,
+            "elapsed_ms": 13.011,
+            "cpu_ms": 15.625
+          },
+          {
+            "name": "load_snapshot",
+            "operations": 1000,
+            "elapsed_ms": 13.754,
+            "cpu_ms": 15.625
+          },
+          {
+            "name": "duplicate_ingest",
+            "operations": 1000,
+            "elapsed_ms": 207.029,
+            "cpu_ms": 203.125
+          },
+          {
+            "name": "touch_history",
+            "operations": 1000,
+            "elapsed_ms": 5.306,
+            "cpu_ms": 0.0
+          }
+        ],
+        "correct": true
+      }
+    },
+    {
+      "pair": 6,
+      "name": "omit-json",
+      "result": {
+        "schema_version": 1,
+        "workload": "synthetic-memory-history-v1",
+        "count": 1000,
+        "payload_bytes": 3111680,
+        "loaded_bytes": 3111680,
+        "rows_observed": 30000,
+        "phases": [
+          {
+            "name": "capture_ingest",
+            "operations": 1000,
+            "elapsed_ms": 122.435,
+            "cpu_ms": 125.0
+          },
+          {
+            "name": "list_recent_30",
+            "operations": 1000,
+            "elapsed_ms": 12.956,
+            "cpu_ms": 15.625
+          },
+          {
+            "name": "load_snapshot",
+            "operations": 1000,
+            "elapsed_ms": 13.828,
+            "cpu_ms": 15.625
+          },
+          {
+            "name": "duplicate_ingest",
+            "operations": 1000,
+            "elapsed_ms": 208.754,
+            "cpu_ms": 203.125
+          },
+          {
+            "name": "touch_history",
+            "operations": 1000,
+            "elapsed_ms": 5.299,
+            "cpu_ms": 0.0
+          }
+        ],
+        "correct": true
+      }
+    },
+    {
+      "pair": 6,
+      "name": "baseline",
+      "result": {
+        "schema_version": 1,
+        "workload": "synthetic-memory-history-v1",
+        "count": 1000,
+        "payload_bytes": 3111680,
+        "loaded_bytes": 3111680,
+        "rows_observed": 30000,
+        "phases": [
+          {
+            "name": "capture_ingest",
+            "operations": 1000,
+            "elapsed_ms": 123.815,
+            "cpu_ms": 125.0
+          },
+          {
+            "name": "list_recent_30",
+            "operations": 1000,
+            "elapsed_ms": 12.927,
+            "cpu_ms": 15.625
+          },
+          {
+            "name": "load_snapshot",
+            "operations": 1000,
+            "elapsed_ms": 13.591,
+            "cpu_ms": 15.625
+          },
+          {
+            "name": "duplicate_ingest",
+            "operations": 1000,
+            "elapsed_ms": 221.914,
+            "cpu_ms": 218.75
+          },
+          {
+            "name": "touch_history",
+            "operations": 1000,
+            "elapsed_ms": 5.277,
+            "cpu_ms": 0.0
+          }
+        ],
+        "correct": true
+      }
+    },
+    {
+      "pair": 7,
+      "name": "baseline",
+      "result": {
+        "schema_version": 1,
+        "workload": "synthetic-memory-history-v1",
+        "count": 1000,
+        "payload_bytes": 3111680,
+        "loaded_bytes": 3111680,
+        "rows_observed": 30000,
+        "phases": [
+          {
+            "name": "capture_ingest",
+            "operations": 1000,
+            "elapsed_ms": 124.17,
+            "cpu_ms": 125.0
+          },
+          {
+            "name": "list_recent_30",
+            "operations": 1000,
+            "elapsed_ms": 12.969,
+            "cpu_ms": 15.625
+          },
+          {
+            "name": "load_snapshot",
+            "operations": 1000,
+            "elapsed_ms": 13.651,
+            "cpu_ms": 15.625
+          },
+          {
+            "name": "duplicate_ingest",
+            "operations": 1000,
+            "elapsed_ms": 209.237,
+            "cpu_ms": 203.125
+          },
+          {
+            "name": "touch_history",
+            "operations": 1000,
+            "elapsed_ms": 5.312,
+            "cpu_ms": 15.625
+          }
+        ],
+        "correct": true
+      }
+    },
+    {
+      "pair": 7,
+      "name": "omit-json",
+      "result": {
+        "schema_version": 1,
+        "workload": "synthetic-memory-history-v1",
+        "count": 1000,
+        "payload_bytes": 3111680,
+        "loaded_bytes": 3111680,
+        "rows_observed": 30000,
+        "phases": [
+          {
+            "name": "capture_ingest",
+            "operations": 1000,
+            "elapsed_ms": 122.076,
+            "cpu_ms": 109.375
+          },
+          {
+            "name": "list_recent_30",
+            "operations": 1000,
+            "elapsed_ms": 12.753,
+            "cpu_ms": 15.625
+          },
+          {
+            "name": "load_snapshot",
+            "operations": 1000,
+            "elapsed_ms": 13.59,
+            "cpu_ms": 15.625
+          },
+          {
+            "name": "duplicate_ingest",
+            "operations": 1000,
+            "elapsed_ms": 206.068,
+            "cpu_ms": 203.125
+          },
+          {
+            "name": "touch_history",
+            "operations": 1000,
+            "elapsed_ms": 5.239,
+            "cpu_ms": 15.625
+          }
+        ],
+        "correct": true
+      }
+    }
+  ],
+  "phases": [
+    {
+      "name": "capture_ingest",
+      "elapsed_ms_medians": {
+        "baseline": 124.321,
+        "omit-json": 122.076
+      },
+      "candidate_percent_change": -1.806
+    },
+    {
+      "name": "list_recent_30",
+      "elapsed_ms_medians": {
+        "baseline": 12.969,
+        "omit-json": 12.927
+      },
+      "candidate_percent_change": -0.324
+    },
+    {
+      "name": "load_snapshot",
+      "elapsed_ms_medians": {
+        "baseline": 13.644,
+        "omit-json": 13.629
+      },
+      "candidate_percent_change": -0.11
+    },
+    {
+      "name": "duplicate_ingest",
+      "elapsed_ms_medians": {
+        "baseline": 210.414,
+        "omit-json": 206.361
+      },
+      "candidate_percent_change": -1.926
+    },
+    {
+      "name": "touch_history",
+      "elapsed_ms_medians": {
+        "baseline": 5.384,
+        "omit-json": 5.306
+      },
+      "candidate_percent_change": -1.449
+    }
+  ]
+}

@@ -1,4 +1,5 @@
 #include "cliptiq/history.hpp"
+#include "cliptiq/settings.hpp"
 #include "sqlite3.h"
 #include "sha256.hpp"
 #include <filesystem>
@@ -51,5 +52,25 @@ int main(int argc,char** argv) {
  test("returned_id_survives_pruning",[]{auto s=memory();HistoryPolicy p;p.max_count=2;p.sort_order=SortOrder::Created;add(s,"A",1,p);add(s,"B",2,p);p.max_count=1;auto id=take(ingest(s,text("A"),p,3));CHECK(!id);CHECK(take(list_history(s)).size()==1);});
  test("native_utf16_blank_text_ignored",[]{auto s=memory();auto v=text("");v.representations[0].native_type="CF_UNICODETEXT";v.representations[0].text_encoding=TextEncoding::Utf16Le;v.representations[0].data={32,0,0,0};CHECK(!take(ingest(s,v,{},1)));v.representations[0].data={0,0};CHECK(!take(ingest(s,v,{},2)));});
  test("utf16_roundtrip_and_big_endian_blank",[]{auto s=memory();auto v=text("");auto& r=v.representations[0];r.text_encoding=TextEncoding::Utf16Be;r.data={0,32,0,0};CHECK(!take(ingest(s,v,{},1)));r.data={0,65,0,0};auto id=*take(ingest(s,v,{},2));auto loaded=take(load_snapshot(s,id));CHECK(loaded.representations[0].text_encoding==TextEncoding::Utf16Be);CHECK(loaded.representations[0].data==r.data);});
+ test("json_mime_payloads_are_lossless_opaque_bytes",[]{
+  Temp temporary;std::vector<EntryId> ids;
+  const std::string valid="{\"clipboard\":\"text\",\"values\":[1,null,true],\"escaped\":\"\\u263a\"}";
+  const std::vector<Bytes> payloads{Bytes(valid.begin(),valid.end()),Bytes{'{','"','x','"',':',0,255,'[','}'}};
+  {auto store=take(open_store(temporary.p.u8string()));for(std::size_t i=0;i<payloads.size();++i){
+   ClipboardSnapshot snapshot;snapshot.sequence_token=std::to_string(i);
+   snapshot.representations.push_back({0,"test","application/json",CanonicalKind::Opaque,payloads[i]});
+   auto retained=take(ingest(store,snapshot,{},static_cast<std::int64_t>(i+1)));CHECK(retained);ids.push_back(*retained);
+  }
+   auto settings=default_settings(CapturePlatform::X11);settings.values["excluded"]=valid+"\n{not:json}\n";
+   ok(save_settings(store,settings));
+  }
+  auto reopened=take(open_store(temporary.p.u8string()));CHECK(take(list_history(reopened)).size()==payloads.size());
+  CHECK(take(load_settings(reopened,CapturePlatform::X11)).values.at("excluded")==valid+"\n{not:json}\n");
+  for(std::size_t i=0;i<ids.size();++i){auto snapshot=take(load_snapshot(reopened,ids[i]));
+   CHECK(snapshot.sequence_token==std::to_string(i));CHECK(snapshot.representations.size()==1);
+   const auto& representation=snapshot.representations[0];CHECK(representation.native_type=="application/json");
+   CHECK(representation.kind==CanonicalKind::Opaque);CHECK(representation.data==payloads[i]);
+  }
+ });
  return failed?1:0;
 }
