@@ -3,6 +3,13 @@ ROOT=pathlib.Path(__file__).resolve().parents[2]
 def module():
  spec=importlib.util.spec_from_file_location('distribution',ROOT/'tools/distribution.py');m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m);return m
 class DistributionTests(unittest.TestCase):
+ def test_windows_dns_client_is_system_but_unknown_or_path_imports_are_not(self):
+  m=module()
+  self.assertTrue(m.system_import('windows','DNSAPI.dll'))
+  self.assertTrue(m.system_import('windows','dnsapi.DLL'))
+  self.assertFalse(m.system_import('windows','vendor-dnsapi.dll'))
+  self.assertFalse(m.system_import('windows','plugins/DNSAPI.dll'))
+
  def fixture(self,root):
   (root/'Cliptiq.exe').write_bytes(b'candidate');return {'schema_version':1,'target':'windows','arch':'x86_64','variant':'base','files':[{'path':'Cliptiq.exe','bytes':9,'sha256':hashlib.sha256(b'candidate').hexdigest()}]}
  def test_actual_architectures_are_read_from_binary_headers(self):
