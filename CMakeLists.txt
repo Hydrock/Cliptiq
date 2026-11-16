@@ -897,3 +897,15 @@ endif()
 if(APPLE AND BUILD_TESTING)
  add_test(NAME macos_process_usage_units COMMAND ${Python3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/experiments/macos-idle/test-process-usage.py)
 endif()
+
+# LLD <=20 merges its generated asm.v1 UAC node incorrectly with an explicit
+# asm.v3 trustInfo (llvm/llvm-project#120394). These targets ALREADY provide
+# cliptiq.manifest with asInvoker/uiAccess=false. Suppress only the redundant
+# linker-generated UAC node, retaining the explicit security declaration.
+if(WIN32 AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+ foreach(name cliptiq_app cliptiq_menu_host lifecycle_native_probe windows_unified_snippets_test menu_idle_wait_test first_run_autostart_test workspace_preview)
+  if(TARGET ${name})
+   target_link_options(${name} PRIVATE /MANIFESTUAC:NO)
+  endif()
+ endforeach()
+endif()
