@@ -11,7 +11,7 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name == 'push' && 'push' || github.run_id }}
   cancel-in-progress: ${{ github.event_name == 'push' }}
 jobs:
-  macos-oz:
+  macos-os-hidden:
     strategy:
       fail-fast: false
       matrix:
@@ -22,12 +22,12 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - run: python tools/fetch-footprint-deps.py
       - run: python tools/fetch-lan-deps.py
-      - name: Configure isolated macOS size experiment
+      - name: Configure isolated macOS visibility-only size experiment
         run: >-
           cmake --preset release
-          '-DCMAKE_C_FLAGS_MINSIZEREL=-Oz -DNDEBUG'
-          '-DCMAKE_CXX_FLAGS_MINSIZEREL=-Oz -DNDEBUG'
-          '-DCMAKE_OBJCXX_FLAGS_MINSIZEREL=-Oz -DNDEBUG'
+          '-DCMAKE_C_FLAGS_MINSIZEREL=-Os -DNDEBUG'
+          '-DCMAKE_CXX_FLAGS_MINSIZEREL=-Os -DNDEBUG'
+          '-DCMAKE_OBJCXX_FLAGS_MINSIZEREL=-Os -DNDEBUG'
           -DCMAKE_C_VISIBILITY_PRESET=hidden
           -DCMAKE_CXX_VISIBILITY_PRESET=hidden
           -DCMAKE_OBJCXX_VISIBILITY_PRESET=hidden
@@ -65,7 +65,7 @@ jobs:
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
-          name: macos-oz-size-experiment-${{ matrix.os }}
+          name: macos-os-hidden-size-experiment-${{ matrix.os }}
           path: |
             out/core-Darwin-release/ci-tests.xml
             out/core-Darwin-release/CMakeCache.txt

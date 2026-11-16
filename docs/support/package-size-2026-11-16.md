@@ -70,3 +70,9 @@ Full Windows Clang IPO (ebeba74) still exceeded unchanged gates:2324050 app and1
 After typed-API/schema review and the isolated tests/benchmark above, the production SQLite target now privately defines SQLITE_OMIT_JSON. No other OMIT candidate is adopted. The dependency manifest records json_sql=false without changing the pinned download or source hashes. The core README scopes compatibility to application-owned schemas; arbitrary custom SQL JSON-based triggers/indexes are not promised. A fresh reconfigure/build of the production-profile benchmark and history test passed, and runtime sqlite3_compileoption_used reports JSON SQL omitted while the benchmark remains correct. Source benchmarks now emit that actual profile field for audit. Compiler optimization/visibility defaults are still unchanged.
 
 Core/footprint/size-experiment workflows coalesce repeated push runs by workflow/ref. Explicit manual validation uses independent groups. The latest run retains every functional, size and security check, and token permissions are unchanged. Older runs that started before this configuration do not acquire the group retroactively.
+
+## Rejected global compiler-size optimization
+
+CI43805711500 measured full IPO+JSON Windows2288722/1025917 and GCC-Oz+JSON Linux1856861/864923; both still fail the original budgets. Linux core median candidate/reference ratios were1.004 capture,1.020 list,1.044 load,1.001 duplicate and1.032 touch, descriptive only.
+
+The macOS ARM Oz+hidden+JSON candidate reduced the stripped executable to1686408B and its ZIP to844657B, but matched core measurements regressed substantially: capture1.188wall/1.197CPU, list1.284/1.285, load1.370/1.372, duplicate1.183/1.186, touch1.381/1.381. These flags are rejected for production despite the size savings. The next macOS experiment retains ordinary-Os and tests hidden visibility alone; RTTI/exceptions remain enabled. No macOS compiler flag has been adopted into the production path.
