@@ -30,7 +30,7 @@ struct RawPeer {
   mbedtls_ssl_config conf;
   mbedtls_entropy_context entropy;
   mbedtls_ctr_drbg_context rng;
-  RawPeer(unsigned short port) {
+  RawPeer(unsigned short port, std::string identity="shared-auth-id", unsigned char keyValue=42) {
     mbedtls_net_init(&net);
     mbedtls_ssl_init(&ssl);
     mbedtls_ssl_config_init(&conf);
@@ -48,8 +48,7 @@ struct RawPeer {
     mbedtls_ssl_conf_tls13_key_exchange_modes(
         &conf, MBEDTLS_SSL_TLS1_3_KEY_EXCHANGE_MODE_PSK_EPHEMERAL);
     mbedtls_ssl_conf_rng(&conf, mbedtls_ctr_drbg_random, &rng);
-    Bytes key(32, 42);
-    const std::string identity = "shared-auth-id";
+    Bytes key(32, keyValue);
     require(!mbedtls_ssl_conf_psk(
                 &conf, key.data(), key.size(),
                 reinterpret_cast<const unsigned char *>(identity.data()),
@@ -93,8 +92,7 @@ struct RawPeer {
     }
     return bytes;
   }
-  void hello() {
-    std::string id = "cccccccc-cccc-cccc-cccc-cccccccccccc";
+  void hello(std::string id="cccccccc-cccc-cccc-cccc-cccccccccccc") {
     Bytes frame{0, 0, 0, static_cast<unsigned char>(id.size()), 1};
     frame.insert(frame.end(), id.begin(), id.end());
     send(frame, true);
@@ -103,6 +101,76 @@ struct RawPeer {
     read(header[3]);
   }
 };
+// Admission happens inside an I/O callback, before this iteration removes the
+// closing connection. The replacement must receive the already-admitted reply.
+static void publication_during_handover(unsigned short port) {
+  std::atomic<bool> enqueued{false}, closed{false};
+  std::atomic<unsigned> connected{0}, disconnected{0};
+  auto reply=std::make_shared<Bytes>(Bytes{4,5,6});
+  TransportCallbacks callbacks;
+  Transport server;
+  struct Release { std::atomic<bool>& flag; ~Release(){flag=true;} } release{closed};
+  callbacks.identity=[](std::string,std::string)->Result<void>{return {};};
+  callbacks.receiving=[](std::string)->Result<std::string>{return std::string("token");};
+  callbacks.status=[&](std::string,std::string status){if(status=="Connected (TLS 1.3)")++connected;if(status=="Disconnected")++disconnected;};
+  callbacks.received=[&](std::string,Bytes,std::string)->Result<void>{
+    server.publish(reply);enqueued=true;
+    while(!closed)std::this_thread::sleep_for(1ms);
+    return {};
+  };
+  TransportPeer peer;peer.id="handover";peer.auth_id="shared-auth-id";peer.key=Bytes(32,42);peer.send=peer.receive=true;peer.host="127.0.0.1";peer.port=port;
+  TransportConfig config{"aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa","127.0.0.1",port,{peer}};
+  auto started=server.start(config,callbacks);require(bool(started),"handover server start");
+  {
+    RawPeer old(port);old.hello();require(wait([&]{return connected>0;}),"handover initial HELLO");
+    old.send({0,0,0,3,2,1,2,3});
+    require(wait([&]{return enqueued.load();}),"handover reply not admitted");
+  }
+  closed=true;
+  require(wait([&]{return disconnected>0;}),"handover old socket not removed");
+  RawPeer replacement(port);replacement.hello();
+  try {
+    require(replacement.read(5)==Bytes({0,0,0,3,2})&&replacement.read(3)==*reply,"reply frame differs");
+  } catch(const std::exception& error) {
+    throw std::runtime_error(std::string("admitted reply lost before dispatch: ")+error.what());
+  }
+  replacement.send({0,0,0,0,3});
+  require(wait([&]{return server.ready_to_publish();}),"handover reply ACK missing");
+  server.stop();
+}
+// A parser failure on the first peer precedes the second peer's callback in
+// one I/O pass. The callback must not enroll the already-retired first peer.
+static void publication_excludes_retired_peer(unsigned short port) {
+  std::atomic<bool> freeze{false}, frozen{false}, release{false}, admitted{false};
+  std::atomic<unsigned> connected{0}, disconnected{0};
+  auto reply=std::make_shared<Bytes>(Bytes{4,5,6});
+  TransportCallbacks callbacks;
+  Transport server;
+  struct Release {std::atomic<bool>& flag;~Release(){flag=true;}} unfreeze{release};
+  callbacks.identity=[](std::string,std::string)->Result<void>{return {};};
+  callbacks.receiving=[](std::string)->Result<std::string>{return std::string("token");};
+  callbacks.status=[&](std::string,std::string status){if(status=="Connected (TLS 1.3)")++connected;if(status=="Disconnected")++disconnected;};
+  callbacks.tick=[&]{if(freeze){frozen=true;while(!release)std::this_thread::sleep_for(1ms);}};
+  callbacks.received=[&](std::string,Bytes,std::string)->Result<void>{server.publish(reply);admitted=true;return {};};
+  TransportPeer first;first.id="first";first.auth_id="first-auth";first.key=Bytes(32,42);first.send=first.receive=true;first.host="127.0.0.1";first.port=port;
+  auto second=first;second.id="second";second.auth_id="second-auth";second.key=Bytes(32,43);
+  TransportConfig config{"aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa","127.0.0.1",port,{first,second}};
+  auto started=server.start(config,callbacks);require(bool(started),"retired-peer server start");
+  RawPeer old(port,"first-auth");old.hello();require(wait([&]{return connected>=1;}),"first peer HELLO");
+  RawPeer live(port,"second-auth",43);live.hello("dddddddd-dddd-dddd-dddd-dddddddddddd");
+  require(wait([&]{return connected>=2;}),"second peer HELLO");
+  freeze=true;require(wait([&]{return frozen.load();}),"I/O pass not paused");
+  old.send({0,0,0,1,9});live.send({0,0,0,3,2,1,2,3});release=true;
+  require(wait([&]{return admitted.load()&&disconnected>0;}),"retired-peer callback missing");
+  require(live.read(5)==Bytes({0,0,0,0,3}),"live input ACK missing");
+  require(live.read(5)==Bytes({0,0,0,3,2})&&live.read(3)==*reply,"live reply missing");
+  live.send({0,0,0,0,3});
+  RawPeer replacement(port,"first-auth");replacement.hello();
+  unsigned char header[5]{};
+  require(mbedtls_ssl_read(&replacement.ssl,header,sizeof(header))<=0,"offline peer enrolled after retirement");
+  require(wait([&]{return server.ready_to_publish();}),"offline peer retained publication budget");
+  server.stop();
+}
 int main() {
   try {
     // Let the OS choose usable loopback ports; fixed ports may be occupied or
@@ -111,6 +179,8 @@ int main() {
     auto portB = free_port();
     while (portB == portA)
       portB = free_port();
+    publication_excludes_retired_peer(portA);
+    publication_during_handover(portA);
     Transport a, b;
     auto start = [](Transport& transport, const TransportConfig& config,
                     const TransportCallbacks& callbacks, const char* stage) {

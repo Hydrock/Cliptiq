@@ -109,10 +109,22 @@ struct Transport::Impl {
       mbedtls_net_free(&net);
       owner->incoming -= body.capacity();
     }
+    void retire() {
+      std::lock_guard<std::mutex> lock(owner->mutex);
+      if (dead)
+        return;
+      dead = true;
+      owner->refresh_availability_locked(peer);
+    }
+    void authenticated() {
+      std::lock_guard<std::mutex> lock(owner->mutex);
+      hello = true;
+      owner->refresh_availability_locked(peer);
+    }
     void queue(unsigned t, std::shared_ptr<const Bytes> b,
                std::shared_ptr<int> budget = {}) {
       if (out.size() >= 32) {
-        dead = true;
+        retire();
         return;
       }
       if (out.empty())
@@ -143,6 +155,11 @@ struct Transport::Impl {
   // buffers.
   std::weak_ptr<int> outbound;
   std::shared_ptr<int> pendingBudget;
+  // Protected by mutex: admission snapshots authenticated recipients, so an
+  // admitted event survives a socket disappearing before the next I/O pass.
+  std::vector<bool> availablePeers;
+  std::vector<size_t> pendingPeers;
+  Clock::time_point pendingExpires{};
   size_t incoming = 0;
   bool cryptoInitialized = false;
   mbedtls_entropy_context entropy{};
@@ -179,6 +196,17 @@ struct Transport::Impl {
                                 !connection->dead;
                        });
   }
+  // Called only by the worker, with mutex held across the liveness transition.
+  void refresh_availability_locked(TransportPeer *peer) {
+    if (!peer)
+      return;
+    const auto index = static_cast<size_t>(peer - config.peers.data());
+    availablePeers[index] = peer->send && liveHello(peer);
+  }
+  void refresh_availability(TransportPeer *peer) {
+    std::lock_guard<std::mutex> lock(mutex);
+    refresh_availability_locked(peer);
+  }
   PeerState &peer_state(TransportPeer *peer) {
     return peerStates[static_cast<size_t>(peer - config.peers.data())];
   }
@@ -195,7 +223,7 @@ struct Transport::Impl {
           if (std::any_of(connection->out.begin(), connection->out.end(), matches) ||
               std::any_of(connection->unacknowledged.begin(), connection->unacknowledged.end(), matches)) {
             connection->failureStatus = "Transfer timed out";
-            connection->dead = true;
+            connection->retire();
           }
         }
         it = peer.outstanding.erase(it);
@@ -204,6 +232,7 @@ struct Transport::Impl {
   void status(std::string p, const char *s) {
     for (size_t index = 0; index < config.peers.size(); ++index)
       if (config.peers[index].id == p) {
+        refresh_availability(&config.peers[index]);
         if (peerStates[index].lastStatus == s)
           return;
         peerStates[index].lastStatus = s;
@@ -264,7 +293,7 @@ struct Transport::Impl {
     if (c.connecting) {
 #ifndef _WIN32
       if (c.net.fd < 0 || c.net.fd >= FD_SETSIZE) {
-        c.dead = true;
+        c.retire();
         return;
       }
 #endif
@@ -285,7 +314,7 @@ struct Transport::Impl {
       getsockopt(c.net.fd, SOL_SOCKET, SO_ERROR, &error, &len);
 #endif
       if (error) {
-        c.dead = true;
+        c.retire();
         return;
       }
       c.connecting = false;
@@ -295,7 +324,7 @@ struct Transport::Impl {
       int r = mbedtls_ssl_handshake(&c.ssl);
       if (r) {
         if (!retry(r))
-          c.dead = true;
+          c.retire();
         return;
       }
       c.handshake = true;
@@ -330,7 +359,7 @@ struct Transport::Impl {
           if (x.offset == 5 + (x.body ? x.body->size() : 0))
             complete();
         } else if (!retry(r))
-          c.dead = true;
+          c.retire();
       }
     }
     for (int iterations = 0; iterations < 8 && !c.dead; ++iterations) {
@@ -338,7 +367,7 @@ struct Transport::Impl {
         int r = mbedtls_ssl_read(&c.ssl, c.header.data() + c.head, 5 - c.head);
         if (r <= 0) {
           if (!retry(r))
-            c.dead = true;
+            c.retire();
           return;
         }
         c.head += r;
@@ -352,21 +381,21 @@ struct Transport::Impl {
             (c.type == 2 &&
              (!c.hello || !c.peer->receive || !c.need || c.need > cap)) ||
             (c.type == 3 && c.need != 0) || c.type < 1 || c.type > 3) {
-          c.dead = true;
+          c.retire();
           return;
         }
         if (c.need > cap - incoming) {
-          c.dead = true;
+          c.retire();
           return;
         }
         if (c.type == 2) {
           if (!callbacks.receiving) {
-            c.dead = true;
+            c.retire();
             return;
           }
           auto cp = callbacks.receiving(c.peer->id);
           if (!cp) {
-            c.dead = true;
+            c.retire();
             return;
           }
           c.checkpoint = std::move(cp.value());
@@ -380,7 +409,7 @@ struct Transport::Impl {
             &c.ssl, temp, std::min(sizeof(temp), c.need - c.body.size()));
         if (r <= 0) {
           if (!retry(r))
-            c.dead = true;
+            c.retire();
           return;
         }
         c.body.insert(c.body.end(), temp, temp + r);
@@ -394,23 +423,25 @@ struct Transport::Impl {
             (!c.peer->remote_device_id.empty() &&
              id != c.peer->remote_device_id) ||
             !callbacks.identity || !callbacks.identity(c.peer->id, id)) {
-          c.dead = true;
+          c.retire();
           return;
         }
+        // Authentication has completed. Make the replacement live before
+        // retiring its duplicate, so publication admission sees no false gap.
+        c.authenticated();
         for (auto &other : connections)
           if (other.get() != &c && other->peer == c.peer && other->hello &&
               !other->dead) {
             bool preferred = c.client == (config.device_id < id);
             if (preferred) {
               other->suppressFailure = true;
-              other->dead = true;
+              other->retire();
             } else {
               c.suppressFailure = true;
-              c.dead = true;
+              c.retire();
               return;
             }
           }
-        c.hello = true;
         if(config.probe_only){running=false;return;}
         // The old socket may already have been erased before this HELLO.
         // Replay only retained live-peer publications within their original bound.
@@ -431,7 +462,7 @@ struct Transport::Impl {
         if (!callbacks.received ||
             !callbacks.received(c.peer->id, std::move(received),
                                 std::move(c.checkpoint))) {
-          c.dead = true;
+          c.retire();
           return;
         }
         c.queue(3, nullptr);
@@ -456,11 +487,15 @@ struct Transport::Impl {
         std::deque<std::function<void()>> work;
         std::shared_ptr<const Bytes> event;
         std::shared_ptr<int> eventBudget;
+        std::vector<size_t> eventPeers;
+        Clock::time_point eventExpires{};
         {
           std::lock_guard<std::mutex> l(mutex);
           work.swap(jobs);
           event.swap(pending);
           eventBudget.swap(pendingBudget);
+          eventPeers.swap(pendingPeers);
+          eventExpires = pendingExpires;
         }
         for (auto &f : work) {
           if (!running)
@@ -472,17 +507,17 @@ struct Transport::Impl {
         expire_publications();
         if (callbacks.tick)
           callbacks.tick();
-        if (event) {
-          const auto expires = Clock::now() + std::chrono::seconds(10);
-          for (auto &c : connections)
-            if (c->hello && !c->dead && c->peer->send) {
-              auto &outstanding = peer_state(c->peer).outstanding;
-              if (std::none_of(outstanding.begin(), outstanding.end(),
-                  [&](const PeerState::Pending &frame) { return frame.budget == eventBudget; })) {
-                outstanding.push_back({event, eventBudget, expires});
-                c->queue(2, event, eventBudget);
-              }
-            }
+        if (event && eventExpires > Clock::now()) {
+          for (const auto index : eventPeers) {
+            auto &peer = config.peers[index];
+            // Eligibility and lifetime were fixed at admission. A replacement
+            // HELLO can replay this outstanding event, but an offline peer that
+            // was not eligible must never acquire it on reconnect.
+            peerStates[index].outstanding.push_back({event, eventBudget, eventExpires});
+            for (auto &connection : connections)
+              if (connection->peer == &peer && connection->hello && !connection->dead)
+                connection->queue(2, event, eventBudget);
+          }
         }
         unsigned pendingCount = 0;
         for (auto &c : connections)
@@ -578,13 +613,13 @@ struct Transport::Impl {
           if (!c->dead)
             process(*c);
           if (!c->hello && Clock::now() - c->born > std::chrono::seconds(5))
-            c->dead = true;
+            c->retire();
           if (c->hello && ((c->head && Clock::now() - c->lastRead >
                                            std::chrono::seconds(10)) ||
                            ((!c->out.empty() || !c->unacknowledged.empty()) && Clock::now() - c->lastWrite >
                                                    std::chrono::seconds(10)))) {
             c->failureStatus = "Transfer timed out";
-            c->dead = true;
+            c->retire();
           }
         }
         for (auto &connection : connections)
@@ -642,6 +677,8 @@ struct Transport::Impl {
       std::lock_guard<std::mutex> l(mutex);
       pending.reset();
       pendingBudget.reset();
+      pendingPeers.clear();
+      availablePeers.clear();
       outbound.reset();
       jobs.clear();
     }
@@ -715,6 +752,10 @@ Result<void> Transport::start(TransportConfig c, TransportCallbacks cb) {
   impl_->config = std::move(c);
   impl_->callbacks = std::move(cb);
   impl_->peerStates.resize(impl_->config.peers.size());
+  {
+    std::lock_guard<std::mutex> lock(impl_->mutex);
+    impl_->availablePeers.assign(impl_->config.peers.size(), false);
+  }
   impl_->stopping = false;
   impl_->running = true;
   impl_->worker = std::thread([this] { impl_->run(); });
@@ -731,10 +772,18 @@ void Transport::stop() {
     impl_->worker.join();
 }
 void Transport::publish(std::shared_ptr<const Bytes> b) {
-  if (impl_->config.probe_only || !b || b->empty() || b->size() > cap)
+  if (!b || b->empty() || b->size() > cap)
     return;
   std::lock_guard<std::mutex> l(impl_->mutex);
-  if (impl_->running && impl_->outbound.expired()) {
+  if (impl_->running && !impl_->config.probe_only && impl_->outbound.expired()) {
+    std::vector<size_t> recipients;
+    for (size_t index = 0; index < impl_->availablePeers.size(); ++index)
+      if (impl_->availablePeers[index])
+        recipients.push_back(index);
+    if (recipients.empty())
+      return;
+    impl_->pendingPeers = std::move(recipients);
+    impl_->pendingExpires = Clock::now() + std::chrono::seconds(10);
     impl_->pendingBudget = std::make_shared<int>(0);
     impl_->outbound = impl_->pendingBudget;
     impl_->pending = std::move(b);
