@@ -104,13 +104,19 @@ jobs:
       - name: Build tests
         run: cmake --build --preset test
       - name: Policy, history contracts and crash recovery
-        run: ctest --preset test --output-on-failure
+        run: ctest --preset test --output-on-failure --output-junit ci-tests.xml
+      - name: Report CTest failures
+        if: always()
+        run: python tools/ci-test-report.py 'out/core-*/ci-tests.xml'
       - name: Configure size build
         run: cmake --preset release -DCLIPTIQ_BUILD_SIZE_PROBE=ON
       - name: Build size probe
         run: cmake --build --preset release
       - name: Release tests
-        run: ctest --preset release --output-on-failure
+        run: ctest --preset release --output-on-failure --output-junit ci-tests.xml
+      - name: Report CTest failures
+        if: always()
+        run: python tools/ci-test-report.py 'out/core-*/ci-tests.xml'
       - name: Package and validate Base distribution
         run: python packaging/package.py
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -139,9 +145,13 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - run: bash tools/install-linux-backend-deps.sh
       - run: python tools/fetch-footprint-deps.py
+      - run: python tools/fetch-lan-deps.py
       - run: cmake --preset sanitize -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
       - run: cmake --build --preset sanitize
-      - run: ctest --preset sanitize --output-on-failure
+      - run: ctest --preset sanitize --output-on-failure --output-junit ci-tests.xml
+      - name: Report CTest failures
+        if: always()
+        run: python tools/ci-test-report.py 'out/core-*/ci-tests.xml'
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
@@ -155,9 +165,13 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - run: python tools/fetch-footprint-deps.py
+      - run: python tools/fetch-lan-deps.py
       - run: cmake --preset sanitize
       - run: cmake --build --preset sanitize
-      - run: ctest --preset sanitize --output-on-failure
+      - run: ctest --preset sanitize --output-on-failure --output-junit ci-tests.xml
+      - name: Report CTest failures
+        if: always()
+        run: python tools/ci-test-report.py 'out/core-*/ci-tests.xml'
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
@@ -176,10 +190,14 @@ jobs:
             if ($_ -match '^([^=]+)=(.*)$') { "$( $matches[1] )=$( $matches[2] )" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8 }
           }
       - run: python tools/fetch-footprint-deps.py
+      - run: python tools/fetch-lan-deps.py
       - name: Configure MSVC AddressSanitizer
         run: cmake -S . -B out/core-Windows-asan -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILD_TESTING=ON -DCMAKE_C_FLAGS=/fsanitize=address "-DCMAKE_CXX_FLAGS=/fsanitize=address /EHsc" -DCMAKE_EXE_LINKER_FLAGS=/INCREMENTAL:NO
       - run: cmake --build out/core-Windows-asan
-      - run: ctest --test-dir out/core-Windows-asan --output-on-failure
+      - run: ctest --test-dir out/core-Windows-asan --output-on-failure --output-junit ci-tests.xml
+      - name: Report CTest failures
+        if: always()
+        run: python tools/ci-test-report.py 'out/core-*/ci-tests.xml'
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:

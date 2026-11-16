@@ -1,6 +1,6 @@
 """Measure the actual application + complete optional pinned Sparkle closure."""
 from pathlib import Path
-import subprocess,urllib.request,hashlib,tarfile,shutil,json,platform,base64
+import sys,subprocess,urllib.request,hashlib,tarfile,shutil,json,platform,base64
 root=Path(__file__).resolve().parents[2];out=root/'out';out.mkdir(exist_ok=True)
 log=(out/'t15-sparkle-test.log').open('w')
 def run(args):
@@ -10,6 +10,7 @@ def run(args):
  log.write('$ '+' '.join(args)+'\n'+text);log.flush()
  if r.returncode:raise RuntimeError(r.stdout[-5000:])
  return r.stdout
+run([sys.executable,'tools/fetch-lan-deps.py'])
 archive=out/'t15-Sparkle.tar.xz'
 urllib.request.urlretrieve('https://github.com/sparkle-project/Sparkle/releases/download/2.10.0/Sparkle-2.10.0.tar.xz',archive)
 digest='c2bf58aa8387266ac179357b1415d6f2635f044da8be41042af32425dae6da0c'

@@ -7,6 +7,7 @@ if platform.system()=='Windows':
  helper=importlib.machinery.SourceFileLoader('footprint',str(root/'tools/build-footprint.py')).load_module();env,cmake=helper.visual_studio_env()
 ctest=str(pathlib.Path(cmake).with_name('ctest.exe')) if platform.system()=='Windows' else 'ctest'
 def run(*command):subprocess.run([str(c) for c in command],env=env,check=True)
+run(sys.executable,'tools/fetch-lan-deps.py')
 if args.engine=='tesseract' and not args.reuse_deps:run(sys.executable,'packaging/ocr/build.py')
 base=root/('out/ocr-'+platform.system()+'-Base');optional=root/('out/ocr-'+platform.system()+'-'+args.engine);host='cliptiq_menu_host' if platform.system()=='Linux' else 'cliptiq_app';suffix='.exe' if platform.system()=='Windows' else ''
 for folder,engine,index in [(base,'none','OFF'),(optional,args.engine,'ON')]:
