@@ -81,7 +81,8 @@ jobs:
       matrix:
         os: [windows-2025, ubuntu-24.04, macos-15, macos-15-intel]
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 15
+    # Two full native/TLS suites plus the IPO release build can exceed 15m.
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - name: MSVC environment
