@@ -121,6 +121,12 @@ jobs:
       - name: Profile macOS binary size without modifying build
         if: runner.os == 'macOS'
         run: python tools/native-size-profile.py out/core-Darwin-release/Cliptiq.app/Contents/MacOS/Cliptiq --output out/native-size-base.json
+      - name: Preserve macOS size diagnostics
+        if: always() && runner.os == 'macOS'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-size-base-${{ matrix.os }}
+          path: out/native-size-base.json
       - name: Package and validate Base distribution
         run: python tools/ci-run.py python packaging/package.py
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
@@ -249,6 +255,12 @@ jobs:
       - name: Profile macOS OCR binary size without modifying build
         if: runner.os == 'macOS'
         run: python tools/native-size-profile.py out/ocr-Darwin-native/Cliptiq.app/Contents/MacOS/Cliptiq --output out/native-size-ocr.json
+      - name: Preserve macOS OCR size diagnostics
+        if: always() && runner.os == 'macOS'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-size-ocr-${{ matrix.os }}
+          path: out/native-size-ocr.json
       - name: Package and validate OCR distribution
         if: runner.os != 'Windows' || matrix.engine == 'tesseract'
         run: python tools/ci-run.py python packaging/package.py --variant ocr

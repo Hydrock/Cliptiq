@@ -1,0 +1,45 @@
+name: Native size compiler experiments
+on:
+  workflow_dispatch:
+  push:
+    branches: [feature/windows-workspace]
+    paths: ['.github/workflows/native-size-experiments.yml']
+permissions:
+  contents: read
+jobs:
+  windows-clang:
+    runs-on: windows-2025
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - name: MSVC SDK environment with runner LLVM
+        shell: pwsh
+        run: |
+          $vsPath = & "${env:ProgramFiles(x86)}/Microsoft Visual Studio/Installer/vswhere.exe" -latest -products '*' -property installationPath
+          cmd /c "`"$vsPath\Common7\Tools\VsDevCmd.bat`" -arch=x64 >nul && set" | ForEach-Object {
+            if ($_ -match '^([^=]+)=(.*)$') { "$( $matches[1] )=$( $matches[2] )" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8 }
+          }
+      - run: python tools/fetch-footprint-deps.py
+      - run: python tools/fetch-lan-deps.py
+      - name: Configure isolated Clang size experiment
+        shell: pwsh
+        run: |
+          $llvm = 'C:/Program Files/LLVM/bin'
+          & "$llvm/clang-cl.exe" --version
+          cmake --preset release "-DCMAKE_C_COMPILER=$llvm/clang-cl.exe" "-DCMAKE_CXX_COMPILER=$llvm/clang-cl.exe" "-DCMAKE_LINKER=$llvm/lld-link.exe" "-DCMAKE_C_FLAGS_MINSIZEREL=/O1 /DNDEBUG /clang:-Oz" "-DCMAKE_CXX_FLAGS_MINSIZEREL=/O1 /DNDEBUG /clang:-Oz"
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+      - run: cmake --build --preset release
+      - run: ctest --preset release --output-on-failure --output-junit ci-tests.xml
+      - name: Report all CTest failures
+        if: always()
+        run: python tools/ci-test-report.py 'out/core-*/ci-tests.xml'
+      - name: Validate unchanged distribution and size gates
+        run: python tools/ci-run.py python packaging/package.py
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: windows-clang-size-experiment
+          path: |
+            out/core-Windows-release/ci-tests.xml
+            out/core-Windows-release/CMakeCache.txt
+            out/t17-*/size.json
