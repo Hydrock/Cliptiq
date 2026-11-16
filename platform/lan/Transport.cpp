@@ -71,6 +71,7 @@ struct Transport::Impl {
   struct Connection {
     Impl *owner;
     bool suppressFailure = false;
+    bool closingDuplicate = false;
     const char *failureStatus = nullptr;
     mbedtls_net_context net;
     mbedtls_ssl_context ssl;
@@ -362,6 +363,14 @@ struct Transport::Impl {
           c.retire();
       }
     }
+    // A valid nonpreferred duplicate must finish our already-queued HELLO so
+    // an endpoint probe can authenticate us. It never becomes data-ready and
+    // processes no further incoming frames while this bounded write drains.
+    if (c.closingDuplicate) {
+      if (c.out.empty())
+        c.retire();
+      return;
+    }
     for (int iterations = 0; iterations < 8 && !c.dead; ++iterations) {
       if (c.head < 5) {
         int r = mbedtls_ssl_read(&c.ssl, c.header.data() + c.head, 5 - c.head);
@@ -426,21 +435,24 @@ struct Transport::Impl {
           c.retire();
           return;
         }
-        // Authentication has completed. Make the replacement live before
-        // retiring its duplicate, so publication admission sees no false gap.
+        const bool duplicate = std::any_of(connections.begin(), connections.end(),
+            [&](const auto& other) { return other.get()!=&c && other->peer==c.peer && other->hello && !other->dead; });
+        const bool preferred = c.client == (config.device_id < id);
+        if (duplicate && !preferred) {
+          c.suppressFailure = true;
+          c.closingDuplicate = true;
+          if (c.out.empty())
+            c.retire();
+          return;
+        }
+        // Make an accepted replacement live before retiring its duplicate, so
+        // publication admission sees no false gap. A rejected duplicate never
+        // acquires eligibility, receives queued data, or reports Connected.
         c.authenticated();
         for (auto &other : connections)
-          if (other.get() != &c && other->peer == c.peer && other->hello &&
-              !other->dead) {
-            bool preferred = c.client == (config.device_id < id);
-            if (preferred) {
-              other->suppressFailure = true;
-              other->retire();
-            } else {
-              c.suppressFailure = true;
-              c.retire();
-              return;
-            }
+          if (other.get() != &c && other->peer == c.peer && other->hello && !other->dead) {
+            other->suppressFailure = true;
+            other->retire();
           }
         if(config.probe_only){running=false;return;}
         // The old socket may already have been erased before this HELLO.

@@ -1,5 +1,7 @@
 # Package size and Pango investigation, 2026-11-16
 
+Status: a later Intel endpoint-migration failure was reproduced and fixed locally; native CI confirmation is pending. Size gates remain unchanged and still fail.
+
 Branch: feature/windows-workspace. The user explicitly requires the original size baseline to remain unchanged. No LAN/security/functionality removal is accepted as a size fix.
 
 ## Linux Pango
@@ -97,3 +99,15 @@ The ordinary-Os plus hidden-symbol candidate also did not meet budgets. ARM ZIP9
 Further bounded Windows experiments were discarded: stronger inlining/O2 grew executable size from2317312 to2429440–3361280B. Sharing guarded exception conversion preserved tested semantics and had no material benchmark change, but saved only14336raw/3044ZIP bytes. Production error handling remains unchanged. A map review found no credible low-risk refactor approaching the remaining491161B Windows production deficit; most added LAN code implements real functionality, lifecycle, authentication and TLS. Broad rewrites are not treated as a safe overnight size fix.
 
 The final diagnostic follow-up corrects the Linux build-tree executable name (cliptiq_menu_host, installed as cliptiq) and emits measured numeric package sizes even for passing gates. Functional code is unchanged by that follow-up; its fresh CI run must still complete. Raw captures are adjacent. Installed user application was not replaced during this investigation.
+
+## Later endpoint-proof recurrence
+
+Run43813011743/source6f5742b exposed an Intel lan_pairing_end_to_end failure at authenticated endpoint migration even after Bonjour publication was repaired. The new timeout diagnostics retain discovery counts, publication state and configured/announced ports without secrets.
+
+A separate real-TLS live-peer regression reproduced the actual failure deterministically on Windows before the fix: keep both services connected and choose UUID ordering so the additional probe is nonpreferred at the peer. The server retired it before finishing its queued HELLO, so the valid pinned endpoint could not be verified. Earlier endpoint-probe tests stopped the existing service, masking this case.
+
+The duplicate loser now drains only its already queued HELLO and then closes. It never becomes application-ready, contributes to publication admission, receives replayed DATA, reads more DATA/ACK frames, or reports Connected. Key/identity validation and UUID tie-breaking remain; the accepted stream and no-false-gap handover behavior remain. The existing five-second unauthenticated lifetime and resource limits are unchanged. No retry or timeout extension was introduced.
+
+Permanent regression keeps the live stream, verifies the endpoint, delivers an exact portable marker on the existing stream, then retains the wrong-device and wrong-key negatives. Debug and MinSizeRel endpoint-probe, complete transport suite and real Service E2E passed. Independent review found no actionable issues. Native macOS CI is required for final recurrence confirmation.
+
+Default-Os OCR symbol profiling also found additional strip-u-r savings, but the strict dyld export equivalence comparison returned false on ARM and Intel. Code/data, imports and dynamically referenced globals matched; exported-interface equivalence was not established. Consequently production retains strip-x and its full global-symbol invariant. No verification was weakened to accept the smaller candidate.

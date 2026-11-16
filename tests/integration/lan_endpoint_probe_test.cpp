@@ -71,12 +71,29 @@ struct Device {
  size_t count(){return take(list_history(*store,SortOrder::LastUsed,1000)).size();}
 };
 int main(){try{
- Device a,b;a.configure("A",b.port);b.configure("B",a.port);a.service->stop();auto local=take(a.service->config()),remote=take(b.service->config());ok(lan::bind_peer_identity(*a.store,local.peers[0].id,remote.device_id));local=take(a.service->config());auto peer=local.peers[0];
+ // Keep an authenticated peer connection alive and force A's probe into the
+ // nonpreferred direction at B. Endpoint verification must still finish HELLO.
+ Device first,second;while(first.port==second.port)second.port=free_port();
+ bool firstLarger=take(first.service->config()).device_id>take(second.service->config()).device_id;
+ Device& a=firstLarger?first:second;Device& b=firstLarger?second:first;
+ a.configure("A",b.port);b.configure("B",a.port);
+ auto connected=std::chrono::steady_clock::now()+std::chrono::seconds(10);
+ while(a.service->status().find("Connected")==std::string::npos||b.service->status().find("Connected")==std::string::npos){
+  a.service->poll();b.service->poll();CHECK(std::chrono::steady_clock::now()<connected);std::this_thread::sleep_for(std::chrono::milliseconds(2));
+ }
+ auto local=take(a.service->config()),remote=take(b.service->config());ok(lan::bind_peer_identity(*a.store,local.peers[0].id,remote.device_id));local=take(a.service->config());auto peer=local.peers[0];CHECK(local.device_id>remote.device_id);
  lan::DiscoveryDevice candidate;candidate.device_id=remote.device_id;candidate.address="127.0.0.1";candidate.interface_address="127.0.0.1";candidate.data_port=b.port;
  auto key=take(lan::read_secret(peer.secret_ref));lan::EndpointProbe good;ok(good.start(local,peer,candidate,key));
- auto wait=[&](lan::EndpointProbe& probe){auto until=std::chrono::steady_clock::now()+std::chrono::seconds(7);while(std::chrono::steady_clock::now()<until){b.service->poll();if(auto result=probe.poll())return *result;std::this_thread::sleep_for(std::chrono::milliseconds(5));}return Result<void>{Error{ErrorCode::Io,"fixture timeout"}};};ok(wait(good));CHECK(a.writes.empty()&&b.writes.empty());
+ auto wait=[&](lan::EndpointProbe& probe){auto until=std::chrono::steady_clock::now()+std::chrono::seconds(7);while(std::chrono::steady_clock::now()<until){a.service->poll();b.service->poll();if(auto result=probe.poll())return *result;std::this_thread::sleep_for(std::chrono::milliseconds(5));}return Result<void>{Error{ErrorCode::Io,"fixture timeout"}};};ok(wait(good));CHECK(a.writes.empty()&&b.writes.empty());
+ // Verification of the duplicate must leave the existing application stream usable.
+ std::string marker="existing stream after endpoint proof";
+ b.send({{0,"portable","text/plain",CanonicalKind::Text,Bytes(marker.begin(),marker.end())}});
+ auto delivered=std::chrono::steady_clock::now()+std::chrono::seconds(4);
+ while(a.writes.empty()){a.service->poll();b.service->poll();CHECK(std::chrono::steady_clock::now()<delivered);std::this_thread::sleep_for(std::chrono::milliseconds(2));}
+ CHECK(a.writes.size()==1&&b.writes.empty());
+ auto payload=take(lan::portable_snapshot(a.writes[0],local));CHECK(payload.size()==1&&payload[0].data==Bytes(marker.begin(),marker.end()));
  // A valid PSK alone must not authorize a different pinned device identity.
  auto impostorPeer=peer;impostorPeer.remote_device_id=lan::new_id();candidate.device_id=impostorPeer.remote_device_id;lan::EndpointProbe wrongIdentity;ok(wrongIdentity.start(local,impostorPeer,candidate,key));CHECK(!wait(wrongIdentity));CHECK(take(a.service->config()).peers[0].host==peer.host);
- lan::EndpointProbe wrongKey;candidate.device_id=peer.remote_device_id;CHECK(!wrongKey.start(local,peer,candidate,std::string(64,'b')));CHECK(a.writes.empty()&&b.writes.empty());
+ lan::EndpointProbe wrongKey;candidate.device_id=peer.remote_device_id;CHECK(!wrongKey.start(local,peer,candidate,std::string(64,'b')));CHECK(a.writes.size()==1&&b.writes.empty());
  std::cout<<"PASS_tls_only_probe_pins_key_and_device_without_clipboard_access\n";return 0;
 }catch(const std::exception& e){std::cerr<<e.what()<<'\n';return 1;}}
