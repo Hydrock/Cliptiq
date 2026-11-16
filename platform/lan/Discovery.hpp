@@ -16,6 +16,7 @@ public:
  explicit DiscoveryRegistry(std::string local_id):local_id_(std::move(local_id)){}
  Result<void> update(DiscoveryDevice,std::int64_t now_ms);
  void remove(const std::string& device_id,std::uint32_t interface_index);
+ void remove(const DiscoveryDevice& endpoint);
  void expire(std::int64_t now_ms);
  std::vector<DiscoveryDevice> devices() const;
  std::vector<DiscoveryDevice> endpoints(const std::string& device_id) const;

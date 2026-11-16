@@ -44,5 +44,14 @@ int main(){try{
  CHECK(service.initialize());auto config_before=take(load_config(store));auto original_peer=config_before.peers[0];auto other_peer=original_peer;other_peer.id="other-peer";other_peer.remote_device_id="other-remote";other_peer.secret_ref="other-key";other_peer.auth_id=std::string(64,'d');config_before.peers.push_back(other_peer);CHECK(save_config(store,config_before));secrets[other_peer.secret_ref]=std::string(64,'d');auto before_remove=secrets.size();
  auto removed=service.remove_peer(original_peer.id);CHECK(removed&&removed.value().peers.size()==1&&removed.value().peers[0].id==other_peer.id);CHECK(service.snapshot().peers.size()==1);CHECK(take(load_config(store)).peers.size()==1);CHECK(secrets.size()+1==before_remove&&!secrets.count(original_peer.secret_ref)&&secrets.count(other_peer.secret_ref));CHECK(!service.remove_peer(original_peer.id));
  CHECK(service.remove_peer(other_peer.id));CHECK(take(load_config(store)).peers.empty()&&!secrets.count(other_peer.secret_ref));service.stop();
+ // A retiring publication must not remove its replacement on the same network.
+ auto overlapStore=take(open_store(":memory:"));take(load_config(overlapStore));DiscoveryService overlap(overlapStore,h);CHECK(overlap.initialize());CHECK(overlap.search());
+ auto replacement=device;replacement.control_port++;replacement.data_port++;
+ discovered.push_back({DiscoveryEvent::Kind::Found,device,{}});discovered.push_back({DiscoveryEvent::Kind::Found,replacement,{}});overlap.poll();
+ discovered.push_back({DiscoveryEvent::Kind::Removed,device,{}});overlap.poll();
+ CHECK(overlap.snapshot().devices.size()==1&&overlap.snapshot().devices[0].control_port==replacement.control_port&&overlap.snapshot().devices[0].data_port==replacement.data_port);
+ // Incomplete removal metadata cannot broaden deletion to a whole interface.
+ DiscoveryDevice incomplete;incomplete.device_id=device.device_id;incomplete.interface_index=device.interface_index;
+ discovered.push_back({DiscoveryEvent::Kind::Removed,incomplete,{}});overlap.poll();CHECK(overlap.snapshot().devices.size()==1);overlap.stop();
  std::cout<<"PASS_opt_in_zero_peers_prepare_commit_disconnect_and_authenticated_recovery\n";return 0;
 }catch(const std::exception&e){std::cerr<<e.what()<<'\n';return 1;}}

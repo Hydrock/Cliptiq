@@ -42,6 +42,12 @@ int main(){try{
  registry.expire(31001);CHECK(registry.devices().empty());
  d.expires_ms=1100;ok(registry.update(d,1000));registry.expire(1100);CHECK(registry.devices().empty());
  CHECK(!registry.update(d,1100));
+ // A late goodbye is scoped to the old endpoint, not the device/interface.
+ DiscoveryRegistry migrations(local);auto prior=device();auto moved=prior;moved.control_port++;moved.data_port++;
+ ok(migrations.update(prior,1000));ok(migrations.update(moved,1000));migrations.remove(prior);
+ CHECK(migrations.endpoints(prior.device_id).size()==1&&migrations.endpoints(prior.device_id)[0].control_port==moved.control_port);
+ auto refreshed=moved;refreshed.data_port++;ok(migrations.update(refreshed,1000));migrations.remove(moved);
+ CHECK(migrations.endpoints(prior.device_id).size()==1&&migrations.endpoints(prior.device_id)[0].data_port==refreshed.data_port);
  std::cout<<"PASS_duplicate_names_endpoints_expiry_and_removal\n";
 
  d=device(local);CHECK(!registry.update(d,1000));d=device("bad/device/id");CHECK(!registry.update(d,1000));

@@ -45,6 +45,14 @@ void DiscoveryRegistry::remove(const std::string& id,std::uint32_t index){
  auto& values=it->second;values.erase(std::remove_if(values.begin(),values.end(),[&](const auto& v){return v.interface_index==index;}),values.end());
  if(values.empty())entries_.erase(it);
 }
+void DiscoveryRegistry::remove(const DiscoveryDevice& endpoint){
+ auto it=entries_.find(endpoint.device_id);if(it==entries_.end())return;
+ auto& values=it->second;values.erase(std::remove_if(values.begin(),values.end(),[&](const auto& v){
+  return v.interface_index==endpoint.interface_index&&v.address==endpoint.address&&
+   v.control_port==endpoint.control_port&&v.data_port==endpoint.data_port;
+ }),values.end());
+ if(values.empty())entries_.erase(it);
+}
 void DiscoveryRegistry::expire(std::int64_t now){
  for(auto it=entries_.begin();it!=entries_.end();){auto& values=it->second;
   values.erase(std::remove_if(values.begin(),values.end(),[&](const auto& d){return d.expires_ms<=now;}),values.end());
