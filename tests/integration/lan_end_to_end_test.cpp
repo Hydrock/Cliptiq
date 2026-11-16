@@ -48,12 +48,18 @@ struct Device {
 int main(){std::string stage="initialize";try{Device a,b;if(a.port==b.port)b.port=free_port();CHECK(!a.service->running()&&!b.service->running());a.configure("A",b.port);b.configure("B",a.port);
  stage="connect";
  auto pump=[&](auto predicate){auto deadline=std::chrono::steady_clock::now()+std::chrono::seconds(12);while(!predicate()){a.service->poll();b.service->poll();if(std::chrono::steady_clock::now()>=deadline)throw std::runtime_error(stage+" A="+a.service->status()+" B="+b.service->status()+" counts="+std::to_string(a.count())+","+std::to_string(b.count())+" writes="+std::to_string(a.writes.size())+","+std::to_string(b.writes.size()));std::this_thread::sleep_for(std::chrono::milliseconds(2));}};
- pump([&]{return a.service->status().find("Connected")!=std::string::npos&&b.service->status().find("Connected")!=std::string::npos;});
+ auto pair_ready=[&]{return a.service->status().find("Connected")!=std::string::npos&&b.service->status().find("Connected")!=std::string::npos;};
+ pump(pair_ready);
  stage="text";std::string text="  Cross-platform clipboard\nwith whitespace  ";a.send({{0,"portable","text/plain",CanonicalKind::Text,Bytes(text.begin(),text.end())}});pump([&]{return b.count()==1&&b.writes.size()==1;});
  auto first=take(list_history(*b.store))[0].id;CHECK(take(lan::entry_origin(*b.store,first))=="A");auto snapshot=take(load_snapshot(*b.store,first));CHECK(snapshot.representations[0].platform!="portable");
  b.service->captured(first);for(int i=0;i<100;++i){a.service->poll();b.service->poll();std::this_thread::sleep_for(std::chrono::milliseconds(2));}CHECK(a.count()==1);
  stage="PNG";Bytes png={137,80,78,71,13,10,26,10,0,0,0,13,73,72,68,82,0,0,0,1,0,0,0,1,8,6,0,0,0,31,21,196,137,0,0,0,13,73,68,65,84,120,156,99,248,207,192,240,31,0,5,0,1,255,137,153,61,29,0,0,0,0,73,69,78,68,174,66,96,130};b.send({{0,"portable","image/png",CanonicalKind::Image,png}});pump([&]{return a.count()==2&&a.writes.size()==1;});CHECK(a.writes.back().representations[0].data==png);
- stage="history-only reconnect";auto config=take(b.service->config());config.receive_mode=lan::ReceiveMode::HistoryOnly;ok(b.service->save(config,{}));pump([&]{return b.service->status().find("Connected")!=std::string::npos;});
+ stage="history-only reconnect";a.service->stop();auto config=take(b.service->config());config.receive_mode=lan::ReceiveMode::HistoryOnly;ok(b.service->save(config,{}));
+ // B receiving A's HELLO does not imply A has received B's HELLO. Stopping A
+ // before B's save, then restarting A, gives both endpoints fresh status maps:
+ // an old Connected label cannot admit the one-shot copy while A is offline.
+ // Offline copies never replay, so wait for bilateral fresh authentication.
+ ok(a.service->initialize());pump(pair_ready);
  stage="URL history-only";std::string url="https://example.com/cliptiq";a.send({{0,"portable","text/uri-list",CanonicalKind::Url,Bytes(url.begin(),url.end())}});pump([&]{return b.count()==3;});CHECK(b.writes.size()==1);
  stage="three device mesh";Device c;
  auto ca=take(a.service->config()),cb=take(b.service->config()),cc=take(c.service->config());

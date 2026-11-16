@@ -171,6 +171,33 @@ static void publication_excludes_retired_peer(unsigned short port) {
   require(wait([&]{return server.ready_to_publish();}),"offline peer retained publication budget");
   server.stop();
 }
+// Receiving the remote HELLO is directional: one endpoint can be ready while
+// its counterpart still lacks an authenticated application-level recipient.
+static void publication_requires_bilateral_hello(unsigned short port) {
+  std::atomic<unsigned> connected{0};
+  TransportCallbacks callbacks;
+  Transport server;
+  callbacks.identity=[](std::string,std::string)->Result<void>{return {};};
+  callbacks.status=[&](std::string,std::string status){if(status=="Connected (TLS 1.3)")++connected;};
+  TransportPeer peer;peer.id="asymmetric";peer.auth_id="shared-auth-id";peer.key=Bytes(32,42);peer.send=true;peer.host="127.0.0.1";peer.port=port;
+  TransportConfig config{"aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa","127.0.0.1",port,{peer}};
+  auto started=server.start(config,callbacks);require(bool(started),"asymmetric HELLO server start");
+  RawPeer remote(port);
+  auto header=remote.read(5);require(header==Bytes({0,0,0,36,1}),"asymmetric remote HELLO header");
+  auto identity=remote.read(36);require(std::string(identity.begin(),identity.end())==config.device_id,"asymmetric remote HELLO identity");
+  // The remote endpoint has received our HELLO, but has not sent its own.
+  require(connected==0,"one-sided HELLO authenticated both endpoints");
+  auto payload=std::make_shared<Bytes>(Bytes{4,5,6});server.publish(payload);
+  require(server.ready_to_publish(),"offline publication was retained");
+  std::string id="cccccccc-cccc-cccc-cccc-cccccccccccc";
+  Bytes hello{0,0,0,36,1};hello.insert(hello.end(),id.begin(),id.end());remote.send(hello);
+  require(wait([&]{return connected>0;}),"bilateral HELLO missing");
+  unsigned char byte{};require(mbedtls_ssl_read(&remote.ssl,&byte,1)<=0,"one-sided publication replayed after HELLO");
+  server.publish(payload);
+  require(remote.read(5)==Bytes({0,0,0,3,2})&&remote.read(3)==*payload,"bilateral publication missing");
+  remote.send({0,0,0,0,3});require(wait([&]{return server.ready_to_publish();}),"bilateral publication ACK missing");
+  server.stop();
+}
 int main() {
   try {
     // Let the OS choose usable loopback ports; fixed ports may be occupied or
@@ -179,6 +206,7 @@ int main() {
     auto portB = free_port();
     while (portB == portA)
       portB = free_port();
+    publication_requires_bilateral_hello(portA);
     publication_excludes_retired_peer(portA);
     publication_during_handover(portA);
     Transport a, b;
