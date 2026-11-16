@@ -20,7 +20,9 @@ if mode in ('x11', 'wayland'):
     env['GDK_BACKEND'] = mode
     env['XDG_SESSION_TYPE'] = mode
 if mode == 'x11':
-    raise SystemExit(subprocess.run(['xvfb-run', '-a', '-s', '-screen 0 800x600x24 -nolisten tcp', executable, *args], env=env).returncode)
+    # Keep this per-test server stable when cases disconnect their last client.
+    # Xvfb otherwise resets between cases while the next client is connecting.
+    raise SystemExit(subprocess.run(['xvfb-run', '-a', '-s', '-screen 0 800x600x24 -nolisten tcp -noreset', executable, *args], env=env).returncode)
 with tempfile.TemporaryDirectory(prefix='cliptiq-wayland-') as name:
     root = Path(name)
     runtime = root / 'runtime'

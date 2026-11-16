@@ -42,11 +42,19 @@ private:
     auto it = names.find(n);
     if (it != names.end())
       return it->second;
+    xcb_generic_error_t *error = nullptr;
     auto reply = xcb_intern_atom_reply(
         connection, xcb_intern_atom(connection, 0, n.size(), n.c_str()),
-        nullptr);
-    if (!reply)
-      throw std::runtime_error("fixture atom query");
+        &error);
+    if (!reply) {
+      auto protocol_error = error ? error->error_code : 0;
+      free(error);
+      throw std::runtime_error("fixture atom query: name=" + n +
+                               " connection_error=" +
+                               std::to_string(xcb_connection_has_error(connection)) +
+                               " protocol_error=" + std::to_string(protocol_error));
+    }
+    free(error);
     auto a = reply->atom;
     free(reply);
     names[n] = a;

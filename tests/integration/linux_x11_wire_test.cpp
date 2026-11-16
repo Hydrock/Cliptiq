@@ -66,6 +66,7 @@ int main() {
     return 2;
   int failures = 0;
   auto test = [&](const char *n, auto f) {
+    std::cerr << "RUN " << n << std::endl;
     try {
       f();
       std::cout << "PASS " << n << '\n';
