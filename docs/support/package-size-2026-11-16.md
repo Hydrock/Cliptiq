@@ -1,6 +1,6 @@
 # Package size and Pango investigation, 2026-11-16
 
-Status: a later Intel endpoint-migration failure was reproduced and fixed locally; native CI confirmation is pending. Size gates remain unchanged and still fail.
+Status: source d21ec9e passed every Windows/Linux/macOS Debug and Release test stage, all sanitizer lanes, OCR functional stages and Sparkle checks. CI remains red solely on six unchanged package size budgets; the original baseline is preserved.
 
 Branch: feature/windows-workspace. The user explicitly requires the original size baseline to remain unchanged. No LAN/security/functionality removal is accepted as a size fix.
 
@@ -111,3 +111,20 @@ The duplicate loser now drains only its already queued HELLO and then closes. It
 Permanent regression keeps the live stream, verifies the endpoint, delivers an exact portable marker on the existing stream, then retains the wrong-device and wrong-key negatives. Debug and MinSizeRel endpoint-probe, complete transport suite and real Service E2E passed. Independent review found no actionable issues. Native macOS CI is required for final recurrence confirmation.
 
 Default-Os OCR symbol profiling also found additional strip-u-r savings, but the strict dyld export equivalence comparison returned false on ARM and Intel. Code/data, imports and dynamically referenced globals matched; exported-interface equivalence was not established. Consequently production retains strip-x and its full global-symbol invariant. No verification was weakened to accept the smaller candidate.
+
+## Final native confirmation for d21ec9e
+
+[Run43816586222](https://github.com/Hydrock/Cliptiq/actions/runs/43816586222) completed with failure solely at the six Base/macOS OCR package size checks. All four history matrix jobs reached packaging after successful Debug and Release CTest stages, including Intel endpoint migration and live-peer endpoint proof. All three sanitizer jobs and both Sparkle jobs succeeded. All five OCR functional stages succeeded; Windows and Linux OCR packaging also passed. No CTest failure annotation was present in the final run.
+
+The previous intermittent Intel failure did not recur in this run. This is native confirmation of the tested regression fix, not a guarantee that all possible network timing faults are eliminated.
+
+| Distribution | App bytes / original gate | ZIP bytes / original gate |
+|---|---:|---:|
+| Windows Base |2358927 /1867254 |1166268 /957588 |
+| Linux Base |1881441 /1682648 |869254 /801109 |
+| macOS ARM Base |2169481 /2101519 |1002205 /866157 |
+| macOS Intel Base |2259049 /2082590 |1078940 /900205 |
+| macOS ARM OCR |2375895 /2350777 |1105477 /987169 |
+| macOS Intel OCR |2451255 /2340296 |1188468 /1026273 |
+
+The live-peer transport correction adds512 executable bytes on Windows versus7d08966; other app-byte totals are unchanged. ZIP differences include build/signature/manifest variation and are not presented as performance changes. The Windows Base app deficit is491673B; a safe small compiler/linker adjustment has not been demonstrated to remove it while preserving all functionality and measured performance. Broad architectural size reduction remains unresolved. No baseline, allowance, ceiling, license/model accounting or security check was changed. The installed user application remains untouched.
