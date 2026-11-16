@@ -78,12 +78,12 @@ jobs:
           }
       - run: python tools/fetch-footprint-deps.py
       - run: python tools/fetch-lan-deps.py
-      - name: Configure isolated Clang size experiment
+      - name: Configure isolated Clang full IPO size experiment
         shell: pwsh
         run: |
           $llvm = 'C:/Program Files/LLVM/bin'
           & "$llvm/clang-cl.exe" --version
-          cmake --preset release "-DCMAKE_C_COMPILER=$llvm/clang-cl.exe" "-DCMAKE_CXX_COMPILER=$llvm/clang-cl.exe" "-DCMAKE_LINKER=$llvm/lld-link.exe" "-DCMAKE_C_FLAGS_MINSIZEREL=/O1 /DNDEBUG /clang:-Oz" "-DCMAKE_CXX_FLAGS_MINSIZEREL=/O1 /DNDEBUG /clang:-Oz"
+          cmake --preset release "-DCMAKE_C_COMPILER=$llvm/clang-cl.exe" "-DCMAKE_CXX_COMPILER=$llvm/clang-cl.exe" "-DCMAKE_LINKER=$llvm/lld-link.exe" "-DCMAKE_PROJECT_Cliptiq_INCLUDE=${{ github.workspace }}/experiments/package-size/full-lto.cmake" "-DCMAKE_C_FLAGS_MINSIZEREL=/O1 /DNDEBUG /clang:-Oz" "-DCMAKE_CXX_FLAGS_MINSIZEREL=/O1 /DNDEBUG /clang:-Oz"
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
       - id: windows-build
         run: cmake --build --preset release
