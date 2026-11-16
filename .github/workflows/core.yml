@@ -240,7 +240,7 @@ jobs:
       - if: runner.os == 'Linux'
         run: bash tools/install-linux-backend-deps.sh
       - run: python tools/fetch-footprint-deps.py
-      - run: python tools/test-ocr.py --engine ${{ matrix.engine }}
+      - run: python tools/ci-run.py python tools/test-ocr.py --engine ${{ matrix.engine }}
       - name: Package and validate OCR distribution
         if: runner.os != 'Windows' || matrix.engine == 'tesseract'
         run: python packaging/package.py --variant ocr

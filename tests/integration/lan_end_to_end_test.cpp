@@ -8,13 +8,7 @@
 #include <stdexcept>
 #include <thread>
 #include <iostream>
-#ifdef _WIN32
-#include <winsock2.h>
-#else
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <unistd.h>
-#endif
+#include "lan_test_port.hpp"
 using namespace cliptiq;
 #define CHECK(x) do{if(!(x))throw std::runtime_error(#x);}while(false)
 template<class T>T take(Result<T>r){if(!r)throw std::runtime_error(r.error().message);return std::move(r.value());}
@@ -25,24 +19,6 @@ Result<std::string> read_secret(const std::string&r){auto i=test_keys.find(r);if
 Result<void> write_secret(const std::string&r,const std::string&k){test_keys[r]=k;return {};}
 Result<void> erase_secret(const std::string&r){test_keys.erase(r);return {};}
 Result<std::string> generate_key(){return std::string(64,'a');}
-}
-static unsigned short free_port(){
-#ifdef _WIN32
- static bool initialized=[] {WSADATA data{};return WSAStartup(MAKEWORD(2,2),&data)==0;}();CHECK(initialized);
-#endif
- auto s=socket(AF_INET,SOCK_STREAM,0);CHECK(s!=decltype(s)(-1));sockaddr_in address{};address.sin_family=AF_INET;address.sin_addr.s_addr=htonl(INADDR_LOOPBACK);CHECK(bind(s,reinterpret_cast<sockaddr*>(&address),sizeof(address))==0);
-#ifdef _WIN32
- int size=sizeof(address);
-#else
- socklen_t size=sizeof(address);
-#endif
- CHECK(getsockname(s,reinterpret_cast<sockaddr*>(&address),&size)==0);
-#ifdef _WIN32
- closesocket(s);
-#else
- close(s);
-#endif
- return ntohs(address.sin_port);
 }
 struct Device {
  std::filesystem::path directory=std::filesystem::temp_directory_path()/("cliptiq-real-lan-"+lan::new_id());
@@ -69,8 +45,8 @@ struct Device {
  token="local-"+lan::new_id();auto id=take(ingest(*store,std::move(native),{},std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count()));CHECK(id);service->captured(*id);}
  size_t count(){return take(list_history(*store,SortOrder::LastUsed,1000)).size();}
 };
-int main(){try{Device a,b;if(a.port==b.port)b.port=free_port();CHECK(!a.service->running()&&!b.service->running());a.configure("A",b.port);b.configure("B",a.port);
- std::string stage="connect";
+int main(){std::string stage="initialize";try{Device a,b;if(a.port==b.port)b.port=free_port();CHECK(!a.service->running()&&!b.service->running());a.configure("A",b.port);b.configure("B",a.port);
+ stage="connect";
  auto pump=[&](auto predicate){auto deadline=std::chrono::steady_clock::now()+std::chrono::seconds(12);while(!predicate()){a.service->poll();b.service->poll();if(std::chrono::steady_clock::now()>=deadline)throw std::runtime_error(stage+" A="+a.service->status()+" B="+b.service->status()+" counts="+std::to_string(a.count())+","+std::to_string(b.count())+" writes="+std::to_string(a.writes.size())+","+std::to_string(b.writes.size()));std::this_thread::sleep_for(std::chrono::milliseconds(2));}};
  pump([&]{return a.service->status().find("Connected")!=std::string::npos&&b.service->status().find("Connected")!=std::string::npos;});
  stage="text";std::string text="  Cross-platform clipboard\nwith whitespace  ";a.send({{0,"portable","text/plain",CanonicalKind::Text,Bytes(text.begin(),text.end())}});pump([&]{return b.count()==1&&b.writes.size()==1;});
@@ -90,9 +66,11 @@ int main(){try{Device a,b;if(a.port==b.port)b.port=free_port();CHECK(!a.service-
  // after handshake. Wait on the durable HELLO identity bindings instead of
  // requiring all six temporary "Connected" labels in the same poll.
  auto paired=[](Device& device){auto cfg=take(device.service->config());return cfg.peers.size()==2&&std::all_of(cfg.peers.begin(),cfg.peers.end(),[](const lan::Peer& peer){return !peer.remote_device_id.empty();});};
- auto mesh=[&](auto predicate){auto deadline=std::chrono::steady_clock::now()+std::chrono::seconds(15);while(!predicate()){a.service->poll();b.service->poll();c.service->poll();if(std::chrono::steady_clock::now()>=deadline)throw std::runtime_error(stage+" A="+a.service->status()+" B="+b.service->status()+" C="+c.service->status());std::this_thread::sleep_for(std::chrono::milliseconds(2));}};
- mesh([&]{return paired(a)&&paired(b)&&paired(c);});
+ auto describe=[](Device& d){auto cfg=take(d.service->config());auto bound=std::count_if(cfg.peers.begin(),cfg.peers.end(),[](const lan::Peer& p){return !p.remote_device_id.empty();});return "history="+std::to_string(d.count())+" writes="+std::to_string(d.writes.size())+" token="+d.token+" paired="+std::to_string(bound)+"/"+std::to_string(cfg.peers.size())+" status="+d.service->status();};
+ auto mesh=[&](auto predicate){auto deadline=std::chrono::steady_clock::now()+std::chrono::seconds(15);while(!predicate()){a.service->poll();b.service->poll();c.service->poll();if(std::chrono::steady_clock::now()>=deadline)throw std::runtime_error(stage+" A={"+describe(a)+"} B={"+describe(b)+"} C={"+describe(c)+"}");std::this_thread::sleep_for(std::chrono::milliseconds(2));}};
+ stage="mesh HELLO: expected paired=2/2 on A,B,C";mesh([&]{return paired(a)&&paired(b)&&paired(c);});
  auto an=a.count(),bn=b.count();std::string third="copy from C";c.send({{0,"portable","text/plain",CanonicalKind::Text,Bytes(third.begin(),third.end())}});
+ stage="mesh C delivery: expected history="+std::to_string(an+1)+","+std::to_string(bn+1)+",1 writes=2,1,0";
  mesh([&]{return a.count()==an+1&&b.count()==bn+1&&a.writes.size()==2;});
  CHECK(take(lan::entry_origin(*a.store,take(list_history(*a.store))[0].id))=="C");CHECK(c.count()==1);CHECK(b.writes.size()==1);
  if(const char* cycles=std::getenv("CLIPTIQ_LAN_STABILITY_CYCLES")){
@@ -111,4 +89,4 @@ int main(){try{Device a,b;if(a.port==b.port)b.port=free_port();CHECK(!a.service-
  }
  if(std::getenv("CLIPTIQ_LAN_IDLE_BENCH")){std::cout<<"READY three connected services idle"<<std::endl;auto until=std::chrono::steady_clock::now()+std::chrono::seconds(40);while(std::chrono::steady_clock::now()<until){a.service->poll();b.service->poll();c.service->poll();std::this_thread::sleep_for(std::chrono::milliseconds(20));}}
  a.service->stop();b.service->stop();c.service->stop();CHECK(!a.service->running()&&!b.service->running()&&!c.service->running());std::cout<<"PASS real TLS Service pair: text/PNG/URL, provenance, no echo, history-only, stop\n";
- }catch(const std::exception&e){std::cerr<<e.what()<<'\n';return 1;}}
+ }catch(const std::exception&e){std::cerr<<"LAN E2E ["<<stage<<"] "<<e.what()<<'\n';return 1;}}

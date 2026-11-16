@@ -1,3 +1,4 @@
+#include "lan_test_port.hpp"
 #include "lan/Transport.hpp"
 #include <atomic>
 #include <chrono>
@@ -104,7 +105,21 @@ struct RawPeer {
 };
 int main() {
   try {
+    // Let the OS choose usable loopback ports; fixed ports may be occupied or
+    // excluded from binding on CI hosts. Startup failures retain their cause.
+    const auto portA = free_port();
+    auto portB = free_port();
+    while (portB == portA)
+      portB = free_port();
     Transport a, b;
+    auto start = [](Transport& transport, const TransportConfig& config,
+                    const TransportCallbacks& callbacks, const char* stage) {
+      auto result = transport.start(config, callbacks);
+      if (!result)
+        throw std::runtime_error(std::string(stage) + " port=" +
+                                 std::to_string(config.port) + ": " +
+                                 result.error().message);
+    };
     require(!a.active(), "constructor active");
     require(!a.post([] {}), "off post accepted");
     a.stop();
@@ -139,18 +154,18 @@ int main() {
     TransportPeer pa;
     pa.id = "pair";
     pa.host = "localhost";
-    pa.port = 49882;
+    pa.port = portB;
     pa.auth_id = "shared-auth-id";
     pa.key = Bytes(32, 42);
     pa.send = pa.receive = true;
     TransportPeer pb = pa;
-    pb.port = 49881;
+    pb.port = portA;
     TransportConfig ca{
-        "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa", "127.0.0.1", 49881, {pa}};
+        "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa", "127.0.0.1", portA, {pa}};
     TransportConfig cc{
-        "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb", "127.0.0.1", 49882, {pb}};
-    require(bool(a.start(ca, cb)), "a start");
-    require(bool(b.start(cc, cb)), "b start");
+        "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb", "127.0.0.1", portB, {pb}};
+    start(a, ca, cb, "a start");
+    start(b, cc, cb, "b start");
     require(wait([&] { return connected >= 2; }, 8000), "TLS handshake failed");
     std::this_thread::sleep_for(150ms);
     auto retained = std::make_shared<Bytes>(Bytes{1, 2, 3});
@@ -178,7 +193,8 @@ int main() {
     arrivals = 0;
     expectedSize = 3;
     cc.peers[0].key[0] ^= 1;
-    require(bool(a.start(ca, cb)) && bool(b.start(cc, cb)), "wrong-key start");
+    start(a, ca, cb, "wrong-key start A");
+    start(b, cc, cb, "wrong-key start B");
     std::this_thread::sleep_for(1500ms);
     a.publish(retained);
     std::this_thread::sleep_for(200ms);
@@ -188,9 +204,9 @@ int main() {
     // Unknown/mismatched authenticated device identities are rejected.
     auto pinned = ca;
     pinned.peers[0].remote_device_id = "expected-other-device";
-    require(bool(a.start(pinned, cb)), "pinned start");
+    start(a, pinned, cb, "pinned start");
     {
-      RawPeer raw(49881);
+      RawPeer raw(portA);
       std::string id = "cccccccc-cccc-cccc-cccc-cccccccccccc";
       Bytes frame{0, 0, 0, 36, 1};
       frame.insert(frame.end(), id.begin(), id.end());
@@ -202,9 +218,9 @@ int main() {
     // A socket may disappear before the replacement HELLO is received.
     // Keep the publication until ACK, including across this ordered reconnect.
     connected=0;disconnected=0;
-    require(bool(a.start(ca, cb)), "replay server start");
+    start(a, ca, cb, "replay server start");
     {
-      RawPeer raw(49881);raw.hello();
+      RawPeer raw(portA);raw.hello();
       require(wait([&]{return connected>0;}),"replay peer hello");
       a.publish(retained);
       require(raw.read(5)==Bytes({0,0,0,3,2}) && raw.read(3)==*retained,"initial replay frame missing");
@@ -212,7 +228,7 @@ int main() {
     }
     require(wait([&]{return disconnected>0;}),"old socket not removed");
     {
-      RawPeer raw(49881);raw.hello();
+      RawPeer raw(portA);raw.hello();
       require(raw.read(5)==Bytes({0,0,0,3,2}) && raw.read(3)==*retained,"unacknowledged frame lost across reconnect");
       raw.send({0,0,0,0,3});
       require(wait([&]{return a.ready_to_publish();}),"ACK retained publication budget");
@@ -222,9 +238,9 @@ int main() {
     }
     a.stop();
     // Short reads and ACK only after successful persistence.
-    require(bool(a.start(ca, cb)), "raw server start");
+    start(a, ca, cb, "raw server start");
     {
-      RawPeer raw(49881);
+      RawPeer raw(portA);
       raw.hello();
       raw.send({0, 0, 0, 3, 2, 1, 2, 3}, true);
       auto ack = raw.read(5);
@@ -241,9 +257,9 @@ int main() {
     a.stop();
     arrivals = 0;
     preflights = 0;
-    require(bool(a.start(ca, cb)), "oversize server start");
+    start(a, ca, cb, "oversize server start");
     {
-      RawPeer raw(49881);
+      RawPeer raw(portA);
       raw.hello();
       raw.send({0, 128, 0, 1, 2});
       std::this_thread::sleep_for(100ms);
@@ -252,15 +268,15 @@ int main() {
     require(arrivals == 0 && preflights == 0,
             "oversize allocated or reached callbacks");
     // An abandoned maximum frame releases the global receive reservation.
-    require(bool(a.start(ca, cb)), "stalled server start");
+    start(a, ca, cb, "stalled server start");
     {
-      RawPeer raw(49881);
+      RawPeer raw(portA);
       raw.hello();
       raw.send({0, 128, 0, 0, 2});
       std::this_thread::sleep_for(10500ms);
     }
     {
-      RawPeer raw(49881);
+      RawPeer raw(portA);
       raw.hello();
       raw.send({0, 0, 0, 3, 2, 1, 2, 3});
       require(raw.read(5) == Bytes({0, 0, 0, 0, 3}),
@@ -271,10 +287,10 @@ int main() {
     connected = 0;
     // An event published while disconnected must not replay upon reconnect.
     cc.peers[0].key = pa.key;
-    require(bool(a.start(ca, cb)), "offline server start");
+    start(a, ca, cb, "offline server start");
     a.publish(retained);
     std::this_thread::sleep_for(100ms);
-    require(bool(b.start(cc, cb)), "reconnect server start");
+    start(b, cc, cb, "reconnect server start");
     require(wait([&] { return connected >= 2; }, 8000), "reconnect handshake");
     std::this_thread::sleep_for(200ms);
     require(arrivals == 0, "offline event replayed");
@@ -285,7 +301,7 @@ int main() {
     b.stop();
     // Queued jobs are cancelled once stop begins, while in-flight work drains.
     std::atomic<bool> entered{false}, release{false}, stopEntered{false};
-    require(bool(a.start(ca, cb)), "post-stop start");
+    start(a, ca, cb, "post-stop start");
     require(bool(a.post([&] {
               entered = true;
               while (!release)

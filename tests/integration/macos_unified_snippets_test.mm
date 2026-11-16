@@ -16,6 +16,14 @@ NSView* find(NSView* view,NSString* id){if([view.identifier isEqualToString:id])
 @property(nonatomic,copy) NSString* copied;
 @end
 @implementation EditingShortcutProbe
+// NSTextView normally validates Paste against the system pasteboard. This
+// responder uses its own fixture, so validate its editing commands locally too.
+- (BOOL)validateUserInterfaceItem:(id<NSValidatedUserInterfaceItem>)item {
+ auto action=item.action;
+ if(action==@selector(paste:)||action==@selector(selectAll:))return YES;
+ if(action==@selector(copy:)||action==@selector(cut:))return self.selectedRange.length>0;
+ return [super validateUserInterfaceItem:item];
+}
 - (void)copy:(id)sender {self.copied=[self.string substringWithRange:self.selectedRange];}
 - (void)cut:(id)sender {[self copy:sender];[self insertText:@"" replacementRange:self.selectedRange];}
 - (void)paste:(id)sender {[self insertText:@"private fixture" replacementRange:self.selectedRange];}

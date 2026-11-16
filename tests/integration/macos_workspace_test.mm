@@ -84,8 +84,10 @@ int main(int argc, char **argv) { @autoreleasepool { try {
  [window performClose:nil];CHECK(!window.visible);CHECK(!ui.status().launcher_visible);CHECK(ui.process_events(10));CHECK(!find(window.contentView,@"workspace-list"));CHECK(releases>0);
  CHECK(ui.update(model));CHECK(ui.native_handles().menu==0);CHECK(!window.visible);
  CHECK([NSApp.delegate respondsToSelector:@selector(applicationShouldHandleReopen:hasVisibleWindows:)]);
- [NSApp.delegate applicationShouldHandleReopen:NSApp hasVisibleWindows:NO];CHECK(window.visible);CHECK(ui.native_handles().menu==0);
- CHECK(ui.show_workspace());CHECK(find(window.contentView,@"workspace-list"));
+ // A Finder/login relaunch stays quiet even after a previously opened window
+ // was closed. Explicit show still recreates and reveals the workspace.
+ [NSApp.delegate applicationShouldHandleReopen:NSApp hasVisibleWindows:NO];CHECK(!window.visible);CHECK(!find(window.contentView,@"workspace-list"));CHECK(ui.native_handles().menu==0);
+ CHECK(ui.show_workspace());CHECK(window.visible);CHECK(find(window.contentView,@"workspace-list"));
  // Exercise real AppKit tracking repeatedly, rather than the popup seam used
  // by the owner-policy test. Each cancelled popup must return and release UI.
  [window performClose:nil];CHECK(ui.process_events(10));

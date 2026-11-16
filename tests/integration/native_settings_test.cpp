@@ -96,7 +96,11 @@ int run() {
       GetWindowTextW(window, title, 128);
       CHECK(std::wstring(title) == L"Настройки Cliptiq");
     }
-    CHECK(TabCtrl_GetItemCount(GetDlgItem(window, 200)) == 8);
+    CHECK(TabCtrl_GetItemCount(GetDlgItem(window, 200)) == 9);
+    wchar_t sound_label[64]{};TCITEMW sound_tab{};sound_tab.mask=TCIF_TEXT;
+    sound_tab.pszText=sound_label;sound_tab.cchTextMax=64;
+    CHECK(SendMessageW(GetDlgItem(window,200),TCM_GETITEMW,8,reinterpret_cast<LPARAM>(&sound_tab)));
+    CHECK(std::wstring(sound_label)==L"Звуки");
     CHECK(SetWindowTextW(child(window, 1000), L"5"));
     auto fields = settings_fields(settings, caps);
     unsigned index = 0;
@@ -177,7 +181,9 @@ int run() {
       CHECK(std::string(gtk_window_get_title(GTK_WINDOW(window))) ==
             u8"Настройки Cliptiq");
     auto tabs = find(window, "settings-tabs");
-    CHECK(tabs && gtk_notebook_get_n_pages(GTK_NOTEBOOK(tabs)) == 8);
+    CHECK(tabs && gtk_notebook_get_n_pages(GTK_NOTEBOOK(tabs)) == 9);
+    auto sound_page=gtk_notebook_get_nth_page(GTK_NOTEBOOK(tabs),8);
+    CHECK(sound_page && std::string(gtk_notebook_get_tab_label_text(GTK_NOTEBOOK(tabs),sound_page))==(russian?u8"Звуки":"Sounds"));
     auto field = find(window, "history_count");
     CHECK(GTK_IS_ENTRY(field));
     gtk_entry_set_text(GTK_ENTRY(field), "5");
