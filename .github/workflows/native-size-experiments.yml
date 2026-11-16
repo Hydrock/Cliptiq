@@ -7,6 +7,59 @@ on:
 permissions:
   contents: read
 jobs:
+  macos-oz:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-15, macos-15-intel]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - run: python tools/fetch-footprint-deps.py
+      - run: python tools/fetch-lan-deps.py
+      - name: Configure isolated macOS size experiment
+        run: >-
+          cmake --preset release
+          '-DCMAKE_C_FLAGS_MINSIZEREL=-Oz -DNDEBUG'
+          '-DCMAKE_CXX_FLAGS_MINSIZEREL=-Oz -DNDEBUG'
+          '-DCMAKE_OBJCXX_FLAGS_MINSIZEREL=-Oz -DNDEBUG'
+          -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+      - name: Record actual Objective-C++ optimization and IPO flags
+        run: |
+          python - <<'PY'
+          import json, pathlib
+          root = pathlib.Path('out/core-Darwin-release')
+          commands = json.loads((root / 'compile_commands.json').read_text())
+          selected = [row for row in commands if row['file'].endswith(('platform/macos/Menu.mm', 'platform/MenuHost.cpp', 'platform/macos/Application.mm', 'core/src/storage.cpp'))]
+          (root / 'size-compile-evidence.json').write_text(json.dumps(selected, indent=2) + '\n')
+          for row in selected:
+              print(row['command'])
+          PY
+      - id: macos-build
+        run: cmake --build --preset release
+      - run: ctest --preset release --output-on-failure --output-junit ci-tests.xml
+      - name: Report all CTest failures
+        if: always()
+        run: python tools/ci-test-report.py 'out/core-*/ci-tests.xml'
+      - name: Profile disposable stripping experiments
+        if: always() && steps.macos-build.outcome == 'success'
+        run: python tools/native-size-profile.py out/core-Darwin-release/Cliptiq.app/Contents/MacOS/Cliptiq --output out/native-size-oz.json
+      - name: Validate unchanged distribution and original size gates
+        run: python tools/ci-run.py python packaging/package.py
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: macos-oz-size-experiment-${{ matrix.os }}
+          path: |
+            out/core-Darwin-release/ci-tests.xml
+            out/core-Darwin-release/CMakeCache.txt
+            out/core-Darwin-release/compile_commands.json
+            out/core-Darwin-release/size-compile-evidence.json
+            out/core-Darwin-release/build.ninja
+            out/native-size-oz.json
+            out/t17-*/size.json
+            out/t17-*/package-report.json
   windows-clang:
     runs-on: windows-2025
     timeout-minutes: 45
