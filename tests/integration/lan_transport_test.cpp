@@ -171,17 +171,25 @@ int main() {
     auto retained = std::make_shared<Bytes>(Bytes{1, 2, 3});
     a.publish(retained);
     require(wait([&] { return arrivals == 1; }), "TLS delivery failed");
-    std::this_thread::sleep_for(50ms);
+    // Delivery callbacks finish before the peer sends its persistence ACK.
+    // Wait for that ACK to release the one-publication budget before sending
+    // again; sleeping can drop the next publication on a busy CI host.
+    require(wait([&] { return a.ready_to_publish(); }), "first delivery ACK missing");
     // Retaining the caller's shared_ptr must not consume transport queue
     // budget.
     a.publish(retained);
     require(wait([&] { return arrivals == 2; }),
             "retained payload blocked publish");
-    std::this_thread::sleep_for(50ms);
+    require(wait([&] { return a.ready_to_publish(); }), "retained delivery ACK missing");
     expectedSize = 1024 * 1024;
     a.publish(std::make_shared<Bytes>(expectedSize.load(), 7));
-    require(wait([&] { return arrivals == 3; }, 6000),
-            "large fragmented TLS record delivery failed");
+    if (!wait([&] { return arrivals == 3; }, 6000))
+      throw std::runtime_error("large fragmented TLS record delivery failed: arrivals=" +
+          std::to_string(arrivals.load()) + " preflights=" + std::to_string(preflights.load()) +
+          " connected=" + std::to_string(connected.load()) +
+          " disconnected=" + std::to_string(disconnected.load()) +
+          " active=" + std::to_string(a.active()) + "," + std::to_string(b.active()) +
+          " publish_ready=" + std::to_string(a.ready_to_publish()));
     require(bool(a.post([&] { ++posted; })), "post failed");
     require(wait([&] { return posted == 1; }, 1000), "post not executed");
     auto before = std::chrono::steady_clock::now();

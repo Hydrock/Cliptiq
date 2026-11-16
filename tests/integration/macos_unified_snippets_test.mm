@@ -48,6 +48,12 @@ int main(int argc,char** argv){@autoreleasepool{try{
  CHECK(ui.show_workspace(MenuKind::Snippets));CHECK(mounts==1&&find(window.contentView,@"editor-tree")==outline);
  auto commandCopy=[NSEvent keyEventWithType:NSEventTypeKeyDown location:NSZeroPoint modifierFlags:NSEventModifierFlagCommand timestamp:0 windowNumber:window.windowNumber context:nil characters:@"c" charactersIgnoringModifiers:@"c" isARepeat:NO keyCode:8];
  CHECK(!find(window.contentView,@"editor-reload"));
+ // makeFirstResponder alone does not establish NSApplication's nil-target
+ // action route. Wait for activation/key-window delivery on CI before testing
+ // the real main-menu key equivalents below.
+ [NSApp activateIgnoringOtherApps:YES];[window makeKeyAndOrderFront:nil];
+ for(unsigned n=0;n<200&&NSApp.keyWindow!=window;++n){CHECK(ui.process_events(10));}
+ CHECK(NSApp.keyWindow==window);
  CHECK([window makeFirstResponder:body]);
  CHECK([NSApp targetForAction:@selector(copy:)]==body);
  CHECK([NSApp targetForAction:@selector(paste:)]==body);
@@ -74,6 +80,9 @@ int main(int argc,char** argv){@autoreleasepool{try{
  [body setSelectedRange:NSMakeRange(body.string.length,0)];[body insertText:@" extra" replacementRange:body.selectedRange];
  CHECK([body.string isEqualToString:@"After extra"]&&session->saving());
  [window performClose:nil];CHECK(window.visible);CHECK(mounts==1&&unmounts==0);CHECK(find(window.contentView,@"editor-tree")==outline);
+ // Closing commits field edits by clearing firstResponder, even when the
+ // pending save vetoes the close. Resume editing before issuing Undo.
+ CHECK([window makeFirstResponder:body]);
  shortcut(@"z",6);settleSave();CHECK(session->content()=="After");
  auto canUndo=session->can_undo();[window performClose:nil];CHECK(!window.visible);
  // Hiding is synchronous; releasing the workspace/editor is queued on the

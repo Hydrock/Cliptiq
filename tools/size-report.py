@@ -107,7 +107,7 @@ def main():
     report['measurement_scope']='candidate app-owned files; included models counted once; clean-consumer system delta unverified'
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
-    print(json.dumps({k: report[k] for k in ('app_bytes', 'archive_bytes', 'total_offline_bytes')}))
+    print(json.dumps({k: report[k] for k in ('app_bytes', 'archive_bytes', 'total_offline_bytes', 'budget_violations')}))
     return 1 if violations else 0
 
 
